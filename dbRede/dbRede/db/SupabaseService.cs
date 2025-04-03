@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 public class SupabaseService
 {
     private readonly Client _supabase;
-
+    // aqui esta a configuração para acessar o banco
     public SupabaseService(IConfiguration configuration)
     {
         string url = configuration["Supabase:Url"];

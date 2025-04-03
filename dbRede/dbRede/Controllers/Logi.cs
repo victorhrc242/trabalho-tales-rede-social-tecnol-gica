@@ -16,6 +16,8 @@ public class Logi : ControllerBase
         _supabase = service.GetClient();
     }
 
+    // aqui eu estou logando
+
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {

@@ -7,7 +7,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<SupabaseService>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
