@@ -9,7 +9,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "LoginRequest",
+        "Type": "Logi\u002BLoginRequest",
         "IsRequired": true
       }
     ],

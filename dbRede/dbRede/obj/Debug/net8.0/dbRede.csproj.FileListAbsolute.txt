@@ -137,3 +137,4 @@ C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\ob
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net8.0\dbRede.genruntimeconfig.cache
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net8.0\ref\dbRede.dll
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net8.0\BCrypt.Net-Next.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net8.0\BCrypt.Net-Next.dll
