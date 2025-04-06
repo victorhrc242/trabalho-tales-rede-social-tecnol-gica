@@ -40,16 +40,17 @@ public class RegisterController : ControllerBase
             var existingUser = await _supabase.From<User>().Where(u => u.Email == request.Email).Get();
             if (existingUser.Models.Any())
             {
+         
                 return BadRequest(new { error = "E-mail já cadastrado." });
             }
-
+            
             // Hash da senha antes de salvar
             string senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 
             // Criar novo usuário
             var newUser = new User
             {
-                Nome = request.Nome.Trim(),
+                Nome = request.Nome.Trim().ToLower(),
                 Email = request.Email.Trim().ToLower(),
                 Senha = senhaHash, // Senha agora está protegida
                 FotoPerfil = request.FotoPerfil,

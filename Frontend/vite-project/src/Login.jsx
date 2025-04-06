@@ -61,9 +61,8 @@ function Login() {
       </form>
 
       {erro && <p className="erro">{erro}</p>}
-
-
       <p>Se não tem Conta <Link to="/cadastro">Cadastrar</Link></p>
+      <p>Se não sabe a senha <Link to="/Recuperar">Recuperar</Link></p> 
     </div>
   );
 }

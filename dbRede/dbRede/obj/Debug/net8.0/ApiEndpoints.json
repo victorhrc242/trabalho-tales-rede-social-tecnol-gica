@@ -16,6 +16,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Logi",
+    "Method": "RecuperarSenha",
+    "RelativePath": "api/auth/Recuperar-senha",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dados",
+        "Type": "Logi\u002BRecuperarSenhaDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "RegisterController",
     "Method": "Register",
     "RelativePath": "api/auth/register",
