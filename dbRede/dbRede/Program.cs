@@ -8,6 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<SupabaseService>();
 
+
 // Adicione essa política de CORS
 builder.Services.AddCors(options =>
 {

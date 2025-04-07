@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using dbRede.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Supabase;
 using Supabase.Postgrest.Attributes;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using static Logi;
+using static Supabase.Postgrest.Constants;
 
 [ApiController]
 [Route("api/auth")]
@@ -78,6 +82,29 @@ public class RegisterController : ControllerBase
         {
             return StatusCode(500, new { error = "Erro interno no servidor.", details = ex.Message });
         }
+    }
+    [HttpGet("usuario")]
+    public async Task<IActionResult> ListarUsuarios()
+    {
+        var usuariosRelacionados = await _supabase
+            .From<User>()
+        .Get();
+
+        var usuarios = usuariosRelacionados.Models.Select(u => new UserDto
+        {
+            Id = u.id,
+            Nome = u.Nome,
+            Email = u.Email
+        });
+
+        return Ok(usuarios);
+    }
+
+    public class UserDto
+    {
+        public Guid Id { get; set; }
+        public string Nome { get; set; }
+        public string Email { get; set; }
     }
 
 

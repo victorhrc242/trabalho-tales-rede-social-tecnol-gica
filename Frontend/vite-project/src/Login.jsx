@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './login.css';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router'; // corrigido aqui
+
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
+  const navigate = useNavigate();
+
+  // Verifica se o token já está salvo e redireciona
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/Home'); // ou o caminho desejado
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,9 +32,13 @@ function Login() {
 
       if (response.ok) {
         console.log('Login bem-sucedido:', data);
-        // Aqui você pode salvar o token no localStorage e redirecionar
+
+        // Salvar token e dados do usuário
         localStorage.setItem('token', data.token);
-        // Redirecionar ou mostrar tela de sucesso
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+        // Redirecionar
+        navigate('/Home');
       } else {
         setErro(data.message || 'Falha no login');
       }
@@ -47,8 +61,7 @@ function Login() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-<br />
-<br />
+        <br /><br />
         <input
           type="password"
           placeholder="Digite sua senha"
@@ -56,13 +69,13 @@ function Login() {
           onChange={(e) => setSenha(e.target.value)}
           required
         />
-<br /><br />
+        <br /><br />
         <button type="submit">Entrar</button>
       </form>
 
       {erro && <p className="erro">{erro}</p>}
-      <p>Se não tem Conta <Link to="/cadastro">Cadastrar</Link></p>
-      <p>Se não sabe a senha <Link to="/Recuperar">Recuperar</Link></p> 
+      <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
+      <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
     </div>
   );
 }

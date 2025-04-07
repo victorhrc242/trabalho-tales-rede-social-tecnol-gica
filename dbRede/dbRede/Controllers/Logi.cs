@@ -34,7 +34,9 @@ public class Logi : ControllerBase
         // Retorna apenas o e-mail do usuário
         var userDTO = new UserDTO
         {
-            Email = user.Email
+            Email = user.Email,
+            id=user.id
+            
         };
 
         return Ok(new { message = "Login realizado com sucesso!", user = userDTO });
@@ -76,5 +78,6 @@ public class RecuperarSenhaDTO
     public class UserDTO
     {
         public string Email { get; set; }
+        public Guid id { get; set; }
     }
 }
