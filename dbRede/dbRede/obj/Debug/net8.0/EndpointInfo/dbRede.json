@@ -181,7 +181,7 @@
         }
       }
     },
-    "/api/Feed": {
+    "/api/Feed/feed": {
       "get": {
         "tags": [
           "Feed"

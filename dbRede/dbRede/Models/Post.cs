@@ -32,5 +32,7 @@ namespace dbRede.Models
 
         [Column("tags")]
         public List<string> Tags { get; set; }
+
+        public User Usuarios { get; set; } // relacionamento
     }
 }

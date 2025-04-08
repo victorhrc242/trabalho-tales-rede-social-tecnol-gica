@@ -176,16 +176,6 @@
   },
   {
     "ContainingType": "dbRede.Controllers.FeedController",
-    "Method": "GetFeed",
-    "RelativePath": "api/Feed",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "dbRede.Controllers.FeedController",
     "Method": "CriarPost",
     "RelativePath": "api/Feed/criar",
     "HttpMethod": "POST",
@@ -198,6 +188,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "dbRede.Controllers.FeedController",
+    "Method": "GetFeed",
+    "RelativePath": "api/Feed/feed",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

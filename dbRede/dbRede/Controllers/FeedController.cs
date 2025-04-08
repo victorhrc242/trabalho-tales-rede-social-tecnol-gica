@@ -16,36 +16,31 @@ namespace dbRede.Controllers
             var service = new SupabaseService(configuration);
             _supabase = service.GetClient();
         }
-        [HttpGet]
+        [HttpGet("feed")]
         public async Task<IActionResult> GetFeed()
         {
-            try
-            {
-                // Buscar todos os posts ordenados por data (mais recente primeiro)
-                var posts = await _supabase
-                    .From<Post>()
-                    .Order("data_postagem", Ordering.Descending)
-                    .Get();
+            var resultado = await _supabase
+                .From<Post>()
+                .Select("*, users (nome)") // Substitua 'users' se o nome da tabela for outro
+                .Get();
 
-                // Mapear os dados para DTO, se necessário
-                var postsDto = posts.Models.Select(post => new PostDTO
-                {
-                    Id = post.Id,
-                    AutorId = post.AutorId,
-                    Conteudo = post.Conteudo,
-                    Imagem = post.Imagem,
-                    Tags = post.Tags,
-                    DataPostagem = post.DataPostagem,
-                    Curtidas = post.Curtidas,
-                    Comentarios = post.Comentarios
-                }).ToList();
+            if (resultado == null)
+                return StatusCode(500, new { erro = "Erro ao acessar o Supabase." });
 
-                return Ok(postsDto);
-            }
-            catch (Exception ex)
+            var postsComAutores = resultado.Models.Select(post => new PostDTO
             {
-                return StatusCode(500, new { erro = ex.Message });
-            }
+                Id = post.Id,
+                Conteudo = post.Conteudo,
+                Imagem = post.Imagem,
+                Tags = post.Tags,
+                DataPostagem = post.DataPostagem,
+                Curtidas = post.Curtidas,
+                Comentarios = post.Comentarios,
+                AutorId = post.AutorId,
+                NomeAutor = post.Usuarios?.Nome ?? "Desconhecido" // Use o nome da propriedade certa do join
+            });
+
+            return Ok(postsComAutores);
         }
 
 
@@ -81,6 +76,7 @@ namespace dbRede.Controllers
                 Curtidas = postSalvo.Curtidas,
                 Comentarios = postSalvo.Comentarios,
                 Tags = postSalvo.Tags
+
             };
 
             return Ok(dto);
@@ -104,6 +100,7 @@ namespace dbRede.Controllers
             public int Curtidas { get; set; }
             public int Comentarios { get; set; }
             public List<string> Tags { get; set; }
+            public string NomeAutor { get; set; }
         }
     
 

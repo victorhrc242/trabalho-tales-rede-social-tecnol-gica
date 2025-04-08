@@ -1,6 +1,7 @@
+// Login.jsx
 import React, { useState, useEffect } from 'react';
 import './login.css';
-import { Link, useNavigate } from 'react-router'; // corrigido aqui
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -8,11 +9,10 @@ function Login() {
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
-  // Verifica se o token já está salvo e redireciona
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      navigate('/Home'); // ou o caminho desejado
+      navigate('/Home');
     }
   }, [navigate]);
 
@@ -33,12 +33,20 @@ function Login() {
       if (response.ok) {
         console.log('Login bem-sucedido:', data);
 
-        // Salvar token e dados do usuário
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        if (data.token) {
+          localStorage.setItem('token', data.token);
 
-        // Redirecionar
-        navigate('/Home');
+          if (data.user) {
+            localStorage.setItem('usuario', JSON.stringify(data.user));
+          } else {
+            console.warn('Usuário não retornado pela API.');
+          }
+
+          navigate('/Home');
+        } else {
+          setErro('Token não retornado pelo servidor.');
+        }
+
       } else {
         setErro(data.message || 'Falha no login');
       }

@@ -5,6 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using BCrypt.Net;
 using System.Collections.Concurrent;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/auth")]
@@ -31,18 +34,24 @@ public class Logi : ControllerBase
         if (!BCrypt.Net.BCrypt.Verify(request.Senha, user.Senha))
             return Unauthorized("Senha incorreta");
 
-        // Retorna apenas o e-mail do usuário
         var userDTO = new UserDTO
         {
             Email = user.Email,
-            id=user.id
-            
+            id = user.id,
+            Nome = user.Nome
         };
 
-        return Ok(new { message = "Login realizado com sucesso!", user = userDTO });
+        var token = GerarToken(userDTO);
+
+        return Ok(new
+        {
+            message = "Login realizado com sucesso!",
+            token = token,
+            user = userDTO
+        });
     }
 
-[HttpPut("Recuperar-senha")]
+    [HttpPut("Recuperar-senha")]
 public async Task<IActionResult> RecuperarSenha([FromBody] RecuperarSenhaDTO dados)
 {
     if (string.IsNullOrEmpty(dados.Email) || string.IsNullOrEmpty(dados.NovaSenha))
@@ -79,5 +88,29 @@ public class RecuperarSenhaDTO
     {
         public string Email { get; set; }
         public Guid id { get; set; }
+        public  string Nome { get; set; }
     }
+    private string GerarToken(UserDTO user)
+    {
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("sua-chave-secreta-supersegura-aqui"));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+        new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Name, user.Nome)
+    };
+
+        var token = new JwtSecurityToken(
+            issuer: "suaaplicacao",
+            audience: "suaaplicacao",
+            claims: claims,
+            expires: DateTime.Now.AddHours(2),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
 }
