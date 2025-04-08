@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dbRede")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+782547c09c6751ba0f686e53d114b2e69f01d493")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d478e8b83fddd36d2e96558ce0e6d2b3c60179f")]
 [assembly: System.Reflection.AssemblyProductAttribute("dbRede")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dbRede")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,5 +1,122 @@
 [
   {
+    "ContainingType": "AmizadesController",
+    "Method": "AceitarSolicitacao",
+    "RelativePath": "api/Amizades/aceitar/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AmizadesController",
+    "Method": "GetPendentes",
+    "RelativePath": "api/Amizades/pendentes/{usuarioId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "usuarioId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AmizadesController",
+    "Method": "RecusarSolicitacao",
+    "RelativePath": "api/Amizades/recusar/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AmizadesController",
+    "Method": "GetSeguidores",
+    "RelativePath": "api/Amizades/seguidores/{usuarioId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "usuarioId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AmizadesController",
+    "Method": "GetSeguindo",
+    "RelativePath": "api/Amizades/seguindo/{usuarioId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "usuarioId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AmizadesController",
+    "Method": "VerificarSolicitacao",
+    "RelativePath": "api/Amizades/solicitacao/existe",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "usuario1",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "usuario2",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AmizadesController",
+    "Method": "EnviarSolicitacao",
+    "RelativePath": "api/Amizades/solicitar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "AmizadesController\u002BSeguidorDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Logi",
     "Method": "Login",
     "RelativePath": "api/auth/login",
@@ -16,6 +133,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Logi",
+    "Method": "RecuperarSenha",
+    "RelativePath": "api/auth/Recuperar-senha",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dados",
+        "Type": "Logi\u002BRecuperarSenhaDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "RegisterController",
     "Method": "Register",
     "RelativePath": "api/auth/register",
@@ -26,6 +159,90 @@
       {
         "Name": "request",
         "Type": "RegisterController\u002BRegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RegisterController",
+    "Method": "ListarUsuarios",
+    "RelativePath": "api/auth/usuario",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "dbRede.Controllers.FeedController",
+    "Method": "CriarPost",
+    "RelativePath": "api/Feed/criar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "novoPost",
+        "Type": "dbRede.Controllers.FeedController\u002BCriarPostRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "dbRede.Controllers.FeedController",
+    "Method": "GetFeed",
+    "RelativePath": "api/Feed/feed",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "dbRede.Controllers.NotificacoesController",
+    "Method": "CriarNotificacao",
+    "RelativePath": "api/Notificacoes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "dbRede.Controllers.NotificacoesController\u002BNotificacaoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "dbRede.Controllers.NotificacoesController",
+    "Method": "Deletar",
+    "RelativePath": "api/Notificacoes/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "dbRede.Controllers.NotificacoesController",
+    "Method": "GetNotificacoes",
+    "RelativePath": "api/Notificacoes/{usuarioId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "usuarioId",
+        "Type": "System.Guid",
         "IsRequired": true
       }
     ],

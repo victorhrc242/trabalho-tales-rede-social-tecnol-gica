@@ -12,7 +12,7 @@ public class User : BaseModel
     // pq quando testei e deu certo eles estavam ai e eu não quero tirar pois pode  dar erro
     [PrimaryKey("id", false)]
     [JsonIgnore]
-
+    public Guid id { get; set; }
     [Column("nome")]
     public string Nome { get; set; }
 
