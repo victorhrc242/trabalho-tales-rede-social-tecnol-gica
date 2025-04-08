@@ -42,9 +42,6 @@ namespace dbRede.Controllers
 
             return Ok(postsComAutores);
         }
-
-
-
         [HttpPost("criar")]
         public async Task<IActionResult> CriarPost([FromBody] CriarPostRequest novoPost)
         {
@@ -64,7 +61,7 @@ namespace dbRede.Controllers
             var postSalvo = resposta.Models.FirstOrDefault();
 
             if (postSalvo == null)
-                return StatusCode(500, "Erro ao salvar o post.");
+                return StatusCode(500, new { erro = "Erro ao salvar o post." });
 
             var dto = new PostDTO
             {
@@ -76,13 +73,14 @@ namespace dbRede.Controllers
                 Curtidas = postSalvo.Curtidas,
                 Comentarios = postSalvo.Comentarios,
                 Tags = postSalvo.Tags
-
             };
 
-            return Ok(dto);
+            return Ok(new
+            {
+                mensagem = "Post criado com sucesso!",
+                post = dto
+            });
         }
-
-
         public class CriarPostRequest
         {
             public Guid AutorId { get; set; }

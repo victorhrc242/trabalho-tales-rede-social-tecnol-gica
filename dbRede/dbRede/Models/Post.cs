@@ -2,6 +2,7 @@
 using Supabase.Postgrest.Models;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace dbRede.Models
 {
@@ -32,7 +33,7 @@ namespace dbRede.Models
 
         [Column("tags")]
         public List<string> Tags { get; set; }
-
+        [IgnoreDataMember]
         public User Usuarios { get; set; } // relacionamento
     }
 }
