@@ -3,6 +3,7 @@ using dbRede.Models;
 using Supabase;
 using static Supabase.Postgrest.Constants;
 using static dbRede.Controllers.FeedController;
+
 namespace dbRede.Controllers
 {
     [ApiController]
@@ -16,12 +17,13 @@ namespace dbRede.Controllers
             var service = new SupabaseService(configuration);
             _supabase = service.GetClient();
         }
+
         [HttpGet("feed")]
         public async Task<IActionResult> GetFeed()
         {
             var resultado = await _supabase
                 .From<Post>()
-                .Select("*, users (nome)") // Substitua 'users' se o nome da tabela for outro
+                .Select("*, users (nome)") // nome da tabela referenciada
                 .Get();
 
             if (resultado == null)
@@ -37,11 +39,12 @@ namespace dbRede.Controllers
                 Curtidas = post.Curtidas,
                 Comentarios = post.Comentarios,
                 AutorId = post.AutorId,
-                NomeAutor = post.Usuarios?.Nome ?? "Desconhecido" // Use o nome da propriedade certa do join
+                NomeAutor = post.Usuarios?.Nome ?? "Desconhecido"
             });
 
             return Ok(postsComAutores);
         }
+
         [HttpPost("criar")]
         public async Task<IActionResult> CriarPost([FromBody] CriarPostRequest novoPost)
         {
@@ -54,7 +57,7 @@ namespace dbRede.Controllers
                 DataPostagem = DateTime.UtcNow,
                 Curtidas = 0,
                 Comentarios = 0,
-                Tags = novoPost.Tags
+                Tags = novoPost.Tags,
             };
 
             var resposta = await _supabase.From<Post>().Insert(post);
@@ -63,16 +66,26 @@ namespace dbRede.Controllers
             if (postSalvo == null)
                 return StatusCode(500, new { erro = "Erro ao salvar o post." });
 
+            // Buscar o post novamente com o nome do autor (join)
+            var resultado = await _supabase
+                .From<Post>()
+                .Select("*, users (nome)")
+                .Filter("id", Operator.Equals, postSalvo.Id.ToString())
+                .Get();
+
+            var postComAutor = resultado.Models.FirstOrDefault();
+
             var dto = new PostDTO
             {
-                Id = postSalvo.Id,
-                AutorId = postSalvo.AutorId,
-                Conteudo = postSalvo.Conteudo,
-                Imagem = postSalvo.Imagem,
-                DataPostagem = postSalvo.DataPostagem,
-                Curtidas = postSalvo.Curtidas,
-                Comentarios = postSalvo.Comentarios,
-                Tags = postSalvo.Tags
+                Id = postComAutor.Id,
+                AutorId = postComAutor.AutorId,
+                Conteudo = postComAutor.Conteudo,
+                Imagem = postComAutor.Imagem,
+                DataPostagem = postComAutor.DataPostagem,
+                Curtidas = postComAutor.Curtidas,
+                Comentarios = postComAutor.Comentarios,
+                Tags = postComAutor.Tags,
+                NomeAutor = postComAutor.Usuarios?.Nome ?? "Desconhecido"
             };
 
             return Ok(new
@@ -81,6 +94,7 @@ namespace dbRede.Controllers
                 post = dto
             });
         }
+
         public class CriarPostRequest
         {
             public Guid AutorId { get; set; }
@@ -88,6 +102,7 @@ namespace dbRede.Controllers
             public string Imagem { get; set; }
             public List<string> Tags { get; set; }
         }
+
         public class PostDTO
         {
             public Guid Id { get; set; }
@@ -100,7 +115,5 @@ namespace dbRede.Controllers
             public List<string> Tags { get; set; }
             public string NomeAutor { get; set; }
         }
-    
-
     }
 }

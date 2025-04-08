@@ -175,6 +175,38 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "dbRede.Controllers.CurtidaController",
+    "Method": "CurtirPost",
+    "RelativePath": "api/Curtida/curtir",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "dbRede.Controllers.CurtidaController\u002BCurtidaResponseDto\u002BCriarCurtidaRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "dbRede.Controllers.CurtidaController",
+    "Method": "ListarCurtidasPorPost",
+    "RelativePath": "api/Curtida/post/{postId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "postId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "dbRede.Controllers.FeedController",
     "Method": "CriarPost",
     "RelativePath": "api/Feed/criar",
