@@ -58,10 +58,10 @@ function Login() {
   };
 
   return (
-    <div className='login-container'>
+    <div className='container-login '>
       <h2>Login</h2>
 
-      <form onSubmit={handleLogin}>
+      <form className='formulario' onSubmit={handleLogin}>
         <input
           type="email"
           placeholder="Digite seu email"
@@ -78,7 +78,7 @@ function Login() {
           required
         />
         <br /><br />
-        <button type="submit">Entrar</button>
+        <button  className='botao-entrar' type="submit">Entrar</button>
       </form>
 
       {erro && <p className="erro">{erro}</p>}

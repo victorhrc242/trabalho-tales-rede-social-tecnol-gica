@@ -1,3 +1,119 @@
-.ola{
-    color: blue;
-}
+/* Container centralizado */
+.container-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #111;
+    padding: 20px;
+    position: relative;
+  }
+  
+  /* Modal estilizado */
+  .container-login::before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+  
+  /* Box que segura formulário + imagem */
+  .container-login > div {
+    display: flex;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+    width: 700px; /* tamanho reduzido */
+    max-width: 100%;
+    min-height: 420px;
+  }
+  
+  /* Lado esquerdo - formulário */
+  .container-login form {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    flex: 1;
+    color: white;
+  }
+  
+  /* Título */
+  .container-login h2 {
+    color: #ff0000;
+    font-size: 28px;
+    margin-bottom: 10px;
+    margin-left: 30px;
+    margin-top: 20px;
+  }
+  
+  /* Inputs */
+  .container-login input {
+    background-color: #2a2a2a;
+    border: 1px solid #ff0000;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .container-login input::placeholder {
+    color: #ccc;
+  }
+  
+  /* Botão */
+  .botao-entrar {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .botao-entrar:hover {
+    background-color: #cc0000;
+  }
+  
+  /* Links abaixo do formulário */
+  .container-login p {
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+  }
+  
+  /* Links */
+  .container-login a {
+    color: #ff0000;
+    text-decoration: none;
+  }
+  
+  .container-login a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Mensagem de erro */
+  .erro {
+    color: #ff4d4d;
+    background-color: #330000;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  /* Imagem do lado direito */
+  .container-login::after {
+    content: '';
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeVXm9iosCliViI6Tj4Qnr1xBWTPltAZwS-6nsgnaeyVmB0ff3HrdlPkYMQIwLopUv1NA&usqp=CAU');
+    background-size: cover;
+    background-position: center;
+    width: 50%;
+    height: 100%;
+    display: block;
+  }
+  
