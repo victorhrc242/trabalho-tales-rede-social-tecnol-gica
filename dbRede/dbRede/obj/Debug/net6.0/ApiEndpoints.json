@@ -175,6 +175,54 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "RegisterController",
+    "Method": "ObterUsuarioPorId",
+    "RelativePath": "api/auth/usuario/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ComentarioController",
+    "Method": "Comentar",
+    "RelativePath": "api/Comentario/comentar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ComentarioController\u002BCriarComentarioRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ComentarioController",
+    "Method": "ListarComentariosPorPost",
+    "RelativePath": "api/Comentario/post/{postId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "postId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "dbRede.Controllers.CurtidaController",
     "Method": "CurtirPost",
     "RelativePath": "api/Curtida/curtir",
