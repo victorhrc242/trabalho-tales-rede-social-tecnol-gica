@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\dbrede.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\dbrede.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\curtidacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\curtidacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\dbrede.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -42,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -50,15 +50,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "dbRede.http",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.http",
-              "RelativeDocumentMoniker": "dbRede\\dbRede.http",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.http",
-              "RelativeToolTip": "dbRede\\dbRede.http",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-04-09T19:51:16.989Z",
+              "DocumentIndex": 2,
+              "Title": "CurtidaController.cs",
+              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\CurtidaController.cs",
+              "RelativeDocumentMoniker": "dbRede\\Controllers\\CurtidaController.cs",
+              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\CurtidaController.cs",
+              "RelativeToolTip": "dbRede\\Controllers\\CurtidaController.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAowFgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T19:57:49.59Z",
               "EditorCaption": ""
             },
             {
@@ -76,13 +76,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
               "RelativeDocumentMoniker": "dbRede\\Program.cs",
               "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
               "RelativeToolTip": "dbRede\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-09T19:51:10.171Z",
               "EditorCaption": ""

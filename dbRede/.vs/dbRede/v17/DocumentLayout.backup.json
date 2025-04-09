@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\dbrede.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\dbrede.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\dbrede.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\dbrede.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -39,6 +51,43 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "dbRede.http",
+              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.http",
+              "RelativeDocumentMoniker": "dbRede\\dbRede.http",
+              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.http",
+              "RelativeToolTip": "dbRede\\dbRede.http",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-04-09T19:51:16.989Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\appsettings.json",
+              "RelativeDocumentMoniker": "dbRede\\appsettings.json",
+              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\appsettings.json",
+              "RelativeToolTip": "dbRede\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-09T19:51:14.287Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
+              "RelativeDocumentMoniker": "dbRede\\Program.cs",
+              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
+              "RelativeToolTip": "dbRede\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T19:51:10.171Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "dbRede.csproj",
               "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.csproj",
               "RelativeDocumentMoniker": "dbRede\\dbRede.csproj",
@@ -46,12 +95,11 @@
               "RelativeToolTip": "dbRede\\dbRede.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-04-09T19:36:37.875Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T19:36:37.875Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "AmizadesController.cs",
               "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\AmizadesController.cs",
               "RelativeDocumentMoniker": "dbRede\\Controllers\\AmizadesController.cs",
@@ -63,7 +111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "Class.cs",
               "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\Class.cs",
               "RelativeDocumentMoniker": "dbRede\\Controllers\\Class.cs",
@@ -75,7 +123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "Notificacao.cs",
               "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Notificacao.cs",
               "RelativeDocumentMoniker": "dbRede\\Models\\Notificacao.cs",
@@ -87,7 +135,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "Curtida.cs",
               "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Curtida.cs",
               "RelativeDocumentMoniker": "dbRede\\Models\\Curtida.cs",
