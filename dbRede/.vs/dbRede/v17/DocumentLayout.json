@@ -1,22 +1,49 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\",
+  "WorkspaceRootPath": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\registercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\registercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\amizadescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\amizadescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\logi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\logi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\models\\notificacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\models\\notificacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\comentariocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\comentariocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\models\\curtida.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\curtidacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\curtidacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\models\\curtida.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\models\\curtida.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\models\\comentario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\models\\comentario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\feedcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\feedcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\9.0.102\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\models\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\models\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\models\\seguidor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\models\\seguidor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +53,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,54 +61,145 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AmizadesController.cs",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\AmizadesController.cs",
-              "RelativeDocumentMoniker": "dbRede\\Controllers\\AmizadesController.cs",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\AmizadesController.cs",
-              "RelativeToolTip": "dbRede\\Controllers\\AmizadesController.cs",
-              "ViewState": "AgIAALAAAAAAAAAAAAAxwMEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "Microsoft.PackageDependencyResolution.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\9.0.102\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\9.0.102\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\9.0.102\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\9.0.102\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "ViewState": "AgIAAPcAAAAAAAAAAAASwAkBAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-04-09T01:04:37.99Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Post.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Post.cs",
+              "RelativeDocumentMoniker": "dbRede\\Models\\Post.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Post.cs",
+              "RelativeToolTip": "dbRede\\Models\\Post.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAowCYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:51:14.477Z",
+              "WhenOpened": "2025-04-08T01:28:56.766Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Seguidor.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Seguidor.cs",
+              "RelativeDocumentMoniker": "dbRede\\Models\\Seguidor.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Seguidor.cs",
+              "RelativeToolTip": "dbRede\\Models\\Seguidor.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-07T02:00:20.267Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Logi.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\Logi.cs",
+              "RelativeDocumentMoniker": "dbRede\\Controllers\\Logi.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\Logi.cs",
+              "RelativeToolTip": "dbRede\\Controllers\\Logi.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-07T01:15:01.075Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\User.cs",
+              "RelativeDocumentMoniker": "dbRede\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\User.cs",
+              "RelativeToolTip": "dbRede\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-07T01:21:28.003Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "FeedController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\FeedController.cs",
+              "RelativeDocumentMoniker": "dbRede\\Controllers\\FeedController.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\FeedController.cs",
+              "RelativeToolTip": "dbRede\\Controllers\\FeedController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-07T01:16:09.701Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Class.cs",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\Class.cs",
-              "RelativeDocumentMoniker": "dbRede\\Controllers\\Class.cs",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\Class.cs",
-              "RelativeToolTip": "dbRede\\Controllers\\Class.cs",
-              "ViewState": "AgIAADcAAAAAAAAAAAAwwEUAAAAJAAAAAAAAAA==",
+              "Title": "RegisterController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\RegisterController.cs",
+              "RelativeDocumentMoniker": "dbRede\\Controllers\\RegisterController.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\RegisterController.cs",
+              "RelativeToolTip": "dbRede\\Controllers\\RegisterController.cs",
+              "ViewState": "AgIAAGsAAAAAAAAAAAAgwG0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:50:48.349Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Notificacao.cs",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Notificacao.cs",
-              "RelativeDocumentMoniker": "dbRede\\Models\\Notificacao.cs",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Notificacao.cs",
-              "RelativeToolTip": "dbRede\\Models\\Notificacao.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:49:05.773Z",
+              "WhenOpened": "2025-04-07T01:15:08.347Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Curtida.cs",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Curtida.cs",
-              "RelativeDocumentMoniker": "dbRede\\Models\\Curtida.cs",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Curtida.cs",
-              "RelativeToolTip": "dbRede\\Models\\Curtida.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAWAAAAAAAAAA==",
+              "Title": "CurtidaController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\CurtidaController.cs",
+              "RelativeDocumentMoniker": "dbRede\\Controllers\\CurtidaController.cs",
+              "ToolTip": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\CurtidaController.cs",
+              "RelativeToolTip": "dbRede\\Controllers\\CurtidaController.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAqwFIAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:48:31.937Z",
+              "WhenOpened": "2025-04-09T01:05:32.204Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ComentarioController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\ComentarioController.cs",
+              "RelativeDocumentMoniker": "dbRede\\Controllers\\ComentarioController.cs",
+              "ToolTip": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\ComentarioController.cs",
+              "RelativeToolTip": "dbRede\\Controllers\\ComentarioController.cs",
+              "ViewState": "AgIAADoAAAAAAAAAAAAqwFEAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T01:11:01.091Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Comentario.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Comentario.cs",
+              "RelativeDocumentMoniker": "dbRede\\Models\\Comentario.cs",
+              "ToolTip": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Comentario.cs",
+              "RelativeToolTip": "dbRede\\Models\\Comentario.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T01:09:34.767Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Curtida.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Curtida.cs",
+              "RelativeDocumentMoniker": "dbRede\\Models\\Curtida.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Curtida.cs",
+              "RelativeToolTip": "dbRede\\Models\\Curtida.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T01:09:51.536Z",
               "EditorCaption": ""
             }
           ]
