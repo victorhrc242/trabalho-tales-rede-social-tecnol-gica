@@ -60,7 +60,7 @@
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[6.0.28, )"
+              "version": "[6.0.22, )"
             },
             "Microsoft.Bcl.TimeProvider": {
               "target": "Package",

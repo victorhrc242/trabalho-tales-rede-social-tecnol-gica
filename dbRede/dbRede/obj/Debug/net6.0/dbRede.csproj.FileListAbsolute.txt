@@ -173,3 +173,4 @@ C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\ob
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\dbRede.csproj.Up2Date
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\dbRede.genruntimeconfig.cache
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\ref\dbRede.dll
+C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\staticwebassets.upToDateCheck.txt
