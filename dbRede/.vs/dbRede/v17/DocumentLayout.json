@@ -3,6 +3,9 @@
   "WorkspaceRootPath": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -37,7 +40,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -45,7 +48,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "NuGet.Config",
+              "DocumentMoniker": "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\AppData\\Roaming\\NuGet\\NuGet.Config",
+              "ToolTip": "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+              "RelativeToolTip": "..\\..\\..\\..\\AppData\\Roaming\\NuGet\\NuGet.Config",
+              "ViewState": "AgIAAKwAAAAAAAAAAAAowMAAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-04-09T22:25:49.127Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\appsettings.json",
               "RelativeDocumentMoniker": "dbRede\\appsettings.json",
@@ -53,12 +69,11 @@
               "RelativeToolTip": "dbRede\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-09T19:51:14.287Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T19:51:14.287Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
               "RelativeDocumentMoniker": "dbRede\\Program.cs",
@@ -71,7 +86,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "dbRede.csproj",
               "DocumentMoniker": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.csproj",
               "RelativeDocumentMoniker": "dbRede\\dbRede.csproj",
@@ -84,7 +99,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "AmizadesController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\AmizadesController.cs",
               "RelativeDocumentMoniker": "dbRede\\Controllers\\AmizadesController.cs",
@@ -92,12 +107,11 @@
               "RelativeToolTip": "dbRede\\Controllers\\AmizadesController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAMEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:51:14.477Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T17:51:14.477Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Class.cs",
               "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\Class.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\Class.cs",
@@ -108,7 +122,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Notificacao.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Notificacao.cs",
               "RelativeDocumentMoniker": "dbRede\\Models\\Notificacao.cs",
@@ -116,12 +130,11 @@
               "RelativeToolTip": "dbRede\\Models\\Notificacao.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:49:05.773Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T17:49:05.773Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Curtida.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Models\\Curtida.cs",
               "RelativeDocumentMoniker": "dbRede\\Models\\Curtida.cs",
@@ -129,8 +142,7 @@
               "RelativeToolTip": "dbRede\\Models\\Curtida.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:48:31.937Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T17:48:31.937Z"
             }
           ]
         }
