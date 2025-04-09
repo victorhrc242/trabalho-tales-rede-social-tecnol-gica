@@ -1,5 +1,6 @@
 ﻿using dbRede.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Supabase;
 using Supabase.Postgrest.Attributes;
@@ -99,6 +100,29 @@ public class RegisterController : ControllerBase
 
         return Ok(usuarios);
     }
+    [HttpGet("usuario/{id}")]
+    public async Task<IActionResult> ObterUsuarioPorId(Guid id)
+    {
+        var resultado = await _supabase
+            .From<User>()
+            .Where(u => u.id == id)
+            .Get();
+
+        var usuario = resultado.Models.FirstOrDefault();
+
+        if (usuario == null)
+            return NotFound(new { erro = "Usuário não encontrado" });
+
+        var usuarioDto = new UserDto
+        {
+            Id = usuario.id,
+            Nome = usuario.Nome,
+            Email = usuario.Email
+        };
+
+        return Ok(usuarioDto);
+    }
+
 
     public class UserDto
     {

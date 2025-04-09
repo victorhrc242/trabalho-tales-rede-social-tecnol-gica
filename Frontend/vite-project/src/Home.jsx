@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import './css/home.css'; // Você pode criar estilos aqui
+import './css/home.css';
 
 function Home() {
   const navigate = useNavigate();
@@ -8,11 +8,15 @@ function Home() {
   const [posts, setPosts] = useState([]);
   const [erro, setErro] = useState('');
 
-  // Modal states
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
   const [tags, setTags] = useState('');
+
+  const [modalComentarios, setModalComentarios] = useState(false);
+  const [comentarioTexto, setComentarioTexto] = useState('');
+  const [comentarios, setComentarios] = useState([]);
+  const [postSelecionado, setPostSelecionado] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -39,7 +43,6 @@ function Home() {
     try {
       const response = await fetch('https://localhost:7051/api/Feed/feed');
       const data = await response.json();
-
       if (response.ok) {
         setPosts(data);
       } else {
@@ -87,7 +90,7 @@ function Home() {
 
       if (response.ok) {
         const postCriado = await response.json();
-        setPosts(prev => [postCriado, ...prev]); // Adiciona o novo post no topo
+        setPosts(prev => [postCriado, ...prev]);
         fecharModal();
       } else {
         const erroResp = await response.json();
@@ -99,15 +102,84 @@ function Home() {
     }
   };
 
+  const curtirPost = async (postId) => {
+    try {
+      await fetch('https://localhost:7051/api/curtida/curtir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId, usuarioId: usuario.id })
+      });
+      fetchFeed();
+    } catch (err) {
+      console.error('Erro ao curtir:', err);
+    }
+  };
+
+  const abrirComentarios = async (post) => {
+    setPostSelecionado(post);
+    setComentarioTexto('');
+    setComentarios([]);
+    setModalComentarios(true);
+
+    try {
+      const response = await fetch(`https://localhost:7051/api/Comentario/post/${post.id}`);
+      const data = await response.json();
+
+      const comentariosComNomes = await Promise.all(
+        data.comentarios.map(async (comentario) => {
+          try {
+            const autorResp = await fetch(`https://localhost:7051/api/auth/usuario/${comentario.autorId}`);
+            const autorData = await autorResp.json();
+            return {
+              ...comentario,
+              autorNome: autorData.nome || 'Usuário'
+            };
+          } catch {
+            return {
+              ...comentario,
+              autorNome: 'Usuário'
+            };
+          }
+        })
+      );
+
+      setComentarios(comentariosComNomes);
+    } catch (err) {
+      console.error('Erro ao carregar comentários:', err);
+    }
+  };
+
+  const comentar = async () => {
+    if (!comentarioTexto.trim()) return;
+
+    const comentario = {
+      postId: postSelecionado.id,
+      autorId: usuario.id,
+      conteudo: comentarioTexto
+    };
+
+    try {
+      await fetch('https://localhost:7051/api/comentario/comentar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(comentario)
+      });
+
+      setComentarioTexto('');
+      abrirComentarios(postSelecionado);
+      fetchFeed();
+    } catch (err) {
+      console.error('Erro ao comentar:', err);
+    }
+  };
+
   return (
     <div className="home-container">
       <h1>Olá, {usuario.nome}!</h1>
-      <p>Seja bem-vindo à Home!</p>
       <button onClick={handleLogout}>Sair</button>
       <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
 
       <hr />
-
       <h2>Feed</h2>
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
       {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
@@ -122,39 +194,47 @@ function Home() {
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
             <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
             <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
+            <button onClick={() => curtirPost(post.id)}>Curtir</button>
+            <button onClick={() => abrirComentarios(post)} style={{ marginLeft: '10px' }}>Comentar</button>
             <hr />
           </li>
         ))}
       </ul>
 
-      {/* Modal para criar post */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Criar Novo Post</h2>
             <form onSubmit={handleCriarPost}>
-              <textarea
-                placeholder="Escreva algo..."
-                value={conteudo}
-                onChange={(e) => setConteudo(e.target.value)}
-                required
-              ></textarea>
-              <input
-                type="text"
-                placeholder="URL da imagem (opcional)"
-                value={imagem}
-                onChange={(e) => setImagem(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Tags separadas por vírgula"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
+              <textarea placeholder="Escreva algo..." value={conteudo} onChange={(e) => setConteudo(e.target.value)} required />
+              <input type="text" placeholder="URL da imagem (opcional)" value={imagem} onChange={(e) => setImagem(e.target.value)} />
+              <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
               <br />
               <button type="submit">Publicar</button>
               <button type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {modalComentarios && postSelecionado && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Comentários</h2>
+            <p><strong>Post:</strong> {postSelecionado.conteudo}</p>
+            <div>
+              {comentarios.map((c, i) => (
+                <p key={i}><strong>{c.autorNome}:</strong> {c.conteudo}</p>
+              ))}
+            </div>
+            <textarea
+              placeholder="Digite seu comentário..."
+              value={comentarioTexto}
+              onChange={(e) => setComentarioTexto(e.target.value)}
+            />
+            <br />
+            <button onClick={comentar}>Comentar</button>
+            <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
           </div>
         </div>
       )}
