@@ -56,7 +56,8 @@
               "RelativeToolTip": "..\\..\\..\\..\\AppData\\Roaming\\NuGet\\NuGet.Config",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-04-09T22:25:49.127Z"
+              "WhenOpened": "2025-04-09T22:25:49.127Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -68,7 +69,8 @@
               "RelativeToolTip": "dbRede\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-09T19:51:14.287Z"
+              "WhenOpened": "2025-04-09T19:51:14.287Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -78,9 +80,10 @@
               "RelativeDocumentMoniker": "dbRede\\Program.cs",
               "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
               "RelativeToolTip": "dbRede\\Program.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-09T19:51:10.171Z"
+              "WhenOpened": "2025-04-09T19:51:10.171Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -88,9 +91,9 @@
               "Title": "dbRede.csproj",
               "DocumentMoniker": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.csproj",
               "RelativeDocumentMoniker": "dbRede\\dbRede.csproj",
-              "ToolTip": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.csproj",
-              "RelativeToolTip": "dbRede\\dbRede.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAZAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\PC\\Source\\Repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\dbRede.csproj*",
+              "RelativeToolTip": "dbRede\\dbRede.csproj*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2025-04-09T19:36:37.875Z",
               "EditorCaption": ""
@@ -105,7 +108,8 @@
               "RelativeToolTip": "dbRede\\Controllers\\AmizadesController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAMEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:51:14.477Z"
+              "WhenOpened": "2025-04-08T17:51:14.477Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -128,7 +132,8 @@
               "RelativeToolTip": "dbRede\\Models\\Notificacao.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:49:05.773Z"
+              "WhenOpened": "2025-04-08T17:49:05.773Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -140,7 +145,8 @@
               "RelativeToolTip": "dbRede\\Models\\Curtida.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T17:48:31.937Z"
+              "WhenOpened": "2025-04-08T17:48:31.937Z",
+              "EditorCaption": ""
             }
           ]
         }
