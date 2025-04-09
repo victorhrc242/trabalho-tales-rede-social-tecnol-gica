@@ -1,0 +1,104 @@
+.cadastro-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #111;
+    position: relative;
+    padding: 20px;
+  }
+  
+  /* Box com formulário + imagem */
+  .cadastro-box {
+    display: flex;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    
+    width: 700px;
+    max-width: 100%;
+    min-height: 520px;
+    position: relative;
+  }
+  
+  /* Formulário à esquerda */
+  .cadastro-form {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    flex: 1;
+    color: white;
+    z-index: 1;
+  }
+  
+  /* Título */
+  .cadastro-form h2 {
+    color: #ff0000;
+    font-size: 28px;
+    margin-bottom: 20px;
+    margin-top: -10px;
+  }
+  
+  /* Inputs e textarea */
+  .cadastro-form input,
+  .cadastro-form textarea {
+    background-color: #2a2a2a;
+    border: 1px solid #ff0000;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    font-size: 15px;
+    margin-bottom: 15px;
+    resize: none;
+  }
+  
+  .cadastro-form input::placeholder,
+  .cadastro-form textarea::placeholder {
+    color: #ccc;
+  }
+  
+  /* Botão */
+  .cadastro-form button {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .cadastro-form button:hover {
+    background-color: #cc0000;
+  }
+  
+  /* Link */
+  .cadastro-form p {
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+  }
+  
+  .cadastro-form a {
+    color: #ff0000;
+    text-decoration: none;
+  }
+  
+  .cadastro-form a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Mensagem de erro */
+  .erro {
+    color: #ff4d4d;
+    background-color: #330000;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+
+  
