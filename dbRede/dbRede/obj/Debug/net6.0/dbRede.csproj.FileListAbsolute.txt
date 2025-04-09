@@ -86,3 +86,6 @@ C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\db
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\dbRede.pdb
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\dbRede.genruntimeconfig.cache
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\ref\dbRede.dll
+C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\dbRede.dll
+C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\refint\dbRede.dll
+C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net6.0\dbRede.pdb
