@@ -41,7 +41,7 @@ function Home() {
 
   const fetchFeed = async () => {
     try {
-      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed');
+      const response = await fetch('https://localhost:7051/api/Feed/feed');
       const data = await response.json();
       if (response.ok) {
         setPosts(data);
@@ -82,7 +82,7 @@ function Home() {
     };
 
     try {
-      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/criar', {
+      const response = await fetch('https://localhost:7051/api/feed/criar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novoPost)
@@ -104,7 +104,7 @@ function Home() {
 
   const curtirPost = async (postId) => {
     try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
+      await fetch('https://localhost:7051/api/curtida/curtir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, usuarioId: usuario.id })
@@ -122,13 +122,13 @@ function Home() {
     setModalComentarios(true);
 
     try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/post/${post.id}`);
+      const response = await fetch(`https://localhost:7051/api/Comentario/post/${post.id}`);
       const data = await response.json();
 
       const comentariosComNomes = await Promise.all(
         data.comentarios.map(async (comentario) => {
           try {
-            const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+            const autorResp = await fetch(`https://localhost:7051/api/auth/usuario/${comentario.autorId}`);
             const autorData = await autorResp.json();
             return {
               ...comentario,
@@ -159,7 +159,7 @@ function Home() {
     };
 
     try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
+      await fetch('https://localhost:7051/api/comentario/comentar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(comentario)

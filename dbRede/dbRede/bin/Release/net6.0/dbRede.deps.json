@@ -11,7 +11,6 @@
           "BCrypt.Net-Next": "4.0.3",
           "MailKit": "4.11.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.28",
-          "Microsoft.Bcl.TimeProvider": "9.0.4",
           "Microsoft.EntityFrameworkCore": "6.0.4",
           "Microsoft.Extensions.Configuration.Json": "9.0.3",
           "Npgsql": "9.0.3",
@@ -63,11 +62,11 @@
           }
         }
       },
-      "Microsoft.Bcl.AsyncInterfaces/9.0.4": {
+      "Microsoft.Bcl.AsyncInterfaces/9.0.3": {
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
-            "assemblyVersion": "9.0.0.4",
-            "fileVersion": "9.0.425.16305"
+            "assemblyVersion": "9.0.0.3",
+            "fileVersion": "9.0.325.11113"
           }
         }
       },
@@ -82,14 +81,14 @@
           }
         }
       },
-      "Microsoft.Bcl.TimeProvider/9.0.4": {
+      "Microsoft.Bcl.TimeProvider/8.0.1": {
         "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "9.0.4"
+          "Microsoft.Bcl.AsyncInterfaces": "9.0.3"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Bcl.TimeProvider.dll": {
-            "assemblyVersion": "9.0.0.4",
-            "fileVersion": "9.0.425.16305"
+            "assemblyVersion": "8.0.0.1",
+            "fileVersion": "8.0.123.58001"
           }
         }
       },
@@ -288,7 +287,7 @@
       },
       "Microsoft.IdentityModel.JsonWebTokens/8.7.0": {
         "dependencies": {
-          "Microsoft.Bcl.TimeProvider": "9.0.4",
+          "Microsoft.Bcl.TimeProvider": "8.0.1",
           "Microsoft.IdentityModel.Tokens": "8.7.0"
         },
         "runtime": {
@@ -336,7 +335,7 @@
       "Microsoft.IdentityModel.Tokens/8.7.0": {
         "dependencies": {
           "Microsoft.Bcl.Memory": "9.0.0",
-          "Microsoft.Bcl.TimeProvider": "9.0.4",
+          "Microsoft.Bcl.TimeProvider": "8.0.1",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
           "Microsoft.IdentityModel.Logging": "8.7.0"
         },
@@ -653,7 +652,7 @@
       },
       "System.Text.Json/9.0.3": {
         "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "9.0.4",
+          "Microsoft.Bcl.AsyncInterfaces": "9.0.3",
           "System.Buffers": "4.5.1",
           "System.IO.Pipelines": "9.0.3",
           "System.Memory": "4.5.5",
@@ -727,12 +726,12 @@
       "path": "microsoft.aspnetcore.authentication.jwtbearer/6.0.28",
       "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.6.0.28.nupkg.sha512"
     },
-    "Microsoft.Bcl.AsyncInterfaces/9.0.4": {
+    "Microsoft.Bcl.AsyncInterfaces/9.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-9VGI5kxIvrNG2mqLQZnUR6y/3fcnygD8eNpHR+CqfbnIXvea6nehnYknDKQTxZVPMpzpNca+7DxLBmpdB3q0Bw==",
-      "path": "microsoft.bcl.asyncinterfaces/9.0.4",
-      "hashPath": "microsoft.bcl.asyncinterfaces.9.0.4.nupkg.sha512"
+      "sha512": "sha512-oFFX9Ls8dnNUBCD9yzRzHTY8tqvv+CiX43B8L8DjrM8BqYTAlORYaJf6+KXNtSC2bD1135yV8OxzcZFaluow5w==",
+      "path": "microsoft.bcl.asyncinterfaces/9.0.3",
+      "hashPath": "microsoft.bcl.asyncinterfaces.9.0.3.nupkg.sha512"
     },
     "Microsoft.Bcl.Memory/9.0.0": {
       "type": "package",
@@ -741,12 +740,12 @@
       "path": "microsoft.bcl.memory/9.0.0",
       "hashPath": "microsoft.bcl.memory.9.0.0.nupkg.sha512"
     },
-    "Microsoft.Bcl.TimeProvider/9.0.4": {
+    "Microsoft.Bcl.TimeProvider/8.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-h60TVcGJZ89Tg6+5RkfxAezZXnihNoJBzPQF59uMMZLHu8jK3IdRTqjzP5mJOIg0HdvR884bp6awyiodc9Yxqg==",
-      "path": "microsoft.bcl.timeprovider/9.0.4",
-      "hashPath": "microsoft.bcl.timeprovider.9.0.4.nupkg.sha512"
+      "sha512": "sha512-C7kWHJnMRY7EvJev2S8+yJHZ1y7A4ZlLbA4NE+O23BDIAN5mHeqND1m+SKv1ChRS5YlCDW7yAMUe7lttRsJaAA==",
+      "path": "microsoft.bcl.timeprovider/8.0.1",
+      "hashPath": "microsoft.bcl.timeprovider.8.0.1.nupkg.sha512"
     },
     "Microsoft.EntityFrameworkCore/6.0.4": {
       "type": "package",

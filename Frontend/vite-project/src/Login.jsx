@@ -20,7 +20,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/login', {
+      const response = await fetch('https://localhost:7051/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -58,36 +58,33 @@ function Login() {
   };
 
   return (
-    <div className='container-login'>
-    <div className="modal-login">
-      <div className="formulario">
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Digite sua senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-          <button className='botao-entrar' type="submit">Entrar</button>
-        </form>
+    <div className='login-container'>
+      <h2>Login</h2>
 
-        {erro && <p className="erro">{erro}</p>}
-        <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
-        <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
-      </div>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Digite seu email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <br /><br />
+        <input
+          type="password"
+          placeholder="Digite sua senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          required
+        />
+        <br /><br />
+        <button type="submit">Entrar</button>
+      </form>
 
-      <div className="imagem-login"></div>
+      {erro && <p className="erro">{erro}</p>}
+      <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
+      <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
     </div>
-  </div>
   );
 }
 

@@ -11,7 +11,7 @@ export default function RecuperarSenha() {
     e.preventDefault();
 
     try {
-      const resposta = await axios.put('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Recuperar-senha', {
+      const resposta = await axios.put('https://localhost:7051/api/auth/Recuperar-senha', {
         email,
         novaSenha
       });

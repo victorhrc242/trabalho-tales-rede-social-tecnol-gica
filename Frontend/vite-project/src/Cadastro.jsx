@@ -1,8 +1,6 @@
-import React, { useState } from 'react'; 
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import './cadastro.css';
-
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { Link } from 'react-router';
 const Cadastro = () => {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -28,7 +26,7 @@ const Cadastro = () => {
     };
 
     try {
-      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/register', {
+      const response = await fetch('https://localhost:7051/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -54,63 +52,59 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="cadastro-container">
-      <div className="cadastro-box">
-        <form onSubmit={handleCadastro} className="cadastro-form">
-          <h2>Cadastro</h2>
+    <div className='cadastro-container'>
+      <h2>Cadastro</h2>
 
-          <input
-            type="text"
-            placeholder="Nome completo"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            required
-          />
-
-          <input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-
-          <input
-            type="text"
-            placeholder="Link da foto de perfil (URL)"
-            value={fotoPerfil}
-            onChange={(e) => setFotoPerfil(e.target.value)}
-          />
-
-          <textarea
-            placeholder="Biografia"
-            value={biografia}
-            onChange={(e) => setBiografia(e.target.value)}
-          />
-
-          <input
-            type="date"
-            placeholder="Data de nascimento"
-            value={dataAniversario}
-            onChange={(e) => setDataAniversario(e.target.value)}
-            required
-          />
-
-          <button type="submit">Cadastrar</button>
-
-          {erro && <p className="erro">{erro}</p>}
-
-          <p>Já tem uma conta? <Link to="/">Logar</Link></p>
-        </form>
-      </div>
+      <form onSubmit={handleCadastro}>
+        <input
+          type="text"
+          placeholder="Nome completo"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          required
+        />
+<br /><br />
+        <input
+          type="email"
+          placeholder="E-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+<br /><br />
+        <input
+          type="password"
+          placeholder="Senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          required
+        />
+<br /><br />
+        <input
+          type="text"
+          placeholder="Link da foto de perfil (URL)"
+          value={fotoPerfil}
+          onChange={(e) => setFotoPerfil(e.target.value)}
+        />
+<br /><br />
+        <textarea
+          placeholder="Biografia"
+          value={biografia}
+          onChange={(e) => setBiografia(e.target.value)}
+        />
+<br /><br />
+        <input
+          type="date"
+          placeholder="Data de nascimento"
+          value={dataAniversario}
+          onChange={(e) => setDataAniversario(e.target.value)}
+          required
+        />
+<br /><br />
+        <button type="submit">Cadastrar</button>
+      </form>
+          <p>Ja tem Uma conta: <Link to="/">Logar</Link></p>
+      {erro && <p className="erro">{erro}</p>}
     </div>
   );
 };
