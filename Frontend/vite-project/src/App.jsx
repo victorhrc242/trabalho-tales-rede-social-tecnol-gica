@@ -4,6 +4,7 @@ import Login from "./Login";
 import Cadastro from './Cadastro';
 import RecuperarSenha from './RecuperarSenha';
 import Home from './Home';
+import Perfil from './perfil';
 function App() {
 
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/Recuperar" element={<RecuperarSenha/>} />
         <Route path="/Home" element={<Home/>}/>
+        <Route path="/Perfil" element={<Perfil/>}></Route>
       </Routes>
     </BrowserRouter>
  </>

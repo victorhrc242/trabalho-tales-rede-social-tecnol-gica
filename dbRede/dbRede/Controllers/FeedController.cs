@@ -44,6 +44,40 @@ namespace dbRede.Controllers
 
             return Ok(postsComAutores);
         }
+        [HttpGet("posts/usuario/{id}")]
+        public async Task<IActionResult> ObterPostsPorUsuario(Guid id)
+        {
+            try
+            {
+                var resultado = await _supabase
+                    .From<Post>()
+                    .Select("*, users (nome)")
+                    .Where(p => p.AutorId == id)
+                    .Get();
+
+                if (resultado == null)
+                    return StatusCode(500, new { erro = "Erro ao acessar o Supabase." });
+
+                var postsDoUsuario = resultado.Models.Select(post => new PostDTO
+                {
+                    Id = post.Id,
+                    Conteudo = post.Conteudo,
+                    Imagem = post.Imagem,
+                    Tags = post.Tags,
+                    DataPostagem = post.DataPostagem,
+                    Curtidas = post.Curtidas,
+                    Comentarios = post.Comentarios,
+                    AutorId = post.AutorId,
+                    NomeAutor = post.Usuarios?.Nome ?? "Desconhecido"
+                });
+
+                return Ok(postsDoUsuario);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { erro = "Erro interno ao buscar os posts do usuário.", detalhes = ex.Message });
+            }
+        }
 
         [HttpPost("criar")]
         public async Task<IActionResult> CriarPost([FromBody] CriarPostRequest novoPost)

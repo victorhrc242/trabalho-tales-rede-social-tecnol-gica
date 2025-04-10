@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom'; // Correção aqui
 import './css/home.css';
 
 function Home() {
@@ -7,16 +7,18 @@ function Home() {
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [posts, setPosts] = useState([]);
   const [erro, setErro] = useState('');
-
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
   const [tags, setTags] = useState('');
-
   const [modalComentarios, setModalComentarios] = useState(false);
   const [comentarioTexto, setComentarioTexto] = useState('');
   const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
+
+  const irParaPerfil = () => {
+    navigate('/Perfil', { state: { userId: usuario.id } }); // Correção aqui
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -178,7 +180,7 @@ function Home() {
       <h1>Olá, {usuario.nome}!</h1>
       <button onClick={handleLogout}>Sair</button>
       <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
-
+      <button onClick={irParaPerfil}>Ir para meu perfil</button>
       <hr />
       <h2>Feed</h2>
       {erro && <p style={{ color: 'red' }}>{erro}</p>}

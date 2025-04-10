@@ -41,23 +41,32 @@ public class RegisterController : ControllerBase
 
         try
         {
-            // Verifica se o usuário já existe
-            var existingUser = await _supabase.From<User>().Where(u => u.Email == request.Email).Get();
-            if (existingUser.Models.Any())
+            var nomeNormalizado = request.Nome.Trim().ToLower();
+            var emailNormalizado = request.Email.Trim().ToLower();
+
+            // Verifica se o e-mail já está cadastrado
+            var existingEmail = await _supabase.From<User>().Where(u => u.Email == emailNormalizado).Get();
+            if (existingEmail.Models.Any())
             {
-         
                 return BadRequest(new { error = "E-mail já cadastrado." });
             }
-            
+
+            // Verifica se o nome de usuário já está cadastrado
+            var existingNome = await _supabase.From<User>().Where(u => u.Nome == nomeNormalizado).Get();
+            if (existingNome.Models.Any())
+            {
+                return BadRequest(new { error = "Nome de usuário já está em uso." });
+            }
+
             // Hash da senha antes de salvar
             string senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 
             // Criar novo usuário
             var newUser = new User
             {
-                Nome = request.Nome.Trim().ToLower(),
-                Email = request.Email.Trim().ToLower(),
-                Senha = senhaHash, // Senha agora está protegida
+                Nome = nomeNormalizado,
+                Email = emailNormalizado,
+                Senha = senhaHash,
                 FotoPerfil = request.FotoPerfil,
                 biografia = request.biografia,
                 dataaniversario = request.dataaniversario
@@ -84,6 +93,7 @@ public class RegisterController : ControllerBase
             return StatusCode(500, new { error = "Erro interno no servidor.", details = ex.Message });
         }
     }
+
     [HttpGet("usuario")]
     public async Task<IActionResult> ListarUsuarios()
     {
@@ -122,8 +132,28 @@ public class RegisterController : ControllerBase
 
         return Ok(usuarioDto);
     }
+    [HttpGet("buscar-por-nome/{nome}")]
+    public async Task<IActionResult> ObterUsuarioPorNome(string nome)
+    {
+        var resultado = await _supabase
+            .From<User>()
+            .Where(u => u.Nome == nome)
+            .Get();
 
+        var usuario = resultado.Models.FirstOrDefault();
 
+        if (usuario == null)
+            return NotFound(new { erro = "Usuário não encontrado" });
+
+        var usuarioDto = new UserDto
+        {
+            Id = usuario.id,
+            Nome = usuario.Nome,
+            Email = usuario.Email
+        };
+
+        return Ok(usuarioDto);
+    }
     public class UserDto
     {
         public Guid Id { get; set; }

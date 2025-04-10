@@ -7,14 +7,6 @@ C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\db
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\dbRede.dll
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\dbRede.pdb
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\BCrypt.Net-Next.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.Configuration.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.Configuration.FileExtensions.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Json.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Abstractions.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Physical.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.FileSystemGlobbing.dll
-C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
@@ -135,3 +127,12 @@ C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\ob
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net9.0\dbRede.genruntimeconfig.cache
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net9.0\ref\dbRede.dll
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Bcl.TimeProvider.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\NuGet.Config
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\MailKit.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\MimeKit.dll
