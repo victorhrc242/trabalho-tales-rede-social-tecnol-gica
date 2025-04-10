@@ -9,26 +9,27 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<SupabaseService>();
 
 
-// Adicione essa política de CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
 });
 var app = builder.Build();
-
-// chamando o cors
-app.UseCors("AllowFrontend");
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseCors("AllowAll");
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minha API v1");
+    c.RoutePrefix = "swagger"; // ou "" se quiser carregar direto na raiz
+});
+
+
 
 app.UseHttpsRedirection();
 
