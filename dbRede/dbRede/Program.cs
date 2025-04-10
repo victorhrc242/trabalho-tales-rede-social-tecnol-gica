@@ -9,14 +9,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<SupabaseService>();
 
 
+// Adicione essa política CORS
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+    options.AddPolicy("AllowLocalhost",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
 });
 var app = builder.Build();
 
