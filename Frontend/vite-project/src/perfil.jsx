@@ -11,17 +11,17 @@ const Perfil = ({ userId }) => {
     const carregarDados = async () => {
       try {
         // Buscar dados do usuário
-        const usuarioResponse = await axios.get(`https://localhost:7051/api/auth/usuario/${userId}`);
+        const usuarioResponse = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`);
         setUsuario(usuarioResponse.data);
 
         // Buscar posts do usuário
-        const postsResponse = await axios.get(`https://localhost:7051/api/Feed/posts/usuario/${userId}`);
+        const postsResponse = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/posts/usuario/${userId}`);
         setPosts(postsResponse.data);
 
         // Buscar seguidores
-        const seguidoresRes = await axios.get(`https://localhost:7051/api/Amizades/seguidores/${userId}`);
+        const seguidoresRes = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`);
         // Buscar seguindo
-        const seguindoRes = await axios.get(`https://localhost:7051/api/Amizades/seguindo/${userId}`);
+        const seguindoRes = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`);
 
         // Armazenar a contagem
         setSeguidoresInfo({

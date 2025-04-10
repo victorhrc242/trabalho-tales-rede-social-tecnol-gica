@@ -1,22 +1,18 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\",
+  "WorkspaceRootPath": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\feedcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\feedcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\feedcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\registercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\pc\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\controllers\\registercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\controllers\\registercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|c:\\users\\victor.costa\\desktop\\trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbrede\\dbrede\\nuget.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{D3EBFC30-DE6E-47CC-9EE6-BEC33FF783E3}|dbRede\\dbRede.csproj|solutionrelative:dbrede\\nuget.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
   "DocumentGroupContainers": [
@@ -36,9 +32,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
               "RelativeDocumentMoniker": "dbRede\\Program.cs",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Program.cs",
               "RelativeToolTip": "dbRede\\Program.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAA8AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -49,9 +45,9 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "FeedController.cs",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\FeedController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\FeedController.cs",
               "RelativeDocumentMoniker": "dbRede\\Controllers\\FeedController.cs",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\FeedController.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\FeedController.cs",
               "RelativeToolTip": "dbRede\\Controllers\\FeedController.cs",
               "ViewState": "AgIAABwAAAAAAAAAAAAUwFAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -60,24 +56,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "NuGet.Config",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\NuGet.Config",
-              "RelativeDocumentMoniker": "dbRede\\NuGet.Config",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\NuGet.Config",
-              "RelativeToolTip": "dbRede\\NuGet.Config",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-04-10T17:24:11.63Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
               "Title": "RegisterController.cs",
-              "DocumentMoniker": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\RegisterController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\RegisterController.cs",
               "RelativeDocumentMoniker": "dbRede\\Controllers\\RegisterController.cs",
-              "ToolTip": "C:\\Users\\Victor.costa\\Desktop\\Trabalho\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\RegisterController.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\trabalho-tales-rede-social-tecnol-gica\\dbRede\\dbRede\\Controllers\\RegisterController.cs",
               "RelativeToolTip": "dbRede\\Controllers\\RegisterController.cs",
               "ViewState": "AgIAAIUAAAAAAAAAAAAqwIUAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
