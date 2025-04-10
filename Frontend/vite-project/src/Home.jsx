@@ -1,3 +1,4 @@
+// ... (imports)
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import './css/home.css';
@@ -6,17 +7,20 @@ function Home() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [posts, setPosts] = useState([]);
+  const [postsComAutores, setPostsComAutores] = useState([]);
   const [erro, setErro] = useState('');
-
+  const [busca, setBusca] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
   const [tags, setTags] = useState('');
-
   const [modalComentarios, setModalComentarios] = useState(false);
   const [comentarioTexto, setComentarioTexto] = useState('');
   const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
+
+  // 🌟 Novo estado para curtidas temporárias com animação
+  const [postsCurtidosRecentemente, setPostsCurtidosRecentemente] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -43,8 +47,22 @@ function Home() {
     try {
       const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed');
       const data = await response.json();
+
       if (response.ok) {
-        setPosts(data);
+        const postsComNomes = await Promise.all(
+          data.map(async (post) => {
+            try {
+              const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
+              const autorData = await autorResp.json();
+              return { ...post, autorNome: autorData.nome || 'Usuário' };
+            } catch {
+              return { ...post, autorNome: 'Usuário' };
+            }
+          })
+        );
+
+        setPosts(postsComNomes);
+        setPostsComAutores(postsComNomes);
       } else {
         setErro(data.erro || 'Erro ao carregar o feed');
       }
@@ -67,9 +85,7 @@ function Home() {
     setMostrarModal(true);
   };
 
-  const fecharModal = () => {
-    setMostrarModal(false);
-  };
+  const fecharModal = () => setMostrarModal(false);
 
   const handleCriarPost = async (e) => {
     e.preventDefault();
@@ -92,6 +108,7 @@ function Home() {
         const postCriado = await response.json();
         setPosts(prev => [postCriado, ...prev]);
         fecharModal();
+        fetchFeed();
       } else {
         const erroResp = await response.json();
         setErro(erroResp.erro || 'Erro ao criar o post');
@@ -102,6 +119,7 @@ function Home() {
     }
   };
 
+  // 🌟 Curtida com animação temporária
   const curtirPost = async (postId) => {
     try {
       await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
@@ -109,6 +127,13 @@ function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, usuarioId: usuario.id })
       });
+
+      // Mostra o like temporariamente
+      setPostsCurtidosRecentemente(prev => [...prev, postId]);
+      setTimeout(() => {
+        setPostsCurtidosRecentemente(prev => prev.filter(id => id !== postId));
+      }, 2000);
+
       fetchFeed();
     } catch (err) {
       console.error('Erro ao curtir:', err);
@@ -130,15 +155,9 @@ function Home() {
           try {
             const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
             const autorData = await autorResp.json();
-            return {
-              ...comentario,
-              autorNome: autorData.nome || 'Usuário'
-            };
+            return { ...comentario, autorNome: autorData.nome || 'Usuário' };
           } catch {
-            return {
-              ...comentario,
-              autorNome: 'Usuário'
-            };
+            return { ...comentario, autorNome: 'Usuário' };
           }
         })
       );
@@ -181,26 +200,52 @@ function Home() {
 
       <hr />
       <h2>Feed</h2>
+
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Buscar por nome de usuário"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          style={{
+            padding: '10px',
+            width: '100%',
+            maxWidth: '400px',
+            borderRadius: '8px',
+            border: '1px solid #ccc'
+          }}
+        />
+      </div>
+
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
-      {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
+      {postsComAutores.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
 
       <ul>
-        {posts.map(post => (
-          <li key={post.id} style={{ marginBottom: '20px' }}>
-            <p><strong>Conteúdo:</strong> {post.conteudo}</p>
-            {post.imagem && (
-              <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />
-            )}
-            <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
-            <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
-            <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
-            <button onClick={() => curtirPost(post.id)}>Curtir</button>
-            <button onClick={() => abrirComentarios(post)} style={{ marginLeft: '10px' }}>Comentar</button>
-            <hr />
-          </li>
-        ))}
+        {postsComAutores
+          .filter(post => post.autorNome.toLowerCase().includes(busca.toLowerCase()))
+          .map(post => (
+            <li key={post.id} style={{ marginBottom: '20px' }}>
+              <p><strong>Autor:</strong> {post.autorNome}</p>
+              <p><strong>Conteúdo:</strong> {post.conteudo}</p>
+              {post.imagem && (
+                <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />
+              )}
+              <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
+              <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
+              <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
+
+              <button onClick={() => curtirPost(post.id)}>Curtir</button>
+              {postsCurtidosRecentemente.includes(post.id) && (
+                <span style={{ marginLeft: '10px', color: 'red', fontSize: '20px' }}>❤️</span>
+              )}
+
+              <button onClick={() => abrirComentarios(post)} style={{ marginLeft: '10px' }}>Comentar</button>
+              <hr />
+            </li>
+          ))}
       </ul>
 
+      {/* Modal de criação */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -217,6 +262,7 @@ function Home() {
         </div>
       )}
 
+      {/* Modal de comentários */}
       {modalComentarios && postSelecionado && (
         <div className="modal-overlay">
           <div className="modal">

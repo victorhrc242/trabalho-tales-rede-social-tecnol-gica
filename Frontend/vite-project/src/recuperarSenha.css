@@ -1,0 +1,87 @@
+.recuperar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #111;
+    padding: 20px;
+  }
+  
+  .recuperar-box {
+    display: flex;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    width: 500px;
+    max-width: 100%;
+    padding: 30px;
+    flex-direction: column;
+    color: white;
+  }
+  
+  .recuperar-box h2 {
+    color: #ff0000;
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Inputs */
+  .recuperar-box input {
+    background-color: #2a2a2a;
+    border: 1px solid #ff0000;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    font-size: 15px;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  .recuperar-box input::placeholder {
+    color: #ccc;
+  }
+  
+  /* Botão */
+  .recuperar-box button {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+  }
+  
+  .recuperar-box button:hover {
+    background-color: #cc0000;
+  }
+  
+  /* Link */
+  .recuperar-box p {
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+  }
+  
+  .recuperar-box a {
+    color: #ff0000;
+    text-decoration: none;
+  }
+  
+  .recuperar-box a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Mensagem */
+  .recuperar-box .mensagem {
+    margin-top: 15px;
+    background-color: #262626;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    color: #ff4d4d;
+  }
+  

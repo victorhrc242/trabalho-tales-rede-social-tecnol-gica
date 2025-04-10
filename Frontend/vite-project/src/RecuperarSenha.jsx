@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
+import './recuperarSenha.css'
 import axios from 'axios';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom'; // corrigido para react-router-dom
 
 export default function RecuperarSenha() {
   const [email, setEmail] = useState('');
@@ -27,31 +28,35 @@ export default function RecuperarSenha() {
   };
 
   return (
-    <div>
-      <h2>Recuperar Senha</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label><br />
+    <div className="recuperar-container">
+      <div className="recuperar-box">
+        <h2>Recuperar Senha</h2>
+        <form onSubmit={handleSubmit}>
+      
           <input
             type="email"
+            placeholder="Digite seu e-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label>Nova Senha:</label><br />
+
+         
           <input
             type="password"
+            placeholder="Digite a nova senha"
             value={novaSenha}
             onChange={(e) => setNovaSenha(e.target.value)}
             required
           />
-        </div>
-        <button type="submit">Atualizar Senha</button>
-      </form>
-      <p><Link to="/">voltar</Link></p>
-      {mensagem && <p>{mensagem}</p>}
+
+          <button type="submit">Atualizar Senha</button>
+        </form>
+
+        <p><Link to="/">Voltar</Link></p>
+
+        {mensagem && <p className="mensagem">{mensagem}</p>}
+      </div>
     </div>
   );
 }

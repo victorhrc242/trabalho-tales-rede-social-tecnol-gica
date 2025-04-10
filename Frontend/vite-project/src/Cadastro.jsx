@@ -61,7 +61,7 @@ const Cadastro = () => {
 
           <input
             type="text"
-            placeholder="Nome completo"
+            placeholder="Nome de usuario"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             required
