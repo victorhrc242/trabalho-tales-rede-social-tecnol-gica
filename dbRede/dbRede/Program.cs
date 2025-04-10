@@ -23,11 +23,13 @@ var app = builder.Build();
 // chamando o cors
 app.UseCors("AllowFrontend");
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minha API v1");
+    c.RoutePrefix = "swagger"; // ou "" se quiser carregar direto na raiz
+});
+
 
 
 app.UseHttpsRedirection();
