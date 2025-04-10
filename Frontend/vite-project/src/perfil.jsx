@@ -1,7 +1,7 @@
+// src/pages/Perfil.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 const Perfil = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Perfil = () => {
 
   useEffect(() => {
     if (!userId) {
-      navigate('/'); // Redireciona se o ID não for passado
+      navigate('/'); // Redireciona se não houver ID
       return;
     }
 
@@ -44,31 +44,44 @@ const Perfil = () => {
     carregarDados();
   }, [userId, navigate]);
 
-  if (loading) return <div>Carregando perfil...</div>;
-  if (!usuario) return <div>Usuário não encontrado.</div>;
+  if (loading) return <div className="loading">Carregando perfil...</div>;
+  if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
 
   return (
     <div className="perfil-container">
-      <h1>Perfil de {usuario.nome}</h1>
-      <p>Email: {usuario.email}</p>
-      <p>Seguidores: {seguidoresInfo.seguidores}</p>
-      <p>Seguindo: {seguidoresInfo.seguindo}</p>
+      <div className="perfil-info">
+        <h1>Perfil de {usuario.nome}</h1>
+        <p><strong>Email:</strong> {usuario.email}</p>
+        <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+        <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+      </div>
 
-      <h2>Meus Posts</h2>
-      {posts.length === 0 ? (
-        <p>Este usuário ainda não postou nada.</p>
-      ) : (
-        posts.map(post => (
-          <div key={post.id} style={{ marginBottom: '20px' }}>
-            <p><strong>Conteúdo:</strong> {post.conteudo}</p>
-            {post.imagem && <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />}
-            <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
-            <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
-            <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
-            <hr />
-          </div>
-        ))
-      )}
+      <div className="perfil-posts">
+        <h2>Meus Posts</h2>
+        {posts.length === 0 ? (
+          <p>Este usuário ainda não postou nada.</p>
+        ) : (
+          posts.map(post => (
+            <div key={post.id} className="post">
+              <p><strong>Conteúdo:</strong> {post.conteudo}</p>
+              {post.imagem && (
+                <img
+                  src={post.imagem}
+                  alt="Imagem do post"
+                  className="imagem-post"
+                />
+              )}
+              <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
+              <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
+              <p>
+                <strong>Curtidas:</strong> {post.curtidas} |{' '}
+                <strong>Comentários:</strong> {post.comentarios}
+              </p>
+              <hr />
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
