@@ -28,7 +28,7 @@ const Cadastro = () => {
     };
 
     try {
-      const response = await fetch('https://localhost:7051/api/auth/register', {
+      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

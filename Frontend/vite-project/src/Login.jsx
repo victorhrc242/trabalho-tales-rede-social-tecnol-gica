@@ -20,7 +20,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://localhost:7051/api/auth/login', {
+      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
