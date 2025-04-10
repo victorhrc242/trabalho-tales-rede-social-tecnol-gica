@@ -1,29 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const Perfil = ({ userId }) => {
+const Perfil = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const userId = location.state?.userId;
+
   const [usuario, setUsuario] = useState(null);
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!userId) {
+      navigate('/'); // Redireciona se o ID não for passado
+      return;
+    }
+
     const carregarDados = async () => {
       try {
-        // Buscar dados do usuário
         const usuarioResponse = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`);
         setUsuario(usuarioResponse.data);
 
-        // Buscar posts do usuário
         const postsResponse = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/posts/usuario/${userId}`);
         setPosts(postsResponse.data);
 
-        // Buscar seguidores
         const seguidoresRes = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`);
-        // Buscar seguindo
         const seguindoRes = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`);
 
-        // Armazenar a contagem
         setSeguidoresInfo({
           seguidores: seguidoresRes.data.length,
           seguindo: seguindoRes.data.length
@@ -37,48 +42,33 @@ const Perfil = ({ userId }) => {
     };
 
     carregarDados();
-  }, [userId]);
+  }, [userId, navigate]);
 
   if (loading) return <div>Carregando perfil...</div>;
   if (!usuario) return <div>Usuário não encontrado.</div>;
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif", maxWidth: "600px", margin: "auto" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <img
-          src={usuario.fotoPerfil || "https://via.placeholder.com/100"}
-          alt="Foto de perfil"
-          style={{ width: "100px", height: "100px", borderRadius: "50%" }}
-        />
-        <div>
-          <h2>{usuario.nome}</h2>
-          <p style={{ color: "#555" }}>{usuario.email}</p>
-        </div>
-      </div>
+    <div className="perfil-container">
+      <h1>Perfil de {usuario.nome}</h1>
+      <p>Email: {usuario.email}</p>
+      <p>Seguidores: {seguidoresInfo.seguidores}</p>
+      <p>Seguindo: {seguidoresInfo.seguindo}</p>
 
-      <div style={{ marginTop: "1rem" }}>
-        <strong>Biografia:</strong>
-        <p>{usuario.biografia}</p>
-      </div>
-
-      <div style={{ marginTop: "1rem", display: "flex", gap: "2rem" }}>
-        <div><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</div>
-        <div><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</div>
-      </div>
-
-      <div style={{ marginTop: "2rem" }}>
-        <h3>Posts</h3>
-        {posts.length === 0 ? (
-          <p>Esse usuário ainda não postou nada.</p>
-        ) : (
-          posts.map((post, index) => (
-            <div key={index} style={{ borderBottom: "1px solid #ccc", padding: "1rem 0" }}>
-              <p>{post.conteudo}</p>
-              <small>{new Date(post.dataPostagem).toLocaleString()}</small>
-            </div>
-          ))
-        )}
-      </div>
+      <h2>Meus Posts</h2>
+      {posts.length === 0 ? (
+        <p>Este usuário ainda não postou nada.</p>
+      ) : (
+        posts.map(post => (
+          <div key={post.id} style={{ marginBottom: '20px' }}>
+            <p><strong>Conteúdo:</strong> {post.conteudo}</p>
+            {post.imagem && <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />}
+            <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
+            <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
+            <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
+            <hr />
+          </div>
+        ))
+      )}
     </div>
   );
 };
