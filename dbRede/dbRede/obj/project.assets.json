@@ -64,6 +64,7 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+<<<<<<< HEAD
       "Microsoft.Bcl.Memory/9.0.0": {
         "type": "package",
         "compile": {
@@ -80,6 +81,8 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+=======
+>>>>>>> 646c9ba9bd0e6b958ebb85cc9e653b99ed333a84
       "Microsoft.EntityFrameworkCore/6.0.4": {
         "type": "package",
         "dependencies": {
@@ -490,8 +493,12 @@
       "Microsoft.IdentityModel.Tokens/8.8.0": {
         "type": "package",
         "dependencies": {
+<<<<<<< HEAD
           "Microsoft.Bcl.Memory": "9.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+=======
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+>>>>>>> 646c9ba9bd0e6b958ebb85cc9e653b99ed333a84
           "Microsoft.IdentityModel.Logging": "8.8.0"
         },
         "compile": {
@@ -1099,6 +1106,7 @@
         "microsoft.aspnetcore.authentication.jwtbearer.nuspec"
       ]
     },
+<<<<<<< HEAD
     "Microsoft.Bcl.Memory/9.0.0": {
       "sha512": "bTUtGfpGyJnohQzjdXbtc7MqNzkv7CWUSRz54+ucNm0i32rZiIU0VdVPHDBShOl1qhVKRjW8mnEBz3d2vH93tQ==",
       "type": "package",
@@ -1129,6 +1137,8 @@
         "useSharedDesignerContext.txt"
       ]
     },
+=======
+>>>>>>> 646c9ba9bd0e6b958ebb85cc9e653b99ed333a84
     "Microsoft.EntityFrameworkCore/6.0.4": {
       "sha512": "gTh3SJsF5WNjEmG32kYc3U4tjeTIv55QOrwHAJcF/xtrIVMteDHMArGC35N0dw86WFY0v8yFkKYKOIOln4jkfQ==",
       "type": "package",
