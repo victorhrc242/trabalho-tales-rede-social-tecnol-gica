@@ -1,7 +1,8 @@
-// src/pages/Perfil.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './css/Perfil.css';
 import { useLocation, useNavigate } from 'react-router-dom';
+
 const Perfil = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const Perfil = () => {
 
   useEffect(() => {
     if (!userId) {
-      navigate('/'); // Redireciona se não houver ID
+      navigate('/');
       return;
     }
 
@@ -47,10 +48,27 @@ const Perfil = () => {
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
 
+  // Caso a foto de perfil não tenha URL completa, você pode fazer isso:
+  const baseURL = 'https://seuservidor.com'; // substitua pela URL base do seu servidor
+  const fotoPerfilURL = usuario.fotoPerfil ? `${baseURL}${usuario.fotoPerfil}` : null;
+
   return (
     <div className="perfil-container">
       <div className="perfil-info">
-        <h1>Perfil de {usuario.nome}</h1>
+        <div className="perfil-header">
+          {fotoPerfilURL ? (
+            <img
+              src={fotoPerfilURL}
+              alt={`Foto de ${usuario.nome}`}
+              className="foto-perfil"
+            />
+          ) : (
+            <div className="foto-perfil-placeholder">
+              <span>{usuario.nome.charAt(0)}</span> {/* Exibe a inicial do nome caso não tenha foto */}
+            </div>
+          )}
+          <h1>Perfil {usuario.nome}</h1>
+        </div>
         <p><strong>Email:</strong> {usuario.email}</p>
         <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
         <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>

@@ -1,0 +1,10 @@
+
+
+.perfil-container{
+    font-style: arial;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px 15px;
+    background-color: #ffffff;
+    border-radius: 12px;
+}
