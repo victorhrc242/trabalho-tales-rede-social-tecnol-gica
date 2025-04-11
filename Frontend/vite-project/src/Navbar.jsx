@@ -1,75 +1,75 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './navbar.css';
 
 function Navbar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [usuarios, setUsuarios] = useState([]);
-  const [termoBusca, setTermoBusca] = useState('');
-  const [resultados, setResultados] = useState([]);
+  const [busca, setBusca] = useState('');
+  const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
 
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuarios');
-        const data = await response.json();
-        if (Array.isArray(data)) {
-          setUsuarios(data);
-        }
-      } catch (err) {
-        console.error('Erro ao buscar usuários:', err);
-      }
-    };
+  const handleBusca = async () => {
+    if (!busca.trim()) return;
 
-    fetchUsuarios();
-  }, []);
-
-  const handleBusca = (e) => {
-    const termo = e.target.value.toLowerCase();
-    setTermoBusca(termo);
-    const filtrados = usuarios.filter(usuario =>
-      usuario.nome.toLowerCase().includes(termo)
-    );
-    setResultados(filtrados);
+    try {
+      const response = await fetch(`https://devisocial.up.railway.app/api/auth/buscar/${busca}`);
+      const data = await response.json();
+      setUsuariosEncontrados(data);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
   };
 
-  const irParaPerfilUsuario = (userId) => {
-    navigate('/perfil', { state: { userId } });
-    setTermoBusca('');
-    setResultados([]);
+  const abrirModalPerfil = async (usuario) => {
+    try {
+      const response = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${usuario.id}`);
+      const data = await response.json();
+      setUsuarioSelecionado(data);
+      setMostrarModal(true);
+    } catch (err) {
+      console.error('Erro ao buscar dados do perfil:', err);
+    }
   };
-
-  // Ocultar navbar nas rotas de login/cadastro/recuperação
-  if (['/', '/cadastro', '/recuperar'].includes(location.pathname)) return null;
 
   return (
     <div className="navbar-lateral">
-      <h2 className="logo">MyApp</h2>
-      <nav>
-        <Link to="/home">🏠 Home</Link>
-        <Link to="/perfil">👤 Perfil</Link>
-      </nav>
+      <Link to="/Home">Home</Link>
+      <Link to="/Perfil">Perfil</Link>
 
-      <input
-        type="text"
-        placeholder="Buscar usuário..."
-        value={termoBusca}
-        onChange={handleBusca}
-        className="barra-pesquisa"
-      />
-      {termoBusca && (
-        <ul className="resultados-pesquisa">
-          {resultados.length > 0 ? (
-            resultados.map((usuario) => (
-              <li key={usuario.id} onClick={() => irParaPerfilUsuario(usuario.id)}>
-                {usuario.nome}
-              </li>
-            ))
-          ) : (
-            <li>Nenhum usuário encontrado</li>
-          )}
-        </ul>
+      <div className="barra-pesquisa">
+        <input
+          type="text"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder="Buscar usuários"
+        />
+        <button onClick={handleBusca}>Buscar</button>
+      </div>
+
+      {usuariosEncontrados.length > 0 && (
+        <div className="resultados-pesquisa">
+          {usuariosEncontrados.map((usuario) => (
+            <div
+              key={usuario.id}
+              className="resultado-usuario"
+              onClick={() => abrirModalPerfil(usuario)}
+            >
+              <span>{usuario.nome}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {mostrarModal && usuarioSelecionado && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Perfil de {usuarioSelecionado.nome}</h2>
+            <p><strong>Email:</strong> {usuarioSelecionado.email}</p>
+            <p><strong>ID:</strong> {usuarioSelecionado.id}</p>
+            {/* Adicione mais campos se desejar */}
+            <button onClick={() => setMostrarModal(false)}>Fechar</button>
+          </div>
+        </div>
       )}
     </div>
   );
