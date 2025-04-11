@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Correção aqui
 import './css/home.css';
 
 function Home() {
@@ -17,7 +17,7 @@ function Home() {
   const [postSelecionado, setPostSelecionado] = useState(null);
 
   const irParaPerfil = () => {
-    navigate('/Perfil', { state: { userId: usuario.id } });
+    navigate('/Perfil', { state: { userId: usuario.id } }); // Correção aqui
   };
 
   useEffect(() => {
@@ -41,42 +41,12 @@ function Home() {
     fetchFeed();
   }, [navigate]);
 
-  const buscarAutorDoPost = async (autorId) => {
-    try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${autorId}`);
-      const data = await response.json();
-      return data.nome || 'Autor';
-    } catch {
-      return 'Autor';
-    }
-  };
-
   const fetchFeed = async () => {
     try {
-      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed');
+      const response = await fetch('https://devisocial.up.railway.app/api/Feed/feed');
       const data = await response.json();
       if (response.ok) {
-        const postsComAutores = await Promise.all(data.map(async (post) => {
-          const autorNome = await buscarAutorDoPost(post.autorId);
-          let comentarioDestaque = '';
-
-          try {
-            const resComentarios = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/post/${post.id}`);
-            const dados = await resComentarios.json();
-
-            if (dados.comentarios.length > 0) {
-              const maisCurtido = [...dados.comentarios].sort((a, b) => (b.curtidas || 0) - (a.curtidas || 0))[0];
-              const autorComentarioResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${maisCurtido.autorId}`);
-              const autorComentario = await autorComentarioResp.json();
-              comentarioDestaque = `${autorComentario.nome || 'Usuário'}: ${maisCurtido.conteudo}`;
-            }
-          } catch (err) {
-            console.error('Erro ao buscar comentário destaque:', err);
-          }
-
-          return { ...post, autorNome, comentarioDestaque };
-        }));
-        setPosts(postsComAutores);
+        setPosts(data);
       } else {
         setErro(data.erro || 'Erro ao carregar o feed');
       }
@@ -114,15 +84,15 @@ function Home() {
     };
 
     try {
-      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/criar', {
+      const response = await fetch('https://devisocial.up.railway.app/api/Feed/criar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novoPost)
       });
 
       if (response.ok) {
-        await response.json();
-        fetchFeed();
+        const postCriado = await response.json();
+        setPosts(prev => [postCriado, ...prev]);
         fecharModal();
       } else {
         const erroResp = await response.json();
@@ -136,7 +106,7 @@ function Home() {
 
   const curtirPost = async (postId) => {
     try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
+      await fetch('https://devisocial.up.railway.app/api/Curtida/curtir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, usuarioId: usuario.id })
@@ -154,13 +124,13 @@ function Home() {
     setModalComentarios(true);
 
     try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/post/${post.id}`);
+      const response = await fetch(`https://devisocial.up.railway.app/api/Comentario/post/${post.id}`);
       const data = await response.json();
 
       const comentariosComNomes = await Promise.all(
         data.comentarios.map(async (comentario) => {
           try {
-            const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+            const autorResp = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${comentario.autorId}`);
             const autorData = await autorResp.json();
             return {
               ...comentario,
@@ -191,7 +161,7 @@ function Home() {
     };
 
     try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
+      await fetch('https://devisocial.up.railway.app/api/Comentario/comentar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(comentario)
@@ -203,11 +173,6 @@ function Home() {
     } catch (err) {
       console.error('Erro ao comentar:', err);
     }
-  };
-
-  const fecharComentarios = () => {
-    setModalComentarios(false);
-    setPostSelecionado(null);
   };
 
   return (
@@ -224,7 +189,6 @@ function Home() {
       <ul>
         {posts.map(post => (
           <li key={post.id} style={{ marginBottom: '20px' }}>
-            <p><strong>Autor:</strong> {post.autorNome}</p>
             <p><strong>Conteúdo:</strong> {post.conteudo}</p>
             {post.imagem && (
               <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />
@@ -232,18 +196,7 @@ function Home() {
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
             <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
             <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
-            {post.comentarioDestaque && (
-              <p><em>💬 {post.comentarioDestaque}</em></p>
-            )}
-            <button onClick={() => curtirPost(post.id)} title="Curtir">
-              <svg width="24" height="24" fill={post.usuarioCurtiu ? "red" : "transparent"} stroke="red" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-                  2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 
-                  4.5 2.09C13.09 3.81 14.76 3 16.5 3 
-                  19.58 3 22 5.42 22 8.5c0 3.78-3.4 
-                  6.86-8.55 11.54L12 21.35z" />
-              </svg>
-            </button>
+            <button onClick={() => curtirPost(post.id)}>Curtir</button>
             <button onClick={() => abrirComentarios(post)} style={{ marginLeft: '10px' }}>Comentar</button>
             <hr />
           </li>
@@ -271,20 +224,19 @@ function Home() {
           <div className="modal">
             <h2>Comentários</h2>
             <p><strong>Post:</strong> {postSelecionado.conteudo}</p>
-            <ul>
-              {comentarios.map((comentario) => (
-                <li key={comentario.id}>
-                  <strong>{comentario.autorNome}:</strong> {comentario.conteudo}
-                </li>
+            <div>
+              {comentarios.map((c, i) => (
+                <p key={i}><strong>{c.autorNome}:</strong> {c.conteudo}</p>
               ))}
-            </ul>
+            </div>
             <textarea
-              placeholder="Digite seu comentário"
+              placeholder="Digite seu comentário..."
               value={comentarioTexto}
               onChange={(e) => setComentarioTexto(e.target.value)}
             />
+            <br />
             <button onClick={comentar}>Comentar</button>
-            <button onClick={fecharComentarios} style={{ marginLeft: '10px' }}>Fechar</button>
+            <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
           </div>
         </div>
       )}

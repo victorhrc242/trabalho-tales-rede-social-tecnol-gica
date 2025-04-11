@@ -1,0 +1,67 @@
+.navbar-lateral {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100vh;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  
+  .navbar-lateral nav {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .navbar-lateral nav a {
+    margin-bottom: 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+  
+  .navbar-lateral nav a:hover {
+    color: #007bff;
+  }
+  
+  .barra-pesquisa {
+    margin-top: 20px;
+    padding: 8px;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .resultados-pesquisa {
+    list-style: none;
+    padding: 0;
+    margin-top: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .resultados-pesquisa li {
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .resultados-pesquisa li:hover {
+    background-color: #f0f0f0;
+  }
+  
