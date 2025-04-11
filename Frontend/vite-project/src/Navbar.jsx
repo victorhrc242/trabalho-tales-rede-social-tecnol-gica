@@ -33,7 +33,7 @@ function Navbar() {
 
   return (
     <div className="navbar-lateral">
-      <Link to="/Home">Home</Link>
+      <Link to="/Feed">Feed</Link>
       <Link to="/Perfil">Perfil</Link>
 
       <div className="barra-pesquisa">
