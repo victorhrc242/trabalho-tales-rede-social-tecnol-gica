@@ -1,45 +1,149 @@
 .navbar-lateral {
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: transparent;
-    height: 100vh;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-  }
-  
-  .barra-pesquisa input {
-    width: 100%;
-    padding: 6px;
-    margin-top: 10px;
-  }
-  
-  .resultados-pesquisa {
-    margin-top: 10px;
-  }
-  
-  .resultado-usuario {
-    cursor: pointer;
-    padding: 6px;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
+  width: 170px;
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #dbdbdb;
+  height: 100vh;
+}
+
+.navbar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.barra-pesquisa {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resultados-pesquisa {
+  margin-top: 10px;
+  background: #f4f4f4;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.resultado-usuario {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.perfil-foto {
+  margin-top: auto;
+  text-align: center;
+  background-color: transparent;
+  color: #181515;
+}
+.perfil-foto:hover{
+  background-color: transparent;
+}
+.foto-perfil-redonda {
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  object-fit: cover;
+  border: 2px solid #dbdbdb;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  margin: 100px auto;
+  width: 300px;
+  border-radius: 10px;
+}
+.layout {
+  display: flex;
+  height: 100vh;
+}
+
+.conteudo-principal {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: #fff;
+}
+
+.modal-conteudo {
+  background-color: rgba(14, 13, 13, 0.9); /* Cor preta com 80% de opacidade */
+  padding: 10px;
+  border-radius: 8px;
+  width: 210px;
+  text-align: center;
+}
+
+
+.modal-conteudo h2 {
+  margin-bottom: 20px;
+}
+.modal-conteudo li{
+  background-color: #000;
+}
+.modal-conteudo button {
+  margin: 10px;
+  padding: 10px;
+  border: none;
+  background-color: #007bff;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+
+.modal-conteudo button:hover {
+  background-color: #0056b3;
+}
+
+.modal-conteudo ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.modal-conteudo li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.modal-conteudo li:hover {
+  background-color: #181515;
+}
