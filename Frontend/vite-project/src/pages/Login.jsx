@@ -1,9 +1,8 @@
-// Login.jsx
 import React, { useState, useEffect } from 'react';
-import './css/login.css';
+import '../css/login.css';
 import { Link, useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login({ logar }) {  // Recebe a função logar como prop
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
@@ -34,23 +33,15 @@ function Login() {
         console.log('Login bem-sucedido:', data);
 
         if (data.token) {
-          localStorage.setItem('token', data.token);
-
-          if (data.user) {
-            localStorage.setItem('usuario', JSON.stringify(data.user));
-          } else {
-            console.warn('Usuário não retornado pela API.');
-          }
-
+          // Chama a função logar para atualizar o estado no App
+          logar(data.user, data.token);
           navigate('/Home');
         } else {
           setErro('Token não retornado pelo servidor.');
         }
-
       } else {
         setErro(data.message || 'Falha no login');
       }
-
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       setErro('Erro ao conectar com o servidor');
@@ -59,35 +50,35 @@ function Login() {
 
   return (
     <div className='container-login'>
-    <div className="modal-login">
-      <div className="formulario">
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Digite sua senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-          <button className='botao-entrar' type="submit">Entrar</button>
-        </form>
+      <div className="modal-login">
+        <div className="formulario">
+          <h2>Login</h2>
+          <form onSubmit={handleLogin}>
+            <input
+              type="email"
+              placeholder="Digite seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Digite sua senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+            />
+            <button className='botao-entrar' type="submit">Entrar</button>
+          </form>
 
-        {erro && <p className="erro">{erro}</p>}
-        <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
-        <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
+          {erro && <p className="erro">{erro}</p>}
+          <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
+          <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
+        </div>
+
+        <div className="imagem-login"></div>
       </div>
-
-      <div className="imagem-login"></div>
     </div>
-  </div>
   );
 }
 
