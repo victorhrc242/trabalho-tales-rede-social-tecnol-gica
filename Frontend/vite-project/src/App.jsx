@@ -4,13 +4,13 @@ import Login from "./Login";
 import Cadastro from './Cadastro';
 import RecuperarSenha from './RecuperarSenha';
 import Home from './Home';
-import Perfil from './perfil';
-import Navbar from './Components/Navbar';
+import Perfil from './perfil'
+import Navbar from './Navbar';
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+    <Navbar/>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />

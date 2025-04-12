@@ -127,7 +127,9 @@ public class RegisterController : ControllerBase
         {
             Id = usuario.id,
             Nome = usuario.Nome,
-            Email = usuario.Email
+            Email = usuario.Email,
+           imagem=usuario.FotoPerfil
+            
         };
 
         return Ok(usuarioDto);
@@ -150,6 +152,7 @@ public class RegisterController : ControllerBase
             Id = usuario.id,
             Nome = usuario.Nome,
             Email = usuario.Email
+            
         };
 
         return Ok(usuarioDto);
@@ -159,6 +162,7 @@ public class RegisterController : ControllerBase
         public Guid Id { get; set; }
         public string Nome { get; set; }
         public string Email { get; set; }
+        public string imagem { get; set; }
     }
 
 

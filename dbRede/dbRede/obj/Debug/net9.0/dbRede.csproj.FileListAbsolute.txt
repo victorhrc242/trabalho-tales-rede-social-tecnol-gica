@@ -118,6 +118,10 @@ C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\ob
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net9.0\dbRede.pdb
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net9.0\dbRede.genruntimeconfig.cache
 C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\obj\Debug\net9.0\ref\dbRede.dll
+<<<<<<< HEAD
+C:\Users\PC\Source\Repos\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\Microsoft.Bcl.TimeProvider.dll
+=======
+>>>>>>> 646c9ba9bd0e6b958ebb85cc9e653b99ed333a84
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\NuGet.Config
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
 C:\Users\Victor.costa\Desktop\Trabalho\trabalho-tales-rede-social-tecnol-gica\dbRede\dbRede\bin\Debug\net9.0\MailKit.dll
