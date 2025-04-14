@@ -1,10 +1,16 @@
+body {
+    font-family: Arial, sans-serif; /* Definir uma fonte padrão */
+}
 
+.infor-pessoais{
+    text-align: justify;
+}
 
 .perfil-container{
-    font-style: arial;
     max-width: 600px;
     margin: 0 auto;
     padding: 30px 15px;
     background-color: #ffffff;
     border-radius: 12px;
+    text-align: center;
 }
