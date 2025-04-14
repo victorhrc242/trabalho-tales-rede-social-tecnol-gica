@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; 
-import './css/recuperarSenha.css'
+import '../css/recuperarSenha.css'
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // corrigido para react-router-dom
 
