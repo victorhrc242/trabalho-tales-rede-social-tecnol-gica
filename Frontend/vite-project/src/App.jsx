@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import React from "react";
-import Login from "./Login";
-import Cadastro from './Cadastro';
-import RecuperarSenha from './RecuperarSenha';
-import Home from './Home';
-import Perfil from './perfil'
-import Navbar from './Navbar';
+import Login from "./pages/Login";
+import Cadastro from './pages/Cadastro';
+import RecuperarSenha from './pages/RecuperarSenha';
+import Home from './pages/Home';
+import Perfil from './pages/perfil'
+import Navbar from './pages/Navbar';
 
 function App() {
   return (
