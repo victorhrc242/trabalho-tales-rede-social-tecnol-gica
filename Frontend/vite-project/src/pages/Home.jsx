@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Correção aqui
+<<<<<<< HEAD
 import './css/home.css';
+=======
+import '../css/home.css';
+>>>>>>> erros
 
 function Home() {
   const navigate = useNavigate();
@@ -15,11 +19,14 @@ function Home() {
   const [comentarioTexto, setComentarioTexto] = useState('');
   const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
+<<<<<<< HEAD
 
   const irParaPerfil = () => {
     navigate('/Perfil', { state: { userId: usuario.id } }); // Correção aqui
   };
 
+=======
+>>>>>>> erros
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -55,6 +62,7 @@ function Home() {
       setErro('Erro ao conectar com o servidor.');
     }
   };
+<<<<<<< HEAD
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -62,6 +70,8 @@ function Home() {
     navigate('/');
   };
 
+=======
+>>>>>>> erros
   const abrirModal = () => {
     setConteudo('');
     setImagem('');
@@ -178,9 +188,13 @@ function Home() {
   return (
     <div className="home-container">
       <h1>Olá, {usuario.nome}!</h1>
+<<<<<<< HEAD
       <button onClick={handleLogout}>Sair</button>
       <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
       <button onClick={irParaPerfil}>Ir para meu perfil</button>
+=======
+      <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
+>>>>>>> erros
       <hr />
       <h2>Feed</h2>
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
