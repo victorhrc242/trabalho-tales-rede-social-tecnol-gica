@@ -8,7 +8,40 @@
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
-/* Botões principais */
+/* Modal Criar Post */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+textarea, input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+}
+
 button {
   background-color: #0a66c2;
   color: white;
@@ -28,85 +61,30 @@ button + button {
   margin-left: 10px;
 }
 
-/* Lista de posts */
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  background-color: #f9f9f9;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  position: relative;
-}
-
-/* Imagem do post */
-li img {
-  width: 100%;
-  max-height: 350px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-top: 10px;
-}
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
+/* Modal de Comentários */
+.comentario-modal {
   background: white;
   padding: 25px;
   border-radius: 16px;
   width: 90%;
   max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* Textarea e input */
-textarea, input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  resize: none;
+.comentarios-container {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 
-/* Curtir botão coração */
-.heart {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  transition: color 0.2s;
+.comentar-rodape {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.heart.curtido {
-  color: red;
-}
-
-.heart.nao-curtido {
-  color: rgba(0, 0, 0, 0.2);
-}
-
-/* Comentários */
-.comentario-destaque {
-  padding: 10px;
-  background-color: #e8f0fe;
-  border-radius: 8px;
+.comentar-rodape button {
   margin-top: 10px;
-  font-size: 14px;
-  color: #333;
 }

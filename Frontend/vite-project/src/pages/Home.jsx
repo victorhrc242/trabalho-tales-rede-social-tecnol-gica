@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Correção aqui
+import { useNavigate } from 'react-router-dom';
 import '../css/home.css';
 
 function Home() {
@@ -15,6 +15,7 @@ function Home() {
   const [comentarioTexto, setComentarioTexto] = useState('');
   const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -50,6 +51,7 @@ function Home() {
       setErro('Erro ao conectar com o servidor.');
     }
   };
+
   const abrirModal = () => {
     setConteudo('');
     setImagem('');
@@ -166,7 +168,7 @@ function Home() {
   return (
     <div className="home-container">
       <h1>Olá, {usuario.nome}!</h1>
-      <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
+      <button onClick={abrirModal}>Criar Post</button>
       <hr />
       <h2>Feed</h2>
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
@@ -174,16 +176,15 @@ function Home() {
 
       <ul>
         {posts.map(post => (
-          <li key={post.id} style={{ marginBottom: '20px' }}>
+          <li key={post.id}>
             <p><strong>Conteúdo:</strong> {post.conteudo}</p>
-            {post.imagem && (
-              <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />
-            )}
+            {post.imagem && <img src={post.imagem} alt="Imagem do post" />}
+            <p className="legenda">{post.legenda}</p>
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
             <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
             <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
             <button onClick={() => curtirPost(post.id)}>Curtir</button>
-            <button onClick={() => abrirComentarios(post)} style={{ marginLeft: '10px' }}>Comentar</button>
+            <button onClick={() => abrirComentarios(post)}>Comentar</button>
             <hr />
           </li>
         ))}
@@ -199,7 +200,7 @@ function Home() {
               <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
               <br />
               <button type="submit">Publicar</button>
-              <button type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
+              <button type="button" onClick={fecharModal}>Cancelar</button>
             </form>
           </div>
         </div>
@@ -207,22 +208,22 @@ function Home() {
 
       {modalComentarios && postSelecionado && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="comentario-modal">
+            <button className="fechar-btn" onClick={() => setModalComentarios(false)}>X</button>
             <h2>Comentários</h2>
-            <p><strong>Post:</strong> {postSelecionado.conteudo}</p>
-            <div>
+            <div className="comentarios-container">
               {comentarios.map((c, i) => (
                 <p key={i}><strong>{c.autorNome}:</strong> {c.conteudo}</p>
               ))}
             </div>
-            <textarea
-              placeholder="Digite seu comentário..."
-              value={comentarioTexto}
-              onChange={(e) => setComentarioTexto(e.target.value)}
-            />
-            <br />
-            <button onClick={comentar}>Comentar</button>
-            <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
+            <div className="comentar-rodape">
+              <textarea
+                placeholder="Digite seu comentário..."
+                value={comentarioTexto}
+                onChange={(e) => setComentarioTexto(e.target.value)}
+              />
+              <button onClick={comentar}>Comentar</button>
+            </div>
           </div>
         </div>
       )}
