@@ -4,14 +4,14 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #111;
+  background-color: #ffffff;
 }
 
 /* Modal (box do login + imagem) */
 .modal-login {
   display: flex;
   flex-direction: row;
-  background-color: #1a1a1a;
+  background-color: #e7e7e7;
   border-radius: 12px;
   overflow: hidden;
   width: 700px;
@@ -31,7 +31,7 @@
 
 /* Título */
 .container-login h2 {
-  color: #ff0000;
+  color: #0a66c2;
   font-size: 28px;
   margin-bottom: 20px;
   text-align: left;
@@ -39,8 +39,8 @@
 
 /* Inputs */
 .formulario input {
-  background-color: #2a2a2a;
-  border: 1px solid #ff0000;
+  background-color: #e7e7e7;
+  border: 1px solid #0a66c2;
   border-radius: 8px;
   padding: 10px;
   color: white;
@@ -55,7 +55,7 @@
 
 /* Botão */
 .botao-entrar {
-  background-color: #ff0000;
+  background-color: #0a66c2;
   color: white;
   border: none;
   border-radius: 8px;
@@ -68,7 +68,7 @@
 }
 
 .botao-entrar:hover {
-  background-color: #cc0000;
+  background-color: #0a66c2;
 }
 
 /* Links abaixo do formulário */
@@ -79,7 +79,7 @@
 }
 
 .container-login a {
-  color: #ff0000;
+  color: #0a66c2;
   text-decoration: none;
 }
 
@@ -89,7 +89,7 @@
 
 /* Mensagem de erro */
 .erro {
-  color: #ff4d4d;
+  color: #5094d8;
   background-color: #330000;
   padding: 10px;
   margin-top: 10px;
