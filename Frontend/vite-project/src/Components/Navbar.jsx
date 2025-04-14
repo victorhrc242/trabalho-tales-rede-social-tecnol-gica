@@ -78,11 +78,7 @@ function Navbar({ usuarioLogado, deslogar }) {
         )}
 
         <Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link>
-<<<<<<< HEAD
         <Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link>
-=======
-        <Link to="/reels" className="nav-item"><FaVideo /> <span>Reels</span></Link>
->>>>>>> erros
         <Link to="/mensagens" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link>
         <Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link>
         <Link to="/criar" className="nav-item"><FaPlusSquare /> <span>Criar</span></Link>
