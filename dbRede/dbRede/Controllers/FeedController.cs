@@ -3,6 +3,8 @@ using dbRede.Models;
 using Supabase;
 using static Supabase.Postgrest.Constants;
 using static dbRede.Controllers.FeedController;
+using Microsoft.AspNetCore.SignalR;
+using dbRede.Hubs;
 
 namespace dbRede.Controllers
 {
@@ -11,11 +13,12 @@ namespace dbRede.Controllers
     public class FeedController : ControllerBase
     {
         private readonly Client _supabase;
-
-        public FeedController(IConfiguration configuration)
+        private readonly IHubContext<FeedHub> _HubContext;
+        public FeedController(IConfiguration configuration, IHubContext <FeedHub> hubContext)
         {
             var service = new SupabaseService(configuration);
             _supabase = service.GetClient();
+            _HubContext = hubContext;
         }
 
         [HttpGet("feed")]
@@ -100,7 +103,6 @@ namespace dbRede.Controllers
             if (postSalvo == null)
                 return StatusCode(500, new { erro = "Erro ao salvar o post." });
 
-            // Buscar o post novamente com o nome do autor (join)
             var resultado = await _supabase
                 .From<Post>()
                 .Select("*, users (nome)")
@@ -122,6 +124,9 @@ namespace dbRede.Controllers
                 NomeAutor = postComAutor.Usuarios?.Nome ?? "Desconhecido"
             };
 
+            // ✅ Notifica todos os clientes conectados sobre o novo post
+            await _HubContext.Clients.All.SendAsync("NovoPost", dto);
+
             return Ok(new
             {
                 mensagem = "Post criado com sucesso!",
@@ -129,6 +134,7 @@ namespace dbRede.Controllers
             });
         }
 
+        // começos de DTOS
         public class CriarPostRequest
         {
             public Guid AutorId { get; set; }
