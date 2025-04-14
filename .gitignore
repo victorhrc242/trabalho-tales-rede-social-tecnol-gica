@@ -33,3 +33,10 @@ bin/
 obj/
 **/.nuget/
 .vs/
+
+.vs/
+*.pdb
+*.dll
+*.exe
+bin/
+obj/
