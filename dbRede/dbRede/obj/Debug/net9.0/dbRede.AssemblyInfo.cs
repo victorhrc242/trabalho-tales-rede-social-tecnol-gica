@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dbRede")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0c5d2c89ce16ebb52ef7ceaa01a523d7fb5a613d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+713c08c41e1782a8534ac7f1be040d657eb30bdf")]
 [assembly: System.Reflection.AssemblyProductAttribute("dbRede")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dbRede")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
