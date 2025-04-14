@@ -10,8 +10,8 @@ WORKDIR /src/dbRede
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app/publish
 
-# Etapa 2: runtime
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+# Etapa 2: runtime (ATENÇÃO AQUI!)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
