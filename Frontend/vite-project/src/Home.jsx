@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Correção aqui
-import './css/home.css';
+import { useNavigate } from 'react-router-dom';
+import '../css/home.css';
 
 function Home() {
   const navigate = useNavigate();
@@ -15,10 +15,6 @@ function Home() {
   const [comentarioTexto, setComentarioTexto] = useState('');
   const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
-
-  const irParaPerfil = () => {
-    navigate('/Perfil', { state: { userId: usuario.id } }); // Correção aqui
-  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -60,6 +56,10 @@ function Home() {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
     navigate('/');
+  };
+
+  const irParaPerfil = () => {
+    navigate('/Perfil', { state: { userId: usuario.id } });
   };
 
   const abrirModal = () => {
@@ -180,7 +180,8 @@ function Home() {
       <h1>Olá, {usuario.nome}!</h1>
       <button onClick={handleLogout}>Sair</button>
       <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
-      <button onClick={irParaPerfil}>Ir para meu perfil</button>
+      <button onClick={irParaPerfil} style={{ marginLeft: '10px' }}>Ir para meu perfil</button>
+
       <hr />
       <h2>Feed</h2>
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
@@ -203,6 +204,7 @@ function Home() {
         ))}
       </ul>
 
+      {/* Modal de Criar Post */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -219,6 +221,7 @@ function Home() {
         </div>
       )}
 
+      {/* Modal de Comentários */}
       {modalComentarios && postSelecionado && (
         <div className="modal-overlay">
           <div className="modal">
