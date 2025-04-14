@@ -8,15 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Node
-node_modules
-dist
-dist-ssr
+node_modules/
+dist/
+dist-ssr/
 *.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -28,15 +28,14 @@ dist-ssr
 **/.nuget/
 bin/
 obj/
-# Ignore arquivos e pastas de build
-bin/
-obj/
-**/.nuget/
 .vs/
 
+# Arquivos de build e compilação do .NET
+bin/
+obj/
 .vs/
+
+# Arquivos temporários de compilação
 *.pdb
 *.dll
 *.exe
-bin/
-obj/
