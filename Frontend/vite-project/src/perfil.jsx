@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/Perfil.css';
+import './css/Perfil.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Perfil = () => {
