@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {
+  Home, User, Search, Compass, Video, MessageCircle
+} from 'lucide-react';
 import '../css/navbar.css';
 
 function Navbar() {
+  const [buscaAtiva, setBuscaAtiva] = useState(false);
   const [busca, setBusca] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
-  const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
-  const [mostrarModal, setMostrarModal] = useState(false);
+  const navigate = useNavigate();
+
+  const usuarioString = localStorage.getItem('usuario');
+  const usuario = usuarioString ? JSON.parse(usuarioString) : { nome: '', id: '' };
 
   const handleBusca = async () => {
     if (!busca.trim()) return;
-
     try {
       const response = await fetch(`https://devisocial.up.railway.app/api/auth/buscar/${busca}`);
       const data = await response.json();
@@ -20,57 +25,64 @@ function Navbar() {
     }
   };
 
-  const abrirModalPerfil = async (usuario) => {
-    try {
-      const response = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${usuario.id}`);
-      const data = await response.json();
-      setUsuarioSelecionado(data);
-      setMostrarModal(true);
-    } catch (err) {
-      console.error('Erro ao buscar dados do perfil:', err);
-    }
+  const irParaPerfil = () => {
+    navigate('/perfil', { state: { userId: usuario.id } });
   };
 
   return (
     <div className="navbar-lateral">
-      <Link to="/Feed">Feed</Link>
-      <Link to="/Perfil">Perfil</Link>
+      <div className="logo">DeviSocial</div>
 
-      <div className="barra-pesquisa">
-        <input
-          type="text"
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar usuários"
-        />
-        <button onClick={handleBusca}>Buscar</button>
+      <div className="menu-item" onClick={() => navigate('/Home')}>
+        <Home className="icon" /> <span>Feed</span>
       </div>
 
-      {usuariosEncontrados.length > 0 && (
-        <div className="resultados-pesquisa">
-          {usuariosEncontrados.map((usuario) => (
-            <div
-              key={usuario.id}
-              className="resultado-usuario"
-              onClick={() => abrirModalPerfil(usuario)}
-            >
-              <span>{usuario.nome}</span>
+      <div className="menu-item" onClick={() => setBuscaAtiva(!buscaAtiva)}>
+        <Search className="icon" /> <span>Pesquisa</span>
+      </div>
+
+      {buscaAtiva && (
+        <div className="barra-pesquisa">
+          <input
+            type="text"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar usuários"
+          />
+          <button onClick={handleBusca}>Buscar</button>
+
+          {usuariosEncontrados.length > 0 && (
+            <div className="resultados-pesquisa">
+              {usuariosEncontrados.map((usuario) => (
+                <div
+                  key={usuario.id}
+                  className="resultado-usuario"
+                  onClick={() => navigate('/Perfil', { state: { userId: usuario.id } })}
+                >
+                  {usuario.nome}
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
 
-      {mostrarModal && usuarioSelecionado && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Perfil de {usuarioSelecionado.nome}</h2>
-            <p><strong>Email:</strong> {usuarioSelecionado.email}</p>
-            <p><strong>ID:</strong> {usuarioSelecionado.id}</p>
-            {/* Adicione mais campos se desejar */}
-            <button onClick={() => setMostrarModal(false)}>Fechar</button>
-          </div>
-        </div>
-      )}
+      <div className="menu-item" onClick={() => navigate('/Explorar')}>
+        <Compass className="icon" /> <span>Explorar</span>
+      </div>
+
+      <div className="menu-item" onClick={() => navigate('/Reels')}>
+        <Video className="icon" /> <span>Reels</span>
+      </div>
+
+      <div className="menu-item" onClick={() => navigate('/Mensagens')}>
+        <MessageCircle className="icon" /> <span>Mensagens</span>
+      </div>
+
+      <div className="menu-item perfil-link" onClick={irParaPerfil}>
+  <User className="icon" /> <span>Perfil</span>
+</div>
+
     </div>
   );
 }
