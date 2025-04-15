@@ -69,9 +69,11 @@ const Perfil = () => {
           )}
           <h1>Perfil {usuario.nome}</h1>
         </div>
+        <div className="infor-pessoais">
         <p><strong>Email:</strong> {usuario.email}</p>
         <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
         <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+        </div>
       </div>
 
       <div className="perfil-posts">
