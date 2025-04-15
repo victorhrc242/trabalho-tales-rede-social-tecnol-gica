@@ -1,0 +1,54 @@
+.criar-post-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #ccc;
+  }
+  
+  .formulario-post {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  textarea {
+    min-height: 100px;
+    padding: 10px;
+    resize: vertical;
+  }
+  
+  input[type="text"] {
+    padding: 10px;
+  }
+  
+  .preview-imagem img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+  
+  .botoes-form {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+
+  .button-confirme:hover{
+    background-color: #0f8200;
+  }
+
+  .button-cancel:hover{
+    background-color: #ce0101;
+  }
+  
+  .erro {
+    color: red;
+  }

@@ -199,7 +199,7 @@ function Home() {
   return (
     <div className="home-container">
       <h1>Olá, {usuario.nome}!</h1>
-      <button onClick={handleLogout}>Sair</button>
+      <button className='button-exit' onClick={handleLogout}>Sair</button>
       <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
       <button onClick={irParaPerfil} style={{ marginLeft: '10px' }}>Ir para meu perfil</button>
 
@@ -243,8 +243,8 @@ function Home() {
               <input type="text" placeholder="URL da imagem (opcional)" value={imagem} onChange={(e) => setImagem(e.target.value)} />
               <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
               <br />
-              <button type="submit">Publicar</button>
-              <button type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
+              <button className='button-confirme' type="submit">Publicar</button>
+              <button className='button-cancel' type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
             </form>
           </div>
         </div>

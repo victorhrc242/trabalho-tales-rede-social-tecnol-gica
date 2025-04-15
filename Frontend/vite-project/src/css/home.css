@@ -80,6 +80,10 @@ button:hover {
   background-color: #004182;
 }
 
+.button-exit:hover {
+  background-color: #ce0101;
+}
+
 button + button {
   margin-left: 10px;
 }
@@ -274,8 +278,12 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #004182;
+.button-confirme:hover {
+  background-color: #0f8200;
+}
+
+.button-cancel:hover {
+  background-color: #ce0101;
 }
 
 button + button {

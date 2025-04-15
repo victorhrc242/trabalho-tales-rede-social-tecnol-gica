@@ -6,6 +6,7 @@ import RecuperarSenha from './pages/RecuperarSenha';
 import Home from './pages/Home';
 import Perfil from './pages/perfil'
 import Navbar from './Components/Navbar';
+import Criar from './pages/Criar';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/recuperar" element={<RecuperarSenha />} />
         <Route path="/home" element={<Home />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/criar" element={<Criar />} />
       </Routes>
     </BrowserRouter>
   );
