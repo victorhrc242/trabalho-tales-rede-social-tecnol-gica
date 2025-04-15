@@ -177,7 +177,7 @@ public class RegisterController : ControllerBase
         public string Nome { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
-        public string FotoPerfil { get; set; }
+        public IFormFile FotoPerfil { get; set; }
         public string biografia { get; set; }
         public string dataaniversario { get; set; }
     }

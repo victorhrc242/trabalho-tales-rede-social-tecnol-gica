@@ -20,7 +20,7 @@ const Cadastro = () => {
     formData.append('nome', nome);
     formData.append('email', email);
     formData.append('senha', senha);
-    formData.append('fotoPerfil', fotoPerfil);
+    formData.append('FotoPerfil', fotoPerfil);
     formData.append('biografia', biografia);
     formData.append('dataaniversario', dataAniversario);
     formData.append('data_criacao', new Date().toISOString());
