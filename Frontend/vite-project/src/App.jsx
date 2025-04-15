@@ -1,17 +1,23 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import React from "react";
 import Login from "./pages/Login";
 import Cadastro from './pages/Cadastro';
 import RecuperarSenha from './pages/RecuperarSenha';
 import Home from './pages/Home';
-import Perfil from './pages/perfil'
+import Perfil from './pages/perfil';
 import Navbar from './Components/Navbar';
 import Criar from './pages/Criar';
 
-function App() {
+function AppWrapper() {
+  const location = useLocation();
+
+  // Lista de rotas onde a Navbar não deve aparecer
+  const esconderNavbar = ["/", "/cadastro", "/recuperar"];
+  const deveEsconderNavbar = esconderNavbar.includes(location.pathname);
+
   return (
-    <BrowserRouter>
-    <Navbar/>
+    <>
+      {!deveEsconderNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
@@ -20,6 +26,14 @@ function App() {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/criar" element={<Criar />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppWrapper />
     </BrowserRouter>
   );
 }
