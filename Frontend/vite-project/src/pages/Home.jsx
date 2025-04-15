@@ -41,8 +41,29 @@ function Home() {
     try {
       const response = await fetch('https://devisocial.up.railway.app/api/Feed/feed');
       const data = await response.json();
+
       if (response.ok) {
-        setPosts(data);
+        const postsComAutores = await Promise.all(
+          data.map(async (post) => {
+            try {
+              const autorResp = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${post.autorId}`);
+              const autorData = await autorResp.json();
+              return {
+                ...post,
+                autorNome: autorData.nome || 'Usuário',
+                autorImagem: autorData.imagem || null, // Se imagem não existir, fica null
+              };
+            } catch {
+              return {
+                ...post,
+                autorNome: 'Usuário',
+                autorImagem: null, // Fallback para imagem nula
+              };
+            }
+          })
+        );
+
+        setPosts(postsComAutores);
       } else {
         setErro(data.erro || 'Erro ao carregar o feed');
       }
@@ -190,10 +211,18 @@ function Home() {
       <ul>
         {posts.map(post => (
           <li key={post.id} style={{ marginBottom: '20px' }}>
-            <p><strong>Conteúdo:</strong> {post.conteudo}</p>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+              <img
+                src={post.autorImagem || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'} // Imagem padrão se não houver imagem do autor
+                alt={`Foto de perfil de ${post.autorNome}`}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
+              />
+              <p><strong></strong> {post.autorNome}</p>
+            </div>
             {post.imagem && (
               <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />
             )}
+                <p><strong>Conteúdo:</strong> {post.conteudo}</p>
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
             <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
             <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>

@@ -21,14 +21,15 @@ builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // ou seu domínio de produção
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // se usar cookies/autenticação
+    });
 });
+
 var app = builder.Build();
 // ✅ Mapeia o Hub
 

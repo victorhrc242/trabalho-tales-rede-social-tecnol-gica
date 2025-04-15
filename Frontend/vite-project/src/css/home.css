@@ -1,11 +1,34 @@
-/* home.css */
+/* Container principal da Home */
 .home-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 30px 15px;
   background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  float: 100%; /* Alinha o container à direita */
+  clear: both; /* Garante que o container não seja sobreposto pelo navbar */
+}
+
+/* Estilo do Avatar do Autor (imagem de perfil) */
+.autor-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.autor-container img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+}
+
+.autor-nome {
+  font-weight: bold;
+  font-size: 14px;
 }
 
 /* Modal Criar Post */
@@ -87,4 +110,174 @@ button + button {
 
 .comentar-rodape button {
   margin-top: 10px;
+}
+
+/* Feed de Posts */
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+}
+
+li img {
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+strong {
+  font-weight: bold;
+}
+
+/* Estilo do botão para curtir e comentar */
+button {
+  background-color: #0a66c2;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #004182;
+}
+
+button + button {
+  margin-left: 10px;
+}
+
+/* Avatar padrão (caso não tenha imagem de perfil) */
+.autor-container img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+}
+
+.autor-container img[src=""] {
+  background: #ccc; /* Cor de fundo para o avatar padrão */
+}
+
+/* Estilo do feed de posts */
+h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 8px 14px;
+  background-color: #0a66c2;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #004182;
+}
+
+/* Estilo do título de erro */
+p[style*="color: red"] {
+  color: red;
+  font-size: 14px;
+}
+
+/* Estilo do botão para curtir e comentar */
+button {
+  background-color: #0a66c2;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #004182;
+}
+
+button + button {
+  margin-left: 10px;
+}
+
+/* Alinhamento do conteúdo à direita */
+.container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.content {
+  width: 80%;
+  padding: 20px;
+}
+
+/* Estilo do feed de posts */
+h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 8px 14px;
+  background-color: #0a66c2;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #004182;
+}
+
+/* Estilo do título de erro */
+p[style*="color: red"] {
+  color: red;
+  font-size: 14px;
+}
+
+/* Estilo do botão para curtir e comentar */
+button {
+  background-color: #0a66c2;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #004182;
+}
+
+button + button {
+  margin-left: 10px;
 }

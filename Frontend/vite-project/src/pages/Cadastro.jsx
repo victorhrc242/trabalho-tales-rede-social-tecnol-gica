@@ -1,12 +1,12 @@
 import React, { useState } from 'react'; 
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../css/cadastro.css';
 
 const Cadastro = () => {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [fotoPerfil, setFotoPerfil] = useState('');
+  const [fotoPerfil, setFotoPerfil] = useState(null);
   const [biografia, setBiografia] = useState('');
   const [dataAniversario, setDataAniversario] = useState('');
   const [erro, setErro] = useState('');
@@ -16,26 +16,24 @@ const Cadastro = () => {
     e.preventDefault();
     setErro('');
 
-    const novoUsuario = {
-      nome,
-      email,
-      senha,
-      FotoPerfil: fotoPerfil,
-      biografia,
-      dataaniversario: dataAniversario,
-      data_criacao: new Date().toISOString()
-    };
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('email', email);
+    formData.append('senha', senha);
+    formData.append('fotoPerfil', fotoPerfil);
+    formData.append('biografia', biografia);
+    formData.append('dataaniversario', dataAniversario);
+    formData.append('data_criacao', new Date().toISOString());
 
     try {
       const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(novoUsuario)
+        body: formData,
+        credentials: 'include' // ✅ Necessário se o backend usa cookies/autenticação
       });
 
-      const isJson = response.headers.get('content-type')?.includes('application/json');
+      const contentType = response.headers.get('content-type');
+      const isJson = contentType && contentType.includes('application/json');
       const data = isJson ? await response.json() : await response.text();
 
       if (!response.ok) {
@@ -55,12 +53,12 @@ const Cadastro = () => {
   return (
     <div className="cadastro-container">
       <div className="cadastro-box">
-        <form onSubmit={handleCadastro} className="cadastro-form">
+        <form onSubmit={handleCadastro} className="cadastro-form" encType="multipart/form-data">
           <h2>Cadastro</h2>
 
           <input
             type="text"
-            placeholder="Nome de usuario"
+            placeholder="Nome de usuário"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             required
@@ -83,10 +81,9 @@ const Cadastro = () => {
           />
 
           <input
-            type="text"
-            placeholder="Link da foto de perfil (URL)"
-            value={fotoPerfil}
-            onChange={(e) => setFotoPerfil(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFotoPerfil(e.target.files[0])}
           />
 
           <textarea
@@ -97,7 +94,6 @@ const Cadastro = () => {
 
           <input
             type="date"
-            placeholder="Data de nascimento"
             value={dataAniversario}
             onChange={(e) => setDataAniversario(e.target.value)}
             required

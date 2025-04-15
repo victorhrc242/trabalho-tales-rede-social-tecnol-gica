@@ -26,15 +26,14 @@ public class RegisterController : ControllerBase
     //estava conseguindo retornar  um json valido ele tentava retornar os dados de
     // um jeito diferente do que era para retornar pois precisava retornar um formato json completo 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    public async Task<IActionResult> Register([FromForm] RegisterRequest request, IFormFile fotoPerfil)
     {
-        // Remover espaços extras e validar os campos obrigatórios
         if (string.IsNullOrWhiteSpace(request.Nome) ||
             string.IsNullOrWhiteSpace(request.Email) ||
             string.IsNullOrWhiteSpace(request.Senha) ||
             string.IsNullOrWhiteSpace(request.biografia) ||
-            string.IsNullOrWhiteSpace(request.FotoPerfil) ||
-            string.IsNullOrWhiteSpace(request.dataaniversario))
+            string.IsNullOrWhiteSpace(request.dataaniversario) ||
+            fotoPerfil == null)
         {
             return BadRequest(new { error = "Todos os campos são obrigatórios." });
         }
@@ -44,37 +43,39 @@ public class RegisterController : ControllerBase
             var nomeNormalizado = request.Nome.Trim().ToLower();
             var emailNormalizado = request.Email.Trim().ToLower();
 
-            // Verifica se o e-mail já está cadastrado
             var existingEmail = await _supabase.From<User>().Where(u => u.Email == emailNormalizado).Get();
             if (existingEmail.Models.Any())
-            {
                 return BadRequest(new { error = "E-mail já cadastrado." });
-            }
 
-            // Verifica se o nome de usuário já está cadastrado
             var existingNome = await _supabase.From<User>().Where(u => u.Nome == nomeNormalizado).Get();
             if (existingNome.Models.Any())
-            {
                 return BadRequest(new { error = "Nome de usuário já está em uso." });
+
+            // Salvar imagem no disco ou serviço
+            string fileName = $"{Guid.NewGuid()}_{fotoPerfil.FileName}";
+            string filePath = Path.Combine("wwwroot/uploads", fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await fotoPerfil.CopyToAsync(stream);
             }
 
-            // Hash da senha antes de salvar
-            string senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
+            string urlDaImagem = $"/uploads/{fileName}";
 
-            // Criar novo usuário
+            var senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
+
             var newUser = new User
             {
                 Nome = nomeNormalizado,
                 Email = emailNormalizado,
                 Senha = senhaHash,
-                FotoPerfil = request.FotoPerfil,
+                FotoPerfil = urlDaImagem,
                 biografia = request.biografia,
                 dataaniversario = request.dataaniversario
             };
 
             await _supabase.From<User>().Insert(newUser);
 
-            // Retornar sucesso sem expor a senha
             return Ok(new
             {
                 message = "Usuário cadastrado com sucesso!",
@@ -94,6 +95,7 @@ public class RegisterController : ControllerBase
         }
     }
 
+
     [HttpGet("usuario")]
     public async Task<IActionResult> ListarUsuarios()
     {
@@ -105,7 +107,9 @@ public class RegisterController : ControllerBase
         {
             Id = u.id,
             Nome = u.Nome,
-            Email = u.Email
+            Email = u.Email,
+            imagem=u.FotoPerfil
+            
         });
 
         return Ok(usuarios);
@@ -151,8 +155,8 @@ public class RegisterController : ControllerBase
         {
             Id = usuario.id,
             Nome = usuario.Nome,
-            Email = usuario.Email
-            
+            Email = usuario.Email,
+            imagem= usuario.FotoPerfil
         };
 
         return Ok(usuarioDto);
