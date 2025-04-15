@@ -5,7 +5,7 @@ import Cadastro from './pages/Cadastro';
 import RecuperarSenha from './pages/RecuperarSenha';
 import Home from './pages/Home';
 import Perfil from './pages/perfil'
-import Navbar from './pages/Navbar';
+import Navbar from './Components/Navbar';
 
 function App() {
   return (

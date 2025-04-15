@@ -2,10 +2,8 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Serviços
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -14,36 +12,43 @@ builder.Services.AddSwaggerGen(c =>
         Title = "dbRede API",
         Version = "v1"
     });
-}); ;
+});
+
 builder.Services.AddSingleton<SupabaseService>();
-// ✅ Adiciona o SignalR
 builder.Services.AddSignalR();
 
+// ✅ Configure CORS corretamente
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:5173") // frontend local
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // se usar cookies/autenticação
+    });
 });
-var app = builder.Build();
-// ✅ Mapeia o Hub
 
-// Configure the HTTP request pipeline.
+var app = builder.Build();
+
+// ✅ Coloque o UseCors antes dos endpoints
 app.UseCors("AllowAll");
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "dbRede API v1");
-    c.RoutePrefix = "swagger"; // ou "" se quiser acessar direto na raiz
+    c.RoutePrefix = "swagger";
 });
-app.UseHttpsRedirection();
 
+app.UseHttpsRedirection();
 app.UseAuthorization();
+
+// Hub do SignalR
 app.MapHub<FeedHub>("/feedHub");
+
+// Controllers
 app.MapControllers();
 
-app.Run(); 
+app.Run();

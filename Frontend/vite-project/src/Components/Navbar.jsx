@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FaHome, FaSearch, FaCompass, FaVideo,
@@ -9,13 +9,13 @@ import '../css/navbar.css';
 function Navbar({ usuarioLogado, deslogar }) {
   const [busca, setBusca] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
-  const [mostrarBusca, setMostrarBusca] = useState(false);
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [confirmarLogout, setConfirmarLogout] = useState(false);
+  const [modal, setModal] = useState({ busca: false, opcoes: false, confirmarLogout: false });
+
   const navigate = useNavigate();
 
-  const handleBusca = async () => {
+  const handleBusca = useCallback(async () => {
     if (!busca.trim()) return;
+
     try {
       const response = await fetch(`https://devisocial.up.railway.app/api/auth/buscar/${busca}`);
       const data = await response.json();
@@ -23,7 +23,7 @@ function Navbar({ usuarioLogado, deslogar }) {
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
     }
-  };
+  }, [busca]);
 
   const irParaPerfil = () => {
     if (usuarioLogado?.id) {
@@ -31,15 +31,10 @@ function Navbar({ usuarioLogado, deslogar }) {
     }
   };
 
-  const abrirModal = () => setMostrarModal(true);
-  const fecharModal = () => setMostrarModal(false);
-
-  const confirmarLogoutFunc = () => {
-    setConfirmarLogout(true);
-    setMostrarModal(false);
-  };
-
-  const cancelarLogout = () => setConfirmarLogout(false);
+  const abrirModalOpcoes = () => setModal({ ...modal, opcoes: true });
+  const fecharModalOpcoes = () => setModal({ ...modal, opcoes: false });
+  const confirmarLogoutFunc = () => setModal({ confirmarLogout: true, opcoes: false, busca: false });
+  const cancelarLogout = () => setModal({ ...modal, confirmarLogout: false });
 
   const deslogarERedirecionar = () => {
     deslogar();
@@ -51,17 +46,18 @@ function Navbar({ usuarioLogado, deslogar }) {
       <nav className="navbar-menu">
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
 
-        <div className="nav-item" onClick={() => setMostrarBusca(!mostrarBusca)}>
+        <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
           <FaSearch /> <span>Buscar</span>
         </div>
 
-        {mostrarBusca && (
+        {modal.busca && (
           <div className="barra-pesquisa">
             <input
               type="text"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar usuários"
+              onKeyDown={(e) => e.key === 'Enter' && handleBusca()}
             />
             <button onClick={handleBusca}>Buscar</button>
           </div>
@@ -85,39 +81,41 @@ function Navbar({ usuarioLogado, deslogar }) {
 
         {usuarioLogado && (
           <div className="usuario-area">
-            <button onClick={irParaPerfil} className="perfil-foto">
+            <button onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
                 src={usuarioLogado.foto || '/default-avatar.png'}
-                alt="F"
+                alt="Foto do usuário"
                 className="foto-perfil-redonda"
               />
             </button>
-            <div className="perfil-configuracao" onClick={abrirModal}>
+            <div className="perfil-configuracao" onClick={abrirModalOpcoes} aria-label="Abrir configurações">
               <FaCog />
             </div>
           </div>
         )}
       </nav>
 
-      {mostrarModal && (
+      {modal.opcoes && (
         <div className="modal">
           <div className="modal-conteudo">
             <ul>
               <li onClick={confirmarLogoutFunc}>Sair</li>
-              <li>Configurações</li>
-              <li>Trocar de Conta</li>
+              <li onClick={() => alert('Em breve')}>Configurações</li>
+              <li onClick={() => alert('Em breve')}>Trocar de Conta</li>
             </ul>
-            <button className="fechar-modal" onClick={fecharModal}>Fechar</button>
+            <button className="fechar-modal" onClick={fecharModalOpcoes}>Fechar</button>
           </div>
         </div>
       )}
 
-      {confirmarLogout && (
+      {modal.confirmarLogout && (
         <div className="modal">
           <div className="modal-conteudo">
             <h2>Você tem certeza que deseja deslogar?</h2>
-            <button onClick={deslogarERedirecionar}>Sim</button>
-            <button onClick={cancelarLogout}>Não</button>
+            <div className="botoes-modal">
+              <button className="btn-confirmar" onClick={deslogarERedirecionar}>Sim</button>
+              <button className="btn-cancelar" onClick={cancelarLogout}>Não</button>
+            </div>
           </div>
         </div>
       )}
