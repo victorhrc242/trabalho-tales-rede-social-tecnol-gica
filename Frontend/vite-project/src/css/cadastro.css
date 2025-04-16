@@ -4,11 +4,9 @@
   align-items: center;
   height: 100vh;
   background-color: #111;
-  position: relative;
   padding: 20px;
 }
 
-/* Box com formulário + imagem */
 .cadastro-box {
   display: flex;
   background-color: #1a1a1a;
@@ -113,4 +111,12 @@
   margin-top: 10px;
   border-radius: 8px;
   text-align: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .cadastro-box {
+    flex-direction: column;
+    min-height: auto;
+  }
 }
