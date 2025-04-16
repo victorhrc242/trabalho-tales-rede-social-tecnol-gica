@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/criar.css';
+import '../css/Criar.css';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 
 function Criar() {
