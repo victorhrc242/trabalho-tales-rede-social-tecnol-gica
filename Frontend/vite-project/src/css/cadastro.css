@@ -1,101 +1,102 @@
+/* Container principal com fundo centralizado */
 .cadastro-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #111;
+  background-color: #ffffff; /* Fundo da tela */
   padding: 20px;
 }
 
+/* Modal (caixa do formulário) */
 .cadastro-box {
-  display: flex;
-  background-color: #1a1a1a;
-  border-radius: 12px;
-  overflow: hidden;
-  width: 700px;
-  max-width: 100%;
-  min-height: 520px;
-  position: relative;
+  background-color: #e7e7e7; /* Fundo claro do modal */
+  border-radius: 16px;
+  padding: 50px;
+  width: 500px; /* ← LARGURA REDUZIDA AQUI */
+  max-width: 95%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Formulário à esquerda */
+/* Formulário dentro do modal */
 .cadastro-form {
   display: flex;
   flex-direction: column;
-  padding: 30px;
-  flex: 1;
-  color: white;
-  z-index: 1;
+  color: #262626;
+  width: 100%;
 }
 
 /* Título */
 .cadastro-form h2 {
-  color: #ff0000;
-  font-size: 28px;
+  color: #0a66c2;
+  font-size: 36px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin-bottom: 20px;
-  margin-top: -10px;
-  text-align: center;
+  text-align: left;
 }
 
-/* Inputs, textarea e date */
+/* Inputs e textarea */
 .cadastro-form input,
 .cadastro-form textarea {
-  background-color: #2a2a2a;
-  border: 1px solid #ff0000;
+  background-color: #ffffff;
+  border: 1px solid #0a66c2;
   border-radius: 8px;
-  padding: 10px;
-  color: white;
+  padding: 12px;
   font-size: 15px;
+  color: #262626;
   margin-bottom: 15px;
   width: 100%;
   box-sizing: border-box;
   transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Estilização específica para input de data */
+/* Campo de biografia com altura maior */
+.cadastro-form textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+/* Input de data */
 .cadastro-form input[type="date"] {
   cursor: pointer;
 }
 
-.cadastro-form input:hover,
+/* Focus */
 .cadastro-form input:focus,
-.cadastro-form textarea:hover,
 .cadastro-form textarea:focus {
-  border-color: #cc0000;
-  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  outline: none;
+  border-color: #0a66c2;
+  box-shadow: 0 0 5px rgba(10, 102, 194, 0.3);
 }
 
+/* Placeholder */
 .cadastro-form input::placeholder,
 .cadastro-form textarea::placeholder {
-  color: #ccc;
+  color: #666666;
 }
 
-/* Botão */
+/* Botão de cadastro */
 .cadastro-form button {
-  background-color: #ff0000;
+  background-color: #0a66c2;
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 12px;
+  padding: 14px;
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
 }
 
-.cadastro-form button:hover {
-  background-color: #cc0000;
-}
-
-/* Link */
+/* Parágrafo e link */
 .cadastro-form p {
   text-align: center;
-  color: #fff;
+  color: #474747;
   margin-top: 10px;
 }
 
 .cadastro-form a {
-  color: #ff0000;
+  color: #0a66c2;
   text-decoration: none;
 }
 
@@ -105,18 +106,10 @@
 
 /* Mensagem de erro */
 .erro {
-  color: #ff4d4d;
+  color: #5094d8;
   background-color: #330000;
   padding: 10px;
   margin-top: 10px;
   border-radius: 8px;
   text-align: center;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .cadastro-box {
-    flex-direction: column;
-    min-height: auto;
-  }
 }

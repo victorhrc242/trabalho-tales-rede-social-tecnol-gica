@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // Corrigido para 'react-router-dom'
-import { Link } from 'react-router-dom';  // Corrigido para 'react-router-dom'
-import '../css/cadastro.css'
+import { useNavigate, Link } from 'react-router-dom';
+import '../css/cadastro.css'; // Estilo atualizado com base no login
+
 const Cadastro = () => {
+  // Estados para os campos do formulário
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -12,6 +13,7 @@ const Cadastro = () => {
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
+  // Função para lidar com o envio do formulário
   const handleCadastro = async (e) => {
     e.preventDefault();
     setErro('');
@@ -53,67 +55,76 @@ const Cadastro = () => {
   };
 
   return (
-    <div className='cadastro-container'>
-      <h2>Cadastro</h2>
+    // Container principal centralizado
+    <div className="cadastro-container">
+      {/* Modal/box onde o formulário ficará estruturado */}
+      <div className="cadastro-box">
+        {/* Formulário estilizado com os campos alinhados */}
+        <form className="cadastro-form" onSubmit={handleCadastro}>
+          {/* Título estilizado */}
+          <h2>Cadastro</h2>
 
-      <form onSubmit={handleCadastro}>
-        <input
-          type="text"
-          placeholder="Nome completo"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          required
-        />
-        <br /><br />
-        
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br /><br />
+          {/* Campo Nome */}
+          <input
+            type="text"
+            placeholder="Nome completo"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            required
+          />
 
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-        />
-        <br /><br />
+          {/* Campo Email */}
+          <input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <input
-          type="text"
-          placeholder="Link da foto de perfil (URL)"
-          value={fotoPerfil}
-          onChange={(e) => setFotoPerfil(e.target.value)}
-        />
-        <br /><br />
+          {/* Campo Senha */}
+          <input
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
 
-        <textarea
-          placeholder="Biografia"
-          value={biografia}
-          onChange={(e) => setBiografia(e.target.value)}
-        />
-        <br /><br />
+          {/* Campo URL da foto */}
+          <input
+            type="text"
+            placeholder="Link da foto de perfil (URL)"
+            value={fotoPerfil}
+            onChange={(e) => setFotoPerfil(e.target.value)}
+          />
 
-        <input
-          type="date"
-          placeholder="Data de nascimento"
-          value={dataAniversario}
-          onChange={(e) => setDataAniversario(e.target.value)}
-          required
-        />
-        <br /><br />
+          {/* Campo Biografia */}
+          <textarea
+            placeholder="Biografia"
+            value={biografia}
+            onChange={(e) => setBiografia(e.target.value)}
+          />
 
-        <button type="submit">Cadastrar</button>
-      </form>
+          {/* Campo Data de Nascimento */}
+          <input
+            type="date"
+            placeholder="Data de nascimento"
+            value={dataAniversario}
+            onChange={(e) => setDataAniversario(e.target.value)}
+            required
+          />
 
-      <p>Já tem uma conta? <Link to="/">Logar</Link></p>
+          {/* Botão de cadastro */}
+          <button type="submit">Cadastrar</button>
 
-      {erro && <p className="erro">{erro}</p>}
+          {/* Link para login */}
+          <p>Já tem uma conta? <Link to="/">Logar</Link></p>
+
+          {/* Exibição de erro, se houver */}
+          {erro && <p className="erro">{erro}</p>}
+        </form>
+      </div>
     </div>
   );
 };
