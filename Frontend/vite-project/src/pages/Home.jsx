@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import '../css/home.css';
 
 function Home() {
@@ -37,6 +38,33 @@ function Home() {
     fetchFeed();
   }, [navigate]);
 
+  useEffect(() => {
+    const connection = new HubConnectionBuilder()
+      .withUrl('https://devisocial.up.railway.app/feedHub', {
+        transport: HttpTransportType.LongPolling,
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log('✅ SignalR conectado na Home');
+
+        connection.on('NovoPost', (novoPost) => {
+          console.log('📥 Novo post recebido via SignalR:', novoPost);
+          setPosts(prev => [novoPost, ...prev]);
+        });
+      })
+      .catch((err) => {
+        console.error('Erro ao conectar ao SignalR na Home:', err);
+      });
+
+    return () => {
+      connection.stop().then(() => console.log('🔌 SignalR desconectado da Home'));
+    };
+  }, []);
+
   const fetchFeed = async () => {
     try {
       const response = await fetch('https://devisocial.up.railway.app/api/Feed/feed');
@@ -51,13 +79,13 @@ function Home() {
               return {
                 ...post,
                 autorNome: autorData.nome || 'Usuário',
-                autorImagem: autorData.imagem || null, // Se imagem não existir, fica null
+                autorImagem: autorData.imagem || null,
               };
             } catch {
               return {
                 ...post,
                 autorNome: 'Usuário',
-                autorImagem: null, // Fallback para imagem nula
+                autorImagem: null,
               };
             }
           })
@@ -83,13 +111,6 @@ function Home() {
     navigate('/Perfil', { state: { userId: usuario.id } });
   };
 
-  const abrirModal = () => {
-    setConteudo('');
-    setImagem('');
-    setTags('');
-    setMostrarModal(true);
-  };
-
   const fecharModal = () => {
     setMostrarModal(false);
   };
@@ -112,8 +133,6 @@ function Home() {
       });
 
       if (response.ok) {
-        const postCriado = await response.json();
-        setPosts(prev => [postCriado, ...prev]);
         fecharModal();
       } else {
         const erroResp = await response.json();
@@ -200,8 +219,8 @@ function Home() {
     <div className="home-container">
       <h1>Olá, {usuario.nome}!</h1>
       <button className='button-exit' onClick={handleLogout}>Sair</button>
-      <button onClick={abrirModal} style={{ marginLeft: '10px' }}>Criar Post</button>
       <button onClick={irParaPerfil} style={{ marginLeft: '10px' }}>Ir para meu perfil</button>
+      <button onClick={() => setMostrarModal(true)} style={{ marginLeft: '10px' }}>Criar Post</button>
 
       <hr />
       <h2>Feed</h2>
@@ -213,7 +232,7 @@ function Home() {
           <li key={post.id} style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
               <img
-                src={post.autorImagem || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'} // Imagem padrão se não houver imagem do autor
+                src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
                 alt={`Foto de perfil de ${post.autorNome}`}
                 style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
               />
@@ -222,7 +241,7 @@ function Home() {
             {post.imagem && (
               <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />
             )}
-                <p><strong>Conteúdo:</strong> {post.conteudo}</p>
+            <p><strong>Conteúdo:</strong> {post.conteudo}</p>
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
             <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
             <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
@@ -233,7 +252,6 @@ function Home() {
         ))}
       </ul>
 
-      {/* Modal de Criar Post */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -250,7 +268,6 @@ function Home() {
         </div>
       )}
 
-      {/* Modal de Comentários */}
       {modalComentarios && postSelecionado && (
         <div className="modal-overlay">
           <div className="modal">

@@ -48,31 +48,26 @@ const Perfil = () => {
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
 
-  // Caso a foto de perfil não tenha URL completa, você pode fazer isso:
   const baseURL = 'https://seuservidor.com'; // substitua pela URL base do seu servidor
   const fotoPerfilURL = usuario.fotoPerfil ? `${baseURL}${usuario.fotoPerfil}` : null;
 
   return (
     <div className="perfil-container">
-      <div className="perfil-info">
-        <div className="perfil-header">
-          {fotoPerfilURL ? (
-            <img
-              src={fotoPerfilURL}
-              alt={`Foto de ${usuario.nome}`}
-              className="foto-perfil"
-            />
-          ) : (
-            <div className="foto-perfil-placeholder">
-              <span>{usuario.nome.charAt(0)}</span> {/* Exibe a inicial do nome caso não tenha foto */}
-            </div>
-          )}
-          <h1>Perfil {usuario.nome}</h1>
-        </div>
-        <div className="infor-pessoais">
-        <p><strong>Email:</strong> {usuario.email}</p>
-        <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
-        <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+      <div className="perfil-header">
+        {fotoPerfilURL ? (
+          <img src={fotoPerfilURL} alt={`Foto de ${usuario.nome}`} className="foto-perfil" />
+        ) : (
+          <div className="foto-perfil-placeholder">
+            <span>{usuario.nome.charAt(0)}</span>
+          </div>
+        )}
+        <div className="perfil-info">
+          <h1>{usuario.nome}</h1>
+          <div className="infor-pessoais">
+          <p><strong>Biografia:</strong> {usuario.biografia}</p>
+            <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+            <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+          </div>
         </div>
       </div>
 
@@ -85,11 +80,7 @@ const Perfil = () => {
             <div key={post.id} className="post">
               <p><strong>Conteúdo:</strong> {post.conteudo}</p>
               {post.imagem && (
-                <img
-                  src={post.imagem}
-                  alt="Imagem do post"
-                  className="imagem-post"
-                />
+                <img src={post.imagem} alt="Imagem do post" />
               )}
               <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
               <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
@@ -101,6 +92,12 @@ const Perfil = () => {
             </div>
           ))
         )}
+      </div>
+
+      {/* Botões de interação */}
+      <div className="botoes-perfil">
+        <button>Seguir</button>
+        <button>Mensagem</button>
       </div>
     </div>
   );

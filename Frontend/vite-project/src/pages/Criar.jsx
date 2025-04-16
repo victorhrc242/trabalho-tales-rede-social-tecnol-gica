@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/criar.css'; // Crie esse CSS separado para a nova página
+import '../css/criar.css';
+import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 
 function Criar() {
   const navigate = useNavigate();
@@ -11,6 +12,38 @@ function Criar() {
   const [imagem, setImagem] = useState('');
   const [tags, setTags] = useState('');
   const [erro, setErro] = useState('');
+  const [connection, setConnection] = useState(null);
+
+  useEffect(() => {
+    const newConnection = new HubConnectionBuilder()
+      .withUrl("https://devisocial.up.railway.app/feedHub", {
+        transport: HttpTransportType.LongPolling // fallback caso WebSocket não esteja disponível
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    newConnection.start()
+      .then(() => {
+        console.log("✅ Conectado ao SignalR!");
+
+        newConnection.on("NovoPost", (post) => {
+          console.log("🚀 Novo post recebido via SignalR:", post);
+          // Aqui você pode atualizar o feed em tempo real ou exibir uma notificação
+        });
+
+        setConnection(newConnection);
+      })
+      .catch((err) => {
+        console.error("❌ Erro ao conectar SignalR:", err);
+      });
+
+    return () => {
+      if (newConnection) {
+        newConnection.stop();
+        console.log("🔌 Desconectado do SignalR");
+      }
+    };
+  }, []);
 
   const handleCriar = async (e) => {
     e.preventDefault();
@@ -35,7 +68,7 @@ function Criar() {
       });
 
       if (response.ok) {
-        navigate('/home');
+        navigate('/home'); // Redireciona após a criação
       } else {
         const erroResp = await response.json();
         setErro(erroResp.erro || 'Erro ao criar o post');
@@ -75,8 +108,8 @@ function Criar() {
           onChange={(e) => setTags(e.target.value)}
         />
         <div className="botoes-form">
-          <button className='button-confirme' type="submit">Publicar</button>
-          <button className='button-cancel' type="button" onClick={() => navigate('/home')}>Cancelar</button>
+          <button className="button-confirme" type="submit">Publicar</button>
+          <button className="button-cancel" type="button" onClick={() => navigate('/home')}>Cancelar</button>
         </div>
       </form>
     </div>
