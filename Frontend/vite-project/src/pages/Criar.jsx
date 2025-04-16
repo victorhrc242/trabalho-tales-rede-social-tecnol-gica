@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/criar.css'; // Crie esse CSS separado para a nova página
 
 function Criar() {
   const navigate = useNavigate();
