@@ -1,6 +1,6 @@
 /* Fonte padrão */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #fafafa;
     margin: 0;
     padding: 0;
@@ -8,126 +8,110 @@ body {
 
 /* Container do perfil */
 .perfil-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 960px;
-    margin: 30px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 935px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #fff;
 }
 
-/* Header do perfil - foto e informações lado a lado */
+/* Header do perfil */
 .perfil-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 20px;
+    gap: 40px;
+    margin-bottom: 40px;
 }
 
-.foto-perfil {
-    width: 120px;
-    height: 120px;
+.foto-perfil,
+.foto-perfil-placeholder {
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.foto-perfil-placeholder {
+    background-color: #dbdbdb;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 120px;
-    height: 120px;
-    background-color: #ddd;
-    border-radius: 50%;
-    font-size: 50px;
+    font-size: 48px;
+    font-weight: bold;
     color: white;
+    overflow: hidden;
 }
 
 .perfil-info {
     flex: 1;
-    margin-left: 20px;
-    text-align: left;
 }
 
 .perfil-info h1 {
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 28px;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+.infor-pessoais {
+    display: flex;
+    gap: 40px;
+    margin: 10px 0 20px;
+}
+
+.infor-pessoais p {
+    font-size: 16px;
     color: #333;
-    margin: 10px 0;
 }
 
-.perfil-info p {
+/* Botões de interação */
+.botoes-perfil {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.botoes-perfil button {
+    padding: 8px 16px;
     font-size: 14px;
-    color: #666;
-    margin: 5px 0;
+    border: 1px solid #0a66c2;
+    border-radius: 4px;
+    background-color: #0a66c2;
+    cursor: pointer;
+    font-weight: 600;
 }
 
-/* Estilo dos posts */
+.botoes-perfil button:hover {
+    background-color: #044280;
+}
+
+/* Posts */
 .perfil-posts {
     width: 100%;
-    margin-top: 20px;
-    border-radius: 8px;
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: left;
+    border-top: 1px solid #dbdbdb;
+    padding-top: 30px;
 }
 
 .perfil-posts h2 {
-    font-size: 20px;
-    color: #333;
-    margin-bottom: 20px;
+    display: none; /* Instagram não mostra título */
 }
 
 .post {
-    margin-bottom: 20px;
+    display: inline-block;
+    width: 293px;
+    height: 293px;
+    margin: 10px;
+    overflow: hidden;
+    background-color: #fafafa;
+    border: 1px solid #dbdbdb;
+    vertical-align: top;
 }
 
 .post img {
     width: 100%;
-    height: auto;
-    border-radius: 8px;
+    height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-.post p {
-    font-size: 14px;
-    color: #333;
-}
-
+.post p,
 .post hr {
-    margin-top: 10px;
-    border: 0;
-    border-top: 1px solid #eee;
-}
-
-/* Estilo para os botões de interação */
-.botoes-perfil {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 20px;
-}
-
-.botoes-perfil button {
-    background-color: #0095f6;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.botoes-perfil button:hover {
-    background-color: #007ac1;
+    display: none; /* Escondendo conteúdo textual dos posts */
 }
 
 /* Responsividade */
@@ -138,18 +122,40 @@ body {
         text-align: center;
     }
 
-    .foto-perfil {
+    .foto-perfil,
+    .foto-perfil-placeholder {
         width: 100px;
         height: 100px;
+        font-size: 36px;
     }
 
     .perfil-info {
         margin-left: 0;
-        text-align: center;
+    }
+
+    .infor-pessoais {
+        flex-direction: column;
+        gap: 5px;
+        margin: 10px 0;
     }
 
     .botoes-perfil {
         flex-direction: column;
-        gap: 10px;
+        width: 100%;
     }
+
+    .post {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+}
+
+/* Estilo para loading e erro */
+.loading,
+.erro {
+    text-align: center;
+    font-size: 18px;
+    padding: 40px 0;
+    color: #888;
 }

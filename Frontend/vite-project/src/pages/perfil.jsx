@@ -12,6 +12,7 @@ const Perfil = () => {
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
   const [loading, setLoading] = useState(true);
+  const [modalPost, setModalPost] = useState(null);
 
   useEffect(() => {
     if (!userId) {
@@ -48,8 +49,16 @@ const Perfil = () => {
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
 
-  const baseURL = 'https://seuservidor.com'; // substitua pela URL base do seu servidor
+  const baseURL = 'https://seuservidor.com';
   const fotoPerfilURL = usuario.fotoPerfil ? `${baseURL}${usuario.fotoPerfil}` : null;
+
+  const abrirModalPost = (post) => {
+    setModalPost(post);
+  };
+
+  const fecharModalPost = () => {
+    setModalPost(null);
+  };
 
   return (
     <div className="perfil-container">
@@ -64,7 +73,7 @@ const Perfil = () => {
         <div className="perfil-info">
           <h1>{usuario.nome}</h1>
           <div className="infor-pessoais">
-          <p><strong>Biografia:</strong> {usuario.biografia}</p>
+            <p><strong>Biografia:</strong> {usuario.biografia}</p>
             <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
             <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
           </div>
@@ -77,11 +86,11 @@ const Perfil = () => {
           <p>Este usuário ainda não postou nada.</p>
         ) : (
           posts.map(post => (
-            <div key={post.id} className="post">
-              <p><strong>Conteúdo:</strong> {post.conteudo}</p>
+            <div key={post.id} className="post" onClick={() => abrirModalPost(post)} style={{ cursor: 'pointer' }}>
               {post.imagem && (
                 <img src={post.imagem} alt="Imagem do post" />
               )}
+              <p><strong>Conteúdo:</strong> {post.conteudo}</p>
               <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
               <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
               <p>
@@ -94,7 +103,27 @@ const Perfil = () => {
         )}
       </div>
 
-      {/* Botões de interação */}
+      {modalPost && (
+        <div className="modal-overlay" onClick={fecharModalPost}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-imagem">
+              {modalPost.imagem && (
+                <img src={modalPost.imagem} alt="Post em destaque" />
+              )}
+            </div>
+            <div className="modal-conteudo">
+              <h3>{usuario.nome}</h3>
+              <p><strong>Conteúdo:</strong> {modalPost.conteudo}</p>
+              <p><strong>Tags:</strong> {modalPost.tags?.join(', ')}</p>
+              <p><strong>Data:</strong> {new Date(modalPost.dataPostagem).toLocaleString()}</p>
+              <p><strong>Curtidas:</strong> {modalPost.curtidas}</p>
+              <p><strong>Comentários:</strong> {modalPost.comentarios}</p>
+              <button onClick={fecharModalPost}>Fechar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="botoes-perfil">
         <button>Seguir</button>
         <button>Mensagem</button>
