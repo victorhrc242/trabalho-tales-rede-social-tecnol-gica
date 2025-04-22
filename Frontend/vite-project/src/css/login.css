@@ -1,4 +1,4 @@
-/* Container principal centralizado na tela */
+/* Container principal centralizado na tela */ 
 .container-login {
   display: flex;
   justify-content: center;
@@ -14,9 +14,11 @@
   background-color: #e7e7e7;
   border-radius: 12px;
   overflow: hidden;
-  width: 700px;
-  max-width: 90%;
-  height: 420px;
+
+  /* Aumentado */
+  width: 850px;
+  max-width: 95%;
+  height: 500px;
 }
 
 /* Lado esquerdo - formulário */
@@ -29,10 +31,11 @@
   color: white;
 }
 
-/* Título */
-.container-login h2 {
+/* Título com fonte maior e diferente */
+.titulo-login {
   color: #0a66c2;
-  font-size: 28px;
+  font-size: 36px; /* maior */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* fonte diferente */
   margin-bottom: 20px;
   text-align: left;
 }
@@ -43,14 +46,22 @@
   border: 1px solid #0a66c2;
   border-radius: 8px;
   padding: 10px;
-  color: white;
+  color: #474747; /* Cor inicial do texto */
   font-size: 15px;
   margin-bottom: 15px;
   width: 100%;
 }
 
+/* Quando o usuário estiver digitando, a cor do texto muda */
+.formulario input:focus {
+  color: #262626; /* Nova cor do texto enquanto digita */
+  outline: none; /* Remove a borda de foco padrão */
+  border-color: #0a66c2; /* Mantém a borda azul do input */
+}
+
+/* Placeholder */
 .formulario input::placeholder {
-  color: #ccc;
+  color: #474747; /* Cor do texto do placeholder */
 }
 
 /* Botão */
@@ -74,7 +85,7 @@
 /* Links abaixo do formulário */
 .container-login p {
   text-align: center;
-  color: #fff;
+  color: #474747;
   margin-top: 10px;
 }
 
@@ -100,7 +111,7 @@
 /* Lado direito - imagem */
 .imagem-login {
   flex: 1;
-  background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeVXm9iosCliViI6Tj4Qnr1xBWTPltAZwS-6nsgnaeyVmB0ff3HrdlPkYMQIwLopUv1NA&usqp=CAU');
+  background-image: url('https://hospitalsantamonica.com.br/wp-content/uploads/2020/11/redes-sociais-saude-mental.png');
   background-size: cover;
   background-position: center;
 }

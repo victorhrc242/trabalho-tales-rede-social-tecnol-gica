@@ -1,39 +1,43 @@
-import React, { useState } from 'react'; 
-import { Link, useNavigate } from 'react-router-dom';
-import '../css/cadastro.css';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import '../css/cadastro.css'; // Estilo atualizado com base no login
 
 const Cadastro = () => {
+  // Estados para os campos do formulário
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [fotoPerfil, setFotoPerfil] = useState(null);
+  const [fotoPerfil, setFotoPerfil] = useState('');
   const [biografia, setBiografia] = useState('');
   const [dataAniversario, setDataAniversario] = useState('');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
+  // Função para lidar com o envio do formulário
   const handleCadastro = async (e) => {
     e.preventDefault();
     setErro('');
 
-    const formData = new FormData();
-    formData.append('nome', nome);
-    formData.append('email', email);
-    formData.append('senha', senha);
-    formData.append('FotoPerfil', fotoPerfil);
-    formData.append('biografia', biografia);
-    formData.append('dataaniversario', dataAniversario);
-    formData.append('data_criacao', new Date().toISOString());
+    const novoUsuario = {
+      nome,
+      email,
+      senha,
+      FotoPerfil: fotoPerfil,
+      biografia,
+      dataaniversario: dataAniversario,
+      data_criacao: new Date().toISOString()
+    };
 
     try {
       const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/register', {
         method: 'POST',
-        body: formData,
-        credentials: 'include' // ✅ Necessário se o backend usa cookies/autenticação
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(novoUsuario)
       });
 
-      const contentType = response.headers.get('content-type');
-      const isJson = contentType && contentType.includes('application/json');
+      const isJson = response.headers.get('content-type')?.includes('application/json');
       const data = isJson ? await response.json() : await response.text();
 
       if (!response.ok) {
@@ -51,19 +55,25 @@ const Cadastro = () => {
   };
 
   return (
+    // Container principal centralizado
     <div className="cadastro-container">
+      {/* Modal/box onde o formulário ficará estruturado */}
       <div className="cadastro-box">
-        <form onSubmit={handleCadastro} className="cadastro-form" encType="multipart/form-data">
+        {/* Formulário estilizado com os campos alinhados */}
+        <form className="cadastro-form" onSubmit={handleCadastro}>
+          {/* Título estilizado */}
           <h2>Cadastro</h2>
 
+          {/* Campo Nome */}
           <input
             type="text"
-            placeholder="Nome de usuário"
+            placeholder="Nome completo"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             required
           />
 
+          {/* Campo Email */}
           <input
             type="email"
             placeholder="E-mail"
@@ -72,6 +82,7 @@ const Cadastro = () => {
             required
           />
 
+          {/* Campo Senha */}
           <input
             type="password"
             placeholder="Senha"
@@ -80,30 +91,38 @@ const Cadastro = () => {
             required
           />
 
+          {/* Campo URL da foto */}
           <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFotoPerfil(e.target.files[0])}
+            type="text"
+            placeholder="Link da foto de perfil (URL)"
+            value={fotoPerfil}
+            onChange={(e) => setFotoPerfil(e.target.value)}
           />
 
+          {/* Campo Biografia */}
           <textarea
             placeholder="Biografia"
             value={biografia}
             onChange={(e) => setBiografia(e.target.value)}
           />
 
+          {/* Campo Data de Nascimento */}
           <input
             type="date"
+            placeholder="Data de nascimento"
             value={dataAniversario}
             onChange={(e) => setDataAniversario(e.target.value)}
             required
           />
 
+          {/* Botão de cadastro */}
           <button type="submit">Cadastrar</button>
 
-          {erro && <p className="erro">{erro}</p>}
-
+          {/* Link para login */}
           <p>Já tem uma conta? <Link to="/">Logar</Link></p>
+
+          {/* Exibição de erro, se houver */}
+          {erro && <p className="erro">{erro}</p>}
         </form>
       </div>
     </div>

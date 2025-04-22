@@ -1,4 +1,3 @@
-// Login.jsx
 import React, { useState, useEffect } from 'react';
 import '../css/login.css';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,6 +7,10 @@ function Login() {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
+
+  // visibilidade da senha
+
+  
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -57,37 +60,39 @@ function Login() {
     }
   };
 
+
+
   return (
     <div className='container-login'>
-    <div className="modal-login">
-      <div className="formulario">
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Digite sua senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-          <button className='botao-entrar' type="submit">Entrar</button>
-        </form>
+      <div className="modal-login">
+        <div className="formulario">
+          <h2 className="titulo-login">Login</h2>
+          <form onSubmit={handleLogin}>
+            <input
+              type="email"
+              placeholder="Digite seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Digite sua senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+            />
+            <button className='botao-entrar' type="submit">Entrar</button>
+          </form>
 
-        {erro && <p className="erro">{erro}</p>}
-        <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
-        <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
+          {erro && <p className="erro">{erro}</p>}
+          <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
+          <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
+        </div>
+
+        <div className="imagem-login"></div>
       </div>
-
-      <div className="imagem-login"></div>
     </div>
-  </div>
   );
 }
 

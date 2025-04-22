@@ -1,16 +1,17 @@
 .navbar-lateral {
-  width: 250px;
+  width: 145px;
   position: fixed;
   top: 0;
   left: 0;
   background: #fff;
   height: 100vh;
   padding: 20px;
-  box-shadow: 1px 0 5px rgba(0,0,0,0.05);
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   border-right: 1px solid #dbdbdb;
+  z-index: 1; /* Garantir que o navbar tenha um índice menor que o modal */
 }
 
 .logo {
@@ -100,7 +101,7 @@
 }
 
 .barra-pesquisa button:hover {
-  background-color: #007ac1;
+  background-color: transparent;
 }
 
 .resultados-pesquisa {
@@ -135,7 +136,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 1000; /* Certificar-se de que o modal aparece sobre o navbar */
 }
 
 .modal-conteudo {
@@ -144,7 +145,7 @@
   padding: 20px;
   width: 300px;
   max-width: 90%;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .modal-conteudo ul {
@@ -196,4 +197,7 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+.ola{
+  color: black;
 }

@@ -26,8 +26,10 @@ function Navbar({ usuarioLogado, deslogar }) {
   }, [busca]);
 
   const irParaPerfil = () => {
-    if (usuarioLogado?.id) {
-      navigate('/Perfil', { state: { userId: usuarioLogado.id } });
+    if (usuarioLogado && usuarioLogado.id) {
+      navigate('/perfil', { state: { userId: usuarioLogado.id } });
+    } else {
+      console.warn('Usuário não encontrado');
     }
   };
 
@@ -44,9 +46,14 @@ function Navbar({ usuarioLogado, deslogar }) {
   return (
     <div className="navbar-lateral">
       <nav className="navbar-menu">
-        <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
+        <Link to="/home" className="nav-item">
+          <FaHome /> <span>Home</span>
+        </Link>
 
-        <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
+        <div
+          className="nav-item"
+          onClick={() => setModal({ ...modal, busca: !modal.busca })}
+        >
           <FaSearch /> <span>Buscar</span>
         </div>
 
@@ -73,28 +80,53 @@ function Navbar({ usuarioLogado, deslogar }) {
           </div>
         )}
 
-        <Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link>
-        <Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link>
-        <Link to="/mensagens" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link>
-        <Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link>
-        <Link to="/criar" className="nav-item"><FaPlusSquare /> <span>Criar</span></Link>
+        <Link to="/explore" className="nav-item">
+          <FaCompass /> <span>Explorar</span>
+        </Link>
+        <Link to="/reels" className="nav-item">
+          <FaVideo /> <span>kurz</span>
+        </Link>
+        <Link to="/mensagens" className="nav-item">
+          <FaPaperPlane /> <span>Mensagens</span>
+        </Link>
+        <Link to="/notificacoes" className="nav-item">
+          <FaHeart /> <span>Notificações</span>
+        </Link>
+        <Link to="/criar" className="nav-item">
+          <FaPlusSquare /> <span>Criar</span>
+        </Link>
 
         {usuarioLogado && (
-          <div className="usuario-area">
-            <button onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
+          <div className="nav-item">
+            <button
+              onClick={irParaPerfil}
+              className="perfil-foto"
+              aria-label="Ir para o perfil"
+            >
               <img
-                src={usuarioLogado.foto || '/default-avatar.png'}
+                src={
+                  usuarioLogado.foto
+                    ? usuarioLogado.foto
+                    : 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'
+                }
                 alt="Foto do usuário"
                 className="foto-perfil-redonda"
               />
+              <span className="ola">Perfil</span>
             </button>
-            <div className="perfil-configuracao" onClick={abrirModalOpcoes} aria-label="Abrir configurações">
-              <FaCog />
-            </div>
           </div>
         )}
+
+        <div
+          className="perfil-configuracao"
+          onClick={abrirModalOpcoes}
+          aria-label="Abrir configurações"
+        >
+          <FaCog />
+        </div>
       </nav>
 
+      {/* Modal de Opções */}
       {modal.opcoes && (
         <div className="modal">
           <div className="modal-conteudo">
@@ -103,18 +135,25 @@ function Navbar({ usuarioLogado, deslogar }) {
               <li onClick={() => alert('Em breve')}>Configurações</li>
               <li onClick={() => alert('Em breve')}>Trocar de Conta</li>
             </ul>
-            <button className="fechar-modal" onClick={fecharModalOpcoes}>Fechar</button>
+            <button className="fechar-modal" onClick={fecharModalOpcoes}>
+              Fechar
+            </button>
           </div>
         </div>
       )}
 
+      {/* Modal de Confirmação de Logout */}
       {modal.confirmarLogout && (
         <div className="modal">
           <div className="modal-conteudo">
             <h2>Você tem certeza que deseja deslogar?</h2>
             <div className="botoes-modal">
-              <button className="btn-confirmar" onClick={deslogarERedirecionar}>Sim</button>
-              <button className="btn-cancelar" onClick={cancelarLogout}>Não</button>
+              <button className="btn-confirmar" onClick={deslogarERedirecionar}>
+                Sim
+              </button>
+              <button className="btn-cancelar" onClick={cancelarLogout}>
+                Não
+              </button>
             </div>
           </div>
         </div>
