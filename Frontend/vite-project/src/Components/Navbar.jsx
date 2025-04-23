@@ -11,6 +11,12 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [modal, setModal] = useState({ busca: false, opcoes: false, confirmarLogout: false });
 
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [conteudo, setConteudo] = useState('');
+  const [imagem, setImagem] = useState('');
+  const [tags, setTags] = useState('');
+  const [erro, setErro] = useState('');
+
   const navigate = useNavigate();
 
   const handleBusca = useCallback(async () => {
@@ -42,6 +48,38 @@ function Navbar({ usuarioLogado, deslogar }) {
     deslogar();
     navigate('/');
   };
+  
+  const handleCriarPost = async (e) => {
+    e.preventDefault();
+    const novoPost = {
+      autorId: usuarioLogado.id,
+      conteudo,
+      imagem,
+      tags: tags.split(',').map(tag => tag.trim())
+    };
+
+    try {
+      const response = await fetch('https://devisocial.up.railway.app/api/Feed/criar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novoPost)
+      });
+
+      if (response.ok) {
+        setMostrarModal(false);
+        setConteudo('');
+        setImagem('');
+        setTags('');
+      } else {
+        const erroResp = await response.json();
+        setErro(erroResp.erro || 'Erro ao criar o post');
+      }
+    } catch (err) {
+      console.error('Erro ao criar post:', err);
+      setErro('Erro de conexão com o servidor.');
+    }
+  };
+
 
   return (
     <div className="navbar-lateral">
@@ -138,6 +176,37 @@ function Navbar({ usuarioLogado, deslogar }) {
             <button className="fechar-modal" onClick={fecharModalOpcoes}>
               Fechar
             </button>
+          </div>
+        </div>
+      )}
+      {mostrarModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Criar Novo Post</h2>
+            <form onSubmit={handleCriarPost}>
+              <textarea
+                placeholder="Escreva algo..."
+                value={conteudo}
+                onChange={(e) => setConteudo(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="URL da imagem (opcional)"
+                value={imagem}
+                onChange={(e) => setImagem(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Tags separadas por vírgula"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+              />
+              <br />
+              <button type="submit" className="button-confirme">Publicar</button>
+              <button type="button" className="button-cancel" onClick={() => setMostrarModal(false)} style={{ marginLeft: '10px' }}>Cancelar</button>
+              {erro && <p style={{ color: 'red' }}>{erro}</p>}
+            </form>
           </div>
         </div>
       )}

@@ -112,21 +112,7 @@ function Criar() {
           <button className="button-cancel" type="button" onClick={() => navigate('/home')}>Cancelar</button>
         </div>
       </form>
-      {mostrarModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Criar Novo Post</h2>
-            <form onSubmit={handleCriarPost}>
-              <textarea placeholder="Escreva algo..." value={conteudo} onChange={(e) => setConteudo(e.target.value)} required />
-              <input type="text" placeholder="URL da imagem (opcional)" value={imagem} onChange={(e) => setImagem(e.target.value)} />
-              <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
-              <br />
-              <button className='button-confirme' type="submit">Publicar</button>
-              <button className='button-cancel' type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
-            </form>
-          </div>
-        </div>
-      )}
+
 
     </div>
   );

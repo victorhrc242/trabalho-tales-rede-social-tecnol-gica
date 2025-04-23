@@ -252,6 +252,7 @@ function Home() {
         ))}
       </ul>
 
+      {/* Criar novo post */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal">

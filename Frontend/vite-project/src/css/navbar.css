@@ -168,11 +168,14 @@
 }
 
 .fechar-modal {
-  background-color: #efefef;
+  background-color: #0095f6;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
+}
+.fechar-modal:hover{
+  background-color: #db1b1b;
 }
 
 .botoes-modal {
