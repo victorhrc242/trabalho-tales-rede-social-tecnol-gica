@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
+
+const socket = io("https://trabalho-tales-rede-social-tecnol-gica.onrender.com");
 
 const Perfil = () => {
   const location = useLocation();
@@ -13,6 +16,9 @@ const Perfil = () => {
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
   const [loading, setLoading] = useState(true);
   const [modalPost, setModalPost] = useState(null);
+  const [comentarios, setComentarios] = useState([]);
+  const [novoComentario, setNovoComentario] = useState("");
+  const inputRef = useRef();
 
   useEffect(() => {
     if (!userId) {
@@ -46,18 +52,59 @@ const Perfil = () => {
     carregarDados();
   }, [userId, navigate]);
 
+  useEffect(() => {
+    socket.on("comentarioRecebido", async (comentario) => {
+      if (comentario.postId === modalPost?.id) {
+        try {
+          const response = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentarios/post/${comentario.postId}?comAutor=true`);
+          setComentarios(response.data);
+        } catch (error) {
+          console.error("Erro ao atualizar comentários em tempo real:", error);
+        }
+      }
+    });
+
+    return () => {
+      socket.off("comentarioRecebido");
+    };
+  }, [modalPost]);
+
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
 
   const baseURL = 'https://seuservidor.com';
   const fotoPerfilURL = usuario.fotoPerfil ? `${baseURL}${usuario.fotoPerfil}` : null;
 
-  const abrirModalPost = (post) => {
+  const abrirModalPost = async (post) => {
     setModalPost(post);
+    try {
+      const response = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentarios/post/${post.id}?comAutor=true`);
+      setComentarios(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar comentários:", error);
+    }
   };
 
   const fecharModalPost = () => {
     setModalPost(null);
+    setComentarios([]);
+  };
+
+  const enviarComentario = async () => {
+    if (!novoComentario.trim()) return;
+    const comentario = {
+      postId: modalPost.id,
+      conteudo: novoComentario,
+      autorId: usuario.id,
+    };
+    try {
+      await axios.post("https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentarios", comentario);
+      socket.emit("novoComentario", comentario);
+      setNovoComentario("");
+      inputRef.current?.focus();
+    } catch (error) {
+      console.error("Erro ao enviar comentário:", error);
+    }
   };
 
   return (
@@ -105,20 +152,32 @@ const Perfil = () => {
 
       {modalPost && (
         <div className="modal-overlay" onClick={fecharModalPost}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-imagem">
-              {modalPost.imagem && (
-                <img src={modalPost.imagem} alt="Post em destaque" />
-              )}
+          <div className="modal-post" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-post-imagem">
+              {modalPost.imagem && <img src={modalPost.imagem} alt="Imagem do post" />}
             </div>
-            <div className="modal-conteudo">
-              <h3>{usuario.nome}</h3>
-              <p><strong>Conteúdo:</strong> {modalPost.conteudo}</p>
-              <p><strong>Tags:</strong> {modalPost.tags?.join(', ')}</p>
-              <p><strong>Data:</strong> {new Date(modalPost.dataPostagem).toLocaleString()}</p>
-              <p><strong>Curtidas:</strong> {modalPost.curtidas}</p>
-              <p><strong>Comentários:</strong> {modalPost.comentarios}</p>
-              <button onClick={fecharModalPost}>Fechar</button>
+            <div className="modal-post-detalhes">
+              <div className="modal-post-header">
+                <h3>{usuario.nome}</h3>
+              </div>
+              <div className="modal-post-comentarios">
+                {comentarios.map((comentario, index) => (
+                  <div key={index} className="comentario">
+                    <strong>{comentario.autor?.nome || "Anônimo"}:</strong> {comentario.conteudo}
+                  </div>
+                ))}
+              </div>
+              <div className="comentar-box">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={novoComentario}
+                  onChange={(e) => setNovoComentario(e.target.value)}
+                  placeholder="Adicionar um comentário..."
+                />
+                <button onClick={enviarComentario}>Comentar</button>
+              </div>
+              <button className="fechar-btn" onClick={fecharModalPost}>Fechar</button>
             </div>
           </div>
         </div>
