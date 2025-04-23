@@ -130,9 +130,9 @@ function Navbar({ usuarioLogado, deslogar }) {
         <Link to="/notificacoes" className="nav-item">
           <FaHeart /> <span>Notificações</span>
         </Link>
-        <Link to="/criar" className="nav-item">
-          <FaPlusSquare /> <span>Criar</span>
-        </Link>
+        <div className="nav-item" onClick={() => setMostrarModal(true)}>
+  <FaPlusSquare /> <span>Criar Post</span>
+</div>
 
         {usuarioLogado && (
           <div className="nav-item">
