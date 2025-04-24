@@ -1,257 +1,288 @@
-/* Fonte padrão */
+/* Fonte e base */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fafafa;
-    margin: 0;
-    padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
+  margin: 0;
+  padding: 0;
 }
 
 /* Container do perfil */
 .perfil-container {
-    max-width: 935px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    background-color: #fff;
+  max-width: 935px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
 }
 
 /* Header do perfil */
 .perfil-header {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-    margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
 .foto-perfil,
 .foto-perfil-placeholder {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    background-color: #dbdbdb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 48px;
-    font-weight: bold;
-    color: white;
-    overflow: hidden;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #dbdbdb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  overflow: hidden;
+  border: 3px solid #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .perfil-info {
-    flex: 1;
+  flex: 1;
 }
 
 .perfil-info h1 {
-    font-size: 28px;
-    font-weight: 300;
-    margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 10px;
 }
 
 .infor-pessoais {
-    display: flex;
-    gap: 40px;
-    margin: 10px 0 20px;
+  display: flex;
+  gap: 40px;
+  margin: 10px 0 20px;
 }
 
 .infor-pessoais p {
-    font-size: 16px;
-    color: #333;
+  font-size: 15px;
+  color: #555;
 }
 
-/* Botões de interação */
+/* Botões */
 .botoes-perfil {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
 }
 
 .botoes-perfil button {
-    padding: 8px 16px;
-    font-size: 14px;
-    border: 1px solid #0a66c2;
-    border-radius: 4px;
-    background-color: #0a66c2;
-    cursor: pointer;
-    font-weight: 600;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: 1px solid #0a66c2;
+  border-radius: 6px;
+  background-color: #0a66c2;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
 }
 
 .botoes-perfil button:hover {
-    background-color: #044280;
+  background-color: #044280;
 }
 
 /* Posts */
 .perfil-posts {
-    width: 100%;
-    border-top: 1px solid #dbdbdb;
-    padding-top: 30px;
-}
-
-.perfil-posts h2 {
-    display: none; /* Instagram não mostra título */
+  width: 100%;
+  border-top: 1px solid #dbdbdb;
+  padding-top: 30px;
 }
 
 .post {
-    display: inline-block;
-    width: 293px;
-    height: 293px;
-    margin: 10px;
-    overflow: hidden;
-    background-color: #fafafa;
-    border: 1px solid #dbdbdb;
-    vertical-align: top;
+  display: inline-block;
+  width: 293px;
+  height: 293px;
+  margin: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  vertical-align: top;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.post:hover {
+  transform: scale(1.02);
 }
 
 .post img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .post p,
 .post hr {
-    display: none; /* Escondendo conteúdo textual dos posts */
+  display: none;
 }
 
-/* Responsividade */
+/* Responsivo */
 @media (max-width: 768px) {
-    .perfil-header {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
+  .perfil-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
 
-    .foto-perfil,
-    .foto-perfil-placeholder {
-        width: 100px;
-        height: 100px;
-        font-size: 36px;
-    }
+  .foto-perfil,
+  .foto-perfil-placeholder {
+    width: 100px;
+    height: 100px;
+    font-size: 36px;
+  }
 
-    .perfil-info {
-        margin-left: 0;
-    }
+  .infor-pessoais {
+    flex-direction: column;
+    gap: 5px;
+  }
 
-    .infor-pessoais {
-        flex-direction: column;
-        gap: 5px;
-        margin: 10px 0;
-    }
+  .botoes-perfil {
+    flex-direction: column;
+    width: 100%;
+  }
 
-    .botoes-perfil {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .post {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1 / 1;
-    }
+  .post {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
 }
 
-/* Estilo para loading e erro */
+/* Loading e erro */
 .loading,
 .erro {
-    text-align: center;
-    font-size: 18px;
-    padding: 40px 0;
-    color: #888;
+  text-align: center;
+  font-size: 18px;
+  padding: 40px 0;
+  color: #888;
 }
-
 
 /* Modal */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-post {
+  background: white;
+  display: flex;
+  width: 90%;
+  max-width: 900px;
+  height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+/* Imagem (direita) */
+.modal-post-imagem {
+  width: 50%;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-post-imagem img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Detalhes (esquerda) */
+.modal-post-detalhes {
+  width: 50%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.modal-post-header h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.modal-post-comentarios {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 5px;
+}
+
+.comentario {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+}
+
+.comentar-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.comentar-box input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.comentar-box button {
+  padding: 10px 14px;
+  background-color: #0a66c2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.comentar-box button:hover {
+  background-color: #044280;
+}
+
+.fechar-btn {
+  align-self: flex-end;
+  padding: 8px 12px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
   .modal-post {
-    background: white;
-    display: flex;
-    width: 80%;
-    max-width: 900px;
-    height: 600px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  }
-  
-  /* ÁREA DE INFORMAÇÕES (ESQUERDA) */
-  .modal-post-detalhes {
-    width: 50%;
-    padding: 20px;
-    display: flex;
     flex-direction: column;
+    height: auto;
   }
-  
-  /* cabeçalho com nome, curtidas etc */
-  .modal-post-header h3 {
-    margin: 0 0 10px;
-    font-size: 20px;
+
+  .modal-post-imagem,
+  .modal-post-detalhes {
+    width: 100%;
   }
-  
-  /* lista de comentários rolável */
-  .modal-post-comentarios {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 20px;
+
+  .modal-post-detalhes {
+    padding: 15px;
   }
-  
-  /* caixa para digitar novo comentário */
-  .comentar-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  /* botão fechar */
-  .fechar-btn {
-    align-self: flex-end;
-    padding: 8px 12px;
-    background: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  /* ÁREA DA IMAGEM (DIREITA) */
-  .modal-post-imagem {
-    width: 50%;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-post-imagem img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-  
-  /* RESPONSIVIDADE: empilha em coluna em telas menores */
-  @media (max-width: 768px) {
-    .modal-post {
-      flex-direction: column;
-      height: auto;
-    }
-    .modal-post-imagem,
-    .modal-post-detalhes {
-      width: 100%;
-    }
-    .modal-post-detalhes {
-      padding: 15px;
-    }
-  }
-  
+}
