@@ -179,11 +179,12 @@ function Navbar({ usuarioLogado, deslogar }) {
           </div>
         </div>
       )}
+      {/* Modal de Criarção de Post */}
       {mostrarModal && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal-CriarPost">
+            <form className="form-criar-post" onSubmit={handleCriarPost}>
             <h2>Criar Novo Post</h2>
-            <form onSubmit={handleCriarPost}>
               <textarea
                 placeholder="Escreva algo..."
                 value={conteudo}
@@ -196,6 +197,17 @@ function Navbar({ usuarioLogado, deslogar }) {
                 value={imagem}
                 onChange={(e) => setImagem(e.target.value)}
               />
+
+        {imagem && (
+          <div style={{ margin: '10px 0' }}>
+            <img
+              src={imagem}
+              alt="Pré-visualização"
+              style={{ maxWidth: '100%', maxHeight: '300px' }}
+              onError={(e) => e.target.style.display = 'none'}
+            />
+          </div>
+        )}
               <input
                 type="text"
                 placeholder="Tags separadas por vírgula"

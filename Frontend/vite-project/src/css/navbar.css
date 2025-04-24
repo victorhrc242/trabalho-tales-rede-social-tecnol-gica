@@ -31,10 +31,11 @@
   text-decoration: none;
   font-size: 1rem;
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .nav-item:hover {
-  background-color: #fafafa;
+  background-color: #d4d4d4;
 }
 
 .nav-item svg {
@@ -72,7 +73,7 @@
 }
 
 .perfil-configuracao:hover {
-  background-color: #f5f5f5;
+  background-color: #d4d4d4;
 }
 
 .barra-pesquisa {
@@ -101,7 +102,7 @@
 }
 
 .barra-pesquisa button:hover {
-  background-color: transparent;
+  background-color: #0f8200;
 }
 
 .resultados-pesquisa {
@@ -137,6 +138,29 @@
   justify-content: center;
   align-items: center;
   z-index: 1000; /* Certificar-se de que o modal aparece sobre o navbar */
+}
+.modal-CriarPost{
+  position: fixed;
+  top: 70px;
+  left: 400px;
+  right: 400px;
+  bottom: 25px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Certificar-se de que o modal aparece sobre o navbar */
+}
+
+.form-criar-post {
+  width: 500px;        /* ou o tamanho que preferir */
+  height: 400px;       /* altura fixa */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;    /* rolagem se o conteúdo passar do limite */
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .modal-conteudo {
