@@ -145,7 +145,7 @@
   left: 400px;
   right: 400px;
   bottom: 25px;
-  border-radius: 10px;
+  border-radius: 15px;
   background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: center;
@@ -155,12 +155,11 @@
 
 .form-criar-post {
   width: 500px;        /* ou o tamanho que preferir */
-  height: 400px;       /* altura fixa */
+  height: 500px;       /* altura fixa */
   display: flex;
   flex-direction: column;
   overflow-y: auto;    /* rolagem se o conteúdo passar do limite */
-  padding: 10px;
-  box-sizing: border-box;
+
 }
 
 .modal-conteudo {
