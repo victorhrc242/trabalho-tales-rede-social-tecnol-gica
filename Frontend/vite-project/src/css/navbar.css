@@ -168,7 +168,7 @@
 }
 
 .fechar-modal {
-  background-color: #efefef;
+  background-color: #0676f7;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
@@ -191,7 +191,7 @@
 }
 
 .btn-cancelar {
-  background-color: #efefef;
+  background-color: #0676f7;
   color: #262626;
   padding: 8px 12px;
   border: none;

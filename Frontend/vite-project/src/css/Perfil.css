@@ -44,30 +44,21 @@ body {
 
 .perfil-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .perfil-info h1 {
   font-size: 28px;
   font-weight: 500;
-  margin-bottom: 10px;
-}
-
-.infor-pessoais {
-  display: flex;
-  gap: 40px;
-  margin: 10px 0 20px;
-}
-
-.infor-pessoais p {
-  font-size: 15px;
-  color: #555;
+  margin-bottom: 5px;
 }
 
 /* Botões */
 .botoes-perfil {
   display: flex;
   gap: 10px;
-  margin-bottom: 30px;
 }
 
 .botoes-perfil button {
@@ -84,6 +75,17 @@ body {
 
 .botoes-perfil button:hover {
   background-color: #044280;
+}
+
+.infor-pessoais {
+  display: flex;
+  gap: 40px;
+  margin: 10px 0 20px;
+}
+
+.infor-pessoais p {
+  font-size: 15px;
+  color: #555;
 }
 
 /* Posts */

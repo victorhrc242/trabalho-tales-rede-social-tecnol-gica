@@ -98,19 +98,28 @@ const Perfil = () => {
   return (
     <div className="perfil-container">
       <div className="perfil-header">
-        {usuario.fotoPerfil ? (
+        <div className="foto-perfil">
           <img
-            src={`https://seuservidor.com${usuario.fotoPerfil}`}
-            alt={`Foto de ${usuario.nome}`}
-            className="foto-perfil"
+            src={
+              usuario.fotoPerfil
+                ? `https://trabalho-tales-rede-social-tecnol-gica.onrender.com${usuario.fotoPerfil}`
+                : 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'
+            }
+            alt={`Foto de perfil de ${usuario.nome}`}
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '50%',
+              objectFit: 'cover'
+            }}
           />
-        ) : (
-          <div className="foto-perfil-placeholder">
-            <span>{usuario.nome.charAt(0)}</span>
-          </div>
-        )}
+        </div>
         <div className="perfil-info">
           <h1>{usuario.nome}</h1>
+          <div className="botoes-perfil">
+            <button>Seguir</button>
+            <button>Mensagem</button>
+          </div>
           <div className="infor-pessoais">
             <p><strong>Biografia:</strong> {usuario.biografia}</p>
             <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
@@ -167,11 +176,6 @@ const Perfil = () => {
           </div>
         </div>
       )}
-
-      <div className="botoes-perfil">
-        <button>Seguir</button>
-        <button>Mensagem</button>
-      </div>
     </div>
   );
 };

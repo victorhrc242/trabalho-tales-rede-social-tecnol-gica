@@ -217,10 +217,7 @@ function Home() {
 
   return (
     <div className="home-container">
-      <h1>Olá, {usuario.nome}!</h1>
-      <button className='button-exit' onClick={handleLogout}>Sair</button>
-      <button onClick={irParaPerfil} style={{ marginLeft: '10px' }}>Ir para meu perfil</button>
-      <button onClick={() => setMostrarModal(true)} style={{ marginLeft: '10px' }}>Criar Post</button>
+      
 
       <hr />
       <h2>Feed</h2>
