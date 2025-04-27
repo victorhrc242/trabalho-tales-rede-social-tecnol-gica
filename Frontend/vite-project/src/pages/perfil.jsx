@@ -53,7 +53,7 @@ const Perfil = () => {
   const fetchComentarios = async (postId) => {
     try {
       const response = await axios.get(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/post/${postId}?comAutor=true`
+        `https://devisocial.up.railway.app/api/Comentario/post/${postId}?comAutor=true`
       );
       setComentarios(response.data || []);
     } catch (err) {
@@ -81,7 +81,7 @@ const Perfil = () => {
     };
     try {
       await axios.post(
-        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentarios',
+        'https://devisocial.up.railway.app/api/Comentario/comentar',
         payload
       );
       setNovoComentario('');

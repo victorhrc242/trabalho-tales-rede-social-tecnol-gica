@@ -1,34 +1,59 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
 import '../css/cadastro.css'; // Estilo atualizado com base no login
 
+// Configuração do Supabase
+const supabase = createClient('https://vffnyarjcfuagqsgovkd.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg');
+
 const Cadastro = () => {
-  // Estados para os campos do formulário
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [fotoPerfil, setFotoPerfil] = useState('');
+  const [fotoPerfilArquivo, setFotoPerfilArquivo] = useState(null);
   const [biografia, setBiografia] = useState('');
   const [dataAniversario, setDataAniversario] = useState('');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
-  // Função para lidar com o envio do formulário
+  const uploadImagem = async (file) => {
+    const fileName = `${Date.now()}_${file.name}`;
+
+    const { data, error } = await supabase
+      .storage
+      .from('imagens-usuarios') // 🔥 Substitua aqui pelo nome do seu bucket!
+      .upload(`perfil/${fileName}`, file);
+
+    if (error) {
+      console.error('Erro ao fazer upload:', error);
+      throw error;
+    }
+
+    const urlPublica = `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/${fileName}`;
+    return urlPublica;
+  };
+
   const handleCadastro = async (e) => {
     e.preventDefault();
     setErro('');
 
-    const novoUsuario = {
-      nome,
-      email,
-      senha,
-      FotoPerfil: fotoPerfil,
-      biografia,
-      dataaniversario: dataAniversario,
-      data_criacao: new Date().toISOString()
-    };
-
     try {
+      let fotoPerfilURL = '';
+
+      if (fotoPerfilArquivo) {
+        fotoPerfilURL = await uploadImagem(fotoPerfilArquivo);
+      }
+
+      const novoUsuario = {
+        nome,
+        email,
+        senha,
+        FotoPerfil: fotoPerfilURL, // agora usando a URL do Supabase
+        biografia,
+        dataaniversario: dataAniversario,
+        data_criacao: new Date().toISOString()
+      };
+
       const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
@@ -55,16 +80,11 @@ const Cadastro = () => {
   };
 
   return (
-    // Container principal centralizado
     <div className="cadastro-container">
-      {/* Modal/box onde o formulário ficará estruturado */}
       <div className="cadastro-box">
-        {/* Formulário estilizado com os campos alinhados */}
         <form className="cadastro-form" onSubmit={handleCadastro}>
-          {/* Título estilizado */}
           <h2>Cadastro</h2>
 
-          {/* Campo Nome */}
           <input
             type="text"
             placeholder="Nome completo"
@@ -73,7 +93,6 @@ const Cadastro = () => {
             required
           />
 
-          {/* Campo Email */}
           <input
             type="email"
             placeholder="E-mail"
@@ -82,7 +101,6 @@ const Cadastro = () => {
             required
           />
 
-          {/* Campo Senha */}
           <input
             type="password"
             placeholder="Senha"
@@ -91,22 +109,19 @@ const Cadastro = () => {
             required
           />
 
-          {/* Campo URL da foto */}
+          {/* Upload de foto */}
           <input
-            type="text"
-            placeholder="Link da foto de perfil (URL)"
-            value={fotoPerfil}
-            onChange={(e) => setFotoPerfil(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFotoPerfilArquivo(e.target.files[0])}
           />
 
-          {/* Campo Biografia */}
           <textarea
             placeholder="Biografia"
             value={biografia}
             onChange={(e) => setBiografia(e.target.value)}
           />
 
-          {/* Campo Data de Nascimento */}
           <input
             type="date"
             placeholder="Data de nascimento"
@@ -115,13 +130,10 @@ const Cadastro = () => {
             required
           />
 
-          {/* Botão de cadastro */}
           <button type="submit">Cadastrar</button>
 
-          {/* Link para login */}
           <p>Já tem uma conta? <Link to="/">Logar</Link></p>
 
-          {/* Exibição de erro, se houver */}
           {erro && <p className="erro">{erro}</p>}
         </form>
       </div>
