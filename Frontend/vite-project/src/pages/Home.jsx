@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import '../css/home.css';
+import '../css/Criar.css'
 
 function Home() {
   const navigate = useNavigate();
@@ -249,6 +250,7 @@ function Home() {
         ))}
       </ul>
 
+      {/* Criar novo post */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -281,8 +283,8 @@ function Home() {
               onChange={(e) => setComentarioTexto(e.target.value)}
             />
             <br />
-            <button onClick={comentar}>Comentar</button>
-            <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
+            <button className='button-confirme' onClick={comentar}>Comentar</button>
+            <button className='button-cancel' onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
           </div>
         </div>
       )}

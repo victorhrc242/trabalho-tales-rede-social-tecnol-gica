@@ -112,6 +112,8 @@ function Criar() {
           <button className="button-cancel" type="button" onClick={() => navigate('/home')}>Cancelar</button>
         </div>
       </form>
+
+
     </div>
   );
 }
