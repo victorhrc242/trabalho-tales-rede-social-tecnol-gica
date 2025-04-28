@@ -229,6 +229,7 @@ function Home() {
         {posts.map(post => (
           <li key={post.id} style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+              {/* imagem de perfil */}
            <img
   src={post.autorImagem ? post.autorImagem : 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
   alt={`Foto de perfil de ${post.autorNome}`}

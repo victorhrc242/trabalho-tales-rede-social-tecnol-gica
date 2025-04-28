@@ -99,6 +99,7 @@ const Perfil = () => {
     <div className="perfil-container">
       <div className="perfil-header">
         <div className="foto-perfil">
+          {/* foto de perfil */}
           <img
             src={
               usuario.fotoPerfil
