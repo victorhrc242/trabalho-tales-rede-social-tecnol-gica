@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import '../css/home.css';
-import '../css/Criar.css'
 
 function Home() {
   const navigate = useNavigate();
@@ -229,12 +228,11 @@ function Home() {
         {posts.map(post => (
           <li key={post.id} style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img
-  src={post.autorImagem ? post.autorImagem : 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-  alt={`Foto de perfil de ${post.autorNome}`}
-  style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
-/>
-
+              <img
+                src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
+                alt={`Foto de perfil de ${post.autorNome}`}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
+              />
               <p><strong></strong> {post.autorNome}</p>
             </div>
             {post.imagem && (
@@ -251,7 +249,6 @@ function Home() {
         ))}
       </ul>
 
-      {/* Criar novo post */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -284,8 +281,8 @@ function Home() {
               onChange={(e) => setComentarioTexto(e.target.value)}
             />
             <br />
-            <button className='button-confirme' onClick={comentar}>Comentar</button>
-            <button className='button-cancel' onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
+            <button onClick={comentar}>Comentar</button>
+            <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
           </div>
         </div>
       )}
