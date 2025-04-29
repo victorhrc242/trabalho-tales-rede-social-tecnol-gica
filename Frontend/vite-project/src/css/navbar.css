@@ -145,7 +145,7 @@
   left: 400px;
   right: 400px;
   bottom: 25px;
-  border-radius: 150px;
+  border-radius: 15px;
   background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: center;
@@ -157,10 +157,130 @@
   width: 500px;        /* ou o tamanho que preferir */
   height: 500px;       /* altura fixa */
   display: flex;
-  flex-direction: column;
-  overflow-y: auto;    /* rolagem se o conteúdo passar do limite */
+  flex-direction: column;   /* rolagem se o conteúdo passar do limite */
 
 }
+
+.area-upload {
+  border: 2px dashed #aaa;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  background-color: #fafafa;
+}
+.area-upload:hover {
+  background-color: #f0f0f0;
+}
+.area-upload input[type="file"] {
+  display: block;
+  margin-top: 10px;
+}
+
+.preview-imagem {
+  margin: 10px 0;
+  text-align: center;
+}
+.imagem-preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+}
+
+/* Filtros (estilos visuais aplicados via className) */
+.imagem-preview.none { filter: none; }
+.imagem-preview.grayscale { filter: grayscale(100%); }
+.imagem-preview.sepia { filter: sepia(100%); }
+.imagem-preview.invert { filter: invert(100%); }
+.imagem-preview.contrast { filter: contrast(150%); }
+.imagem-preview.saturate { filter: saturate(200%); }
+
+.filtros {
+  margin-bottom: 15px;
+}
+.filtros-opcoes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filtro-botao {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.filtro-botao.ativo {
+  border-color: #0095f6;
+  background-color: #e7f3ff;
+}
+
+/* Botoes */
+.botoes-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.button-proximo {
+  background-color: #0095f6;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  align-self: flex-end; /* alinha à direita */
+  transition: background-color 0.2s ease;
+}
+
+.button-proximo:hover {
+  background-color: #0077cc;
+}
+
+.fechar-modal-x {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #777;
+  cursor: pointer;
+  z-index: 1010;
+  transition: color 0.2s ease;
+}
+
+.fechar-modal-x:hover {
+  background-color: #db1b1b;
+}
+
+.button-confirme,
+.button-cancel {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.button-confirme {
+  background-color: #0095f6;
+  color: #d4d4d4;
+}
+.button-confirme:hover {
+  background-color: #0077cc;
+}
+
+.button-cancel {
+  background-color: #0095f6;
+  color: #d4d4d4;
+}
+
 
 .modal-conteudo {
   background: #fff;

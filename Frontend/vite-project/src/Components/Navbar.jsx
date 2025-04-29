@@ -14,6 +14,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
+  const [etapa, setEtapa] = useState(1); // 1: imagem, 2: filtro, 3: texto e tags
   const [tags, setTags] = useState('');
   const [erro, setErro] = useState('');
 
@@ -181,46 +182,123 @@ function Navbar({ usuarioLogado, deslogar }) {
       )}
       {/* Modal de Criarção de Post */}
       {mostrarModal && (
-        <div className="modal-overlay">
-          <div className="modal-CriarPost">
-            <form className="form-criar-post" onSubmit={handleCriarPost}>
-            <h2>Criar Novo Post</h2>
-              <textarea
-                placeholder="Escreva algo..."
-                value={conteudo}
-                onChange={(e) => setConteudo(e.target.value)}
-                required
-              />
-              {/* Imagem */}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImagemArquivo(e.target.files[0])}
-              />
-              {imagem && (
-                <div style={{ margin: '10px 0' }}>
-                  <img
-                    src={imagem}
-                    alt="Pré-visualização"
-                    style={{ maxWidth: '100%', maxHeight: '300px' }}
-                    onError={(e) => e.target.style.display = 'none'}
-                  />
-                </div>
-              )}
-              <input
-                type="text"
-                placeholder="Tags separadas por vírgula"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
-              <br />
-              <button type="submit" className="button-confirme">Publicar</button>
-              <button type="button" className="button-cancel" onClick={() => setMostrarModal(false)} style={{ marginLeft: '10px' }}>Cancelar</button>
-              {erro && <p style={{ color: 'red' }}>{erro}</p>}
-            </form>
-          </div>
+  <div className="modal-overlay">
+    <div className="modal-CriarPost">
+    <form className="form-criar-post" onSubmit={handleCriarPost}>
+  <h2>Criar Novo Post</h2>
+
+  {/* Etapa 1 - Seleção de imagem */}
+  {etapa === 1 && (
+    <>
+      <div
+        className="area-upload"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          setImagemArquivo(e.dataTransfer.files[0]);
+        }}
+      >
+        <p>Arraste uma imagem aqui ou clique para selecionar</p>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImagemArquivo(e.target.files[0])}
+        />
+      </div>
+      {imagem}
+      <button
+          type="button"
+          className="button-proximo"
+          onClick={() => setEtapa(2)}
+        >
+          Próximo
+        </button>
+    </>
+  )}
+
+  {/* Etapa 2 - Filtros */}
+  {etapa === 2 && imagem && (
+    <>
+      <div className="preview-imagem">
+        <img
+          src={imagem}
+          alt="Pré-visualização"
+          className={`imagem-preview ${filtroSelecionado}`}
+        />
+      </div>
+
+      <div className="filtros">
+        <p>Escolha um filtro:</p>
+        <div className="filtros-opcoes">
+          {['none', 'grayscale', 'sepia', 'invert', 'contrast', 'saturate'].map((filtro) => (
+            <button
+              type="button"
+              key={filtro}
+              className={`filtro-botao ${filtroSelecionado === filtro ? 'ativo' : ''}`}
+              onClick={() => setFiltroSelecionado(filtro)}
+            >
+              {filtro}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
+      <button
+  type="button"
+  className="button-proximo"
+  onClick={() => setEtapa(3)}
+>
+  Próximo
+</button>
+    </>
+  )}
+
+  {/* Etapa 3 - Texto e Tags */}
+  {etapa === 3 && (
+    <>
+      <textarea
+        placeholder="Escreva algo..."
+        value={conteudo}
+        onChange={(e) => setConteudo(e.target.value)}
+        required
+      />
+
+      <input
+        type="text"
+        placeholder="Tags separadas por vírgula"
+        value={tags}
+        onChange={(e) => setTags(e.target.value)}
+      />
+
+      <div className="botoes-acoes">
+        <button type="submit" className="button-confirme">Publicar</button>
+        <button
+          type="button"
+          className="button-cancel"
+          onClick={() => {
+            setMostrarModal(false);
+            setEtapa(1); // resetar para a primeira etapa ao fechar
+          }}
+        >
+          Cancelar
+        </button>
+      </div>
+    </>
+  )}
+
+  {erro && <p style={{ color: 'red' }}>{erro}</p>}
+</form>
+<button
+  className="fechar-modal-x"
+  onClick={() => {
+    setMostrarModal(false);
+    setEtapa(1); // opcional: resetar para a primeira etapa
+  }}
+>
+  &times;
+</button>
+    </div>
+  </div>
+)}
 
       {/* Modal de Confirmação de Logout */}
       {modal.confirmarLogout && (
