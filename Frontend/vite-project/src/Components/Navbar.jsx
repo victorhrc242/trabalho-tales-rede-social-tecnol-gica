@@ -10,7 +10,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [busca, setBusca] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [modal, setModal] = useState({ busca: false, opcoes: false, confirmarLogout: false });
-
+  const [imagemArquivo, setImagemArquivo] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
@@ -191,23 +191,22 @@ function Navbar({ usuarioLogado, deslogar }) {
                 onChange={(e) => setConteudo(e.target.value)}
                 required
               />
+              {/* Imagem */}
               <input
-                type="text"
-                placeholder="URL da imagem (opcional)"
-                value={imagem}
-                onChange={(e) => setImagem(e.target.value)}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImagemArquivo(e.target.files[0])}
               />
-
-        {imagem && (
-          <div style={{ margin: '10px 0' }}>
-            <img
-              src={imagem}
-              alt="Pré-visualização"
-              style={{ maxWidth: '100%', maxHeight: '300px' }}
-              onError={(e) => e.target.style.display = 'none'}
-            />
-          </div>
-        )}
+              {imagem && (
+                <div style={{ margin: '10px 0' }}>
+                  <img
+                    src={imagem}
+                    alt="Pré-visualização"
+                    style={{ maxWidth: '100%', maxHeight: '300px' }}
+                    onError={(e) => e.target.style.display = 'none'}
+                  />
+                </div>
+              )}
               <input
                 type="text"
                 placeholder="Tags separadas por vírgula"

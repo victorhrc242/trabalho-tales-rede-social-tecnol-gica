@@ -104,6 +104,7 @@ const Perfil = () => {
     <div className="perfil-container">
       <div className="perfil-header">
         <div className="foto-perfil">
+          {/* foto de perfil */}
           <img
             src={usuario.imagem || 'https://via.placeholder.com/150'}
             alt={`Foto de perfil de ${usuario.nome}`}
