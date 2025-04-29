@@ -19,18 +19,22 @@ const Perfil = () => {
 
   useEffect(() => {
     if (!userId) return navigate('/');
+
     const carregarDados = async () => {
       try {
+        // Buscar dados do usuário com imagem completa
         const { data: userData } = await axios.get(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
+          `https://devisocial.up.railway.app/api/auth/usuario/${userId}`
         );
         setUsuario(userData);
 
+        // Buscar posts do usuário
         const { data: postsData } = await axios.get(
           `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/posts/usuario/${userId}`
         );
         setPosts(postsData);
 
+        // Buscar seguidores e seguindo
         const seguidoresRes = await axios.get(
           `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`
         );
@@ -47,6 +51,7 @@ const Perfil = () => {
         setLoading(false);
       }
     };
+
     carregarDados();
   }, [userId, navigate]);
 
@@ -100,11 +105,7 @@ const Perfil = () => {
       <div className="perfil-header">
         <div className="foto-perfil">
           <img
-            src={
-              usuario.fotoPerfil
-                ? `https://trabalho-tales-rede-social-tecnol-gica.onrender.com${usuario.fotoPerfil}`
-                : 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'
-            }
+            src={usuario.imagem || 'https://via.placeholder.com/150'}
             alt={`Foto de perfil de ${usuario.nome}`}
             style={{
               width: '100%',
@@ -121,7 +122,7 @@ const Perfil = () => {
             <button>Mensagem</button>
           </div>
           <div className="infor-pessoais">
-            <p><strong>Biografia:</strong> {usuario.biografia}</p>
+            <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p>
             <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
             <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
           </div>
@@ -146,7 +147,7 @@ const Perfil = () => {
         <div className="modal-overlay" onClick={fecharModalPost}>
           <div className="modal-post" onClick={(e) => e.stopPropagation()}>
             <div className="modal-post-imagem">
-              {modalPost.imagem && (<img src={modalPost.imagem} alt="Imagem do post" />)}
+              {modalPost.imagem && <img src={modalPost.imagem} alt="Imagem do post" />}
             </div>
             <div className="modal-post-detalhes">
               <div className="modal-post-header">
