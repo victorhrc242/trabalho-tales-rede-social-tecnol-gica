@@ -107,8 +107,8 @@ function Home() {
     navigate('/');
   };
 
-  const irParaPerfil = () => {
-    navigate('/Perfil', { state: { userId: usuario.id } });
+  const irParaPerfil = (usuarioId) => {
+    navigate('/Perfil', { state: { userId: usuarioId } });
   };
 
   const fecharModal = () => {
@@ -217,8 +217,6 @@ function Home() {
 
   return (
     <div className="home-container">
-      
-
       <hr />
       <h2>Feed</h2>
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
@@ -232,8 +230,9 @@ function Home() {
                 src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
                 alt={`Foto de perfil de ${post.autorNome}`}
                 style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
+                onClick={() => irParaPerfil(post.autorId)} // Ação de clicar na foto para ir ao perfil
               />
-              <p><strong></strong> {post.autorNome}</p>
+              <p><strong>{post.autorNome}</strong></p>
             </div>
             {post.imagem && (
               <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />

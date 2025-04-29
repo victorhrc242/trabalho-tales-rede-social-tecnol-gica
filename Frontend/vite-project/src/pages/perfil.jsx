@@ -15,6 +15,10 @@ const Perfil = () => {
   const [modalPost, setModalPost] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [novoComentario, setNovoComentario] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [nome, setNome] = useState('');
+  const [biografia, setBiografia] = useState('');
+  const [imagem, setImagem] = useState('');
   const inputRef = useRef();
 
   useEffect(() => {
@@ -22,11 +26,14 @@ const Perfil = () => {
 
     const carregarDados = async () => {
       try {
-        // Buscar dados do usuário com imagem completa
+        // Buscar dados do usuário
         const { data: userData } = await axios.get(
           `https://devisocial.up.railway.app/api/auth/usuario/${userId}`
         );
         setUsuario(userData);
+        setNome(userData.Nome_usuario);
+        setBiografia(userData.biografia);
+        setImagem(userData.FotoPerfil);
 
         // Buscar posts do usuário
         const { data: postsData } = await axios.get(
@@ -41,9 +48,13 @@ const Perfil = () => {
         const seguindoRes = await axios.get(
           `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`
         );
+
+        const seguidoresTotal = seguidoresRes.data?.seguidores?.length || 0;
+        const seguindoTotal = seguindoRes.data?.seguindo?.length || 0;
+
         setSeguidoresInfo({
-          seguidores: seguidoresRes.data.length,
-          seguindo: seguindoRes.data.length
+          seguidores: seguidoresTotal,
+          seguindo: seguindoTotal
         });
       } catch (err) {
         console.error('Erro ao carregar dados do perfil:', err);
@@ -54,6 +65,43 @@ const Perfil = () => {
 
     carregarDados();
   }, [userId, navigate]);
+
+  const editarPerfil = async () => {
+    try {
+      // Crie um objeto para o payload apenas com os campos que foram alterados
+      const payload = {};
+
+      if (nome !== usuario.Nome-usuario) {
+        payload.Nome = nome;
+      }
+
+      if (biografia !== usuario.biografia) {
+        payload.biografia = biografia;
+      }
+
+      if (imagem !== usuario.FotoPerfil) {
+        payload.imagem = imagem;
+      }
+
+      // Verifique se há dados para atualizar
+      if (Object.keys(payload).length === 0) {
+        alert("Não há dados para atualizar.");
+        return;
+      }
+
+      // Envie a requisição de atualização apenas com os campos modificados
+      const response = await axios.put(
+        `https://devisocial.up.railway.app/api/auth/editarusuarios/${userId}`,
+        payload
+      );
+
+      // Atualiza o estado com os dados editados
+      setUsuario(response.data[0]);
+      setIsEditing(false); // Fecha o modo de edição
+    } catch (err) {
+      console.error('Erro ao editar perfil:', err);
+    }
+  };
 
   const fetchComentarios = async (postId) => {
     try {
@@ -118,15 +166,41 @@ const Perfil = () => {
         </div>
         <div className="perfil-info">
           <h1>{usuario.nome}</h1>
-          <div className="botoes-perfil">
-            <button>Seguir</button>
-            <button>Mensagem</button>
-          </div>
-          <div className="infor-pessoais">
-            <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p>
-            <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
-            <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
-          </div>
+          {usuario.id === userId && !isEditing && (
+            <div className="botoes-perfil">
+              <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
+            </div>
+          )}
+          {isEditing && (
+            <div className="editar-formulario">
+              <input
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Nome"
+              />
+              <textarea
+                value={biografia}
+                onChange={(e) => setBiografia(e.target.value)}
+                placeholder="Biografia"
+              />
+              <input
+                type="text"
+                value={imagem}
+                onChange={(e) => setImagem(e.target.value)}
+                placeholder="Imagem URL"
+              />
+              <button onClick={editarPerfil}>Salvar</button>
+              <button onClick={() => setIsEditing(false)}>Cancelar</button>
+            </div>
+          )}
+          {!isEditing && (
+            <div className="infor-pessoais">
+              <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p>
+              <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+              <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+            </div>
+          )}
         </div>
       </div>
 
