@@ -78,7 +78,7 @@ function Home() {
               const autorData = await autorResp.json();
               return {
                 ...post,
-                autorNome: autorData.nome || 'Usuário',
+                autorNome: autorData.nome_usuario || 'Usuário',
                 autorImagem: autorData.imagem || null,
               };
             } catch {

@@ -31,7 +31,7 @@ const Perfil = () => {
           `https://devisocial.up.railway.app/api/auth/usuario/${userId}`
         );
         setUsuario(userData);
-        setNome(userData.Nome_usuario);
+        setNome(userData.nome_usuario);
         setBiografia(userData.biografia);
         setImagem(userData.FotoPerfil);
 
@@ -71,8 +71,8 @@ const Perfil = () => {
       // Crie um objeto para o payload apenas com os campos que foram alterados
       const payload = {};
 
-      if (nome !== usuario.Nome-usuario) {
-        payload.Nome = nome;
+      if (nome_usuario !== usuario.nome_usuario) {
+        payload.nome_usuario = nome_usuario;
       }
 
       if (biografia !== usuario.biografia) {
@@ -165,7 +165,7 @@ const Perfil = () => {
           />
         </div>
         <div className="perfil-info">
-          <h1>{usuario.nome}</h1>
+          <h1>{usuario.nome_usuario}</h1>
           {usuario.id === userId && !isEditing && (
             <div className="botoes-perfil">
               <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
