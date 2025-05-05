@@ -1,3 +1,51 @@
+/* barra de pesquisa e storys  */
+.top-navbar {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid #ccc;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+.stories-container {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 10px 20px;
+  background-color: #fafafa;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.story-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70px;
+  font-size: 12px;
+}
+
+.story-bubble img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #dbdbdb;
+  object-fit: cover;
+  margin-bottom: 5px;
+}
+
+/* Final da barra de perfil e storys */
+
 /* Container principal da Home */
 .home-container {
   max-width: 600px;
