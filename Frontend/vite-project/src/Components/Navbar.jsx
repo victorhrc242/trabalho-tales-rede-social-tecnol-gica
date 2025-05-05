@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FaHome, FaSearch, FaCompass, FaVideo,
@@ -49,27 +49,60 @@ function Navbar({ usuarioLogado, deslogar }) {
     deslogar();
     navigate('/');
   };
+
+  useEffect(() => {
+    if (imagemArquivo) {
+      const url = URL.createObjectURL(imagemArquivo);
+      setImagem(url);
   
+      // limpa a URL anterior da memória quando a imagem muda ou componente desmonta
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [imagemArquivo]);
   const handleCriarPost = async (e) => {
     e.preventDefault();
-    const novoPost = {
-      autorId: usuarioLogado.id,
-      conteudo,
-      imagem,
-      tags: tags.split(',').map(tag => tag.trim())
+  
+    if (!imagemArquivo) {
+      setErro('Selecione uma imagem para o post.');
+      return;
+    }
+  
+    // Função auxiliar para converter imagem para base64
+    const converterParaBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
     };
-
+  
     try {
+      const imagemBase64 = await converterParaBase64(imagemArquivo);
+  
+      const novoPost = {
+        autorId: usuarioLogado.id,
+        conteudo,
+        imagem: imagemBase64, // imagem agora em base64
+        tags: tags.split(',').map(tag => tag.trim()),
+        filtro: filtroSelecionado
+      };
+  
       const response = await fetch('https://devisocial.up.railway.app/api/Feed/criar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novoPost)
       });
-
+  
       if (response.ok) {
+        // Resetar os campos após publicação
         setMostrarModal(false);
-        setConteudo('');
+        setEtapa(1);
         setImagem('');
+        setImagemArquivo(null);
+        setErro('');
+        setFiltroSelecionado('none');
+        setConteudo('');
         setTags('');
       } else {
         const erroResp = await response.json();
@@ -77,7 +110,7 @@ function Navbar({ usuarioLogado, deslogar }) {
       }
     } catch (err) {
       console.error('Erro ao criar post:', err);
-      setErro('Erro de conexão com o servidor.');
+      setErro('Erro de conexão com o servidor ou ao converter imagem.');
     }
   };
 
