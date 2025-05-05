@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
+import { Heart, HeartIcon } from 'lucide-react';
 import '../css/home.css';
 
 function Home() {
@@ -80,12 +81,14 @@ function Home() {
                 ...post,
                 autorNome: autorData.nome_usuario || 'Usuário',
                 autorImagem: autorData.imagem || null,
+                curtiuUsuario: post.usuariosCurtiram?.includes(usuario.id) || false
               };
             } catch {
               return {
                 ...post,
                 autorNome: 'Usuário',
                 autorImagem: null,
+                curtiuUsuario: false
               };
             }
           })
@@ -230,7 +233,7 @@ function Home() {
                 src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
                 alt={`Foto de perfil de ${post.autorNome}`}
                 style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
-                onClick={() => irParaPerfil(post.autorId)} // Ação de clicar na foto para ir ao perfil
+                onClick={() => irParaPerfil(post.autorId)}
               />
               <p><strong>{post.autorNome}</strong></p>
             </div>
@@ -241,7 +244,13 @@ function Home() {
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
             <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
             <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
-            <button onClick={() => curtirPost(post.id)}>Curtir</button>
+            <button onClick={() => curtirPost(post.id)} className="like-button">
+              {post.curtiuUsuario ? (
+                <Heart className="heart filled" color="red" fill="red" />
+              ) : (
+                <HeartIcon className="heart" />
+              )}
+            </button>
             <button onClick={() => abrirComentarios(post)} style={{ marginLeft: '10px' }}>Comentar</button>
             <hr />
           </li>
@@ -265,23 +274,28 @@ function Home() {
       )}
 
       {modalComentarios && postSelecionado && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Comentários</h2>
-            <p><strong>Post:</strong> {postSelecionado.conteudo}</p>
-            <div>
-              {comentarios.map((c, i) => (
-                <p key={i}><strong>{c.autorNome}:</strong> {c.conteudo}</p>
-              ))}
+        <div className="modal-overlay comments-modal">
+          <div className="modal-content">
+            <div className="modal-image">
+              <img src={postSelecionado.imagem} alt="Post" />
             </div>
-            <textarea
-              placeholder="Digite seu comentário..."
-              value={comentarioTexto}
-              onChange={(e) => setComentarioTexto(e.target.value)}
-            />
-            <br />
-            <button onClick={comentar}>Comentar</button>
-            <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
+            <div className="modal-comments">
+              <h2>Comentários</h2>
+              <p><strong>{postSelecionado.conteudo}</strong></p>
+              <div className="comments-list">
+                {comentarios.map((c, i) => (
+                  <p key={i}><strong>{c.autorNome}:</strong> {c.conteudo}</p>
+                ))}
+              </div>
+              <textarea
+                placeholder="Digite seu comentário..."
+                value={comentarioTexto}
+                onChange={(e) => setComentarioTexto(e.target.value)}
+              />
+              <br />
+              <button onClick={comentar}>Comentar</button>
+              <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
+            </div>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-/* barra de pesquisa e storys  */
+/* barra de pesquisa e storys */
 .top-navbar {
   width: 100%;
   padding: 10px 20px;
@@ -44,296 +44,317 @@
   margin-bottom: 5px;
 }
 
-/* Final da barra de perfil e storys */
-
-/* Container principal da Home */
+/* Container principal */
 .home-container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 30px 15px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  float: 100%; /* Alinha o container à direita */
-  clear: both; /* Garante que o container não seja sobreposto pelo navbar */
+  padding: 20px;
+  font-family: 'Helvetica Neue', sans-serif;
 }
 
-/* Estilo do Avatar do Autor (imagem de perfil) */
-.autor-container {
+/* Estilização dos posts */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background-color: #fff;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+/* Cabeçalho do post */
+li > div:first-child {
   display: flex;
   align-items: center;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
-.autor-container img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+li img[alt^="Foto de perfil"] {
+  cursor: pointer;
+}
+
+/* Imagem do post */
+li img[alt="Imagem do post"] {
+  width: 100%;
+  max-height: 500px;
   object-fit: cover;
-  margin-right: 10px;
-  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
-.autor-nome {
-  font-weight: bold;
-  font-size: 14px;
+/* Botão de curtir */
+.like-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
-/* Modal Criar Post */
+.heart {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s;
+}
+
+.heart:hover {
+  transform: scale(1.2);
+}
+
+.filled {
+  fill: red;
+  stroke: red;
+}
+
+/* Modal padrão */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 999;
 }
 
 .modal {
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
   width: 90%;
   max-width: 500px;
+}
+
+/* Modal de comentários estilo Instagram */
+.comments-modal .modal-content {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-textarea, input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  resize: none;
-}
-
-button {
-  background-color: #0a66c2;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #004182;
-}
-
-.button-exit:hover {
-  background-color: #ce0101;
-}
-
-button + button {
-  margin-left: 10px;
-}
-
-/* Modal de Comentários */
-.comentario-modal {
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
+  flex-direction: row;
+  background-color: #fff;
   width: 90%;
-  max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  max-width: 900px;
+  height: 600px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.comentarios-container {
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-.comentar-rodape {
+.modal-image {
+  flex: 1;
+  background-color: #000;
   display: flex;
-  gap: 10px;
+  justify-content: center;
   align-items: center;
 }
 
-.comentar-rodape button {
-  margin-top: 10px;
+.modal-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
-/* Feed de Posts */
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 15px;
-}
-
-li img {
-  width: 100%;
-  height: auto;
-  margin-top: 10px;
-}
-
-hr {
-  border: 0;
-  border-top: 1px solid #eee;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-strong {
-  font-weight: bold;
-}
-
-/* Estilo do botão para curtir e comentar */
-button {
-  background-color: #0a66c2;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #004182;
-}
-
-button + button {
-  margin-left: 10px;
-}
-
-/* Avatar padrão (caso não tenha imagem de perfil) */
-.autor-container img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-}
-
-.autor-container img[src=""] {
-  background: #ccc; /* Cor de fundo para o avatar padrão */
-}
-
-/* Estilo do feed de posts */
-h2 {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-button {
-  padding: 8px 14px;
-  background-color: #0a66c2;
-  color: white;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #004182;
-}
-
-/* Estilo do título de erro */
-p[style*="color: red"] {
-  color: red;
-  font-size: 14px;
-}
-
-/* Estilo do botão para curtir e comentar */
-button {
-  background-color: #0a66c2;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #004182;
-}
-
-button + button {
-  margin-left: 10px;
-}
-
-/* Alinhamento do conteúdo à direita */
-.container {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.content {
-  width: 80%;
+.modal-comments {
+  flex: 1;
   padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Estilo do feed de posts */
-h2 {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 20px;
+.comments-list {
+  flex: 1;
+  margin-bottom: 10px;
+  overflow-y: auto;
 }
 
-button {
-  padding: 8px 14px;
-  background-color: #0a66c2;
-  color: white;
+.modal-comments textarea {
+  resize: none;
+  padding: 10px;
+  font-size: 14px;
+  width: 93%;
   border-radius: 6px;
+  border: 1px solid #dbdbdb;
+  margin-top: 10px;
+}
+
+/* Botões */
+.button-confirme,
+.button-cancel,
+.modal-comments button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #0095f6;
+  color: white;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
+}
+
+.button-cancel {
+  background-color: #efefef;
+  color: #333;
+}
+
+.modal-comments button {
+  background-color: #0095f6;
+  color: white;
+}
+
+.modal-comments button:last-of-type {
+  background-color: #efefef;
+  color: #333;
+}
+/* Overlay do Modal */
+.modal-overlay.comments-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Conteúdo do Modal */
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+  max-width: 800px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagem do Post */
+.modal-image {
+  width: 50%;
+  overflow: hidden;
+}
+
+.modal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Comentários */
+.modal-comments {
+  width: 50%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-comments h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.comments-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding-right: 10px;
+}
+
+.comment-item {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.comment-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.comment-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comment-content {
+  font-size: 14px;
+  color: #333;
+}
+
+.comment-content strong {
+  font-weight: bold;
+}
+
+/* Área de Digitação do Comentário */
+.comment-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: none;
+  background-color: #fafafa;
+}
+
+.comment-input:focus {
+  border-color: #0095f6;
+  outline: none;
+}
+
+
+
+/* Botão de Fechar */
+.btn-fechar {
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
   font-weight: 600;
-  transition: 0.3s;
+  cursor: pointer;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.btn-fechar:hover {
+  background-color: #ddd;
+}
+
+/* Estilização do botão "Comentar" na página principal */
+button {
+  background-color: transparent;
+  border: none;
+  color: #0095f6; /* Cor azul do Instagram */
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  padding: 5px 10px;
+  display: inline-block;
+  margin-left: 10px;
 }
 
 button:hover {
-  background-color: #004182;
+  color: #0077c2; /* Cor mais escura ao passar o mouse */
+  background-color: rgba(0, 149, 246, 0.1); /* Fundo azul claro ao passar o mouse */
+  border-radius: 5px; /* Bordas arredondadas para o botão */
 }
 
-/* Estilo do título de erro */
-p[style*="color: red"] {
-  color: red;
-  font-size: 14px;
-}
-
-/* Estilo do botão para curtir e comentar */
-button {
-  background-color: #0a66c2;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.button-confirme:hover {
-  background-color: #0f8200;
-}
-
-.button-cancel:hover {
-  background-color: #ce0101;
-}
-
-button + button {
-  margin-left: 10px;
+button:active {
+  color: #005a8b; /* Cor mais escura quando pressionado */
+  background-color: rgba(0, 149, 246, 0.2); /* Fundo mais escuro quando pressionado */
 }
