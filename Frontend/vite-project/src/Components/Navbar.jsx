@@ -16,6 +16,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [imagem, setImagem] = useState('');
   const [etapa, setEtapa] = useState(1); // 1: imagem, 2: filtro, 3: texto e tags
   const [tags, setTags] = useState('');
+  const [filtroSelecionado, setFiltroSelecionado] = useState('none');
   const [erro, setErro] = useState('');
 
   const navigate = useNavigate();
@@ -252,6 +253,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   {/* Etapa 2 - Filtros */}
   {etapa === 2 && imagem && (
     <>
+    <button type="button" className="button-voltar" onClick={() => setEtapa(1)}>Voltar</button>
       <div className="preview-imagem">
         <img
           src={imagem}
@@ -274,14 +276,12 @@ function Navbar({ usuarioLogado, deslogar }) {
             </button>
           ))}
         </div>
+        <div className="botoes-etapa">
+          <button type="button" className="button-voltar" onClick={() => setEtapa(1)}>Voltar</button>
+          <button type="button" className="button-proximo" onClick={() => setEtapa(3)}>Próximo</button>
+        </div>
       </div>
-      <button
-  type="button"
-  className="button-proximo"
-  onClick={() => setEtapa(3)}
->
-  Próximo
-</button>
+      
     </>
   )}
 
