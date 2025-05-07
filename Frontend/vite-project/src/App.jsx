@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import Perfil from './pages/perfil';
 import Navbar from './Components/Navbar';
 import Criar from './pages/Criar';
-
+import Msg from './pages/Mensagens/mensagen';
 function AppWrapper() {
   const location = useLocation();
 
@@ -35,9 +35,9 @@ function AppWrapper() {
 
   return (
     <>
-      {!deveEsconderNavbar && usuario && (
+      {/* {!deveEsconderNavbar && usuario && (
         <Navbar usuarioLogado={usuario} deslogar={deslogar} />
-      )}
+      )} */}
 
       <Routes>
         <Route path="/" element={<Login />} />
@@ -46,11 +46,11 @@ function AppWrapper() {
         <Route path="/home" element={<Home />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/criar" element={<Criar />} />
+        <Route path="/mensagen" element={<Msg/>} />
       </Routes>
     </>
   );
 }
-
 function App() {
   return (
     <BrowserRouter>
