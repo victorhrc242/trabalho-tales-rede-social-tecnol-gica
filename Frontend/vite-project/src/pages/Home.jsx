@@ -154,7 +154,22 @@ function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, usuarioId: usuario.id })
       });
-      fetchFeed();
+
+      // Atualiza localmente o post curtido
+      setPosts(prevPosts =>
+        prevPosts.map(post => {
+          if (post.id === postId) {
+            const curtiuAntes = post.curtiuUsuario;
+            const novoTotal = curtiuAntes ? post.curtidas - 1 : post.curtidas + 1;
+            return {
+              ...post,
+              curtiuUsuario: !curtiuAntes,
+              curtidas: novoTotal
+            };
+          }
+          return post;
+        })
+      );
     } catch (err) {
       console.error('Erro ao curtir:', err);
     }
@@ -212,7 +227,6 @@ function Home() {
 
       setComentarioTexto('');
       abrirComentarios(postSelecionado);
-      fetchFeed();
     } catch (err) {
       console.error('Erro ao comentar:', err);
     }
@@ -244,7 +258,7 @@ function Home() {
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
             <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
             <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
-            <button onClick={() => curtirPost(post.id)} className="like-button">
+            <button onClick={() => curtirPost(post.id)} className="like-button" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
               {post.curtiuUsuario ? (
                 <Heart className="heart filled" color="red" fill="red" />
               ) : (
