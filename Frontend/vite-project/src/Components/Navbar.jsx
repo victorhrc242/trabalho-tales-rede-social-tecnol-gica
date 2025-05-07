@@ -4,6 +4,7 @@ import {
   FaHome, FaSearch, FaCompass, FaVideo,
   FaPaperPlane, FaHeart, FaPlusSquare, FaCog
 } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 import '../css/navbar.css';
 
 function Navbar({ usuarioLogado, deslogar }) {
@@ -14,6 +15,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
+  const [filtroConfirmado, setFiltroConfirmado] = useState(false);
   const [etapa, setEtapa] = useState(1); // 1: imagem, 2: filtro, 3: texto e tags
   const [tags, setTags] = useState('');
   const [filtroSelecionado, setFiltroSelecionado] = useState('none');
@@ -249,11 +251,10 @@ function Navbar({ usuarioLogado, deslogar }) {
         </button>
     </>
   )}
-
   {/* Etapa 2 - Filtros */}
   {etapa === 2 && imagem && (
     <>
-    <button type="button" className="button-voltar" onClick={() => setEtapa(1)}>Voltar</button>
+    
       <div className="preview-imagem">
         <img
           src={imagem}
@@ -261,7 +262,7 @@ function Navbar({ usuarioLogado, deslogar }) {
           className={`imagem-preview ${filtroSelecionado}`}
         />
       </div>
-
+      <button type="button" className="button-proximo" onClick={() => setEtapa(3)}>Próximo</button>
       <div className="filtros">
         <p>Escolha um filtro:</p>
         <div className="filtros-opcoes">
@@ -274,20 +275,43 @@ function Navbar({ usuarioLogado, deslogar }) {
             >
               {filtro}
             </button>
-          ))}
-        </div>
-        <div className="botoes-etapa">
-          <button type="button" className="button-voltar" onClick={() => setEtapa(1)}>Voltar</button>
-          <button type="button" className="button-proximo" onClick={() => setEtapa(3)}>Próximo</button>
+          ))}          
         </div>
       </div>
-      
+      <div className="botoes-etapa">
+      <button type="button" className="button-voltar" onClick={() => setEtapa(1)}>←</button>
+
+      {!filtroConfirmado ? (
+        <button
+          type="button"
+          className="button-confirmar"
+          onClick={() => setFiltroConfirmado(true)}
+        >
+          Confirmar filtro
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="button-proximo"
+          onClick={() => setEtapa(3)}
+        >
+          Próximo
+        </button>
+      )}
+    </div>
     </>
   )}
 
   {/* Etapa 3 - Texto e Tags */}
   {etapa === 3 && (
     <>
+    <button
+  type="button"
+  className="button-voltar"
+  onClick={() => setEtapa(2)}
+>
+  ←
+</button>
       <textarea
         placeholder="Escreva algo..."
         value={conteudo}

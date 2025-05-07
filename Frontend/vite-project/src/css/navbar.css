@@ -233,7 +233,6 @@
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 343px;
   align-self: flex-end; /* alinha à direita */
   transition: background-color 0.2s ease;
 }
