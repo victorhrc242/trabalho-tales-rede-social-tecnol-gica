@@ -46,16 +46,15 @@ const Mensagens = () => {
     if (!usuarioSelecionado) return;
 
     const connection = new HubConnectionBuilder()
-      .withUrl('https://devisocial.up.railway.app/mensagensHub')
+      .withUrl('https://localhost:7051/mensagensHub')
       .build();
-
     connection.start().then(() => {
-      console.log('Conexão SignalR estabelecida!');
+      console.log('Conexão SignalR estabelecida! com o Hub mensagensHub');
     }).catch(err => {
       console.error('Erro ao conectar no SignalR:', err);
     });
 
-    connection.on('NovaMensagem', (novaMensagem) => {
+    connection.on('ReceberMensagem', (novaMensagem) => {
       setHistoricoMensagens(prev => [...prev, novaMensagem]);
     });
 
@@ -101,7 +100,7 @@ const Mensagens = () => {
         setHistoricoMensagens(prev => [...prev, novaMensagem]);
 
         if (conexao) {
-          await conexao.invoke('NovaMensagem', novaMensagem);
+          await conexao.invoke('ReceberMensagem', novaMensagem);
         }
 
         setMensagem('');
