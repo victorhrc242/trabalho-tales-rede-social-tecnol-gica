@@ -161,7 +161,7 @@ function Navbar({ usuarioLogado, deslogar }) {
         <Link to="/reels" className="nav-item">
           <FaVideo /> <span>kurz</span>
         </Link>
-        <Link to="/mensagens" className="nav-item">
+        <Link to="/mensagen" className="nav-item">
           <FaPaperPlane /> <span>Mensagens</span>
         </Link>
         <Link to="/notificacoes" className="nav-item">

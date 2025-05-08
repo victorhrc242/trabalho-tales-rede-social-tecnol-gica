@@ -1,0 +1,52 @@
+.mensagens-container {
+  display: flex;
+  height: 100vh;
+}
+
+.lista-chats {
+  width: 30%;
+  background: #f2f2f2;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.chat-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+}
+
+.chat-item.ativo {
+  background: #ddd;
+}
+
+.chat-aberto {
+  width: 70%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mensagens-area {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.entrada-mensagem {
+  display: flex;
+  gap: 10px;
+}
+
+.entrada-mensagem input {
+  flex: 1;
+  padding: 10px;
+}
+
+.entrada-mensagem button {
+  padding: 10px 20px;
+}
+
+.minha {
+  text-align: right;
+}
