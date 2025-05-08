@@ -226,6 +226,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   {/* Etapa 1 - Seleção de imagem */}
   {etapa === 1 && (
     <>
+          {!imagemArquivo && (
       <div
         className="area-upload"
         onDragOver={(e) => e.preventDefault()}
@@ -241,14 +242,42 @@ function Navbar({ usuarioLogado, deslogar }) {
           onChange={(e) => setImagemArquivo(e.target.files[0])}
         />
       </div>
-      {imagem}
+    )}
+
+    {imagem && (
+      <div className="preview-imagem2">
+        <img
+          src={imagem}
+          alt="Pré-visualização"
+          className={`imagem-preview ${filtroSelecionado}`}
+        />
+      </div>
+    )}
+    
+
+    {imagemArquivo && (
+      <div>
+                 <button
+                 type="button"
+                 className="button-trocar-imagem"
+                 onClick={() => {
+                   setImagemArquivo(null);
+                   setImagem('');
+                 }}
+               >
+                 Trocar imagem
+     </button>
+     <div>
       <button
-          type="button"
-          className="button-proximo"
-          onClick={() => setEtapa(2)}
-        >
-          Próximo
-        </button>
+        type="button"
+        className="button-proximo"
+        onClick={() => setEtapa(2)}
+      >
+        Próximo
+      </button>
+      </div>
+      </div>
+    )}
     </>
   )}
   {/* Etapa 2 - Filtros */}
@@ -262,7 +291,7 @@ function Navbar({ usuarioLogado, deslogar }) {
           className={`imagem-preview ${filtroSelecionado}`}
         />
       </div>
-      <button type="button" className="button-proximo" onClick={() => setEtapa(3)}>Próximo</button>
+      
       <div className="filtros">
         <p>Escolha um filtro:</p>
         <div className="filtros-opcoes">
@@ -305,13 +334,6 @@ function Navbar({ usuarioLogado, deslogar }) {
   {/* Etapa 3 - Texto e Tags */}
   {etapa === 3 && (
     <>
-    <button
-  type="button"
-  className="button-voltar"
-  onClick={() => setEtapa(2)}
->
-  ←
-</button>
       <textarea
         placeholder="Escreva algo..."
         value={conteudo}
