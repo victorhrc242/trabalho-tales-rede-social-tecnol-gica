@@ -4,6 +4,7 @@ import {
   FaHome, FaSearch, FaCompass, FaVideo,
   FaPaperPlane, FaHeart, FaPlusSquare, FaCog
 } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 import '../css/navbar.css';
 
 function Navbar({ usuarioLogado, deslogar }) {
@@ -14,8 +15,10 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
+  const [filtroConfirmado, setFiltroConfirmado] = useState(false);
   const [etapa, setEtapa] = useState(1); // 1: imagem, 2: filtro, 3: texto e tags
   const [tags, setTags] = useState('');
+  const [filtroSelecionado, setFiltroSelecionado] = useState('none');
   const [erro, setErro] = useState('');
 
   const navigate = useNavigate();
@@ -223,6 +226,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   {/* Etapa 1 - Seleção de imagem */}
   {etapa === 1 && (
     <>
+          {!imagemArquivo && (
       <div
         className="area-upload"
         onDragOver={(e) => e.preventDefault()}
@@ -238,20 +242,48 @@ function Navbar({ usuarioLogado, deslogar }) {
           onChange={(e) => setImagemArquivo(e.target.files[0])}
         />
       </div>
-      {imagem}
+    )}
+
+    {imagem && (
+      <div className="preview-imagem2">
+        <img
+          src={imagem}
+          alt="Pré-visualização"
+          className={`imagem-preview ${filtroSelecionado}`}
+        />
+      </div>
+    )}
+    
+
+    {imagemArquivo && (
+      <div>
+                 <button
+                 type="button"
+                 className="button-trocar-imagem"
+                 onClick={() => {
+                   setImagemArquivo(null);
+                   setImagem('');
+                 }}
+               >
+                 Trocar imagem
+     </button>
+     <div>
       <button
-          type="button"
-          className="button-proximo"
-          onClick={() => setEtapa(2)}
-        >
-          Próximo
-        </button>
+        type="button"
+        className="button-proximo"
+        onClick={() => setEtapa(2)}
+      >
+        Próximo
+      </button>
+      </div>
+      </div>
+    )}
     </>
   )}
-
   {/* Etapa 2 - Filtros */}
   {etapa === 2 && imagem && (
     <>
+    
       <div className="preview-imagem">
         <img
           src={imagem}
@@ -259,7 +291,7 @@ function Navbar({ usuarioLogado, deslogar }) {
           className={`imagem-preview ${filtroSelecionado}`}
         />
       </div>
-
+      
       <div className="filtros">
         <p>Escolha um filtro:</p>
         <div className="filtros-opcoes">
@@ -272,16 +304,30 @@ function Navbar({ usuarioLogado, deslogar }) {
             >
               {filtro}
             </button>
-          ))}
+          ))}          
         </div>
       </div>
-      <button
-  type="button"
-  className="button-proximo"
-  onClick={() => setEtapa(3)}
->
-  Próximo
-</button>
+      <div className="botoes-etapa">
+      <button type="button" className="button-voltar" onClick={() => setEtapa(1)}>←</button>
+
+      {!filtroConfirmado ? (
+        <button
+          type="button"
+          className="button-confirmar"
+          onClick={() => setFiltroConfirmado(true)}
+        >
+          Confirmar filtro
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="button-proximo"
+          onClick={() => setEtapa(3)}
+        >
+          Próximo
+        </button>
+      )}
+    </div>
     </>
   )}
 
