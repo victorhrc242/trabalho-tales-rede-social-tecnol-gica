@@ -265,33 +265,33 @@
 
 .button-trocar-imagem{
   position: fixed;
-    top: 500px;
-    background-color: #0095f6;
-    color: white;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    align-self: flex-start;
-    transition: background-color 0.2s ease;
+  top: 500px;
+  background-color: #0095f6;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: anchor-center; /* alinha à direita */
+  transition: background-color 0.2s ease;
 }
 
 .fechar-modal-x {
   position: absolute;
-  top: 15px;
-  right: 20px;
+  top: -80px;
+  right: -400px;
   background: none;
   border: none;
   font-size: 28px;
-  color: #777;
+  color: #fff;
   cursor: pointer;
   z-index: 1010;
   transition: color 0.2s ease;
 }
 
 .fechar-modal-x:hover {
-  background-color: #db1b1b;
+  background-color: transparent;
 }
 
 .button-confirme,

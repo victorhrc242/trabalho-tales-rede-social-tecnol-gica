@@ -15,6 +15,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
   const [imagem, setImagem] = useState('');
+  const [filtroConfirmadoValor, setFiltroConfirmadoValor] = useState('none');
   const [filtroConfirmado, setFiltroConfirmado] = useState(false);
   const [etapa, setEtapa] = useState(1); // 1: imagem, 2: filtro, 3: texto e tags
   const [tags, setTags] = useState('');
@@ -300,7 +301,14 @@ function Navbar({ usuarioLogado, deslogar }) {
               type="button"
               key={filtro}
               className={`filtro-botao ${filtroSelecionado === filtro ? 'ativo' : ''}`}
-              onClick={() => setFiltroSelecionado(filtro)}
+              onClick={() => {setFiltroSelecionado(filtro);
+              // Se o filtro for diferente do confirmado, reativa o botão de confirmação
+              if (filtro !== filtroConfirmadoValor) {
+                  setFiltroConfirmado(false);
+              } else {
+                setFiltroConfirmado(true);
+              }
+              }}
             >
               {filtro}
             </button>
@@ -314,7 +322,10 @@ function Navbar({ usuarioLogado, deslogar }) {
         <button
           type="button"
           className="button-confirmar"
-          onClick={() => setFiltroConfirmado(true)}
+          onClick={() => {setFiltroConfirmado(true);
+          setFiltroConfirmado(true);
+          setFiltroConfirmadoValor(filtroSelecionado); // salva o filtro confirmado
+          }}
         >
           Confirmar filtro
         </button>
