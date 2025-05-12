@@ -4,18 +4,16 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #ffffff; /* Fundo da tela */
   padding: 20px;
 }
 
 /* Modal (caixa do formulário) */
 .cadastro-box {
-  background-color: #e7e7e7; /* Fundo claro do modal */
+  background-color: transparent; /* Fundo claro do modal */
   border-radius: 16px;
   padding: 50px;
   width: 500px; /* ← LARGURA REDUZIDA AQUI */
   max-width: 95%;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Formulário dentro do modal */
@@ -32,22 +30,22 @@
   font-size: 36px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin-bottom: 20px;
-  text-align: left;
+  text-align: center;
 }
-
 /* Inputs e textarea */
+.cadastro-form input[type="text"],
 .cadastro-form input,
 .cadastro-form textarea {
   background-color: #ffffff;
   border: 1px solid #0a66c2;
-  border-radius: 8px;
   padding: 12px;
   font-size: 15px;
   color: #262626;
   margin-bottom: 15px;
-  width: 100%;
-  box-sizing: border-box;
+  width:80%;
   transition: border 0.3s ease, box-shadow 0.3s ease;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Campo de biografia com altura maior */

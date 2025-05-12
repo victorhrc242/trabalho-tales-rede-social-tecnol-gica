@@ -102,13 +102,14 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="cadastro-container">
+    <footer>
+          <div className="cadastro-container">
       <div className="cadastro-box">
         <form
           className="cadastro-form"
           onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
         >
-          <h2>Cadastro</h2>
+          <h2>Devisocial</h2>
 
           {etapa === 1 ? (
             <>
@@ -188,6 +189,8 @@ const Cadastro = () => {
         </form>
       </div>
     </div>
+    </footer>
+
   );
 };
 
