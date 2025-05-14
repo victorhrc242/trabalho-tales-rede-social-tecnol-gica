@@ -1,3 +1,4 @@
+
 /* barra de pesquisa e storys  */
 .top-navbar {
   width: 100%;
@@ -54,8 +55,8 @@
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  float: 100%; /* Alinha o container à direita */
-  clear: both; /* Garante que o container não seja sobreposto pelo navbar */
+  float: 100%;
+  clear: both;
 }
 
 /* Estilo do Avatar do Autor (imagem de perfil) */
@@ -136,34 +137,150 @@ button + button {
   margin-left: 10px;
 }
 
-/* Modal de Comentários */
-.comentario-modal {
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 500px;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.comentarios-container {
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-.comentar-rodape {
-  display: flex;
-  gap: 10px;
+  justify-content: center;
   align-items: center;
 }
 
-.comentar-rodape button {
-  margin-top: 10px;
+/* Modal de Comentários estilo Instagram */
+.comentarios-modal {
+  display: flex;
+  background-color: #fff;
+  width: 90%;
+  max-width: 950px;
+  height: 85vh;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+  flex-direction: row;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+/* Lado da Imagem */
+.imagem-container {
+  flex: 1;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imagem-post {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Lado dos Comentários */
+.comentarios-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ddd;
+}
+
+/* Header com nome do autor */
+.comentarios-header {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Lista de Comentários */
+.comentarios-lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.comentario-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.comentario-item img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comentario-conteudo {
+  display: flex;
+  flex-direction: column;
+}
+
+.comentario-autor {
+  font-weight: 600;
+}
+
+.comentario-texto {
+  font-weight: 400;
+}
+
+/* Campo de escrever novo comentário */
+.comentarios-form {
+  border-top: 1px solid #eee;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comentarios-form textarea {
+  flex: 1;
+  resize: none;
+  border: none;
+  font-size: 14px;
+  height: 36px;
+  padding: 8px 10px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  outline: none;
+}
+
+.comentarios-form button {
+  background-color: transparent;
+  color: #0095f6;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.comentarios-form button:hover {
+  opacity: 0.8;
+}
+
+/* Botão de fechar */
+.fechar-modal {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+  z-index: 1001;
+}
 /* Feed de Posts */
 ul {
   list-style-type: none;
@@ -213,66 +330,9 @@ button + button {
   margin-left: 10px;
 }
 
-/* Avatar padrão (caso não tenha imagem de perfil) */
-.autor-container img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-}
-
+/* Avatar padrão */
 .autor-container img[src=""] {
-  background: #ccc; /* Cor de fundo para o avatar padrão */
-}
-
-/* Estilo do feed de posts */
-h2 {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-button {
-  padding: 8px 14px;
-  background-color: #0a66c2;
-  color: white;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #004182;
-}
-
-/* Estilo do título de erro */
-p[style*="color: red"] {
-  color: red;
-  font-size: 14px;
-}
-
-/* Estilo do botão para curtir e comentar */
-button {
-  background-color: #0a66c2;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #004182;
-}
-
-button + button {
-  margin-left: 10px;
+  background: #ccc;
 }
 
 /* Alinhamento do conteúdo à direita */
@@ -286,54 +346,10 @@ button + button {
   padding: 20px;
 }
 
-/* Estilo do feed de posts */
-h2 {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-button {
-  padding: 8px 14px;
-  background-color: #0a66c2;
-  color: white;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #004182;
-}
-
-/* Estilo do título de erro */
-p[style*="color: red"] {
-  color: red;
-  font-size: 14px;
-}
-
-/* Estilo do botão para curtir e comentar */
-button {
-  background-color: #0a66c2;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
 .button-confirme:hover {
   background-color: #0f8200;
 }
 
 .button-cancel:hover {
   background-color: #ce0101;
-}
-
-button + button {
-  margin-left: 10px;
 }

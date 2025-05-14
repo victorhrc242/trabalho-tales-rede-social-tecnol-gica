@@ -264,27 +264,40 @@ function Home() {
         </div>
       )}
 
-      {modalComentarios && postSelecionado && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Comentários</h2>
-            <p><strong>Post:</strong> {postSelecionado.conteudo}</p>
-            <div>
-              {comentarios.map((c, i) => (
-                <p key={i}><strong>{c.autorNome}:</strong> {c.conteudo}</p>
-              ))}
-            </div>
-            <textarea
-              placeholder="Digite seu comentário..."
-              value={comentarioTexto}
-              onChange={(e) => setComentarioTexto(e.target.value)}
+    {modalComentarios && postSelecionado && (
+      <div className="modal-overlay">
+        <div className="comentarios-modal">
+      <div className="imagem-container">
+        <img
+          src={postSelecionado.imagem}
+          alt="Imagem do post"
+          className="imagem-post"
+        />
+      </div>
+       <div className="comentarios-container">
+         <div className="comentarios-header">
+           <strong>{postSelecionado.autorNome}</strong>
+          </div>
+        <div className="comentarios-lista">
+          {comentarios.map((c, i) => (
+            <p key={i}>
+              <strong>{c.autorNome}:</strong> {c.conteudo}
+            </p>
+          ))}
+        </div>
+          <div className="comentarios-form">
+             <textarea
+               placeholder="Adicione um comentário..."
+               value={comentarioTexto}
+               onChange={(e) => setComentarioTexto(e.target.value)}
             />
-            <br />
-            <button onClick={comentar}>Comentar</button>
-            <button onClick={() => setModalComentarios(false)} style={{ marginLeft: '10px' }}>Fechar</button>
+             <button onClick={comentar}>Publicar</button>
+           </div>
+              <button className="fechar-modal" onClick={() => setModalComentarios(false)}>X</button>
           </div>
         </div>
-      )}
+        </div>
+    )}
     </div>
   );
 }
