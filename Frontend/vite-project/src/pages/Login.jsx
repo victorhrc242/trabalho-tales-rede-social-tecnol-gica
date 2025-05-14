@@ -66,7 +66,7 @@ function Login() {
     <div className='container-login'>
       <div className="modal-login">
         <div className="formulario">
-          <h2 className="titulo-login">Login</h2>
+          <h2 className="titulo-login">Devisocial</h2>
           <form onSubmit={handleLogin}>
             <input
               type="email"
@@ -82,12 +82,21 @@ function Login() {
               onChange={(e) => setSenha(e.target.value)}
               required
             />
+            <br />
             <button className='botao-entrar' type="submit">Entrar</button>
           </form>
-
+          <br />
+        <div className="linha-esquerda">
+        </div>
+        <div className="ou">
+        ou
+        </div>
+        <div className="linha-direita">
+        </div>
+        <br />
           {erro && <p className="erro">{erro}</p>}
-          <p>Se não tem conta <Link to="/cadastro">Cadastrar</Link></p>
-          <p>Se não sabe a senha <Link to="/recuperar">Recuperar</Link></p> 
+          <p className="esq"><Link to="/recuperar">Esqueceu a senha?</Link></p> 
+          <p>Não tem uma conta? <Link to="/cadastro">Cadastrar</Link></p>
         </div>
 
         <div className="imagem-login"></div>
