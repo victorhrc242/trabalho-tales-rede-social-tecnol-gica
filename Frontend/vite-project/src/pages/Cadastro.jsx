@@ -102,14 +102,15 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="cadastro-container">
+    <footer>
+          <div className="cadastro-container">
       <div className="cadastro-box">
         <form
           className="cadastro-form"
           onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
         >
-          <h2>Cadastro</h2>
-
+          <h2>Devisocial</h2>
+            <p>Cadastre-se para ver fotos e vídeos dos seus amigos.</p>
           {etapa === 1 ? (
             <>
               <input
@@ -153,7 +154,16 @@ const Cadastro = () => {
               />
 
               <button type="submit">Próximo</button>
+ <div className="linha-esquerda">
+        </div>
+        <div className="ou">
+        ou
+        </div>
+        <div className="linha-direita">
+        </div>
             </>
+
+            
           ) : (
             <>
               <input
@@ -175,6 +185,12 @@ const Cadastro = () => {
                 value={biografia}
                 onChange={(e) => setBiografia(e.target.value)}
               />
+          <p>As pessoas que usam nosso serviço podem ter carregado suas informações de 
+            contato no Instagram. <a href="">Saiba mais</a> 
+          Ao se cadastrar, você concorda com nossos <a href="">Termos</a>,
+ <a href="">Política de Privacidade</a> e  <a href="">Política de Cookies</a>.
+
+</p>
 
               <button type="submit">Cadastrar</button>
             </>
@@ -188,6 +204,8 @@ const Cadastro = () => {
         </form>
       </div>
     </div>
+    </footer>
+
   );
 };
 

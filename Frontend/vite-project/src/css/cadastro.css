@@ -4,18 +4,17 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #ffffff; /* Fundo da tela */
   padding: 20px;
+
 }
 
 /* Modal (caixa do formulário) */
 .cadastro-box {
-  background-color: #e7e7e7; /* Fundo claro do modal */
+  background-color: transparent; /* Fundo claro do modal */
   border-radius: 16px;
-  padding: 50px;
-  width: 500px; /* ← LARGURA REDUZIDA AQUI */
+  padding: 0px;
+  width: 410px; /* ← LARGURA REDUZIDA AQUI */
   max-width: 95%;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Formulário dentro do modal */
@@ -23,7 +22,13 @@
   display: flex;
   flex-direction: column;
   color: #262626;
-  width: 100%;
+  width: 80%;
+  border: 2px solid black; /* ← borda preta */
+  padding: 20px; /* espaço interno para os elementos não ficarem colados à borda */
+  background-color: #ffffff; /* opcional: deixa o fundo branco dentro da borda */
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -100px;
 }
 
 /* Título */
@@ -32,22 +37,22 @@
   font-size: 36px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin-bottom: 20px;
-  text-align: left;
+  text-align: center;
 }
-
 /* Inputs e textarea */
+.cadastro-form input[type="text"],
 .cadastro-form input,
 .cadastro-form textarea {
   background-color: #ffffff;
   border: 1px solid #0a66c2;
-  border-radius: 8px;
   padding: 12px;
   font-size: 15px;
   color: #262626;
   margin-bottom: 15px;
-  width: 100%;
-  box-sizing: border-box;
+  width:70%;
   transition: border 0.3s ease, box-shadow 0.3s ease;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Campo de biografia com altura maior */
@@ -86,6 +91,9 @@
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
+  width: 260px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Parágrafo e link */
@@ -112,4 +120,31 @@
   margin-top: 10px;
   border-radius: 8px;
   text-align: center;
+}
+fieldset{
+  width: 10px;
+  height: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+}
+
+.linha-esquerda{
+  background-color: rgb(12, 11, 11);
+  width: 100px;
+  height: 1px;
+  margin-top: 20px;
+  margin-left: 50px;
+}
+.linha-direita{
+  background-color: rgb(12, 11, 11);
+  width: 100px;
+  height: 1px;
+  margin-left: 56%;
+  margin-top: -9px;  
+}
+.ou{
+  color: rgb(3, 3, 3);
+  text-align: center;
+  margin-top: -14px;
 }

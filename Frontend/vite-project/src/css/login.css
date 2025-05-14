@@ -11,12 +11,11 @@
 .modal-login {
   display: flex;
   flex-direction: row;
-  background-color: #e7e7e7;
+  background-color: #ffffff;
   border-radius: 12px;
   overflow: hidden;
-
   /* Aumentado */
-  width: 850px;
+  width: 1000px;
   max-width: 95%;
   height: 500px;
 }
@@ -29,6 +28,7 @@
   padding: 30px;
   flex: 1;
   color: white;
+  margin-top: -150px;
 }
 
 /* Título com fonte maior e diferente */
@@ -37,19 +37,19 @@
   font-size: 36px; /* maior */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* fonte diferente */
   margin-bottom: 20px;
-  text-align: left;
+  text-align: center;
+
 }
 
 /* Inputs */
 .formulario input {
   background-color: #e7e7e7;
-  border: 1px solid #0a66c2;
-  border-radius: 8px;
   padding: 10px;
   color: #474747; /* Cor inicial do texto */
   font-size: 15px;
   margin-bottom: 15px;
-  width: 100%;
+  width: 70%;
+margin-left: 70px;
 }
 
 /* Quando o usuário estiver digitando, a cor do texto muda */
@@ -66,7 +66,7 @@
 
 /* Botão */
 .botao-entrar {
-  background-color: #0a66c2;
+  background-color: #4990d8;
   color: white;
   border: none;
   border-radius: 8px;
@@ -75,7 +75,8 @@
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
-  width: 100%;
+  width: 70%;
+  margin-left: 80px;
 }
 
 .botao-entrar:hover {
@@ -88,7 +89,6 @@
   color: #474747;
   margin-top: 10px;
 }
-
 .container-login a {
   color: #0a66c2;
   text-decoration: none;
@@ -111,7 +111,32 @@
 /* Lado direito - imagem */
 .imagem-login {
   flex: 1;
-  background-image: url('https://hospitalsantamonica.com.br/wp-content/uploads/2020/11/redes-sociais-saude-mental.png');
+  background-image: url('https://seo10digital.com.br/wp-content/uploads/2020/12/redes-sociais.jpg');
   background-size: cover;
   background-position: center;
+}
+.modal-login {
+  flex-direction: row-reverse; /* Inverte os lados */
+}
+.linha-esquerda{
+  background-color: rgb(12, 11, 11);
+  width: 150px;
+  height: 1px;
+  margin-top: 20px;
+  margin-left: 60px;
+}
+.linha-direita{
+  background-color: rgb(12, 11, 11);
+  width: 150px;
+  height: 1px;
+  margin-left: 56%;
+  margin-top: -9px;  
+}
+.ou{
+  color: rgb(3, 3, 3);
+  text-align: center;
+  margin-top: -14px;
+}
+.esq a{
+  color: #051e4b;
 }
