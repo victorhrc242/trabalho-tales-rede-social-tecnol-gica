@@ -284,61 +284,58 @@ function Navbar({ usuarioLogado, deslogar }) {
   {/* Etapa 2 - Filtros */}
   {etapa === 2 && imagem && (
     <>
-    
-      <div className="preview-imagem">
-        <img
-          src={imagem}
-          alt="Pré-visualização"
-          className={`imagem-preview ${filtroSelecionado}`}
-        />
-      </div>
-      
-      <div className="filtros">
-        <p>Escolha um filtro:</p>
-        <div className="filtros-opcoes">
-          {['none', 'grayscale', 'sepia', 'invert', 'contrast', 'saturate'].map((filtro) => (
-            <button
-              type="button"
-              key={filtro}
-              className={`filtro-botao ${filtroSelecionado === filtro ? 'ativo' : ''}`}
-              onClick={() => {setFiltroSelecionado(filtro);
-              // Se o filtro for diferente do confirmado, reativa o botão de confirmação
-              if (filtro !== filtroConfirmadoValor) {
-                  setFiltroConfirmado(false);
-              } else {
-                setFiltroConfirmado(true);
-              }
-              }}
-            >
-              {filtro}
-            </button>
-          ))}          
-        </div>
-      </div>
-      <div className="botoes-etapa">
-      <button type="button" className="button-voltar" onClick={() => setEtapa(1)}>←</button>
+<div className="preview-e-filtros">
+  <div className="preview-imagem2">
+    <img
+      src={imagem}
+      alt="Pré-visualização"
+      className={`imagem-preview ${filtroSelecionado}`}
+    />
+  </div>
 
-      {!filtroConfirmado ? (
-        <button
-          type="button"
-          className="button-confirmar"
-          onClick={() => {setFiltroConfirmado(true);
-          setFiltroConfirmado(true);
-          setFiltroConfirmadoValor(filtroSelecionado); // salva o filtro confirmado
-          }}
-        >
-          Confirmar filtro
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="button-proximo"
-          onClick={() => setEtapa(3)}
-        >
-          Próximo
-        </button>
-      )}
-    </div>
+  <div className="filtros-preview">
+    {['none', 'grayscale', 'sepia', 'invert', 'contrast', 'saturate'].map((filtro) => (
+      <div
+        key={filtro}
+        className={`filtro-miniatura ${filtroSelecionado === filtro ? 'ativo' : ''}`}
+        onClick={() => {
+          setFiltroSelecionado(filtro);
+          setFiltroConfirmado(false); // ao trocar, precisa confirmar de novo
+        }}
+      >
+        <img
+          src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=200&q=80"
+          alt={`Filtro ${filtro}`}
+          className={`imagem-miniatura ${filtro}`}
+        />
+        <span>{filtro}</span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<div className="botoes-acoes">
+  {!filtroConfirmado ? (
+    <button
+      type="button"
+      className="button-confirmar"
+      onClick={() => {
+        setFiltroConfirmado(true);
+        setFiltroConfirmadoValor(filtroSelecionado); // salvar o filtro atual
+      }}
+    >
+      Confirmar filtro
+    </button>
+  ) : (
+    <button
+      type="button"
+      className="button-proximo"
+      onClick={() => setEtapa(3)}
+    >
+      Próximo
+    </button>
+  )}
+</div>
     </>
   )}
 
