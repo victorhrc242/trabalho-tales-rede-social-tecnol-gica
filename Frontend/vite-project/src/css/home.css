@@ -59,12 +59,14 @@
   clear: both;
 }
 
-/* Estilo do Avatar do Autor (imagem de perfil) */
 .autor-container {
   display: flex;
   align-items: center;
+  justify-content: flex-start; /* Isso alinha tudo à esquerda */
   margin-bottom: 10px;
+  padding-left: 10px; /* Opcional: dá um respiro à esquerda */
 }
+
 
 .autor-container img {
   width: 40px;
@@ -78,6 +80,7 @@
 .autor-nome {
   font-weight: bold;
   font-size: 14px;
+  margin-right: 400px;
 }
 
 /* Modal Criar Post */
@@ -294,10 +297,17 @@ li {
 }
 
 li img {
+  display: block;
+  max-width: 500px;
   width: 100%;
-  height: auto;
-  margin-top: 10px;
+  height: 500px;
+  margin: 10px auto 0 auto; /* Centraliza horizontalmente */
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #f2f2f2;
 }
+
+
 
 hr {
   border: 0;
@@ -353,3 +363,6 @@ button + button {
 .button-cancel:hover {
   background-color: #ce0101;
 }
+
+
+
