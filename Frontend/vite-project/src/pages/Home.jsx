@@ -164,7 +164,7 @@ function Home() {
     setModalComentarios(true);
 
     try {
-      const response = await fetch(`https://devisocial.up.railway.app/api/Comentario/post/${post.id}`);
+      const response = await fetch(`https://devisocial.up.railway.app/api/Comentario/comentarios/${post.id}`);
       const data = await response.json();
 
       const comentariosComNomes = await Promise.all(
