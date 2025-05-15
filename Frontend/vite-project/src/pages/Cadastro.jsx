@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import '../css/cadastro.css';
@@ -21,6 +21,24 @@ const Cadastro = () => {
   const [dataAniversario, setDataAniversario] = useState('');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
+
+  // Carregar imagem padrão como arquivo para o preview da foto
+  useEffect(() => {
+    // Só carregar quando entrar na etapa 2 e se ainda não tiver foto selecionada
+    if (etapa === 2 && !fotoPerfilArquivo) {
+      const carregarImagemPadrao = async () => {
+        try {
+          const resposta = await fetch('https://th.bing.com/th/id/OIP.UF-gmvY1iFxXDL_dHPmuHgAAAA?rs=1&pid=ImgDetMain?text=Foto');
+          const blob = await resposta.blob();
+          const arquivoPadrao = new File([blob], 'fotoPadrao.png', { type: blob.type });
+          setFotoPerfilArquivo(arquivoPadrao);
+        } catch (error) {
+          console.error('Erro ao carregar imagem padrão:', error);
+        }
+      };
+      carregarImagemPadrao();
+    }
+  }, [etapa, fotoPerfilArquivo]);
 
   const uploadImagem = async (file) => {
     const fileName = `${Date.now()}_${file.name}`;
@@ -103,109 +121,115 @@ const Cadastro = () => {
 
   return (
     <footer>
-          <div className="cadastro-container">
-      <div className="cadastro-box">
-        <form
-          className="cadastro-form"
-          onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
-        >
-          <h2>Devisocial</h2>
+      <div className="cadastro-container">
+        <div className="cadastro-box">
+          <form
+            className={`cadastro-form ${etapa === 1 ? 'form-etapa1' : 'form-etapa2'}`}
+            onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
+          >
+            <h2>Devisocial</h2>
             <p>Cadastre-se para ver fotos e vídeos dos seus amigos.</p>
-          {etapa === 1 ? (
-            <>
-              <input
-                type="text"
-                placeholder="Nome completo"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-              />
 
-              <input
-                type="email"
-                placeholder="E-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+            {etapa === 1 ? (
+              <>
+                <input
+                  type="text"
+                  placeholder="Nome completo"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="E-mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Repetir senha"
+                  value={repetirSenha}
+                  onChange={(e) => setRepetirSenha(e.target.value)}
+                  required
+                />
+                <input
+                  type="date"
+                  placeholder="Data de nascimento"
+                  value={dataAniversario}
+                  onChange={(e) => setDataAniversario(e.target.value)}
+                  required
+                />
+                <button type="submit">Próximo</button>
 
-              <input
-                type="password"
-                placeholder="Senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-              />
+                <div className="linha-esquerda"></div>
+                <div className="ou">ou</div>
+                <div className="linha-direita"></div>
+              </>
+            ) : (
+              <>
+                {/* Foto de perfil - preview circular e clicável */}
+                <label htmlFor="fotoPerfilInput">
+                  <img
+                    src={
+                      fotoPerfilArquivo
+                        ? URL.createObjectURL(fotoPerfilArquivo)
+                        : 'https://via.placeholder.com/100x100.png?text=Foto'
+                    }
+                    alt="Foto de perfil"
+                    className="foto-perfil-preview"
+                  />
+                </label>
+                <input
+                  type="file"
+                  id="fotoPerfilInput"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={(e) => setFotoPerfilArquivo(e.target.files[0])}
+                />
 
-              <input
-                type="password"
-                placeholder="Repetir senha"
-                value={repetirSenha}
-                onChange={(e) => setRepetirSenha(e.target.value)}
-                required
-              />
+                <input
+                  type="text"
+                  placeholder="Nome de usuário"
+                  value={nome_usuario}
+                  onChange={(e) => setNome_usuario(e.target.value)}
+                  required
+                />
 
-              <input
-                type="date"
-                placeholder="Data de nascimento"
-                value={dataAniversario}
-                onChange={(e) => setDataAniversario(e.target.value)}
-                required
-              />
+                <textarea
+                  placeholder="Biografia"
+                  value={biografia}
+                  onChange={(e) => setBiografia(e.target.value)}
+                />
 
-              <button type="submit">Próximo</button>
- <div className="linha-esquerda">
+                <p>
+                  As pessoas que usam nosso serviço podem ter carregado suas informações
+                  de contato no Instagram. <a href="#">Saiba mais</a>. Ao se cadastrar,
+                  você concorda com nossos <a href="#">Termos</a>,{' '}
+                  <a href="#">Política de Privacidade</a> e{' '}
+                  <a href="#">Política de Cookies</a>.
+                </p>
+
+                <button type="submit">Cadastrar</button>
+              </>
+            )}
+
+            <p>
+              Já tem uma conta? <Link to="/">Logar</Link>
+            </p>
+
+            {erro && <p className="erro">{erro}</p>}
+          </form>
         </div>
-        <div className="ou">
-        ou
-        </div>
-        <div className="linha-direita">
-        </div>
-            </>
-
-            
-          ) : (
-            <>
-              <input
-                type="text"
-                placeholder="Nome de usuário"
-                value={nome_usuario}
-                onChange={(e) => setNome_usuario(e.target.value)}
-                required
-              />
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFotoPerfilArquivo(e.target.files[0])}
-              />
-
-              <textarea
-                placeholder="Biografia"
-                value={biografia}
-                onChange={(e) => setBiografia(e.target.value)}
-              />
-          <p>As pessoas que usam nosso serviço podem ter carregado suas informações de 
-            contato no Instagram. <a href="">Saiba mais</a> 
-          Ao se cadastrar, você concorda com nossos <a href="">Termos</a>,
- <a href="">Política de Privacidade</a> e  <a href="">Política de Cookies</a>.
-
-</p>
-
-              <button type="submit">Cadastrar</button>
-            </>
-          )}
-
-          <p>
-            Já tem uma conta? <Link to="/">Logar</Link>
-          </p>
-
-          {erro && <p className="erro">{erro}</p>}
-        </form>
       </div>
-    </div>
     </footer>
-
   );
 };
 
