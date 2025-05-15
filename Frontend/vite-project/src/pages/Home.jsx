@@ -225,24 +225,33 @@ function Home() {
       <ul>
         {posts.map(post => (
           <li key={post.id} style={{ marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-              <img
-                src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-                alt={`Foto de perfil de ${post.autorNome}`}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '458px', objectFit: 'cover' }}
-                onClick={() => irParaPerfil(post.autorId)} // Ação de clicar na foto para ir ao perfil
-              />
-              <p><strong>{post.autorNome}</strong></p>
-            </div>
-            {post.imagem && (
-              <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '500px' }} />
-            )}
-            <p><strong>Conteúdo:</strong> {post.conteudo}</p>
-            <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
-            <p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
-            <p><strong>Curtidas:</strong> {post.curtidas} | <strong>Comentários:</strong> {post.comentarios}</p>
-            <button onClick={() => curtirPost(post.id)}>Curtir</button>
-            <button onClick={() => abrirComentarios(post)} style={{ marginLeft: '10px' }}>Comentar</button>
+          <div className="autor-container">
+  <img
+    src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
+    alt={`Foto de perfil de ${post.autorNome}`}
+    onClick={() => irParaPerfil(post.autorId)}
+  />
+  <span className="autor-nome">{post.autorNome}</span>
+</div>
+
+
+{post.imagem && (
+  <img src={post.imagem} alt="Imagem do post" className="imagem-post-feed" />
+)}
+
+<div className="botoes-post">
+  <button onClick={() => curtirPost(post.id)}>
+    Curtir ({post.curtidas})
+  </button>
+  <button onClick={() => abrirComentarios(post)}>
+    Comentar ({post.comentarios})
+  </button>
+</div>
+
+<p><strong>Conteúdo:</strong> {post.conteudo}</p>
+<p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
+<p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
+
             <hr />
           </li>
         ))}
