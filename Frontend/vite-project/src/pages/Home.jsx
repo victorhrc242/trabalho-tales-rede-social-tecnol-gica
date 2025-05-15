@@ -164,7 +164,7 @@ function Home() {
     setModalComentarios(true);
 
     try {
-      const response = await fetch(`https://devisocial.up.railway.app/api/Comentario/post/${post.id}`);
+      const response = await fetch(`https://devisocial.up.railway.app/api/Comentario/comentarios/${post.id}`);
       const data = await response.json();
 
       const comentariosComNomes = await Promise.all(
@@ -229,13 +229,13 @@ function Home() {
               <img
                 src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
                 alt={`Foto de perfil de ${post.autorNome}`}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: 'cover' }}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '458px', objectFit: 'cover' }}
                 onClick={() => irParaPerfil(post.autorId)} // Ação de clicar na foto para ir ao perfil
               />
               <p><strong>{post.autorNome}</strong></p>
             </div>
             {post.imagem && (
-              <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '300px' }} />
+              <img src={post.imagem} alt="Imagem do post" style={{ maxWidth: '500px' }} />
             )}
             <p><strong>Conteúdo:</strong> {post.conteudo}</p>
             <p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
