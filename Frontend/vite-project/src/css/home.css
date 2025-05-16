@@ -62,9 +62,9 @@
 .autor-container {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Isso alinha tudo à esquerda */
+  justify-content: flex-start;
   margin-bottom: 10px;
-  padding-left: 10px; /* Opcional: dá um respiro à esquerda */
+  padding-left: 10px;
 }
 
 
@@ -80,7 +80,7 @@
 .autor-nome {
   font-weight: bold;
   font-size: 14px;
-  margin-right: 400px;
+  margin-right: 458px; /* Espaço entre a imagem e o nome */
 }
 
 /* Modal Criar Post */
@@ -321,6 +321,14 @@ strong {
 }
 
 /* Estilo do botão para curtir e comentar */
+.botoes-post {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 50px;
+}
+
 button {
   background-color: #0a66c2;
   color: white;
@@ -364,5 +372,8 @@ button + button {
   background-color: #ce0101;
 }
 
+.Nomeautor{
+  margin-right: 400px;
+}
 
 
