@@ -265,33 +265,33 @@
 
 .button-trocar-imagem{
   position: fixed;
-    top: 500px;
-    background-color: #0095f6;
-    color: white;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    align-self: flex-start;
-    transition: background-color 0.2s ease;
+  top: 500px;
+  background-color: #0095f6;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: anchor-center; /* alinha à direita */
+  transition: background-color 0.2s ease;
 }
 
 .fechar-modal-x {
   position: absolute;
-  top: 15px;
-  right: 20px;
+  top: -80px;
+  right: -400px;
   background: none;
   border: none;
   font-size: 28px;
-  color: #777;
+  color: #fff;
   cursor: pointer;
   z-index: 1010;
   transition: color 0.2s ease;
 }
 
 .fechar-modal-x:hover {
-  background-color: #db1b1b;
+  background-color: transparent;
 }
 
 .button-confirme,
@@ -357,6 +357,20 @@
   background-color: #db1b1b;
 }
 
+.button-confirmar{
+      position: fixed;
+    top: 500px;
+    background-color: #0095f6;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: background-color 0.2s ease;
+}
+
 .botoes-modal {
   display: flex;
   justify-content: space-between;
@@ -382,4 +396,62 @@
 }
 .ola{
   color: black;
+}
+
+.filtros-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.filtro-miniatura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  padding: 5px;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.filtro-miniatura.ativo {
+  border-color: #007bff;
+}
+
+.imagem-miniatura {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+/* Filtros aplicados */
+.none {
+  filter: none;
+}
+.grayscale {
+  filter: grayscale(100%);
+}
+.sepia {
+  filter: sepia(100%);
+}
+.invert {
+  filter: invert(100%);
+}
+.contrast {
+  filter: contrast(150%);
+}
+.saturate {
+  filter: saturate(200%);
+}
+
+.preview-e-filtros {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
 }
