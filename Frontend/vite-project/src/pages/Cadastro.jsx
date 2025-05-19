@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import '../css/cadastro.css';
+//importaçao dos icons
+import { FaUser, FaEnvelope, FaLock, FaBirthdayCake, FaUserCircle } from 'react-icons/fa';
 
 // Supabase config
 const supabase = createClient(
@@ -119,19 +121,20 @@ const Cadastro = () => {
     }
   };
 
-  return (
-    <footer>
-      <div className="cadastro-container">
-        <div className="cadastro-box">
-          <form
-            className={`cadastro-form ${etapa === 1 ? 'form-etapa1' : 'form-etapa2'}`}
-            onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
-          >
-            <h2>Devisocial</h2>
-            <p>Cadastre-se para ver fotos e vídeos dos seus amigos.</p>
+ return (
+  <footer>
+    <div className="signup-container">
+      <div className="signup-box">
+        <form
+          className={`signup-form ${etapa === 1 ? 'step-one' : 'step-two'}`}
+          onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
+        >
+          <h2>Devisocial</h2>
+          <p>Cadastre-se para ver fotos e vídeos dos seus amigos.</p>
 
-            {etapa === 1 ? (
-              <>
+          {etapa === 1 ? (
+            <>
+              <div className="input-wrapper">
                 <input
                   type="text"
                   placeholder="Nome completo"
@@ -139,6 +142,9 @@ const Cadastro = () => {
                   onChange={(e) => setNome(e.target.value)}
                   required
                 />
+                <FaUser className="input-icon" />
+              </div>
+              <div className="input-wrapper">
                 <input
                   type="email"
                   placeholder="E-mail"
@@ -146,6 +152,9 @@ const Cadastro = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
+                <FaEnvelope className="input-icon" />
+              </div>
+              <div className="input-wrapper">
                 <input
                   type="password"
                   placeholder="Senha"
@@ -153,13 +162,19 @@ const Cadastro = () => {
                   onChange={(e) => setSenha(e.target.value)}
                   required
                 />
+                <FaLock className="input-icon" />
+              </div>
+              <div className="input-wrapper">
                 <input
                   type="password"
-                  placeholder="Repetir senha"
+                  placeholder="Confirme senha"
                   value={repetirSenha}
                   onChange={(e) => setRepetirSenha(e.target.value)}
                   required
                 />
+                <FaLock className="input-icon" />
+              </div>
+              <div className="input-wrapper">
                 <input
                   type="date"
                   placeholder="Data de nascimento"
@@ -167,34 +182,40 @@ const Cadastro = () => {
                   onChange={(e) => setDataAniversario(e.target.value)}
                   required
                 />
-                <button type="submit">Próximo</button>
+              </div>
+              
+              <button type="submit" className="next-button">Próximo</button>
 
-                <div className="linha-esquerda"></div>
-                <div className="ou">ou</div>
-                <div className="linha-direita"></div>
-              </>
-            ) : (
-              <>
-                {/* Foto de perfil - preview circular e clicável */}
-                <label htmlFor="fotoPerfilInput">
-                  <img
-                    src={
-                      fotoPerfilArquivo
-                        ? URL.createObjectURL(fotoPerfilArquivo)
-                        : 'https://via.placeholder.com/100x100.png?text=Foto'
-                    }
-                    alt="Foto de perfil"
-                    className="foto-perfil-preview"
-                  />
-                </label>
-                <input
-                  type="file"
-                  id="fotoPerfilInput"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={(e) => setFotoPerfilArquivo(e.target.files[0])}
+            <div className="divider-with-text">
+            <span className="line"></span>
+            <span className="or">ou</span>
+            <span className="line"></span>
+          </div>
+
+            </>
+          ) : (
+            <>
+              {/* Foto de perfil - preview circular e clicável */}
+              <label htmlFor="photoInput">
+                <img
+                  src={
+                    fotoPerfilArquivo
+                      ? URL.createObjectURL(fotoPerfilArquivo)
+                      : 'https://via.placeholder.com/100x100.png?text=Foto'
+                  }
+                  alt="Foto de perfil"
+                  className="profile-photo-preview"
                 />
+              </label>
+              <input
+                type="file"
+                id="photoInput"
+                accept="image/*"
+                className="file-input-hidden"
+                onChange={(e) => setFotoPerfilArquivo(e.target.files[0])}
+              />
 
+              <div className="input-wrapper">
                 <input
                   type="text"
                   placeholder="Nome de usuário"
@@ -202,35 +223,40 @@ const Cadastro = () => {
                   onChange={(e) => setNome_usuario(e.target.value)}
                   required
                 />
+                <FaUserCircle className="input-icon" />
+              </div>
 
+              <div className="input-wrapper">
                 <textarea
                   placeholder="Biografia"
                   value={biografia}
                   onChange={(e) => setBiografia(e.target.value)}
                 />
+              </div>
 
-                <p>
-                  As pessoas que usam nosso serviço podem ter carregado suas informações
-                  de contato no Instagram. <a href="#">Saiba mais</a>. Ao se cadastrar,
-                  você concorda com nossos <a href="#">Termos</a>,{' '}
-                  <a href="#">Política de Privacidade</a> e{' '}
-                  <a href="#">Política de Cookies</a>.
-                </p>
+              <p>
+                As pessoas que usam nosso serviço podem ter carregado suas informações
+                de contato no Instagram. <a href="#">Saiba mais</a>. Ao se cadastrar,
+                você concorda com nossos <a href="#">Termos</a>,{' '}
+                <a href="#">Política de Privacidade</a> e{' '}
+                <a href="#">Política de Cookies</a>.
+              </p>
 
-                <button type="submit">Cadastrar</button>
-              </>
-            )}
+              <button type="submit" className="signup-button">Cadastrar</button>
+            </>
+          )}
 
-            <p>
-              Já tem uma conta? <Link to="/">Logar</Link>
-            </p>
+          <p>
+            Já tem uma conta? <Link to="/">Logar</Link>
+          </p>
 
-            {erro && <p className="erro">{erro}</p>}
-          </form>
-        </div>
+          {erro && <p className="error-message">{erro}</p>}
+        </form>
       </div>
-    </footer>
-  );
+    </div>
+  </footer>
+);
+
 };
 
 export default Cadastro;

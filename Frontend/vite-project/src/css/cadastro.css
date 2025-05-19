@@ -1,5 +1,5 @@
 /* Container principal com fundo centralizado */
-.cadastro-container {
+.signup-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,7 +8,7 @@
 }
 
 /* Modal (caixa do formulário) */
-.cadastro-box {
+.signup-box {
   background-color: transparent;
   border-radius: 16px;
   padding: 0px;
@@ -16,32 +16,34 @@
   max-width: 95%;
 }
 
-.form-etapa1 {
+.step-one {
   display: flex;
   flex-direction: column;
   color: #030303;
   width: 80%;
-  border: 2px solid rgb(0, 0, 0);
+  border: 2px solid #074685;
   padding: 20px;
   background-color: #ffffff;
   margin-left: auto;
   margin-right: auto;
   margin-top: -40px;
 }
-.form-etapa2{
-   display: flex;
+
+.step-two {
+  display: flex;
   flex-direction: column;
   color: #262626;
   width: 80%;
-  border: 2px solid rgb(0, 0, 0);
+  border: 2px solid #074685;
   padding: 20px;
   background-color: #ffffff;
   margin-left: auto;
   margin-right: auto;
   margin-top: 126px;
 }
+
 /* Título */
-.cadastro-form h2 {
+.signup-form h2 {
   color: #0a66c2;
   font-size: 36px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -50,48 +52,49 @@
 }
 
 /* Inputs e textarea */
-.cadastro-form input[type="text"],
-.cadastro-form input,
-.cadastro-form textarea {
+.signup-form input[type="text"],
+.signup-form input,
+.signup-form textarea {
   background-color: #ffffff;
   border: 1px solid #0a66c2;
   padding: 12px;
   font-size: 15px;
   color: #262626;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   width: 70%;
   transition: border 0.3s ease, box-shadow 0.3s ease;
   margin-left: auto;
   margin-right: auto;
+  border-radius: 6px;
 }
 
 /* Campo de biografia com altura maior */
-.cadastro-form textarea {
+.signup-form textarea {
   height: 120px;
   resize: vertical;
 }
 
 /* Input de data */
-.cadastro-form input[type="date"] {
+.signup-form input[type="date"] {
   cursor: pointer;
 }
 
 /* Focus */
-.cadastro-form input:focus,
-.cadastro-form textarea:focus {
+.signup-form input:focus,
+.signup-form textarea:focus {
   outline: none;
   border-color: #0a66c2;
   box-shadow: 0 0 5px rgba(10, 102, 194, 0.3);
 }
 
 /* Placeholder */
-.cadastro-form input::placeholder,
-.cadastro-form textarea::placeholder {
+.signup-form input::placeholder,
+.signup-form textarea::placeholder {
   color: #666666;
 }
 
 /* Botão de cadastro */
-.cadastro-form button {
+.signup-form button {
   background-color: #0a66c2;
   color: white;
   border: none;
@@ -107,23 +110,23 @@
 }
 
 /* Parágrafo e link */
-.cadastro-form p {
+.signup-form p {
   text-align: center;
   color: #474747;
   margin-top: 10px;
 }
 
-.cadastro-form a {
+.signup-form a {
   color: #0a66c2;
   text-decoration: none;
 }
 
-.cadastro-form a:hover {
+.signup-form a:hover {
   text-decoration: underline;
 }
 
 /* Mensagem de erro */
-.erro {
+.error-message {
   color: #5094d8;
   background-color: #330000;
   padding: 10px;
@@ -132,40 +135,32 @@
   text-align: center;
 }
 
-/* Fieldset decorativo */
-fieldset {
-  width: 10px;
-  height: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-}
-
 /* Linhas decorativas */
-.linha-esquerda {
-  background-color: rgb(12, 11, 11);
-  width: 100px;
-  height: 1px;
-  margin-top: 20px;
-  margin-left: 50px;
+.divider-with-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 20px 0;
 }
 
-.linha-direita {
-  background-color: rgb(12, 11, 11);
-  width: 100px;
+.divider-with-text .line {
+  flex-grow: 1;
   height: 1px;
-  margin-left: 56%;
-  margin-top: -9px;
+  background-color: #0a0a0a;
+  margin: 0 10px;
 }
 
-.ou {
-  color: rgb(3, 3, 3);
-  text-align: center;
-  margin-top: -14px;
+.divider-with-text .or {
+  white-space: nowrap;
+  color: #0a0a0a;
+  font-size: 17px;
+  font-weight: 500;
 }
+
 
 /* Foto de perfil - imagem circular */
-.foto-perfil-preview {
+.profile-photo-preview {
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -178,14 +173,79 @@ fieldset {
   transition: box-shadow 0.3s ease;
 }
 
-.foto-perfil-preview:hover {
+.profile-photo-preview:hover {
   box-shadow: 0 0 8px rgba(10, 102, 194, 0.5);
 }
 
 /* Esconde o input de arquivo */
-.input-imagem-oculto {
+.file-input-hidden {
   display: none;
 }
-footer{
-  font-family: Arial, Helvetica, sans-serif;
+
+/* Botões interativos */
+.next-button:hover,
+.signup-button:hover {
+  background-color: #074685;
+}
+
+/* Container do input com ícone */
+.input-wrapper {
+  position: relative;
+  width: 70%;
+  margin: 0 auto 20px auto; /* Centraliza o input no formulário */
+}
+
+/* Estilo dos inputs */
+.signup-form input[type="text"],
+.signup-form input[type="email"],
+.signup-form input[type="password"],
+.signup-form input[type="date"],
+.signup-form textarea {
+  width: 100%;
+  border: 1px solid #0a66c2;
+  background-color: #ffffff;
+  font-size: 15px;
+  color: #262626;
+  border-radius: 6px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Ícone dentro do input */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #0a66c2;
+  pointer-events: none;
+}
+
+/* Reduz o espaçamento entre os campos */
+.input-wrapper {
+  position: relative;
+  width: 70%;
+  margin: 0 auto 10px auto; /* Diminuído de 20px para 10px */
+}
+
+/* Reduz espaço abaixo da imagem de perfil */
+.profile-photo-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0a66c2;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto 10px auto; /* Antes: 1rem, agora: 10px */
+  background-color: #eee;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Adicional: diminui espaço entre textarea (bio) e botão */
+.signup-form textarea {
+  height: 120px;
+  resize: vertical;
+  margin-bottom: 10px; /* Adicionado para reduzir espaço extra */
 }
