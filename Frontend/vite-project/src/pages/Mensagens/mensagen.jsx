@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
+
+// Config global do axios
+axios.defaults.withCredentials = true;
 
 const Mensagens = () => {
   const [seguindo, setSeguindo] = useState([]);
@@ -9,18 +12,19 @@ const Mensagens = () => {
   const [historicoMensagens, setHistoricoMensagens] = useState([]);
   const [conexao, setConexao] = useState(null);
 
-  // Corrigido: extrair apenas o ID do objeto salvo no localStorage
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
+
+  // URL da API (ajustável para .env futuramente)
+  const API_URL = 'https://localhost:7051';
 
   useEffect(() => {
     const fetchSeguindo = async () => {
       try {
-        console.log("ID do usuário:", usuarioLogadoId);
-        const res = await axios.get(`https://localhost:7051/api/Amizades/seguindo/${usuarioLogadoId}`);
+        const res = await axios.get(`${API_URL}/api/Amizades/seguindo/${usuarioLogadoId}`);
         const listaCompletada = await Promise.all(
           res.data.seguindo.map(async (item) => {
-            const userRes = await axios.get(`https://localhost:7051/api/auth/usuario/${item.usuario2}`);
+            const userRes = await axios.get(`${API_URL}/api/auth/usuario/${item.usuario2}`);
             return {
               idAmizade: item.id,
               dataSolicitacao: item.dataSolicitacao,
@@ -46,25 +50,32 @@ const Mensagens = () => {
     if (!usuarioSelecionado) return;
 
     const connection = new HubConnectionBuilder()
-      .withUrl('https://localhost:7051/mensagensHub')
+      .withUrl(`${API_URL}/mensagensHub`, {
+        transport: HttpTransportType.WebSockets,
+        withCredentials: true
+      })
+      .withAutomaticReconnect()
       .build();
-    connection.start().then(() => {
-      console.log('Conexão SignalR estabelecida! com o Hub mensagensHub');
-    }).catch(err => {
-      console.error('Erro ao conectar no SignalR:', err);
-    });
 
+    connection
+      .start()
+      .then(() => console.log('✅ Conexão SignalR estabelecida'))
+      .catch((err) => console.error('❌ Erro ao conectar no SignalR:', err));
+
+    // Recebe mensagens em tempo real
     connection.on('ReceberMensagem', (novaMensagem) => {
-      setHistoricoMensagens(prev => [...prev, novaMensagem]);
+      setHistoricoMensagens((prev) => [...prev, novaMensagem]);
     });
 
+    // Recebe mensagens apagadas
     connection.on('MensagemApagada', (mensagemId) => {
-      setHistoricoMensagens(prev => prev.filter(msg => msg.id !== mensagemId));
+      setHistoricoMensagens((prev) => prev.filter((msg) => msg.id !== mensagemId));
     });
 
+    // Marca as mensagens como lidas
     connection.on('MensagemLida', (mensagemId, lida) => {
-      setHistoricoMensagens(prev =>
-        prev.map(msg => msg.id === mensagemId ? { ...msg, lida } : msg)
+      setHistoricoMensagens((prev) =>
+        prev.map((msg) => (msg.id === mensagemId ? { ...msg, lida } : msg))
       );
     });
 
@@ -72,10 +83,10 @@ const Mensagens = () => {
 
     const fetchMensagens = async () => {
       try {
-        const res = await axios.get(`https://localhost:7051/api/Mensagens/mensagens/${usuarioLogadoId}/${usuarioSelecionado.id}`);
+        const res = await axios.get(`${API_URL}/api/Mensagens/mensagens/${usuarioLogadoId}/${usuarioSelecionado.id}`);
         setHistoricoMensagens(res.data.mensagens || []);
       } catch (err) {
-        console.error('Erro ao buscar histórico de mensagens', err);
+        console.error('Erro ao buscar histórico de mensagens:', err);
       }
     };
 
@@ -88,27 +99,30 @@ const Mensagens = () => {
   }, [usuarioSelecionado, usuarioLogadoId]);
 
   const enviarMensagem = async () => {
-    if (mensagem.trim() !== '') {
-      try {
-        const res = await axios.post('https://localhost:7051/api/Mensagens/enviar', {
-          IdRemetente: usuarioLogadoId,
-          IdDestinatario: usuarioSelecionado.id,
-          Conteudo: mensagem,
-        });
+  if (mensagem.trim() === '') return;
 
-        const novaMensagem = res.data.dados;
-        setHistoricoMensagens(prev => [...prev, novaMensagem]);
+  try {
+    // Criando o objeto da mensagem que será enviada
+    const mensagemSignalR = {
+      IdRemetente: usuarioLogadoId,
+      IdDestinatario: usuarioSelecionado.id,
+      Conteudo: mensagem,
+      DataEnvio: new Date().toISOString() // ou uma data que você recebe do backend
+    };
 
-        if (conexao) {
-          await conexao.invoke('ReceberMensagem', novaMensagem);
-        }
-
-        setMensagem('');
-      } catch (err) {
-        console.error('Erro ao enviar mensagem', err);
-      }
+    // Enviando a mensagem via SignalR
+    if (conexao) {
+      await conexao.invoke('ReceberMensagem', mensagemSignalR);
     }
-  };
+
+    // Atualizando o estado de mensagens
+    setHistoricoMensagens((prev) => [...prev, mensagemSignalR]);
+
+    setMensagem('');
+  } catch (err) {
+    console.error('Erro ao enviar mensagem', err);
+  }
+};
 
   const iniciarChat = (usuario) => {
     setUsuarioSelecionado(usuario);
@@ -154,16 +168,21 @@ const Mensagens = () => {
           <h3 className="text-lg font-semibold mb-2">
             Conversando com: <span className="text-[#D4AF37]">{usuarioSelecionado.nome}</span>
           </h3>
-          <p className="text-sm text-gray-300">ID do destinatário: {usuarioSelecionado.id}</p>
-          <p className="text-sm text-gray-300 mb-2">Seu ID: {usuarioLogadoId}</p>
 
           <div className="bg-black text-white p-4 rounded-xl mt-4 h-96 overflow-auto">
-            {historicoMensagens.map((msg) => (
-              <div key={msg.id} className="mb-4 p-2 bg-[#2c2c2c] rounded-xl">
-                <p>{msg.conteudo}</p>
-                <p className="text-xs text-gray-400">{new Date(msg.data_envio).toLocaleString()}</p>
-              </div>
-            ))}
+            {historicoMensagens.map((msg) => {
+              const dataEnvio = msg.data_envio;
+              if (!dataEnvio) return null;
+              const adjustedDate = dataEnvio.split('.')[0] + 'Z';
+              const formattedDate = new Date(adjustedDate).toLocaleString();
+
+              return (
+                <div key={msg.id} className="mb-4 p-2 bg-[#2c2c2c] rounded-xl">
+                  <p>{msg.conteudo}</p>
+                  <p className="text-xs text-gray-400">{formattedDate}</p>
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-4">
