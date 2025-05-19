@@ -39,3 +39,4 @@ obj/
 *.pdb
 *.dll
 *.exe
+Frontend/vite-project/node_modules/.vite/deps/_metadata.json
