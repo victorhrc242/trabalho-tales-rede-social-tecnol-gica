@@ -174,7 +174,7 @@ function Navbar({ usuarioLogado, deslogar }) {
 
         {usuarioLogado && (
           <div className="nav-item">
-            <button
+            <a
               onClick={irParaPerfil}
               className="perfil-foto"
               aria-label="Ir para o perfil"
@@ -189,7 +189,7 @@ function Navbar({ usuarioLogado, deslogar }) {
                 className="foto-perfil-redonda"
               />
               <span className="ola">Perfil</span>
-            </button>
+            </a>
           </div>
         )}
 
@@ -219,8 +219,13 @@ function Navbar({ usuarioLogado, deslogar }) {
       )}
       {/* Modal de Criarção de Post */}
       {mostrarModal && (
-  <div className="modal-overlay">
-    <div className="modal-CriarPost">
+    <div className="modal-overlay" onClick={() => {
+      setMostrarModal(false);
+      setEtapa(1); // resetar ao fechar
+    }}>
+    <div className={`modal-CriarPost ${etapa === 2 ? 'modal-CriarPost-etapa2' : ''}`}
+      onClick={(e) => e.stopPropagation()} // impede que clique dentro feche o modal
+    >
     <form className="form-criar-post" onSubmit={handleCriarPost}>
   <h2>Criar Novo Post</h2>
 
@@ -375,10 +380,10 @@ function Navbar({ usuarioLogado, deslogar }) {
   {erro && <p style={{ color: 'red' }}>{erro}</p>}
 </form>
 <button
-  className="fechar-modal-x"
+  className={`fechar-modal-x ${etapa === 2 ? 'fechar-modal-x-etapa2' : ''}`}
   onClick={() => {
     setMostrarModal(false);
-    setEtapa(1); // opcional: resetar para a primeira etapa
+    setEtapa(1);
   }}
 >
   &times;

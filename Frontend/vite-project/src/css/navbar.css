@@ -154,11 +154,11 @@
 }
 
 .form-criar-post {
-  width: 500px;        /* ou o tamanho que preferir */
+  width: 700px;        /* ou o tamanho que preferir */
   height: 500px;       /* altura fixa */
   display: flex;
   flex-direction: column;   /* rolagem se o conteúdo passar do limite */
-
+  padding: 25px;
 }
 
 .area-upload {
@@ -290,6 +290,10 @@
   transition: color 0.2s ease;
 }
 
+.fechar-modal-x-etapa2 {
+  right: -271px; /* ou ajuste fino como -850px se necessário */
+}
+
 .fechar-modal-x:hover {
   background-color: transparent;
 }
@@ -353,6 +357,7 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
 .fechar-modal:hover{
   background-color: #db1b1b;
 }
@@ -453,10 +458,20 @@
   filter: saturate(200%);
 }
 
-/* .preview-e-filtros {
-  display: flex;
+.modal-CriarPost-etapa2 {
+  width: 750px; /* ou qualquer valor desejado para a Etapa 2 */
+  left: 300px;
   justify-content: space-between;
-  gap: 20px;
-  align-items: flex-start;
-} */
+  padding: 15px;
+}
+
+.filtros-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 15px;
+  flex: 1;
+  padding: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
 
