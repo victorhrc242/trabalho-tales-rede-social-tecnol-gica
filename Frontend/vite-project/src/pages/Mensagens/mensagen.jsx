@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 
-// Config global do axios
 axios.defaults.withCredentials = true;
 
 const Mensagens = () => {
@@ -10,14 +9,17 @@ const Mensagens = () => {
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [mensagem, setMensagem] = useState('');
   const [historicoMensagens, setHistoricoMensagens] = useState([]);
-  const [conexao, setConexao] = useState(null);
 
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
 
-  // URL da API (ajustável para .env futuramente)
   const API_URL = 'https://localhost:7051';
 
+  // Usar ref para evitar re-criar listeners no SignalR
+  const historicoRef = useRef(historicoMensagens);
+  historicoRef.current = historicoMensagens;
+
+  // Buscar lista de seguindo
   useEffect(() => {
     const fetchSeguindo = async () => {
       try {
@@ -30,7 +32,7 @@ const Mensagens = () => {
               dataSolicitacao: item.dataSolicitacao,
               usuario: {
                 ...userRes.data.dados,
-                id: item.usuario2
+                id: item.usuario2,
               },
             };
           })
@@ -46,44 +48,63 @@ const Mensagens = () => {
     }
   }, [usuarioLogadoId]);
 
+  // Inicializar conexão SignalR uma vez (quando usuário logado mudar)
   useEffect(() => {
-    if (!usuarioSelecionado) return;
+    if (!usuarioLogadoId) return;
 
     const connection = new HubConnectionBuilder()
       .withUrl(`${API_URL}/mensagensHub`, {
         transport: HttpTransportType.WebSockets,
-        withCredentials: true
+        withCredentials: true,
       })
       .withAutomaticReconnect()
       .build();
 
     connection
       .start()
-      .then(() => console.log('✅ Conexão SignalR estabelecida'))
-      .catch((err) => console.error('❌ Erro ao conectar no SignalR:', err));
+      .then(() => console.log('Conexão SignalR estabelecida'))
+      .catch((err) => console.error('Erro ao conectar no SignalR:', err));
 
-    // Recebe mensagens em tempo real
-    connection.on('ReceberMensagem', (novaMensagem) => {
-      setHistoricoMensagens((prev) => [...prev, novaMensagem]);
+    // Evento: nova mensagem
+    connection.on('NovaMensagem', (novaMensagem) => {
+      if (
+        usuarioSelecionado &&
+        (novaMensagem.id_remetente === usuarioSelecionado.id ||
+          novaMensagem.id_destinatario === usuarioSelecionado.id)
+      ) {
+        setHistoricoMensagens((prev) => [...prev, novaMensagem]);
+      }
     });
 
-    // Recebe mensagens apagadas
+    // Evento: mensagem apagada
     connection.on('MensagemApagada', (mensagemId) => {
       setHistoricoMensagens((prev) => prev.filter((msg) => msg.id !== mensagemId));
     });
 
-    // Marca as mensagens como lidas
+    // Evento: mensagem lida
     connection.on('MensagemLida', (mensagemId, lida) => {
       setHistoricoMensagens((prev) =>
         prev.map((msg) => (msg.id === mensagemId ? { ...msg, lida } : msg))
       );
     });
 
-    setConexao(connection);
+    return () => {
+      connection.stop();
+    };
+  }, [usuarioLogadoId, usuarioSelecionado]);
+
+  // Buscar histórico de mensagens quando trocar usuário selecionado
+  useEffect(() => {
+    if (!usuarioSelecionado) {
+      setHistoricoMensagens([]);
+      return;
+    }
 
     const fetchMensagens = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/Mensagens/mensagens/${usuarioLogadoId}/${usuarioSelecionado.id}`);
+        const res = await axios.get(
+          `${API_URL}/api/Mensagens/mensagens/${usuarioLogadoId}/${usuarioSelecionado.id}`
+        );
         setHistoricoMensagens(res.data.mensagens || []);
       } catch (err) {
         console.error('Erro ao buscar histórico de mensagens:', err);
@@ -91,42 +112,44 @@ const Mensagens = () => {
     };
 
     fetchMensagens();
-
-    return () => {
-      connection.stop();
-      setConexao(null);
-    };
   }, [usuarioSelecionado, usuarioLogadoId]);
 
+  // Enviar mensagem: chama API REST que salva no banco e o backend notifica via hub
   const enviarMensagem = async () => {
-  if (mensagem.trim() === '') return;
-
-  try {
-    // Criando o objeto da mensagem que será enviada
-    const mensagemSignalR = {
-      IdRemetente: usuarioLogadoId,
-      IdDestinatario: usuarioSelecionado.id,
-      Conteudo: mensagem,
-      DataEnvio: new Date().toISOString() // ou uma data que você recebe do backend
-    };
-
-    // Enviando a mensagem via SignalR
-    if (conexao) {
-      await conexao.invoke('ReceberMensagem', mensagemSignalR);
+    if (!mensagem.trim() || !usuarioSelecionado) {
+      console.warn('Mensagem vazia ou usuário não selecionado');
+      return;
     }
 
-    // Atualizando o estado de mensagens
-    setHistoricoMensagens((prev) => [...prev, mensagemSignalR]);
+    try {
+      const novaMensagem = {
+        id_remetente: usuarioLogadoId,
+        id_destinatario: usuarioSelecionado.id,
+        conteudo: mensagem,
+        data_envio: new Date().toISOString(),
+        lida: false,
+      };
 
-    setMensagem('');
-  } catch (err) {
-    console.error('Erro ao enviar mensagem', err);
-  }
-};
+      // Salvar via API REST
+      const res = await axios.post(`${API_URL}/api/Mensagens/enviar`, novaMensagem);
 
+      if (res.status === 201 || res.status === 200) {
+        const mensagemSalva = res.data;
+
+        setHistoricoMensagens((prev) => [...prev, mensagemSalva]);
+
+        setMensagem('');
+      } else {
+        console.error('Erro ao salvar mensagem:', res.status);
+      }
+    } catch (err) {
+      console.error('Erro ao enviar mensagem:', err);
+    }
+  };
+
+  // Função para iniciar chat com usuário
   const iniciarChat = (usuario) => {
     setUsuarioSelecionado(usuario);
-    setHistoricoMensagens([]);
   };
 
   return (
@@ -136,7 +159,9 @@ const Mensagens = () => {
       </h2>
 
       <ul className="space-y-4">
-        {seguindo.length === 0 && <p className="text-gray-400">Você ainda não segue ninguém.</p>}
+        {seguindo.length === 0 && (
+          <p className="text-gray-400">Você ainda não segue ninguém.</p>
+        )}
         {seguindo.map((item) => (
           <li
             key={item.idAmizade}
@@ -166,19 +191,20 @@ const Mensagens = () => {
       {usuarioSelecionado && (
         <div className="mt-8 border-t border-gray-700 pt-4">
           <h3 className="text-lg font-semibold mb-2">
-            Conversando com: <span className="text-[#D4AF37]">{usuarioSelecionado.nome}</span>
+            Conversando com:{' '}
+            <span className="text-[#D4AF37]">{usuarioSelecionado.nome}</span>
           </h3>
 
           <div className="bg-black text-white p-4 rounded-xl mt-4 h-96 overflow-auto">
-            {historicoMensagens.map((msg) => {
-              const dataEnvio = msg.data_envio;
+            {historicoMensagens.map((msg, index) => {
+              const dataEnvio = msg.data_envio || msg.DataEnvio;
               if (!dataEnvio) return null;
               const adjustedDate = dataEnvio.split('.')[0] + 'Z';
               const formattedDate = new Date(adjustedDate).toLocaleString();
 
               return (
-                <div key={msg.id} className="mb-4 p-2 bg-[#2c2c2c] rounded-xl">
-                  <p>{msg.conteudo}</p>
+                <div key={msg.id || index} className="mb-4 p-2 bg-[#2c2c2c] rounded-xl">
+                  <p>{msg.conteudo || msg.Conteudo}</p>
                   <p className="text-xs text-gray-400">{formattedDate}</p>
                 </div>
               );
