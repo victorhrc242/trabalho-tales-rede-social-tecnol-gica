@@ -154,11 +154,11 @@
 }
 
 .form-criar-post {
-  width: 500px;        /* ou o tamanho que preferir */
+  width: 700px;        /* ou o tamanho que preferir */
   height: 500px;       /* altura fixa */
   display: flex;
   flex-direction: column;   /* rolagem se o conteúdo passar do limite */
-
+  padding: 25px;
 }
 
 .area-upload {
@@ -290,6 +290,10 @@
   transition: color 0.2s ease;
 }
 
+.fechar-modal-x-etapa2 {
+  right: -271px; /* ou ajuste fino como -850px se necessário */
+}
+
 .fechar-modal-x:hover {
   background-color: transparent;
 }
@@ -353,6 +357,7 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
 .fechar-modal:hover{
   background-color: #db1b1b;
 }
@@ -398,60 +403,75 @@
   color: black;
 }
 
-.filtros-preview {
+.preview-e-filtros{
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
+  align-items: flex-start;
   justify-content: center;
-  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.filtros-lado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 250px;
 }
 
 .filtro-miniatura {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   cursor: pointer;
-  border: 2px solid transparent;
-  padding: 5px;
-  border-radius: 6px;
-  transition: border-color 0.2s;
+  text-align: center;
+  transition: transform 0.2s;
 }
 
 .filtro-miniatura.ativo {
-  border-color: #007bff;
+  border: 2px solid #007bff;
+  border-radius: 8px;
 }
 
 .imagem-miniatura {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 4px;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
 }
 
-/* Filtros aplicados */
-.none {
+/* Exemplo de filtros */
+.imagem-miniatura.none {
   filter: none;
 }
-.grayscale {
+.imagem-miniatura.grayscale {
   filter: grayscale(100%);
 }
-.sepia {
+.imagem-miniatura.sepia {
   filter: sepia(100%);
 }
-.invert {
+.imagem-miniatura.invert {
   filter: invert(100%);
 }
-.contrast {
-  filter: contrast(150%);
+.imagem-miniatura.contrast {
+  filter: contrast(200%);
 }
-.saturate {
+.imagem-miniatura.saturate {
   filter: saturate(200%);
 }
 
-.preview-e-filtros {
-  display: flex;
+.modal-CriarPost-etapa2 {
+  width: 750px; /* ou qualquer valor desejado para a Etapa 2 */
+  left: 300px;
   justify-content: space-between;
-  gap: 20px;
-  align-items: flex-start;
+  padding: 15px;
 }
+
+.filtros-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 15px;
+  flex: 1;
+  padding: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
