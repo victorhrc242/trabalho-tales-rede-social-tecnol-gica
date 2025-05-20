@@ -20,6 +20,8 @@ const Perfil = () => {
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
   const inputRef = useRef();
+  const [seguindoUsuario, setSeguindoUsuario] = useState(false);
+
 
   useEffect(() => {
     if (!userId) return navigate('/');

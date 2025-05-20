@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
+import { Heart, MessageCircle } from 'lucide-react';
 import '../css/home.css';
 
 function Home() {
@@ -240,11 +241,18 @@ function Home() {
 )}
 
 <div className="botoes-post">
-  <button onClick={() => curtirPost(post.id)}>
-    Curtir ({post.curtidas})
+  <button className="botao-acao" onClick={() => curtirPost(post.id)}>
+    <Heart
+      size={20}
+      color={post.curtidas > 0 ? 'red' : 'black'}
+      fill={post.curtidas > 0 ? 'red' : 'none'}
+      style={{ marginRight: '5px' }}
+    />
+    ({post.curtidas})
   </button>
-  <button onClick={() => abrirComentarios(post)}>
-    Comentar ({post.comentarios})
+  <button className="botao-acao" onClick={() => abrirComentarios(post)}>
+    <MessageCircle size={20} style={{ marginRight: '5px' }} />
+    ({post.comentarios})
   </button>
 </div>
 
@@ -289,9 +297,14 @@ function Home() {
           </div>
         <div className="comentarios-lista">
           {comentarios.map((c, i) => (
-            <p key={i}>
-              <strong>{c.autorNome}:</strong> {c.conteudo}
-            </p>
+            <div key={i} className="comentario-item">
+              <img
+                src={c.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
+                alt="Foto perfil"
+                className="comentario-imagem"
+              />
+              <span><strong>{c.autorNome}:</strong> {c.conteudo}</span>
+            </div>
           ))}
         </div>
           <div className="comentarios-form">
