@@ -131,6 +131,7 @@ button + button {
   margin-left: 10px;
 }
 
+/* Fundo escuro do modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -144,7 +145,7 @@ button + button {
   align-items: center;
 }
 
-/* Modal de Comentários estilo Instagram */
+/* Container do modal */
 .comentarios-modal {
   display: flex;
   background-color: #fff;
@@ -156,26 +157,27 @@ button + button {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
   flex-direction: row;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  position: relative;
 }
 
+/* Lado da imagem */
 .imagem-container {
   flex: 1;
   background-color: #000;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* importante para cortar imagem excedente */
+  overflow: hidden;
   position: relative;
 }
 
 .imagem-post {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* faz a mágica de preencher igual Instagram */
+  object-fit: cover;
 }
 
-
-/* Lado dos Comentários */
+/* Área dos comentários */
 .comentarios-container {
   flex: 1;
   display: flex;
@@ -183,7 +185,7 @@ button + button {
   border-left: 1px solid #ddd;
 }
 
-/* Header com nome do autor */
+/* Cabeçalho dos comentários */
 .comentarios-header {
   display: flex;
   align-items: center;
@@ -193,7 +195,7 @@ button + button {
   border-bottom: 1px solid #eee;
 }
 
-/* Lista de Comentários */
+/* Lista dos comentários */
 .comentarios-lista {
   flex: 1;
   overflow-y: auto;
@@ -204,6 +206,7 @@ button + button {
   font-size: 14px;
 }
 
+/* Cada comentário */
 .comentario-item {
   display: flex;
   align-items: flex-start;
@@ -230,7 +233,7 @@ button + button {
   font-weight: 400;
 }
 
-/* Campo de escrever novo comentário */
+/* Formulário para novo comentário */
 .comentarios-form {
   border-top: 1px solid #eee;
   padding: 12px;
@@ -259,22 +262,34 @@ button + button {
   font-size: 14px;
   cursor: pointer;
   padding: 8px;
+  transition: opacity 0.3s ease;
 }
 
 .comentarios-form button:hover {
   opacity: 0.8;
 }
 
-/* Botão de fechar */
+/* Botão fechar modal */
 .fechar-modal {
   position: absolute;
   top: 10px;
   right: 10px;
   background: none;
-  font-size: 18px;
   border: none;
+  font-size: 24px; /* tamanho maior para visibilidade */
   cursor: pointer;
+  color: #333; /* cor do X */
+  padding: 0;
+  line-height: 1;
+  outline: none;
 }
+
+.fechar-modal:hover {
+  color: #000; /* opcional, só escurece um pouco no hover */
+  background: none; /* garante que não tenha fundo */
+  border: none; /* garante que não tenha borda */
+}
+
 /* Feed de Posts */
 ul {
   list-style-type: none;
