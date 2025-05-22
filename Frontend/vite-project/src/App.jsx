@@ -35,15 +35,11 @@ function AppWrapper() {
 
   return (
     <>
-<<<<<<< HEAD
-           {!deveEsconderNavbar && usuario && (
-        <Navbar usuarioLogado={usuario} deslogar={deslogar} />
-      )}    
-=======
+
           {!deveEsconderNavbar && usuario && (
         <Navbar usuarioLogado={usuario} deslogar={deslogar} />
       )}   
->>>>>>> origin/Breno
+
 
       <Routes>
         <Route path="/" element={<Login />} />
