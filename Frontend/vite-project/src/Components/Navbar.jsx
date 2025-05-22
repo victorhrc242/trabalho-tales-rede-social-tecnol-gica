@@ -77,7 +77,7 @@ function Navbar({ usuarioLogado, deslogar }) {
       throw error;
     }
 
-    return `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/posts/${fileName}`;
+    return `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/post-usuarios/posts/${fileName}`;
   };
 
   const handleCriarPost = async (e) => {
@@ -128,9 +128,6 @@ function Navbar({ usuarioLogado, deslogar }) {
     <div className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
       onMouseEnter={() => setExpandida(true)}
       onMouseLeave={() => setExpandida(false)}>
-      <div className="botao-toggle-navbar" onClick={toggleNavbar}>
-      {expandida ? '⏪' : '⏩'}
-    </div>
       <nav className="navbar-menu">
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
         <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
