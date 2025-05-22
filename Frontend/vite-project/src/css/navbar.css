@@ -12,6 +12,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   border-right: 1px solid #dbdbdb;
   z-index: 1; /* Garantir que o navbar tenha um índice menor que o modal */
+    transition: width 0.3s ease;
 }
 
 .logo {
@@ -24,24 +25,29 @@
 /* Navbar expandida e minimizada */
 .navbar-lateral.expandida {
   width: 145px;
-    transition: width 0.3s ease;
-  overflow: hidden;
 }
 
 .navbar-lateral.minimizada {
-  width: 38px;
-  transition: width 0.3s ease;
+  width: 40px;
 }
 
 .navbar-lateral.minimizada .nav-item span,
 .navbar-lateral.minimizada .ola {
-  display: none;
+    opacity: 0;
+  pointer-events: none;
+  margin-left: -10px;
 }
 
 .navbar-lateral.minimizada .perfil-foto img {
   margin-left: auto;
   margin-right: auto;
   display: block;
+}
+
+.nav-item span {
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease, margin-left 0.3s ease;
 }
 
 .nav-item {
