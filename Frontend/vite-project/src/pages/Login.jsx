@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../css/login.css';
 import { Link, useNavigate } from 'react-router-dom';
+//icons 
+import { FaEnvelope, FaLock } from 'react-icons/fa';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -67,7 +69,9 @@ function Login() {
       <div className="modal-login">
         <div className="formulario">
           <h2 className="titulo-login">Devisocial</h2>
-          <form onSubmit={handleLogin}>
+          {/* formulario de login */}
+         <form onSubmit={handleLogin}>
+          <div className="input-wrapper">
             <input
               type="email"
               placeholder="Digite seu email"
@@ -75,6 +79,10 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            <FaEnvelope className="input-icon-direita" />
+          </div>
+
+          <div className="input-wrapper">
             <input
               type="password"
               placeholder="Digite sua senha"
@@ -82,17 +90,20 @@ function Login() {
               onChange={(e) => setSenha(e.target.value)}
               required
             />
-            <br />
-            <button className='botao-entrar' type="submit">Entrar</button>
-          </form>
+            <FaLock className="input-icon-direita" />
+          </div>
+
           <br />
-        <div className="linha-esquerda">
+          <button className='botao-entrar' type="submit">Entrar</button>
+        </form>
+
+          <br />
+        <div className="linha-ou-container">
+          <div className="linha-esquerda"></div>
+          <div className="ou">ou</div>
+          <div className="linha-direita"></div>
         </div>
-        <div className="ou">
-        ou
-        </div>
-        <div className="linha-direita">
-        </div>
+
         <br />
           {erro && <p className="erro">{erro}</p>}
           <p className="esq"><Link to="/recuperar">Esqueceu a senha?</Link></p> 
