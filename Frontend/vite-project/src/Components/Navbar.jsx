@@ -75,7 +75,7 @@ function Navbar({ usuarioLogado, deslogar }) {
       throw error;
     }
 
-    return `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/posts/${fileName}`;
+    return `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/post-usuarios/posts/${fileName}`;
   };
 
   const handleCriarPost = async (e) => {
