@@ -40,3 +40,10 @@ obj/
 *.dll
 *.exe
 Frontend/vite-project/node_modules/.vite/deps/_metadata.json
+Frontend/vite-project/node_modules/.vite/deps/_metadata.json
+Frontend/vite-project/node_modules/.vite/deps/react-dom_client.js
+Frontend/vite-project/node_modules/.vite/deps/react.js
+Frontend/vite-project/node_modules/.vite/deps/react_jsx-dev-runtime.js
+Frontend/vite-project/node_modules/.vite/deps/react_jsx-runtime.js
+Frontend/vite-project/node_modules/.vite/deps/react_jsx-runtime.js.map
+Frontend/vite-project/node_modules/.vite/deps/react-dom.js
