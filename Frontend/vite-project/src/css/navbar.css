@@ -21,6 +21,29 @@
   color: #262626;
 }
 
+/* Navbar expandida e minimizada */
+.navbar-lateral.expandida {
+  width: 145px;
+    transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+.navbar-lateral.minimizada {
+  width: 38px;
+  transition: width 0.3s ease;
+}
+
+.navbar-lateral.minimizada .nav-item span,
+.navbar-lateral.minimizada .ola {
+  display: none;
+}
+
+.navbar-lateral.minimizada .perfil-foto img {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -350,17 +373,7 @@
   background-color: #f9f9f9;
 }
 
-.fechar-modal {
-  background-color: #0095f6;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
 
-.fechar-modal:hover{
-  background-color: #db1b1b;
-}
 
 .button-confirmar{
       position: fixed;
@@ -392,8 +405,8 @@
 }
 
 .btn-cancelar {
-  background-color: #efefef;
-  color: #262626;
+  background-color: #1a6fcf;
+  color: #1082ec;
   padding: 8px 12px;
   border: none;
   border-radius: 6px;

@@ -239,7 +239,7 @@ useEffect(() => {
     alt={`Foto de perfil de ${post.autorNome}`}
     onClick={() => irParaPerfil(post.autorId)}
   />
-  <span className="autor-nome">{post.autorNome}</span>
+  <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)}>{post.autorNome}</span>
 </div>
 
 
@@ -315,14 +315,15 @@ useEffect(() => {
           ))}
         </div>
           <div className="comentarios-form">
-             <textarea
-               placeholder="Adicione um comentário..."
-               value={comentarioTexto}
-               onChange={(e) => setComentarioTexto(e.target.value)}
-            />
+             <input
+    type="text"
+    placeholder="Adicione um comentário..."
+    value={comentarioTexto}
+    onChange={(e) => setComentarioTexto(e.target.value)}
+  />
              <button onClick={comentar}>Publicar</button>
            </div>
-              <button className="fechar-modal" onClick={() => setModalComentarios(false)}>X</button>
+              <button className="fechar-modal" onClick={() => setModalComentarios(false)}>×</button>
           </div>
         </div>
         </div>

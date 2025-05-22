@@ -24,6 +24,8 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [filtroConfirmado, setFiltroConfirmado] = useState(false);
   const [etapa, setEtapa] = useState(1);
   const [tags, setTags] = useState('');
+  const [expandida, setExpandida] = useState(false);
+  const toggleNavbar = () => setExpandida(!expandida);
   const [filtroSelecionado, setFiltroSelecionado] = useState('none');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
@@ -123,7 +125,9 @@ function Navbar({ usuarioLogado, deslogar }) {
   };
 
   return (
-    <div className="navbar-lateral">
+    <div className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
+      onMouseEnter={() => setExpandida(true)}
+      onMouseLeave={() => setExpandida(false)}>
       <nav className="navbar-menu">
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
         <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
