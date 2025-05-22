@@ -21,6 +21,49 @@
   color: #262626;
 }
 
+/* Navbar expandida e minimizada */
+.navbar-lateral.expandida {
+  width: 145px;
+    transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+.navbar-lateral.minimizada {
+  width: 38px;
+  transition: width 0.3s ease;
+}
+
+.navbar-lateral.minimizada .nav-item span,
+.navbar-lateral.minimizada .ola {
+  display: none;
+}
+
+.navbar-lateral.minimizada .perfil-foto img {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+/* Botão para expandir/minimizar */
+.botao-toggle-navbar {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0095f6;
+  color: white;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.2s;
+}
+
+.botao-toggle-navbar:hover {
+  background-color: #0074cc;
+}
+
 .nav-item {
   display: flex;
   align-items: center;

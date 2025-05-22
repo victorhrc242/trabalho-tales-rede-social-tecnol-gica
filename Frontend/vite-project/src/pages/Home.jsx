@@ -232,7 +232,7 @@ function Home() {
     alt={`Foto de perfil de ${post.autorNome}`}
     onClick={() => irParaPerfil(post.autorId)}
   />
-  <span className="autor-nome">{post.autorNome}</span>
+  <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)}>{post.autorNome}</span>
 </div>
 
 
