@@ -221,39 +221,61 @@ const Perfil = () => {
       </div>
 
       {modalPost && (
-        <div className="modal-overlay" onClick={fecharModalPost}>
-          <div className="modal-post" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-post-imagem">
-              {modalPost.imagem && <img src={modalPost.imagem} alt="Imagem do post" />}
-            </div>
-            <div className="modal-post-detalhes">
-              <div className="modal-post-header">
-                <h3>{usuario.nome}</h3>
-              </div>
-              <div className="modal-post-comentarios">
-                {comentarios.map((c, i) => (
-                  <div key={i} className="comentario">
-                    <strong>{c.autor?.nome || 'Anônimo'}:</strong> {c.conteudo}
-                  </div>
-                ))}
-              </div>
-              <div className="comentar-box">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={novoComentario}
-                  onChange={(e) => setNovoComentario(e.target.value)}
-                  placeholder="Adicionar um comentário..."
-                />
-                <button onClick={enviarComentario}>Comentar</button>
-              </div>
-              <button className="fechar-btn" onClick={fecharModalPost}>
-                Fechar
-              </button>
-            </div>
-          </div>
+  <div className="modal-overlay" onClick={fecharModalPost}>
+    <div className="modal-post-container" onClick={e => e.stopPropagation()}>
+      <div className="modal-post-imagem-container">
+        {modalPost.imagem && (
+          <img src={modalPost.imagem} alt="Imagem do post" />
+        )}
+      </div>
+      <div className="modal-post-conteudo">
+        <div className="modal-post-header">
+          <h3>{usuario.nome_usuario}</h3>
+          <button className="fechar-btn" onClick={fecharModalPost}>×</button>
         </div>
-      )}
+
+        <div className="modal-post-comentarios">
+          {comentarios.length === 0 && <p>Sem comentários ainda.</p>}
+          {comentarios.map((c, idx) => (
+            <div key={idx} className="comentario-item">
+              <strong>{c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
+              {c.autor?.id === usuario.id && (
+                <button
+                  className="excluir-comentario-btn"
+                  onClick={async () => {
+                    try {
+                      await axios.delete(
+                        `https://devisocial.up.railway.app/api/Comentario/${c.id}`
+                      );
+                      await fetchComentarios(modalPost.id);
+                    } catch (error) {
+                      console.error('Erro ao excluir comentário:', error);
+                    }
+                  }}
+                  title="Excluir comentário"
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="modal-comentar-box">
+          <input
+            ref={inputRef}
+            type="text"
+            value={novoComentario}
+            onChange={e => setNovoComentario(e.target.value)}
+            placeholder="Adicione um comentário..."
+            onKeyDown={e => e.key === 'Enter' && enviarComentario()}
+          />
+          <button onClick={enviarComentario}>Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

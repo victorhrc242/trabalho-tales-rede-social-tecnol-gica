@@ -308,14 +308,15 @@ function Home() {
           ))}
         </div>
           <div className="comentarios-form">
-             <textarea
-               placeholder="Adicione um comentário..."
-               value={comentarioTexto}
-               onChange={(e) => setComentarioTexto(e.target.value)}
-            />
+             <input
+    type="text"
+    placeholder="Adicione um comentário..."
+    value={comentarioTexto}
+    onChange={(e) => setComentarioTexto(e.target.value)}
+  />
              <button onClick={comentar}>Publicar</button>
            </div>
-              <button className="fechar-modal" onClick={() => setModalComentarios(false)}>X</button>
+              <button className="fechar-modal" onClick={() => setModalComentarios(false)}>×</button>
           </div>
         </div>
         </div>
