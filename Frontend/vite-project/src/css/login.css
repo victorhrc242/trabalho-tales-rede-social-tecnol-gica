@@ -22,13 +22,46 @@
 
 /* Lado esquerdo - formulário */
 .formulario {
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #000;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 30px;
   flex: 1;
-  color: white;
-  margin-top: -150px;
+  margin-top: -50px;
+}
+
+/* Envolve o input + ícone */
+.input-wrapper {
+  position: relative;
+  width: 70%;
+  margin-left: 70px;
+  margin-bottom: 15px;
+}
+
+
+/* Foco no input */
+.input-wrapper input:focus {
+  outline: none;
+  border-color: #0a66c2;
+}
+
+/* Ícone à direita dentro do input */
+.input-icon-direita {
+  position: absolute;
+  right: 40px;/*altera para direita ou esqerda */
+  top: 50%;
+  transform: translateY(-85%);/*posiçao dos icons*/
+  color: #0a66c2;
+  pointer-events: none;
+  font-size: 18px;
+}
+
+/* Input com erro */
+.erro-input {
+  border-color: red !important;
 }
 
 /* Título com fonte maior e diferente */
@@ -38,18 +71,20 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* fonte diferente */
   margin-bottom: 20px;
   text-align: center;
-
+  padding: 7px;
 }
 
 /* Inputs */
 .formulario input {
-  background-color: #e7e7e7;
+  background-color: #ffffff;
+  border: 2px solid #0a66c2;
   padding: 10px;
   color: #474747; /* Cor inicial do texto */
+  border-radius: 5px;
   font-size: 15px;
   margin-bottom: 15px;
   width: 70%;
-margin-left: 70px;
+ margin-left: 45px;
 }
 
 /* Quando o usuário estiver digitando, a cor do texto muda */
@@ -118,25 +153,82 @@ margin-left: 70px;
 .modal-login {
   flex-direction: row-reverse; /* Inverte os lados */
 }
-.linha-esquerda{
-  background-color: rgb(12, 11, 11);
-  width: 150px;
-  height: 1px;
-  margin-top: 20px;
-  margin-left: 60px;
+
+
+.linha-ou-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 0 20px;
 }
-.linha-direita{
-  background-color: rgb(12, 11, 11);
-  width: 150px;
+
+.linha-esquerda,
+.linha-direita {
   height: 1px;
-  margin-left: 56%;
-  margin-top: -9px;  
+  background-color: rgb(12, 11, 11);
+  flex-grow: 1;
+  max-width: 150px;
 }
-.ou{
+
+/* Texto "ou" */
+.ou {
   color: rgb(3, 3, 3);
-  text-align: center;
-  margin-top: -14px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 .esq a{
   color: #051e4b;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .modal-login {
+    flex-direction: column; /* empilha o formulário e a imagem */
+    height: auto;
+    width: 90%;
+  }
+
+  .formulario {
+    width: 100%;
+    border: 2px solid #0a66c2; /* <-- borda azul no mobile */
+    border-radius: 10px;
+    padding: 20px;
+    align-items: center;
+    margin-top: 0;
+    background-color: #ffffff;
+  }
+
+  .titulo-login {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .input-wrapper {
+    width: 90%;
+    margin-left: 0;
+  }
+
+  .formulario input {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .botao-entrar {
+    width: 90%;
+    margin-left: 0;
+  }
+
+  .imagem-login {
+    display: none; /* oculta imagem em mobile */
+  }
+
+   .linha-esquerda,
+  .linha-direita {
+    max-width: none; /* Remove limite de largura */
+  }
+
 }

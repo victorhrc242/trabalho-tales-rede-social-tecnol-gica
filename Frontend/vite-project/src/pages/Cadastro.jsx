@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import '../css/cadastro.css';
 //importaçao dos icons
-import { FaUser, FaEnvelope, FaLock, FaBirthdayCake, FaUserCircle } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaUserCircle } from 'react-icons/fa';
+
 
 // Supabase config
 const supabase = createClient(
@@ -174,15 +175,18 @@ const Cadastro = () => {
                 />
                 <FaLock className="input-icon" />
               </div>
+
               <div className="input-wrapper">
-                <input
-                  type="date"
-                  placeholder="Data de nascimento"
-                  value={dataAniversario}
-                  onChange={(e) => setDataAniversario(e.target.value)}
-                  required
-                />
-              </div>
+              <label htmlFor="data-nascimento" className="input-label">Data de Nascimento</label>
+              <input
+                id="data-nascimento"
+                type="date"
+                value={dataAniversario}
+                onChange={(e) => setDataAniversario(e.target.value)}
+                required
+              />
+            </div>
+
               
               <button type="submit" className="next-button">Próximo</button>
 
