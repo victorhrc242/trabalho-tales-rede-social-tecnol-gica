@@ -74,7 +74,7 @@ useEffect(() => {
     try {
        if (!usuario.id) return;
 
-  const response = await fetch(`https://localhost:7051/api/Feed/feed-completo/${usuario.id}`);
+  const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`);
 
       const data = await response.json();
 
