@@ -7,6 +7,8 @@
   padding: 20px;
 }
 
+
+
 /* Modal (caixa do formulário) */
 .signup-box {
   background-color: transparent;
@@ -16,30 +18,35 @@
   max-width: 95%;
 }
 
+/* Container primeiro formulario */
 .step-one {
   display: flex;
   flex-direction: column;
   color: #030303;
-  width: 80%;
-  border: 2px solid #074685;
+  width: 90%;
+  border: 2px solid #074685; /*cor do borda do primeiro formulario*/
   padding: 20px;
+  padding-top: 10px; /* Distância do topo */
   background-color: #ffffff;
   margin-left: auto;
   margin-right: auto;
-  margin-top: -40px;
+  margin-top: -10px;
+  box-shadow: 3px 1px 3px rgba(10, 102, 194, 0.3);
 }
 
+/* container segundo formulario */
 .step-two {
   display: flex;
   flex-direction: column;
   color: #262626;
-  width: 80%;
-  border: 2px solid #074685;
+  width: 90%;
+  border: 2px solid #074685;/*cor do borda do segundo formulario*/
   padding: 20px;
   background-color: #ffffff;
   margin-left: auto;
   margin-right: auto;
   margin-top: 126px;
+  box-shadow: 3px 1px 3px rgba(10, 102, 194, 0.3);
 }
 
 /* Título */
@@ -228,6 +235,28 @@
   width: 70%;
   margin: 0 auto 10px auto; /* Diminuído de 20px para 10px */
 }
+/* estilo da escreita da dta de nascimento */
+.input-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #0a66c2;
+  font-weight: 500;
+  margin-left: 4px;
+}
+.custom-datepicker-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #0a66c2;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #262626;
+}
+
+
+
+
 
 /* Reduz espaço abaixo da imagem de perfil */
 .profile-photo-preview {
@@ -248,4 +277,73 @@
   height: 120px;
   resize: vertical;
   margin-bottom: 10px; /* Adicionado para reduzir espaço extra */
+}
+
+
+
+
+/* Responsividade para qualquer celular */
+@media screen and (max-width: 600px) {
+
+  /* Reset e correção universal */
+* {
+  box-sizing: border-box;
+}
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 10px;
+    height: auto;
+    width: 100%;
+  }
+
+  .signup-box {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .signup-form.step-one,
+  .signup-form.step-two {
+    width: 100%;
+    padding: 16px;
+    margin: 20px auto 0 auto;
+    border: 2px solid #074685;
+    background-color: #ffffff;
+    box-shadow: 3px 1px 6px rgba(10, 102, 194, 0.4);
+    border-radius: 10px;
+  }
+
+  .input-wrapper {
+    width: 100%;
+    margin: 0 auto 14px auto;
+  }
+
+  .signup-form input,
+  .signup-form textarea {
+    width: 100%;
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .signup-form button {
+    width: 100%;
+    font-size: 16px;
+    padding: 14px;
+    margin-top: 10px;
+  }
+
+  .profile-photo-preview {
+    width: 85px;
+    height: 85px;
+    margin-bottom: 14px;
+  }
 }

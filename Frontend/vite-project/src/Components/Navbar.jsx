@@ -167,10 +167,10 @@ function Navbar({ usuarioLogado, deslogar }) {
             <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
                 src={usuarioLogado.foto || 'https://via.placeholder.com/100x100.png?text=Foto'}
-                alt="Foto do usuário"
+                alt=""
                 className="foto-perfil-redonda"
               />
-              <span className="ola">Perfil</span>
+              <span className="ola"></span>
             </a>
           </div>
         )}
