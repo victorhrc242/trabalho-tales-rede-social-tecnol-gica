@@ -248,6 +248,7 @@ useEffect(() => {
 )}
 
 <div className="botoes-post">
+
   <button className="botao-acao" onClick={() => curtirPost(post.id)}>
     <Heart
       size={20}
@@ -255,17 +256,28 @@ useEffect(() => {
       fill={post.curtidas > 0 ? 'red' : 'none'}
       style={{ marginRight: '5px' }}
     />
-    ({post.curtidas})
+   {/* Mostra a contagem só se o usuário for o dono do post */}
+   {usuario?.id === post.autorId && post.curtidas !== undefined && `(${post.curtidas})`}
   </button>
+
   <button className="botao-acao" onClick={() => abrirComentarios(post)}>
     <MessageCircle size={20} style={{ marginRight: '5px' }} />
     ({post.comentarios})
   </button>
 </div>
 
-<p><strong>Conteúdo:</strong> {post.conteudo}</p>
-<p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
-<p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
+<div className="post-description">
+  <p>
+    {post.conteudo}
+    {post.tags && post.tags.length > 0 && (
+      <>
+        {' '}
+        {post.tags.map(tag => `#${tag.trim()}`).join(' ')}
+      </>
+    )}
+  </p>
+  <p>{new Date(post.dataPostagem).toLocaleString()}</p>
+</div>
 
             <hr />
           </li>

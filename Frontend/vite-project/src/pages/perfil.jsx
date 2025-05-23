@@ -136,7 +136,7 @@ const Perfil = () => {
     };
     try {
       await axios.post(
-        'https://devisocial.up.railway.app/api/Comentario/comentar',
+        'https://devisocial.up.railway.app/api/Comentario/comentarios/',
         payload
       );
       setNovoComentario('');
@@ -245,7 +245,7 @@ const Perfil = () => {
                   onClick={async () => {
                     try {
                       await axios.delete(
-                        `https://devisocial.up.railway.app/api/Comentario/${c.id}`
+                        `https://devisocial.up.railway.app/api/Comentario/comentarios/${c.id}`
                       );
                       await fetchComentarios(modalPost.id);
                     } catch (error) {
