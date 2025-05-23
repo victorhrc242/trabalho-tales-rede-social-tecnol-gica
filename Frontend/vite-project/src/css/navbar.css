@@ -38,6 +38,22 @@
   margin-left: -10px;
 }
 
+.navbar-lateral.minimizada .nav-item span {
+  position: absolute;
+  left: 50px;
+justify-content: center;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  font-size: 0.9rem;
+  z-index: 100;
+}
+
+
 .navbar-lateral.minimizada .perfil-foto img {
   margin-right: auto;
   display: block;
@@ -51,6 +67,7 @@
 
 .nav-item {
   display: flex;
+  position: relative;
   align-items: center;
   gap: 14px;
   padding: 12px 10px;
@@ -68,6 +85,10 @@
 
 .nav-item svg {
   font-size: 20px;
+}
+
+.navbar-lateral.minimizada .nav-item svg {
+  margin-right: 0;
 }
 
 .usuario-area {
