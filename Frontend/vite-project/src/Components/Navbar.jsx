@@ -21,6 +21,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [imagemArquivo, setImagemArquivo] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
+    const [posts, setPosts] = useState([]);
   const [imagem, setImagem] = useState('');
   const [filtroConfirmado, setFiltroConfirmado] = useState(false);
   const [etapa, setEtapa] = useState(1);
@@ -171,11 +172,11 @@ function Navbar({ usuarioLogado, deslogar }) {
           <div className="nav-item">
             <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
-                src={usuarioLogado.foto || 'https://via.placeholder.com/100x100.png?text=Foto'}
-                alt=""
-                className="foto-perfil-redonda"
+              src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
+              alt={`Foto de perfil de ${post.autorNome}`}
+              onClick={() => irParaPerfil(post.autorId)}
               />
-              <span className="ola"></span>
+                <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)}>{post.autorNome}</span>
             </a>
           </div>
         )}
