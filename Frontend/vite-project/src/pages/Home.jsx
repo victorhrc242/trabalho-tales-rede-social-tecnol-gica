@@ -314,18 +314,18 @@ useEffect(() => {
          <div className="comentarios-header">
            <strong>{postSelecionado.autorNome}</strong>
           </div>
-        <div className="comentarios-lista">
-          {comentarios.map((c, i) => (
-            <div key={i} className="comentario-item">
-              <img
-                src={c.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-                alt="Foto perfil"
-                className="comentario-imagem"
-              />
-              <span><strong>{c.autorNome}:</strong> {c.conteudo}</span>
-            </div>
-          ))}
-        </div>
+      <div className="comentarios-lista">
+  {comentarios.map((c, i) => (
+    <div key={i} className="comentario-item" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+      <img
+        src={c.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
+        alt={`Foto de perfil de ${c.autorNome}`}
+        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', marginRight: '10px' }}
+      />
+      <span><strong>{c.autorNome}</strong>: {c.conteudo}</span>
+    </div>
+  ))}
+</div>
           <div className="comentarios-form">
              <input
     type="text"
