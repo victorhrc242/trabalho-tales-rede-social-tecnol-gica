@@ -9,20 +9,23 @@
 }
 
 .recuperar-box {
+  position: relative; /* necessário para posicionar indicador absoluto dentro */
   background-color: #e7e7e7;
   border-radius: 16px;
   padding: 50px;
-  width: 500px; /* ← LARGURA REDUZIDA AQUI */
+  width: 500px; /*pnde se reduz a largura*/
   max-width: 95%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
+
 /* Título */
 .recuperar-box h2 {
   color: #0a66c2;
   font-size: 36px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin-bottom: 20px;
-  text-align: left;
+  margin-bottom: 25px;
+  text-align: center;
+  padding: 10px;
 }
 
 /* Formulário */
@@ -73,7 +76,20 @@
 
 .recuperar-box button:hover {
   background-color: #084b9a;
+}.recuperar-buttons {
+  display: flex;
+  justify-content: center; /* centraliza horizontalmente */
+  gap: 15px; /* espaço entre os botões */
+  margin-top: 10px; /* espaçamento acima dos botões, opcional */
 }
+.recuperar-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+
 
 /* Parágrafo e link */
 .recuperar-box p {
@@ -102,4 +118,129 @@
   border-radius: 8px;
 }
 
+/* linhas com ou */
+.separador {
+  text-align: center;
+  color: #181818;
+  font-size: 20px;
+  margin: 20px 0;
+}
 
+.separador-ou {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.linha-esquerda,
+.linha-direita {
+  flex: 1;
+  height: 1px;
+  background-color: #000000;
+  margin: 0 10px;
+}
+
+.ou {
+  font-size: 15px;
+  color: #030303;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* Box azul cronômetro - canto superior direito na etapa 2 */
+.cronometro {
+  display: flex;
+  align-items: center;
+  background-color: #0a66c2;
+  color: white;
+  border-radius: 8px;
+  padding: 14px 20px;
+  font-weight: bold;
+  font-size: 16px;
+  user-select: none;
+}
+
+/* Box azul sucesso senha alterada */
+.box-sucesso {
+  background-color: #0a66c2;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(10, 102, 194, 0.7);
+}
+
+/* Ajustar para que o box azul cronometro não esconda o indicador de etapa */
+.etapa-indicador {
+  z-index: 20;
+}
+
+
+/* responsividade  */
+@media (max-width: 600px) {
+  .recuperar-container {
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 10px;
+  }
+
+  .recuperar-box {
+    width: 100%;
+    max-width: 95%;
+    padding: 30px 20px;
+    background-color: #ffffff; /* fundo branco */
+    border: 2px solid #0a66c2; /* bordas fixas azuis */
+    border-radius: 12px;
+    box-shadow: none; /* remove sombra para mobile */
+  }
+
+  .recuperar-box h2 {
+    font-size: 26px;
+  }
+
+  .recuperar-box input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .recuperar-box button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .recuperar-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cronometro {
+    font-size: 14px;
+    padding: 10px 15px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .box-sucesso {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .mensagem {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .linha-esquerda,
+  .linha-direita {
+    margin: 0 5px;
+  }
+
+  .ou {
+    font-size: 13px;
+  }
+}
