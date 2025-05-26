@@ -15,6 +15,35 @@
     transition: width 0.3s ease;
 }
 
+.logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.logo-site {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #262626;
+  
+}
+
+.logo-site img {
+  width: 150px; /* aumenta a largura */
+  height: auto; /* mantém a proporção original */
+  object-fit: contain;
+}
+
+/* Quando a navbar estiver minimizada */
+.navbar-lateral.minimizada .logo-site span {
+  display: none;
+}
+
 .logo {
   font-size: 1.8rem;
   font-weight: bold;
@@ -290,13 +319,12 @@ justify-content: center;
 /* Botoes */
 .botoes-acoes {
   display: flex;
+  justify-content: flex-end; /* alinhamento à direita */
   gap: 10px;
   margin-top: 15px;
 }
-
-.button-proximo {
-  position: fixed;
-  top: 500px;
+.button-proximo,
+.button-trocar-imagem {
   background-color: #0095f6;
   color: white;
   padding: 10px 16px;
@@ -304,10 +332,8 @@ justify-content: center;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  align-self: flex-end; /* alinha à direita */
   transition: background-color 0.2s ease;
 }
-
 .button-proximo:hover {
   background-color: #0080ff;
 }
@@ -362,7 +388,7 @@ justify-content: center;
   color: #d4d4d4;
 }
 .button-confirme:hover {
-  background-color: #0077cc;
+  background-color: #22b122;
 }
 
 .button-cancel {

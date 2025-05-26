@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 import { createClient } from '@supabase/supabase-js';
 import '../css/navbar.css';
+import logo from '../Components/img/LogoParadise.jpg';
 
 // Supabase client
 const supabase = createClient(
@@ -129,6 +130,10 @@ function Navbar({ usuarioLogado, deslogar }) {
       onMouseEnter={() => setExpandida(true)}
       onMouseLeave={() => setExpandida(false)}>
       <nav className="navbar-menu">
+        <Link to="/home" className="logo-link">
+  <div className="logo-site">
+    <img src={logo} alt="Logo" />
+    <span>Paradise</span></div></Link>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
         <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
           <FaSearch /> <span>Buscar</span>
@@ -221,10 +226,10 @@ function Navbar({ usuarioLogado, deslogar }) {
                   )}
                   {imagemArquivo && (
                     <div>
-                      <button type="button" onClick={() => { setImagemArquivo(null); setImagem(''); }}>
+                      <button type="button" className='button-trocar-imagem' onClick={() => { setImagemArquivo(null); setImagem(''); }}>
                         Trocar imagem
                       </button>
-                      <button type="button" onClick={() => setEtapa(2)}>Próximo</button>
+                      <button type="button" className='button-proximo' onClick={() => setEtapa(2)}>Próximo</button>
                     </div>
                   )}
                 </>
@@ -252,9 +257,9 @@ function Navbar({ usuarioLogado, deslogar }) {
                   </div>
                   <div className="botoes-acoes">
                     {!filtroConfirmado ? (
-                      <button type="button" onClick={() => { setFiltroConfirmado(true); }}>Confirmar filtro</button>
+                      <button type="button" className='button-proximo' onClick={() => { setFiltroConfirmado(true); }}>Confirmar filtro</button>
                     ) : (
-                      <button type="button" onClick={() => setEtapa(3)}>Próximo</button>
+                      <button type="button" className='button-proximo' onClick={() => setEtapa(3)}>Próximo</button>
                     )}
                   </div>
                 </>
@@ -267,8 +272,8 @@ function Navbar({ usuarioLogado, deslogar }) {
                   <input type="text" placeholder="Tags separadas por vírgula"
                     value={tags} onChange={(e) => setTags(e.target.value)} />
                   <div className="botoes-acoes">
-                    <button type="submit">Publicar</button>
-                    <button type="button" onClick={() => { setMostrarModal(false); setEtapa(1); }}>Cancelar</button>
+                    <button type="submit" className='button-confirme'>Publicar</button>
+                    <button type="button" className='button-cancel' onClick={() => { setMostrarModal(false); setEtapa(1); }}>Cancelar</button>
                   </div>
                 </>
               )}
