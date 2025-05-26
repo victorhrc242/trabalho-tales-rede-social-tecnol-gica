@@ -34,7 +34,7 @@
 }
 
 .logo-site img {
-  width: 150px; /* aumenta a largura */
+  width: 50px; /* aumenta a largura */
   height: auto; /* mantém a proporção original */
   object-fit: contain;
 }
