@@ -21,11 +21,11 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [imagemArquivo, setImagemArquivo] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [conteudo, setConteudo] = useState('');
-    const [posts, setPosts] = useState([]);
   const [imagem, setImagem] = useState('');
   const [filtroConfirmado, setFiltroConfirmado] = useState(false);
   const [etapa, setEtapa] = useState(1);
   const [tags, setTags] = useState('');
+  const [usuario, setUsuario] = useState(null);
   const [expandida, setExpandida] = useState(false);
   const toggleNavbar = () => setExpandida(!expandida);
   const [filtroSelecionado, setFiltroSelecionado] = useState('none');
@@ -50,6 +50,21 @@ function Navbar({ usuarioLogado, deslogar }) {
     }
   };
 
+useEffect(() => {
+  const buscarUsuario = async () => {
+    try {
+      const response = await axios.get(`https://devisocial.up.railway.app/api/auth/usuario/${usuarioLogado.id}`);
+      setUsuario(response.data);
+      setImagem(response.data.FotoPerfil);
+    } catch (error) {
+      console.error('Erro ao buscar dados do usuário:', error);
+    }
+  };
+
+  if (usuarioLogado?.id) buscarUsuario();
+}, [usuarioLogado]);
+  
+
   const abrirModalOpcoes = () => setModal({ ...modal, opcoes: true });
   const fecharModalOpcoes = () => setModal({ ...modal, opcoes: false });
   const confirmarLogoutFunc = () => setModal({ confirmarLogout: true, opcoes: false, busca: false });
@@ -58,14 +73,6 @@ function Navbar({ usuarioLogado, deslogar }) {
     deslogar();
     navigate('/');
   };
-
-  useEffect(() => {
-    if (imagemArquivo) {
-      const url = URL.createObjectURL(imagemArquivo);
-      setImagem(url);
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [imagemArquivo]);
 
   // 🧩 Upload da imagem via Supabase (igual cadastro)
   const uploadImagem = async (file) => {
@@ -126,6 +133,14 @@ function Navbar({ usuarioLogado, deslogar }) {
     }
   };
 
+  useEffect(() => {
+    if (imagemArquivo) {
+      const url = URL.createObjectURL(imagemArquivo);
+      setImagem(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [imagemArquivo]);
+
   return (
     <div className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
       onMouseEnter={() => setExpandida(true)}
@@ -170,13 +185,14 @@ function Navbar({ usuarioLogado, deslogar }) {
 
         {usuarioLogado && (
           <div className="nav-item">
-            <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
+              <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
-              src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-              alt={`Foto de perfil de ${post.autorNome}`}
-              onClick={() => irParaPerfil(post.autorId)}
+                src={usuarioLogado?.imagem || 'https://via.placeholder.com/150'}
+                alt={`Fotodeperfil${usuarioLogado?.nome}`}
               />
-                <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)}>{post.autorNome}</span>
+              <span className="autor-nome" onClick={irParaPerfil}>
+                {usuarioLogado.nome}
+              </span>
             </a>
           </div>
         )}
