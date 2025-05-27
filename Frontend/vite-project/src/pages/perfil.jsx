@@ -198,8 +198,8 @@ const Perfil = () => {
           )}
           {!isEditing && (
             <div className="infor-pessoais">
-              <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p>
-              <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+              <p><strong></strong> {usuario.biografia || 'Sem biografia'}</p><br/>
+              <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p><br/>
               <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
             </div>
           )}
