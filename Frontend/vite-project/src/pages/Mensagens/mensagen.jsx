@@ -1,10 +1,16 @@
+// oi chat aqui eo victor  e antes de tudo bom dia   se vc tiver mexendo aqui e por favor tenha cuidado com o codigo 
+//  pois tem partes aqui que e muinto importantepara o codigo funcionar
+// e manda oi para mim se alguem for altera meu codigo e por favor não esqueça do que falei  pois se alterar  algo e quebrar o codigo não sei mais como resolver por isso e m codigo legado
 import React, { useEffect, useState, useRef } from 'react';
+//  essa parte do codigo aqui e importante pois se vc mexer ou auterar alguma parte da qui vai travar o sisitema e não vai funcionar
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
+//css
 import './msg.css'
 
 axios.defaults.withCredentials = true;
-
+//inicio codigo legado desenvolvido por (Victor)
+//FAVOR NÃO MECHER NESSA PARTE POIS E SENSIVEL A MODIFICAÇÃO
 const Mensagens = () => {
   const [seguindo, setSeguindo] = useState([]);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
@@ -54,12 +60,12 @@ const Mensagens = () => {
     if (!usuarioLogadoId) return;
 
     const connection = new HubConnectionBuilder()
-      .withUrl(`${API_URL}/mensagensHub`, {
-        transport: HttpTransportType.WebSockets,
-        withCredentials: true,
-      })
-      .withAutomaticReconnect()
-      .build();
+    .withUrl(`${API_URL}/mensagensHub?userId=${usuarioLogadoId}`, {
+    transport: HttpTransportType.WebSockets,
+    withCredentials: true,
+    })
+    .withAutomaticReconnect()
+    .build();
 
     connection
       .start()
@@ -116,44 +122,41 @@ const Mensagens = () => {
   }, [usuarioSelecionado, usuarioLogadoId]);
 
   // Enviar mensagem: chama API REST que salva no banco e o backend notifica via hub
-  const enviarMensagem = async () => {
-    if (!mensagem.trim() || !usuarioSelecionado) {
-      console.warn('Mensagem vazia ou usuário não selecionado');
-      return;
+const enviarMensagem = async () => {
+  if (!mensagem.trim() || !usuarioSelecionado) {
+    console.warn('Mensagem vazia ou usuário não selecionado');
+    return;
+  }
+
+  try {
+    const novaMensagem = {
+      idRemetente: usuarioLogadoId,
+      idDestinatario: usuarioSelecionado.id,
+      conteudo: mensagem,
+    };
+
+    const res = await axios.post(`${API_URL}/api/Mensagens/enviar`, novaMensagem);
+
+    if (res.status === 201 || res.status === 200) {
+      const mensagemSalva = res.data.dados; // pegar o objeto dentro do dados
+
+      setHistoricoMensagens((prev) => [...prev, mensagemSalva]);
+
+      setMensagem('');
+    } else {
+      console.error('Erro ao salvar mensagem:', res.status);
     }
-
-    try {
-      const novaMensagem = {
-        id_remetente: usuarioLogadoId,
-        id_destinatario: usuarioSelecionado.id,
-        conteudo: mensagem,
-        data_envio: new Date().toISOString(),
-        lida: false,
-      };
-
-      // Salvar via API REST
-      const res = await axios.post(`${API_URL}/api/Mensagens/enviar`, novaMensagem);
-
-      if (res.status === 201 || res.status === 200) {
-        const mensagemSalva = res.data;
-
-        setHistoricoMensagens((prev) => [...prev, mensagemSalva]);
-
-        setMensagem('');
-      } else {
-        console.error('Erro ao salvar mensagem:', res.status);
-      }
-    } catch (err) {
-      console.error('Erro ao enviar mensagem:', err);
-    }
-  };
-
+  } catch (err) {
+    console.error('Erro ao enviar mensagem:', err);
+  }
+};
   // Função para iniciar chat com usuário
   const iniciarChat = (usuario) => {
     setUsuarioSelecionado(usuario);
   };
-
+//final codigo legado(fim +"se for  mecher mexa com cuidado pois nem eu sei pq funcionou")
   return (
+    // aqui mecha com segurança pois  pode ser que mexendo em certa parte do codigo der erro
     <div className="p-4 bg-[#1e1e1e] text-white rounded-2xl shadow-lg">
       <h2 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">
         Usuários que você segue
