@@ -20,7 +20,7 @@ const Mensagens = () => {
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
 
-  const API_URL = 'https://localhost:7051';
+  const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
 
   // Usar ref para evitar re-criar listeners no SignalR
   const historicoRef = useRef(historicoMensagens);
