@@ -1,52 +1,224 @@
-.mensagens-container {
-  display: flex;
-  height: 100vh;
+/* Layout da aplicação */
+.area-mensagens {
+  padding: 1rem;
 }
 
-.lista-chats {
-  width: 30%;
-  background: #f2f2f2;
-  padding: 20px;
+.titulo-mensagens {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #4b5563;
+  padding-bottom: 0.5rem;
+}
+
+.lista-usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.usuario-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2c2c2c;
+  padding: 1rem;
+  border-radius: 1rem;
+  transition: background 0.3s ease;
+}
+
+.usuario-item:hover {
+  background: #383838;
+}
+
+.usuario-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.foto-usuario {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.nome-usuario {
+  font-weight: 600;
+}
+
+.apelido-usuario {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.botao-enviar-mensagem {
+  background-color: #D4AF37;
+  color: black;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  transition: filter 0.2s ease;
+}
+
+.botao-enviar-mensagem:hover {
+  filter: brightness(90%);
+}
+
+.area-chat {
+  margin-top: 2rem;
+  border-top: 1px solid #4b5563;
+  padding-top: 1rem;
+}
+
+.titulo-chat {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.nome-selecionado {
+  color: #D4AF37;
+}
+
+.historico-chat {
+  background-color: black;
+  color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  height: 24rem;
   overflow-y: auto;
 }
 
-.chat-item {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #ddd;
+.mensagem {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: #2c2c2c;
+  border-radius: 0.75rem;
 }
 
-.chat-item.ativo {
-  background: #ddd;
+.data-mensagem {
+  font-size: 0.75rem;
+  color: #9ca3af;
 }
 
-.chat-aberto {
-  width: 70%;
-  padding: 20px;
+.formulario-mensagem {
+  margin-top: 1rem;
+}
+
+.input-mensagem {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #2c2c2c;
+  color: white;
+  border-radius: 0.75rem;
+}
+
+.botao-enviar {
+  margin-top: 0.5rem;
+  background-color: #D4AF37;
+  color: black;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  transition: filter 0.2s ease;
+}
+
+.botao-enviar:hover {
+  filter: brightness(90%);
+}
+
+.texto-sem-seguidores {
+  color: #9ca3af;
+}
+
+/* Sidebar branca e azul com lista de usuários */
+.atalhos-laterais {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  background-color: #f0f8ff; /* branco-azulado */
+  color: #1e3a8a; /* azul escuro */
+  z-index: 999;
+  padding: 20px 10px;
+  box-shadow: 4px 0 6px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  transition: width 0.3s ease;
+}
+
+.atalhos-conteudo {
   display: flex;
   flex-direction: column;
 }
 
-.mensagens-area {
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 10px;
+.titulo-sidebar {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #1e3a8a;
 }
 
-.entrada-mensagem {
+.lista-usuarios-sidebar {
+  list-style: none;
+  padding: 0;
+}
+
+.usuario-sidebar {
   display: flex;
+  align-items: center;
   gap: 10px;
+  background-color: #e0ecff;
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 10px;
+  transition: background 0.2s ease;
 }
 
-.entrada-mensagem input {
-  flex: 1;
-  padding: 10px;
+.usuario-sidebar:hover {
+  background-color: #d0e4ff;
 }
 
-.entrada-mensagem button {
-  padding: 10px 20px;
+.foto-usuario {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  object-fit: cover;
 }
 
-.minha {
-  text-align: right;
+.nome-usuario {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e3a8a;
 }
+
+.apelido-usuario {
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.botao-msg {
+  margin-left: auto;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.botao-msg:hover {
+  background-color: #2563eb;
+}
+
+.texto-sem-seguidores {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+
+
