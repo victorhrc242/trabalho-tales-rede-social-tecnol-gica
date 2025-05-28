@@ -9,6 +9,7 @@ const Perfil = () => {
   const userId = location.state?.userId;
 
   const [usuario, setUsuario] = useState(null);
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,20 @@ const Perfil = () => {
 
   useEffect(() => {
     if (!userId) return navigate('/');
+
+    if (usuarioLogado?.id && userId && usuarioLogado.id !== userId) {
+  const verificarSeSegue = async () => {
+    try {
+      const res = await axios.get(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/verificar/${usuarioLogado.id}/${userId}`
+      );
+      setSeguindoUsuario(res.data?.seguindo || false);
+    } catch (err) {
+      console.error('Erro ao verificar se está seguindo:', err);
+    }
+  };
+  verificarSeSegue();
+}
 
     const carregarDados = async () => {
       try {
@@ -67,6 +82,40 @@ const Perfil = () => {
 
     carregarDados();
   }, [userId, navigate]);
+
+const seguirUsuario = async () => {
+  try {
+    await axios.post(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguir`,
+      {
+        seguidorId: usuarioLogado.id,
+        seguindoId: userId
+      }
+    );
+    setSeguindoUsuario(true);
+    setSeguidoresInfo(prev => ({
+      ...prev,
+      seguidores: prev.seguidores + 1
+    }));
+  } catch (err) {
+    console.error('Erro ao seguir usuário:', err);
+  }
+};
+
+const deixarDeSeguir = async () => {
+  try {
+    await axios.delete(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/deixar/${usuarioLogado.id}/${userId}`
+    );
+    setSeguindoUsuario(false);
+    setSeguidoresInfo(prev => ({
+      ...prev,
+      seguidores: Math.max(0, prev.seguidores - 1)
+    }));
+  } catch (err) {
+    console.error('Erro ao deixar de seguir usuário:', err);
+  }
+};
 
   const editarPerfil = async () => {
     try {
@@ -168,11 +217,20 @@ const Perfil = () => {
         </div>
         <div className="perfil-info">
           <h1>{usuario.nome_usuario}</h1>
-          {usuario.id === userId && !isEditing && (
-            <div className="botoes-perfil">
-              <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
-            </div>
-          )}
+            {usuarioLogado?.id === usuario.id ? (
+              !isEditing && (
+                <div className="botoes-perfil">
+                  <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
+                </div>
+              )
+            ) : (
+              <div className="botoes-perfil">
+                <button onClick={seguindoUsuario ? deixarDeSeguir : seguirUsuario}>
+                  {seguindoUsuario ? 'Deixar de Seguir' : 'Seguir'}
+                </button>
+                <button onClick={() => alert("Função de mensagem ainda não implementada.")}>Mensagem</button>
+              </div>
+            )}
           {isEditing && (
             <div className="editar-formulario">
               <input
