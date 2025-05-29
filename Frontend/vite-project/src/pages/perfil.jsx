@@ -247,7 +247,7 @@ const fetchComentarios = async (postId) => {
       <div className="perfil-header">
         <div className="foto-perfil">
           <img
-            src={usuario.imagem || 'https://via.placeholder.com/150'}
+            src={usuario.FotoPerfil || 'https://via.placeholder.com/150'}
             alt={`Foto de perfil de ${usuario.nome_usuario}`}
             style={{
               width: '100%',
@@ -339,7 +339,7 @@ const fetchComentarios = async (postId) => {
   {Array.isArray(comentarios) && comentarios.map((c, idx) => (
     <div key={idx} className="comentario-item">
       <strong>{c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
-      {c.autor?.id === usuario.id && (
+      {c.autor?.id === usuarioLogado.id && (
         <button
           className="excluir-comentario-btn"
           onClick={() => excluirComentario(c.id)}
