@@ -7,6 +7,8 @@ import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 //css
 import './msg.css'
+//icon
+import { FaUser, FaPaperPlane } from 'react-icons/fa';
 
 axios.defaults.withCredentials = true;
 //inicio codigo legado desenvolvido por (Victor)
@@ -155,51 +157,89 @@ const enviarMensagem = async () => {
     setUsuarioSelecionado(usuario);
   };
 //final codigo legado(fim +"se for  mecher mexa com cuidado pois nem eu sei pq funcionou")
-  return (
-    // aqui mecha com segurança pois  pode ser que mexendo em certa parte do codigo der erro
-    <div className="p-4 bg-[#1e1e1e] text-white rounded-2xl shadow-lg">
-      <h2 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">
+ return (
+  // aqui mecha com segurança pois pode ser que mexendo em certa parte do código der erro
+  <div
+    style={{
+      marginLeft: document.querySelector('.barra-navegacao-lateral')?.classList.contains('minimizada')
+        ? '38px'
+        : '145px',
+    }}
+  >
+{/* SIDEBAR DE USUÁRIOS */}
+<div className="atalhos-laterais">
+  <div className="atalhos-conteudo">
+    <h2 className="titulo-sidebar">👥 Usuários que você segue</h2>
+
+    {seguindo.length === 0 ? (
+      <p className="texto-sem-seguidores">Você ainda não segue ninguém.</p>
+    ) : (
+      <ul className="lista-usuarios-sidebar">
+        {seguindo.map((item) => (
+          <li key={item.idAmizade} className="usuario-sidebar">
+            <img
+              src={item.usuario.foto || 'https://via.placeholder.com/40'}
+              alt={item.usuario.nome}
+              className="foto-usuario"
+            />
+            <div>
+              <p className="nome-usuario">{item.usuario.nome}</p>
+              <p className="apelido-usuario">@{item.usuario.apelido}</p>
+            </div>
+            <button
+              onClick={() => iniciarChat(item.usuario)}
+              className="botao-msg"
+            >
+              ✉️
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</div>
+
+
+    {/* ÁREA PRINCIPAL DE MENSAGENS */}
+    <div className="area-mensagens bg-[#1e1e1e] text-white rounded-2xl shadow-lg">
+      {/* <h2 className="titulo-mensagens">
         Usuários que você segue
       </h2>
 
-      <ul className="space-y-4">
+      <ul className="lista-usuarios">
         {seguindo.length === 0 && (
-          <p className="text-gray-400">Você ainda não segue ninguém.</p>
+          <p className="texto-sem-seguidores">Você ainda não segue ninguém.</p>
         )}
         {seguindo.map((item) => (
-          <li
-            key={item.idAmizade}
-            className="flex items-center justify-between bg-[#2c2c2c] p-4 rounded-xl hover:bg-[#383838] transition"
-          >
-            <div className="flex items-center space-x-4">
+          <li key={item.idAmizade} className="usuario-item">
+            <div className="usuario-info">
               <img
                 src={item.usuario.foto || 'https://via.placeholder.com/40'}
                 alt={item.usuario.nome}
-                className="w-12 h-12 rounded-full object-cover"
+                className="foto-usuario"
               />
               <div>
-                <p className="font-semibold">{item.usuario.nome}</p>
-                <p className="text-sm text-gray-400">@{item.usuario.apelido}</p>
+                <p className="nome-usuario">{item.usuario.nome}</p>
+                <p className="apelido-usuario">@{item.usuario.apelido}</p>
               </div>
             </div>
             <button
               onClick={() => iniciarChat(item.usuario)}
-              className="bg-[#D4AF37] text-black px-4 py-2 rounded-xl font-medium hover:brightness-90 transition"
+              className="botao-enviar-mensagem"
             >
               Enviar Mensagem
             </button>
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       {usuarioSelecionado && (
-        <div className="mt-8 border-t border-gray-700 pt-4">
-          <h3 className="text-lg font-semibold mb-2">
-            Conversando com:{' '}
-            <span className="text-[#D4AF37]">{usuarioSelecionado.nome}</span>
+        <div className="area-chat">
+          <h3 className="titulo-chat">
+            Conversando com: <span className="nome-selecionado">{usuarioSelecionado.nome}</span>
           </h3>
 
-          <div className="bg-black text-white p-4 rounded-xl mt-4 h-96 overflow-auto">
+          <div className="historico-chat">
             {historicoMensagens.map((msg, index) => {
               const dataEnvio = msg.data_envio || msg.DataEnvio;
               if (!dataEnvio) return null;
@@ -207,24 +247,24 @@ const enviarMensagem = async () => {
               const formattedDate = new Date(adjustedDate).toLocaleString();
 
               return (
-                <div key={msg.id || index} className="mb-4 p-2 bg-[#2c2c2c] rounded-xl">
+                <div key={msg.id || index} className="mensagem">
                   <p>{msg.conteudo || msg.Conteudo}</p>
-                  <p className="text-xs text-gray-400">{formattedDate}</p>
+                  <p className="data-mensagem">{formattedDate}</p>
                 </div>
               );
             })}
           </div>
 
-          <div className="mt-4">
+          <div className="formulario-mensagem">
             <textarea
-              className="w-full p-2 bg-[#2c2c2c] text-white rounded-xl"
+              className="input-mensagem"
               placeholder="Digite sua mensagem..."
               value={mensagem}
               onChange={(e) => setMensagem(e.target.value)}
             />
             <button
               onClick={enviarMensagem}
-              className="mt-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl font-medium hover:brightness-90 transition"
+              className="botao-enviar"
             >
               Enviar
             </button>
@@ -232,7 +272,9 @@ const enviarMensagem = async () => {
         </div>
       )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Mensagens;

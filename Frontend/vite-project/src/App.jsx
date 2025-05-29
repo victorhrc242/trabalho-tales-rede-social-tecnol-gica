@@ -35,9 +35,14 @@ function AppWrapper() {
 
   return (
     <>
+<<<<<<< HEAD
           {!deveEsconderNavbar && usuario && (
+=======
+
+         {!deveEsconderNavbar && usuario && (
+>>>>>>> Eduarda
         <Navbar usuarioLogado={usuario} deslogar={deslogar} />
-      )}   
+      )}    
 
       <Routes>
         <Route path="/" element={<Login />} />
