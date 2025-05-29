@@ -21,8 +21,6 @@ const Perfil = () => {
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
   const inputRef = useRef();
-  const [seguindoUsuario, setSeguindoUsuario] = useState(false);
-
 
   useEffect(() => {
     if (!userId) return navigate('/');
@@ -122,8 +120,8 @@ const deixarDeSeguir = async () => {
       // Crie um objeto para o payload apenas com os campos que foram alterados
       const payload = {};
 
-      if (nome_usuario !== usuario.nome_usuario) {
-        payload.nome_usuario = nome_usuario;
+      if (nome !== usuario.nome_usuario) {
+        payload.nome_usuario = nome;
       }
 
       if (biografia !== usuario.biografia) {
@@ -153,36 +151,69 @@ const deixarDeSeguir = async () => {
       console.error('Erro ao editar perfil:', err);
     }
   };
+// ola chat vc ira mecher aqui mas cuidado pois vc tera que buscar no endpoint que busca o id do usuario e com o id ldo usuario vc ira usalo no endpoint e ira retornar os dados do usuario e isso vai pegar o nome e com esse nome que ira pegar vc ira colocar no lugar da quele nome que esta passando qsl?
+ // Função para buscar comentários de um post
+const fetchComentarios = async (postId) => {
+  try {
+    const response = await axios.get(
+      `https://devisocial.up.railway.app/api/Comentario/comentarios/${postId}?comAutor=true`
+    );
 
-  const fetchComentarios = async (postId) => {
-    try {
-      const response = await axios.get(
-        `https://devisocial.up.railway.app/api/Comentario/post/${postId}?comAutor=true`
-      );
-      setComentarios(response.data || []);
-    } catch (err) {
-      console.error('Erro ao buscar comentários:', err);
-    }
-  };
+    const comentariosArray = response.data?.comentarios || [];
 
+    // Para cada comentário, buscar o nome atualizado do autor pelo ID
+    const comentariosComNomeAtualizado = await Promise.all(
+      comentariosArray.map(async (comentario) => {
+        if (!comentario.autor?.id) return comentario;
+
+        try {
+          const userResp = await axios.get(
+            `https://devisocial.up.railway.app/api/auth/usuario/${comentario.autor.id}`
+          );
+          return {
+            ...comentario,
+            autor: {
+              ...comentario.autor,
+              nome: userResp.data.nome_usuario || comentario.autor.nome,
+            },
+          };
+        } catch {
+          // Caso falhe na requisição, manter o nome antigo
+          return comentario;
+        }
+      })
+    );
+
+    setComentarios(comentariosComNomeAtualizado);
+  } catch (err) {
+    console.error('Erro ao buscar comentários:', err);
+  }
+};
+
+
+  // Abre o modal com os comentários do post
   const abrirModalPost = async (post) => {
     setModalPost(post);
     setComentarios([]);
     await fetchComentarios(post.id);
   };
 
+  // Fecha o modal
   const fecharModalPost = () => {
     setModalPost(null);
     setComentarios([]);
   };
 
+  // Enviar um novo comentário
   const enviarComentario = async () => {
     if (!novoComentario.trim()) return;
+
     const payload = {
       postId: modalPost.id,
       autorId: usuario.id,
       conteudo: novoComentario
     };
+
     try {
       await axios.post(
         'https://devisocial.up.railway.app/api/Comentario/comentarios/',
@@ -196,6 +227,18 @@ const deixarDeSeguir = async () => {
     }
   };
 
+  // Exclusão de comentário
+  const excluirComentario = async (comentarioId) => {
+    try {
+      await axios.delete(
+        `https://devisocial.up.railway.app/api/Comentario/comentarios/${comentarioId}`
+      );
+      await fetchComentarios(modalPost.id);
+    } catch (err) {
+      console.error('Erro ao excluir comentário:', err);
+    }
+  };
+
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
 
@@ -203,10 +246,9 @@ const deixarDeSeguir = async () => {
     <div className="perfil-container">
       <div className="perfil-header">
         <div className="foto-perfil">
-          {/* foto de perfil */}
           <img
             src={usuario.imagem || 'https://via.placeholder.com/150'}
-            alt={`Foto de perfil de ${usuario.nome}`}
+            alt={`Foto de perfil de ${usuario.nome_usuario}`}
             style={{
               width: '100%',
               height: '100%',
@@ -256,7 +298,7 @@ const deixarDeSeguir = async () => {
           )}
           {!isEditing && (
             <div className="infor-pessoais">
-              <p><strong></strong> {usuario.biografia || 'Sem biografia'}</p><br/>
+              <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p><br/>
               <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p><br/>
               <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
             </div>
@@ -279,61 +321,52 @@ const deixarDeSeguir = async () => {
       </div>
 
       {modalPost && (
-  <div className="modal-overlay" onClick={fecharModalPost}>
-    <div className="modal-post-container" onClick={e => e.stopPropagation()}>
-      <div className="modal-post-imagem-container">
-        {modalPost.imagem && (
-          <img src={modalPost.imagem} alt="Imagem do post" />
-        )}
-      </div>
-      <div className="modal-post-conteudo">
-        <div className="modal-post-header">
-          <h3>{usuario.nome_usuario}</h3>
-          <button className="fechar-btn" onClick={fecharModalPost}>×</button>
-        </div>
-
-        <div className="modal-post-comentarios">
-          {comentarios.length === 0 && <p>Sem comentários ainda.</p>}
-          {comentarios.map((c, idx) => (
-            <div key={idx} className="comentario-item">
-              <strong>{c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
-              {c.autor?.id === usuario.id && (
-                <button
-                  className="excluir-comentario-btn"
-                  onClick={async () => {
-                    try {
-                      await axios.delete(
-                        `https://devisocial.up.railway.app/api/Comentario/comentarios/${c.id}`
-                      );
-                      await fetchComentarios(modalPost.id);
-                    } catch (error) {
-                      console.error('Erro ao excluir comentário:', error);
-                    }
-                  }}
-                  title="Excluir comentário"
-                >
-                  🗑️
-                </button>
+        <div className="modal-overlay" onClick={fecharModalPost}>
+          <div className="modal-post-container" onClick={e => e.stopPropagation()}>
+            <div className="modal-post-imagem-container">
+              {modalPost.imagem && (
+                <img src={modalPost.imagem} alt="Imagem do post" />
               )}
             </div>
-          ))}
-        </div>
+            <div className="modal-post-conteudo">
+              <div className="modal-post-header">
+                <h3>{usuario.nome_usuario}</h3>
+                <button className="fechar-btn" onClick={fecharModalPost}>×</button>
+              </div>
 
-        <div className="modal-comentar-box">
-          <input
-            ref={inputRef}
-            type="text"
-            value={novoComentario}
-            onChange={e => setNovoComentario(e.target.value)}
-            placeholder="Adicione um comentário..."
-            onKeyDown={e => e.key === 'Enter' && enviarComentario()}
-          />
-          <button onClick={enviarComentario}>Enviar</button>
+              <div className="modal-post-comentarios">
+              {comentarios.length === 0 && <p>Sem comentários ainda.</p>}
+  {Array.isArray(comentarios) && comentarios.map((c, idx) => (
+    <div key={idx} className="comentario-item">
+      <strong>{c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
+      {c.autor?.id === usuario.id && (
+        <button
+          className="excluir-comentario-btn"
+          onClick={() => excluirComentario(c.id)}
+          title="Excluir comentário"
+        >
+          🗑️
+        </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="modal-comentar-box">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={novoComentario}
+                  onChange={e => setNovoComentario(e.target.value)}
+                  placeholder="Adicione um comentário..."
+                  onKeyDown={e => e.key === 'Enter' && enviarComentario()}
+                />
+                <button onClick={enviarComentario}>Enviar</button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 };

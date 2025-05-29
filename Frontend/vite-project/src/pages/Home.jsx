@@ -293,7 +293,7 @@ useEffect(() => {
               <input type="text" placeholder="URL da imagem (opcional)" value={imagem} onChange={(e) => setImagem(e.target.value)} />
               <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
               <br />
-              <button className='button-confirme' type="submit">Publicar</button>
+              <button className='button-confirme' type="submit">Enviar</button>
               <button className='button-cancel' type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
             </form>
           </div>
@@ -333,7 +333,7 @@ useEffect(() => {
     value={comentarioTexto}
     onChange={(e) => setComentarioTexto(e.target.value)}
   />
-             <button onClick={comentar}>Publicar</button>
+             <button onClick={comentar}>Enviar</button>
            </div>
               <button className="fechar-modal" onClick={() => setModalComentarios(false)}>×</button>
           </div>
