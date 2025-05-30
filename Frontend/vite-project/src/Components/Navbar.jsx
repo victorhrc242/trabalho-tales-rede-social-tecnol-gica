@@ -310,8 +310,8 @@ useEffect(() => {
           <div className="modal-conteudo">
             <h2>Você tem certeza que deseja deslogar?</h2>
             <div className="botoes-modal">
-              <button onClick={deslogarERedirecionar}>Sim</button>
-              <button onClick={cancelarLogout}>Não</button>
+              <button className='button-confirme' onClick={deslogarERedirecionar}>Sim</button>
+              <button className='button-cancel' onClick={cancelarLogout}>Não</button>
             </div>
           </div>
         </div>

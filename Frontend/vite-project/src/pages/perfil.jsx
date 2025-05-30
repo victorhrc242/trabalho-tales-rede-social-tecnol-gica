@@ -267,9 +267,6 @@ const fetchComentarios = async (postId) => {
               )
             ) : (
               <div className="botoes-perfil">
-                <button onClick={seguindoUsuario ? deixarDeSeguir : seguirUsuario}>
-                  {seguindoUsuario ? 'Deixar de Seguir' : 'Seguir'}
-                </button>
                 <button onClick={() => alert("Função de mensagem ainda não implementada.")}>Mensagem</button>
               </div>
             )}
