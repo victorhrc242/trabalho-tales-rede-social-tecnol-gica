@@ -35,9 +35,11 @@ function AppWrapper() {
 
   return (
     <>
+
          {!deveEsconderNavbar && usuario && (
         <Navbar usuarioLogado={usuario} deslogar={deslogar} />
       )}    
+
 
       <Routes>
         <Route path="/" element={<Login />} />

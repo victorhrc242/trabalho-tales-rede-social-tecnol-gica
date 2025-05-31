@@ -6,7 +6,6 @@ import {
 } from 'react-icons/fa';
 import { createClient } from '@supabase/supabase-js';
 import '../css/navbar.css';
-import logo from '../Components/img/LogoParadise.jpg';
 
 // Supabase client
 const supabase = createClient(
@@ -25,7 +24,6 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [filtroConfirmado, setFiltroConfirmado] = useState(false);
   const [etapa, setEtapa] = useState(1);
   const [tags, setTags] = useState('');
-  const [usuario, setUsuario] = useState(null);
   const [expandida, setExpandida] = useState(false);
   const toggleNavbar = () => setExpandida(!expandida);
   const [filtroSelecionado, setFiltroSelecionado] = useState('none');
@@ -50,21 +48,6 @@ function Navbar({ usuarioLogado, deslogar }) {
     }
   };
 
-useEffect(() => {
-  const buscarUsuario = async () => {
-    try {
-      const response = await axios.get(`https://devisocial.up.railway.app/api/auth/usuario/${usuarioLogado.id}`);
-      setUsuario(response.data);
-      setImagem(response.data.FotoPerfil);
-    } catch (error) {
-      console.error('Erro ao buscar dados do usuário:', error);
-    }
-  };
-
-  if (usuarioLogado?.id) buscarUsuario();
-}, [usuarioLogado]);
-  
-
   const abrirModalOpcoes = () => setModal({ ...modal, opcoes: true });
   const fecharModalOpcoes = () => setModal({ ...modal, opcoes: false });
   const confirmarLogoutFunc = () => setModal({ confirmarLogout: true, opcoes: false, busca: false });
@@ -73,6 +56,14 @@ useEffect(() => {
     deslogar();
     navigate('/');
   };
+
+  useEffect(() => {
+    if (imagemArquivo) {
+      const url = URL.createObjectURL(imagemArquivo);
+      setImagem(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [imagemArquivo]);
 
   // 🧩 Upload da imagem via Supabase (igual cadastro)
   const uploadImagem = async (file) => {
@@ -133,23 +124,11 @@ useEffect(() => {
     }
   };
 
-  useEffect(() => {
-    if (imagemArquivo) {
-      const url = URL.createObjectURL(imagemArquivo);
-      setImagem(url);
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [imagemArquivo]);
-
   return (
     <div className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
       onMouseEnter={() => setExpandida(true)}
       onMouseLeave={() => setExpandida(false)}>
       <nav className="navbar-menu">
-        <Link to="/home" className="logo-link">
-  <div className="logo-site">
-    <img src={logo} alt="Logo" />
-    <span>Paradise</span></div></Link>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
         <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
           <FaSearch /> <span>Buscar</span>
@@ -185,14 +164,13 @@ useEffect(() => {
 
         {usuarioLogado && (
           <div className="nav-item">
-              <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
+            <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
-                src={usuarioLogado?.imagem || 'https://via.placeholder.com/150'}
-                alt={`Fotodeperfil${usuarioLogado?.nome}`}
+                src={usuarioLogado.foto || 'https://via.placeholder.com/100x100.png?text=Foto'}
+                alt=""
+                className="foto-perfil-redonda"
               />
-              <span className="autor-nome" onClick={irParaPerfil}>
-                {usuarioLogado.nome}
-              </span>
+              <span className="ola"></span>
             </a>
           </div>
         )}
@@ -243,10 +221,10 @@ useEffect(() => {
                   )}
                   {imagemArquivo && (
                     <div>
-                      <button type="button" className='button-trocar-imagem' onClick={() => { setImagemArquivo(null); setImagem(''); }}>
+                      <button type="button" onClick={() => { setImagemArquivo(null); setImagem(''); }}>
                         Trocar imagem
                       </button>
-                      <button type="button" className='button-proximo' onClick={() => setEtapa(2)}>Próximo</button>
+                      <button type="button" onClick={() => setEtapa(2)}>Próximo</button>
                     </div>
                   )}
                 </>
@@ -274,9 +252,9 @@ useEffect(() => {
                   </div>
                   <div className="botoes-acoes">
                     {!filtroConfirmado ? (
-                      <button type="button" className='button-proximo' onClick={() => { setFiltroConfirmado(true); }}>Confirmar filtro</button>
+                      <button type="button" onClick={() => { setFiltroConfirmado(true); }}>Confirmar filtro</button>
                     ) : (
-                      <button type="button" className='button-proximo' onClick={() => setEtapa(3)}>Próximo</button>
+                      <button type="button" onClick={() => setEtapa(3)}>Próximo</button>
                     )}
                   </div>
                 </>
@@ -289,8 +267,8 @@ useEffect(() => {
                   <input type="text" placeholder="Tags separadas por vírgula"
                     value={tags} onChange={(e) => setTags(e.target.value)} />
                   <div className="botoes-acoes">
-                    <button type="submit" className='button-confirme'>Publicar</button>
-                    <button type="button" className='button-cancel' onClick={() => { setMostrarModal(false); setEtapa(1); }}>Cancelar</button>
+                    <button type="submit">Publicar</button>
+                    <button type="button" onClick={() => { setMostrarModal(false); setEtapa(1); }}>Cancelar</button>
                   </div>
                 </>
               )}
@@ -310,8 +288,8 @@ useEffect(() => {
           <div className="modal-conteudo">
             <h2>Você tem certeza que deseja deslogar?</h2>
             <div className="botoes-modal">
-              <button className='button-confirme' onClick={deslogarERedirecionar}>Sim</button>
-              <button className='button-cancel' onClick={cancelarLogout}>Não</button>
+              <button onClick={deslogarERedirecionar}>Sim</button>
+              <button onClick={cancelarLogout}>Não</button>
             </div>
           </div>
         </div>
