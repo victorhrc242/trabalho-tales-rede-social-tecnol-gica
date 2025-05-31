@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../css/recuperarSenha.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-
 
 export default function RecuperarSenha() {
   const [etapa, setEtapa] = useState(1);
@@ -12,15 +11,41 @@ export default function RecuperarSenha() {
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [carregando, setCarregando] = useState(false);
+  const [mensagemSucesso, setMensagemSucesso] = useState('');
+
+  const [tempoRestante, setTempoRestante] = useState(0);
+  const intervaloRef = useRef(null);
+
   const navigate = useNavigate();
+
+  const formatarTempo = (segundos) => {
+    const min = Math.floor(segundos / 60);
+    const seg = segundos % 60;
+    return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    if (etapa === 2 && tempoRestante > 0) {
+      intervaloRef.current = setInterval(() => {
+        setTempoRestante((prev) => {
+          if (prev <= 1) {
+            clearInterval(intervaloRef.current);
+            setMensagem('Código expirado. Por favor, reenvie o código.');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(intervaloRef.current);
+  }, [etapa, tempoRestante]);
 
   const enviarCodigo = async () => {
     setCarregando(true);
     try {
-      await axios.post('https://devisocial.up.railway.app/api/auth/Enviar-codigo', {
-        email
-      });
-      setMensagem('Código enviado para seu e-mail.');
+      await axios.post('https://devisocial.up.railway.app/api/auth/Enviar-codigo', { email });
+      setTempoRestante(900); // 15 minutos
+      setMensagem('');
       setEtapa(2);
     } catch (erro) {
       setMensagem(erro.response?.data || 'Erro ao enviar código.');
@@ -28,14 +53,14 @@ export default function RecuperarSenha() {
     setCarregando(false);
   };
 
-  const validarCodigo = async () => {
+  const validarCodigo = () => {
     if (!codigo.trim()) {
       setMensagem('Digite o código recebido.');
       return;
     }
-    // Simplesmente avança para etapa 3, pois a validação de código será feita na hora de redefinir senha
     setEtapa(3);
     setMensagem('');
+    clearInterval(intervaloRef.current);
   };
 
   const redefinirSenha = async () => {
@@ -60,11 +85,6 @@ export default function RecuperarSenha() {
       return;
     }
 
-
-
-
-
-    
     setCarregando(true);
     try {
       await axios.put('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Recuperar-senha', {
@@ -72,9 +92,10 @@ export default function RecuperarSenha() {
         novaSenha,
         codigoRecuperacao: codigo
       });
-      setMensagem('Senha atualizada com sucesso!');
+      setMensagem('');
+      setMensagemSucesso('Senha alterada com sucesso!');
       setTimeout(() => {
-        navigate('/'); // redireciona para login
+        navigate('/');
       }, 2000);
     } catch (erro) {
       setMensagem(erro.response?.data || 'Erro ao redefinir senha.');
@@ -84,11 +105,17 @@ export default function RecuperarSenha() {
 
   const handleReenviarCodigo = () => {
     enviarCodigo();
+    setMensagem('');
   };
 
   return (
     <div className="recuperar-container">
       <div className="recuperar-box">
+
+        {mensagemSucesso && (
+          <div className="box-sucesso">{mensagemSucesso}</div>
+        )}
+
         <h2>Recuperar Senha</h2>
 
         {etapa === 1 && (
@@ -116,12 +143,16 @@ export default function RecuperarSenha() {
               required
             />
             <div className="recuperar-buttons">
-              <button type="button" onClick={handleReenviarCodigo} disabled={carregando}>
-                {carregando ? "Reenviando..." : "Renviar codigo"}
-              </button>
-              <button type="submit">
-                Enviar
-              </button>
+              {tempoRestante > 0 ? (
+                <div className="cronometro">
+                  Código válido por: <strong>{formatarTempo(tempoRestante)}</strong>
+                </div>
+              ) : (
+                <button type="button" onClick={handleReenviarCodigo} disabled={carregando}>
+                  {carregando ? "Reenviando..." : "Reenviar código"}
+                </button>
+              )}
+              <button type="submit">Enviar</button>
             </div>
           </form>
         )}
@@ -147,8 +178,16 @@ export default function RecuperarSenha() {
             </button>
           </form>
         )}
-   {mensagem && <p className="mensagem">{mensagem}</p>}
+
+        {mensagem && !mensagemSucesso && <p className="mensagem">{mensagem}</p>}
+
+        <div className="separador-ou">
+          <div className="linha-esquerda"></div>
+          <div className="ou">ou</div>
+          <div className="linha-direita"></div>
+        </div>
         <p><Link to="/">Voltar para o login</Link></p>
+        <p>Não tem uma conta? <Link to="/cadastro">Cadastrar</Link></p>
       </div>
     </div>
   );

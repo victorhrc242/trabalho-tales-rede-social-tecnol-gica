@@ -36,9 +36,9 @@ function AppWrapper() {
   return (
     <>
 
-          {!deveEsconderNavbar && usuario && (
+         {!deveEsconderNavbar && usuario && (
         <Navbar usuarioLogado={usuario} deslogar={deslogar} />
-      )}   
+      )}    
 
 
       <Routes>

@@ -1,12 +1,16 @@
-// oi chat aqui eo victor  e antes de tudo bom dia   se vc tiver mexendo aqui e por favor tenha cuidado com o codigo 
+// oi chat aqui eo victor  e antes de tudo bom dia   
+// se vc tiver mexendo aqui e por favor tenha cuidado com o codigo  
 //  pois tem partes aqui que e muinto importantepara o codigo funcionar
-// e manda oi para mim se alguem for altera meu codigo e por favor não esqueça do que falei  pois se alterar  algo e quebrar o codigo não sei mais como resolver por isso e m codigo legado
+// e manda oi para mim se alguem for altera meu codigo e por favor não esqueça do que falei  
+// pois se alterar  algo e quebrar o codigo não sei mais como resolver por isso e m codigo legado
 import React, { useEffect, useState, useRef } from 'react';
 //  essa parte do codigo aqui e importante pois se vc mexer ou auterar alguma parte da qui vai travar o sisitema e não vai funcionar
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 //css
 import './msg.css'
+//icon
+import { FaUser, FaPaperPlane } from 'react-icons/fa';
 
 axios.defaults.withCredentials = true;
 //inicio codigo legado desenvolvido por (Victor)
@@ -122,115 +126,121 @@ const Mensagens = () => {
   }, [usuarioSelecionado, usuarioLogadoId]);
 
   // Enviar mensagem: chama API REST que salva no banco e o backend notifica via hub
-const enviarMensagem = async () => {
-  if (!mensagem.trim() || !usuarioSelecionado) {
-    console.warn('Mensagem vazia ou usuário não selecionado');
-    return;
-  }
-
-  try {
-    const novaMensagem = {
-      idRemetente: usuarioLogadoId,
-      idDestinatario: usuarioSelecionado.id,
-      conteudo: mensagem,
-    };
-
-    const res = await axios.post(`${API_URL}/api/Mensagens/enviar`, novaMensagem);
-
-    if (res.status === 201 || res.status === 200) {
-      const mensagemSalva = res.data.dados; // pegar o objeto dentro do dados
-
-      setHistoricoMensagens((prev) => [...prev, mensagemSalva]);
-
-      setMensagem('');
-    } else {
-      console.error('Erro ao salvar mensagem:', res.status);
+  const enviarMensagem = async () => {
+    if (!mensagem.trim() || !usuarioSelecionado) {
+      console.warn('Mensagem vazia ou usuário não selecionado');
+      return;
     }
-  } catch (err) {
-    console.error('Erro ao enviar mensagem:', err);
-  }
-};
+
+    try {
+      const novaMensagem = {
+        idRemetente: usuarioLogadoId,
+        idDestinatario: usuarioSelecionado.id,
+        conteudo: mensagem,
+      };
+
+      const res = await axios.post(`${API_URL}/api/Mensagens/enviar`, novaMensagem);
+
+      if (res.status === 201 || res.status === 200) {
+        const mensagemSalva = res.data.dados; // pegar o objeto dentro do dados
+
+        setHistoricoMensagens((prev) => [...prev, mensagemSalva]);
+
+        setMensagem('');
+      } else {
+        console.error('Erro ao salvar mensagem:', res.status);
+      }
+    } catch (err) {
+      console.error('Erro ao enviar mensagem:', err);
+    }
+  };
   // Função para iniciar chat com usuário
   const iniciarChat = (usuario) => {
     setUsuarioSelecionado(usuario);
   };
-//final codigo legado(fim +"se for  mecher mexa com cuidado pois nem eu sei pq funcionou")
+  //final codigo legado(fim +"se for  mecher mexa com cuidado pois nem eu sei pq funcionou")
   return (
-    // aqui mecha com segurança pois  pode ser que mexendo em certa parte do codigo der erro
-    <div className="p-4 bg-[#1e1e1e] text-white rounded-2xl shadow-lg">
-      <h2 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2">
-        Usuários que você segue
-      </h2>
+    <div className="app-container">
+      <div className="fixed-header"></div>
 
-      <ul className="space-y-4">
-        {seguindo.length === 0 && (
-          <p className="text-gray-400">Você ainda não segue ninguém.</p>
-        )}
-        {seguindo.map((item) => (
-          <li
-            key={item.idAmizade}
-            className="flex items-center justify-between bg-[#2c2c2c] p-4 rounded-xl hover:bg-[#383838] transition"
-          >
-            <div className="flex items-center space-x-4">
-              <img
-                src={item.usuario.foto || 'https://via.placeholder.com/40'}
-                alt={item.usuario.nome}
-                className="w-12 h-12 rounded-full object-cover"
-              />
-              <div>
-                <p className="font-semibold">{item.usuario.nome}</p>
-                <p className="text-sm text-gray-400">@{item.usuario.apelido}</p>
-              </div>
-            </div>
-            <button
-              onClick={() => iniciarChat(item.usuario)}
-              className="bg-[#D4AF37] text-black px-4 py-2 rounded-xl font-medium hover:brightness-90 transition"
-            >
-              Enviar Mensagem
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {usuarioSelecionado && (
-        <div className="mt-8 border-t border-gray-700 pt-4">
-          <h3 className="text-lg font-semibold mb-2">
-            Conversando com:{' '}
-            <span className="text-[#D4AF37]">{usuarioSelecionado.nome}</span>
-          </h3>
-
-          <div className="bg-black text-white p-4 rounded-xl mt-4 h-96 overflow-auto">
-            {historicoMensagens.map((msg, index) => {
-              const dataEnvio = msg.data_envio || msg.DataEnvio;
-              if (!dataEnvio) return null;
-              const adjustedDate = dataEnvio.split('.')[0] + 'Z';
-              const formattedDate = new Date(adjustedDate).toLocaleString();
-
-              return (
-                <div key={msg.id || index} className="mb-4 p-2 bg-[#2c2c2c] rounded-xl">
-                  <p>{msg.conteudo || msg.Conteudo}</p>
-                  <p className="text-xs text-gray-400">{formattedDate}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-4">
-            <textarea
-              className="w-full p-2 bg-[#2c2c2c] text-white rounded-xl"
-              placeholder="Digite sua mensagem..."
-              value={mensagem}
-              onChange={(e) => setMensagem(e.target.value)}
-            />
-            <button
-              onClick={enviarMensagem}
-              className="mt-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl font-medium hover:brightness-90 transition"
-            >
-              Enviar
-            </button>
-          </div>
+      <div className="sidebar">
+        <div className="sidebar-header">Meu WhatsApp</div>
+        <div className="search-bar">
+          <input type="text" placeholder="Buscar..." />
         </div>
-      )}
+        <div className="chat-list">
+          {seguindo.length === 0 ? (
+            <p className="texto-sem-seguidores">Você ainda não segue ninguém.</p>
+          ) : (
+            seguindo.map((item) => (
+              <div
+                key={item.idAmizade}
+                className="chat-item"
+                onClick={() => iniciarChat(item.usuario)}
+              >
+                <img
+                  src={item.usuario.foto || 'https://via.placeholder.com/40'}
+                  alt={item.usuario.nome}
+                />
+                <span>{item.usuario.nome}</span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="chat-area">
+        {usuarioSelecionado ? (
+          <>
+            <div className="chat-header">
+              <img
+                src={usuarioSelecionado.foto || 'https://via.placeholder.com/40'}
+                alt={usuarioSelecionado.nome}
+              />
+              <span>{usuarioSelecionado.nome}</span>
+            </div>
+
+            <div className="messages">
+              {historicoMensagens.map((msg, index) => {
+                const dataEnvio = msg.data_envio || msg.DataEnvio;
+                if (!dataEnvio) return null;
+                const adjustedDate = dataEnvio.split('.')[0] + 'Z';
+                const formattedDate = new Date(adjustedDate).toLocaleString();
+
+                return (
+                  <div
+                    key={msg.id || index}
+                    className={`message ${
+                      (msg.idRemetente || msg.id_remetente) === usuarioLogadoId ? 'sent' : 'received'
+                    }`}
+                  >
+                    <p>{msg.conteudo || msg.Conteudo}</p>
+                    <div className="timestamp">{formattedDate}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="chat-input">
+          <textarea
+            className="input-mensagem"
+            placeholder="Digite sua mensagem..."
+            value={mensagem}
+            onChange={(e) => setMensagem(e.target.value)}
+            rows={1}
+          />
+          <button onClick={enviarMensagem} className="botao-enviar">
+            <FaPaperPlane />
+          </button>
+        </div>
+
+          </>
+        ) : (
+          <div className="messages" style={{ padding: '20px' }}>
+            <p>Selecione um usuário para iniciar o chat.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
