@@ -82,7 +82,7 @@ useEffect(() => {
         const postsComAutores = await Promise.all(
           data.map(async (post) => {
             try {
-              const autorResp = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${post.autorId}`);
+              const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
               const autorData = await autorResp.json();
               return {
                 ...post,

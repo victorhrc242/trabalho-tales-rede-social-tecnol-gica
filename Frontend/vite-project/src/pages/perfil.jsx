@@ -23,18 +23,18 @@ const Perfil = () => {
 
   useEffect(() => {
     if (!userId) return navigate('/');
-
+  console.log(userId)
     const carregarDados = async () => {
       try {
         // Buscar dados do usuário
         const { data: userData } = await axios.get(
-          `https://devisocial.up.railway.app/api/auth/usuario/${userId}`
+          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
         );
+      
         setUsuario(userData);
         setNome(userData.nome_usuario);
         setBiografia(userData.biografia);
         setImagem(userData.FotoPerfil);
-
         // Buscar posts do usuário
         const { data: postsData } = await axios.get(
           `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/posts/usuario/${userId}`

@@ -1,48 +1,56 @@
-// oi chat aqui eo victor  e antes de tudo bom dia   
-// se vc tiver mexendo aqui e por favor tenha cuidado com o codigo  
-//  pois tem partes aqui que e muinto importantepara o codigo funcionar
-// e manda oi para mim se alguem for altera meu codigo e por favor não esqueça do que falei  
-// pois se alterar  algo e quebrar o codigo não sei mais como resolver por isso e m codigo legado
 import React, { useEffect, useState, useRef } from 'react';
-//  essa parte do codigo aqui e importante pois se vc mexer ou auterar alguma parte da qui vai travar o sisitema e não vai funcionar
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
-//css
-import './msg.css'
-//icon
+import './msg.css';
 import { FaUser, FaPaperPlane } from 'react-icons/fa';
+import { data } from 'react-router';
 
 axios.defaults.withCredentials = true;
-//inicio codigo legado desenvolvido por (Victor)
-//FAVOR NÃO MECHER NESSA PARTE POIS E SENSIVEL A MODIFICAÇÃO
+
 const Mensagens = () => {
   const [seguindo, setSeguindo] = useState([]);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [mensagem, setMensagem] = useState('');
   const [historicoMensagens, setHistoricoMensagens] = useState([]);
+  const [usuarioLogado, setUsuarioLogado] = useState(null); // Aqui guardo o objeto completo do usuário logado
 
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
 
   const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
 
-  // Usar ref para evitar re-criar listeners no SignalR
   const historicoRef = useRef(historicoMensagens);
   historicoRef.current = historicoMensagens;
 
-  // Buscar lista de seguindo
+  // Buscar dados completos do usuário logado, incluindo foto
+  useEffect(() => {
+    const fetchUsuarioLogado = async () => {
+      try {
+        if (!usuarioLogadoId) return;
+        const res = await axios.get(`${API_URL}/api/auth/usuario/${usuarioLogadoId}`);
+        setUsuarioLogado(res.data.dados || res.data); // Ajuste conforme a estrutura da API
+      } catch (err) {
+        console.error('Erro ao carregar dados do usuário logado:', err);
+      }
+    };
+    fetchUsuarioLogado();
+  }, [usuarioLogadoId]);
+
+  // Buscar lista de seguindo com fotos corretas
   useEffect(() => {
     const fetchSeguindo = async () => {
       try {
+        if (!usuarioLogadoId) return;
         const res = await axios.get(`${API_URL}/api/Amizades/seguindo/${usuarioLogadoId}`);
         const listaCompletada = await Promise.all(
           res.data.seguindo.map(async (item) => {
             const userRes = await axios.get(`${API_URL}/api/auth/usuario/${item.usuario2}`);
+            const usuarioDados = userRes.data.dados || userRes.data;
             return {
               idAmizade: item.id,
               dataSolicitacao: item.dataSolicitacao,
               usuario: {
-                ...userRes.data.dados,
+                ...usuarioDados,
                 id: item.usuario2,
               },
             };
@@ -54,29 +62,25 @@ const Mensagens = () => {
       }
     };
 
-    if (usuarioLogadoId) {
-      fetchSeguindo();
-    }
+    fetchSeguindo();
   }, [usuarioLogadoId]);
 
-  // Inicializar conexão SignalR uma vez (quando usuário logado mudar)
   useEffect(() => {
     if (!usuarioLogadoId) return;
 
     const connection = new HubConnectionBuilder()
-    .withUrl(`${API_URL}/mensagensHub?userId=${usuarioLogadoId}`, {
-    transport: HttpTransportType.WebSockets,
-    withCredentials: true,
-    })
-    .withAutomaticReconnect()
-    .build();
+      .withUrl(`${API_URL}/mensagensHub?userId=${usuarioLogadoId}`, {
+        transport: HttpTransportType.WebSockets,
+        withCredentials: true,
+      })
+      .withAutomaticReconnect()
+      .build();
 
     connection
       .start()
       .then(() => console.log('Conexão SignalR estabelecida'))
       .catch((err) => console.error('Erro ao conectar no SignalR:', err));
 
-    // Evento: nova mensagem
     connection.on('NovaMensagem', (novaMensagem) => {
       if (
         usuarioSelecionado &&
@@ -87,12 +91,10 @@ const Mensagens = () => {
       }
     });
 
-    // Evento: mensagem apagada
     connection.on('MensagemApagada', (mensagemId) => {
       setHistoricoMensagens((prev) => prev.filter((msg) => msg.id !== mensagemId));
     });
 
-    // Evento: mensagem lida
     connection.on('MensagemLida', (mensagemId, lida) => {
       setHistoricoMensagens((prev) =>
         prev.map((msg) => (msg.id === mensagemId ? { ...msg, lida } : msg))
@@ -104,7 +106,6 @@ const Mensagens = () => {
     };
   }, [usuarioLogadoId, usuarioSelecionado]);
 
-  // Buscar histórico de mensagens quando trocar usuário selecionado
   useEffect(() => {
     if (!usuarioSelecionado) {
       setHistoricoMensagens([]);
@@ -124,8 +125,6 @@ const Mensagens = () => {
 
     fetchMensagens();
   }, [usuarioSelecionado, usuarioLogadoId]);
-
-  // Enviar mensagem: chama API REST que salva no banco e o backend notifica via hub
   const enviarMensagem = async () => {
     if (!mensagem.trim() || !usuarioSelecionado) {
       console.warn('Mensagem vazia ou usuário não selecionado');
@@ -142,10 +141,8 @@ const Mensagens = () => {
       const res = await axios.post(`${API_URL}/api/Mensagens/enviar`, novaMensagem);
 
       if (res.status === 201 || res.status === 200) {
-        const mensagemSalva = res.data.dados; // pegar o objeto dentro do dados
-
+        const mensagemSalva = res.data.dados;
         setHistoricoMensagens((prev) => [...prev, mensagemSalva]);
-
         setMensagem('');
       } else {
         console.error('Erro ao salvar mensagem:', res.status);
@@ -154,11 +151,11 @@ const Mensagens = () => {
       console.error('Erro ao enviar mensagem:', err);
     }
   };
-  // Função para iniciar chat com usuário
+
   const iniciarChat = (usuario) => {
     setUsuarioSelecionado(usuario);
   };
-  //final codigo legado(fim +"se for  mecher mexa com cuidado pois nem eu sei pq funcionou")
+
   return (
     <div className="app-container">
       <div className="fixed-header"></div>
@@ -179,10 +176,10 @@ const Mensagens = () => {
                 onClick={() => iniciarChat(item.usuario)}
               >
                 <img
-                  src={item.usuario.foto || 'https://via.placeholder.com/40'}
-                  alt={item.usuario.nome}
+                  src={item.usuario.imagem || item.usuario.FotoPerfil || 'https://via.placeholder.com/40'}
+                  alt={item.usuario.nome_usuario}
                 />
-                <span>{item.usuario.nome}</span>
+                <span>{item.usuario.nome_usuario}</span>
               </div>
             ))
           )}
@@ -194,10 +191,10 @@ const Mensagens = () => {
           <>
             <div className="chat-header">
               <img
-                src={usuarioSelecionado.foto || 'https://via.placeholder.com/40'}
-                alt={usuarioSelecionado.nome}
-              />
-              <span>{usuarioSelecionado.nome}</span>
+                src={usuarioSelecionado.imagem}
+                alt={usuarioSelecionado.nome_usuario}
+              />  
+              <span>{usuarioSelecionado.nome_usuario}</span>
             </div>
 
             <div className="messages">
@@ -222,18 +219,17 @@ const Mensagens = () => {
             </div>
 
             <div className="chat-input">
-          <textarea
-            className="input-mensagem"
-            placeholder="Digite sua mensagem..."
-            value={mensagem}
-            onChange={(e) => setMensagem(e.target.value)}
-            rows={1}
-          />
-          <button onClick={enviarMensagem} className="botao-enviar">
-            <FaPaperPlane />
-          </button>
-        </div>
-
+              <textarea
+                className="input-mensagem"
+                placeholder="Digite sua mensagem..."
+                value={mensagem}
+                onChange={(e) => setMensagem(e.target.value)}
+                rows={1}
+              />
+              <button onClick={enviarMensagem} className="botao-enviar">
+                <FaPaperPlane />
+              </button>
+            </div>
           </>
         ) : (
           <div className="messages" style={{ padding: '20px' }}>

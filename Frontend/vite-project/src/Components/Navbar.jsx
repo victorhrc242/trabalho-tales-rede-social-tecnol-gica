@@ -41,13 +41,25 @@ function Navbar({ usuarioLogado, deslogar }) {
       console.error('Erro ao buscar usuários:', error);
     }
   }, [busca]);
+ const carregarDados = useCallback(async () => {
+    if (!usuarioLogado?.id) return;
 
+    try {
+      const { data: userData } = await axios.get(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuarioLogado.id}`
+      );
+      setImagem(userData.imagem);
+    } catch (err) {
+      console.error('Erro ao carregar dados do perfil:', err);
+    }
+  }, [usuarioLogado?.id]);
   const irParaPerfil = () => {
     if (usuarioLogado?.id) {
       navigate('/perfil', { state: { userId: usuarioLogado.id } });
     }
   };
-
+  // Carregar dados do usuário
+ 
   const abrirModalOpcoes = () => setModal({ ...modal, opcoes: true });
   const fecharModalOpcoes = () => setModal({ ...modal, opcoes: false });
   const confirmarLogoutFunc = () => setModal({ confirmarLogout: true, opcoes: false, busca: false });
@@ -63,7 +75,8 @@ function Navbar({ usuarioLogado, deslogar }) {
       setImagem(url);
       return () => URL.revokeObjectURL(url);
     }
-  }, [imagemArquivo]);
+      carregarDados();
+  }, [imagemArquivo],[usuarioLogado?.id, carregarDados]);
 
   // 🧩 Upload da imagem via Supabase (igual cadastro)
   const uploadImagem = async (file) => {
@@ -166,7 +179,7 @@ function Navbar({ usuarioLogado, deslogar }) {
           <div className="nav-item">
             <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
-                src={usuarioLogado.foto || 'https://via.placeholder.com/100x100.png?text=Foto'}
+                src={usuarioLogado.imagem || 'https://via.placeholder.com/100x100.png?text=Foto'}
                 alt=""
                 className="foto-perfil-redonda"
               />
