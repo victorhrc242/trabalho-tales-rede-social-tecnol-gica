@@ -234,10 +234,10 @@ function Navbar({ usuarioLogado, deslogar }) {
                   )}
                   {imagemArquivo && (
                     <div>
-                      <button type="button" onClick={() => { setImagemArquivo(null); setImagem(''); }}>
+                      <button className='button-trocar-imagem' type="button" onClick={() => { setImagemArquivo(null); setImagem(''); }}>
                         Trocar imagem
                       </button>
-                      <button type="button" onClick={() => setEtapa(2)}>Próximo</button>
+                      <button className='button-proximo' type="button" onClick={() => setEtapa(2)}>Próximo</button>
                     </div>
                   )}
                 </>
@@ -265,9 +265,9 @@ function Navbar({ usuarioLogado, deslogar }) {
                   </div>
                   <div className="botoes-acoes">
                     {!filtroConfirmado ? (
-                      <button type="button" onClick={() => { setFiltroConfirmado(true); }}>Confirmar filtro</button>
+                      <button className='button-proximo' type="button" onClick={() => { setFiltroConfirmado(true); }}>Confirmar filtro</button>
                     ) : (
-                      <button type="button" onClick={() => setEtapa(3)}>Próximo</button>
+                      <button className='button-proximo' type="button" onClick={() => setEtapa(3)}>Próximo</button>
                     )}
                   </div>
                 </>
@@ -280,8 +280,8 @@ function Navbar({ usuarioLogado, deslogar }) {
                   <input type="text" placeholder="Tags separadas por vírgula"
                     value={tags} onChange={(e) => setTags(e.target.value)} />
                   <div className="botoes-acoes">
-                    <button type="submit">Publicar</button>
-                    <button type="button" onClick={() => { setMostrarModal(false); setEtapa(1); }}>Cancelar</button>
+                    <button className='button-confirme' type="submit">Publicar</button>
+                    <button className='button-cancel' type="button" onClick={() => { setMostrarModal(false); setEtapa(1); }}>Cancelar</button>
                   </div>
                 </>
               )}
@@ -301,8 +301,8 @@ function Navbar({ usuarioLogado, deslogar }) {
           <div className="modal-conteudo">
             <h2>Você tem certeza que deseja deslogar?</h2>
             <div className="botoes-modal">
-              <button onClick={deslogarERedirecionar}>Sim</button>
-              <button onClick={cancelarLogout}>Não</button>
+              <button className='button-confirme' onClick={deslogarERedirecionar}>Sim</button>
+              <button className='button-cancel' onClick={cancelarLogout}>Não</button>
             </div>
           </div>
         </div>
