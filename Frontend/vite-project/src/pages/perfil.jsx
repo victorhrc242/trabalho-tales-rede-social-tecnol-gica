@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
 
 
 const Perfil = () => {
@@ -180,17 +179,7 @@ const fetchComentarios = async (postId) => {
     }
   };
 
-  // Exclusão de comentário
-  const excluirComentario = async (comentarioId) => {
-    try {
-      await axios.delete(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${comentarioId}`
-      );
-      await fetchComentarios(modalPost.id);
-    } catch (err) {
-      console.error('Erro ao excluir comentário:', err);
-    }
-  };
+  
 
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
