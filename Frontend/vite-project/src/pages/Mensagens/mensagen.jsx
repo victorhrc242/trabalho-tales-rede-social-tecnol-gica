@@ -164,7 +164,7 @@ const Mensagens = () => {
       <div className="fixed-header"></div>
 
       <div className="sidebar">
-        <div className="sidebar-header">Meu WhatsApp</div>
+        <div className="sidebar-header">Mensagens</div>
         <div className="search-bar">
           <input type="text" placeholder="Buscar..." />
         </div>
