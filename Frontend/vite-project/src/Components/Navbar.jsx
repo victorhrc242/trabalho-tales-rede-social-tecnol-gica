@@ -202,7 +202,7 @@ function Navbar({ usuarioLogado, deslogar }) {
               <li onClick={() => alert('Em breve')}>Configurações</li>
               <li onClick={() => alert('Em breve')}>Trocar de Conta</li>
             </ul>
-            <button className="fechar-modal" onClick={fecharModalOpcoes}>Fechar</button>
+            <button className="fechar-modal" onClick={fecharModalOpcoes}>x</button>
           </div>
         </div>
       )}
