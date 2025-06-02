@@ -114,47 +114,12 @@ useEffect(() => {
     localStorage.removeItem('usuario');
     navigate('/');
   };
-
-  const irParaPerfil = (usuarioId) => {
-    navigate('/Perfil', { state: { userId: usuarioId } });
-  };
-
   const fecharModal = () => {
     setMostrarModal(false);
   };
-
-  const handleCriarPost = async (e) => {
-    e.preventDefault();
-
-    const novoPost = {
-      autorId: usuario.id,
-      conteudo,
-      imagem,
-      tags: tags.split(',').map(tag => tag.trim())
-    };
-
-    try {
-      const response = await fetch('https://devisocial.up.railway.app/api/Feed/criar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(novoPost)
-      });
-
-      if (response.ok) {
-        fecharModal();
-      } else {
-        const erroResp = await response.json();
-        setErro(erroResp.erro || 'Erro ao criar o post');
-      }
-    } catch (err) {
-      console.error('Erro ao criar post:', err);
-      setErro('Erro de conexão com o servidor.');
-    }
-  };
-
   const curtirPost = async (postId) => {
     try {
-      await fetch('https://devisocial.up.railway.app/api/Curtida/curtir', {
+      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, usuarioId: usuario.id })
@@ -172,13 +137,13 @@ useEffect(() => {
     setModalComentarios(true);
 
     try {
-      const response = await fetch(`https://devisocial.up.railway.app/api/Comentario/comentarios/${post.id}`);
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
       const data = await response.json();
 
       const comentariosComNomes = await Promise.all(
         data.comentarios.map(async (comentario) => {
           try {
-            const autorResp = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${comentario.autorId}`);
+            const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
             const autorData = await autorResp.json();
             return {
               ...comentario,
@@ -209,7 +174,7 @@ useEffect(() => {
     };
 
     try {
-      await fetch('https://devisocial.up.railway.app/api/Comentario/comentar', {
+      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(comentario)
