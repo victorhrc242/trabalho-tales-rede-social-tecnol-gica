@@ -82,7 +82,7 @@ useEffect(() => {
         const postsComAutores = await Promise.all(
           data.map(async (post) => {
             try {
-              const autorResp = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${post.autorId}`);
+              const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
               const autorData = await autorResp.json();
               return {
                 ...post,
@@ -248,6 +248,7 @@ useEffect(() => {
 )}
 
 <div className="botoes-post">
+
   <button className="botao-acao" onClick={() => curtirPost(post.id)}>
     <Heart
       size={20}
@@ -255,17 +256,28 @@ useEffect(() => {
       fill={post.curtidas > 0 ? 'red' : 'none'}
       style={{ marginRight: '5px' }}
     />
-    ({post.curtidas})
+   {/* Mostra a contagem só se o usuário for o dono do post */}
+   {usuario?.id === post.autorId && post.curtidas !== undefined && `(${post.curtidas})`}
   </button>
+
   <button className="botao-acao" onClick={() => abrirComentarios(post)}>
     <MessageCircle size={20} style={{ marginRight: '5px' }} />
     ({post.comentarios})
   </button>
 </div>
 
-<p><strong>Conteúdo:</strong> {post.conteudo}</p>
-<p><strong>Tags:</strong> {post.tags?.join(', ')}</p>
-<p><strong>Data:</strong> {new Date(post.dataPostagem).toLocaleString()}</p>
+<div className="post-description">
+  <p>
+    {post.conteudo}
+    {post.tags && post.tags.length > 0 && (
+      <>
+        {' '}
+        {post.tags.map(tag => `#${tag.trim()}`).join(' ')}
+      </>
+    )}
+  </p>
+  <p>{new Date(post.dataPostagem).toLocaleString()}</p>
+</div>
 
             <hr />
           </li>
@@ -281,7 +293,7 @@ useEffect(() => {
               <input type="text" placeholder="URL da imagem (opcional)" value={imagem} onChange={(e) => setImagem(e.target.value)} />
               <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
               <br />
-              <button className='button-confirme' type="submit">Publicar</button>
+              <button className='button-confirme' type="submit">Enviar</button>
               <button className='button-cancel' type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
             </form>
           </div>
@@ -302,18 +314,18 @@ useEffect(() => {
          <div className="comentarios-header">
            <strong>{postSelecionado.autorNome}</strong>
           </div>
-        <div className="comentarios-lista">
-          {comentarios.map((c, i) => (
-            <div key={i} className="comentario-item">
-              <img
-                src={c.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-                alt="Foto perfil"
-                className="comentario-imagem"
-              />
-              <span><strong>{c.autorNome}:</strong> {c.conteudo}</span>
-            </div>
-          ))}
-        </div>
+      <div className="comentarios-lista">
+  {comentarios.map((c, i) => (
+    <div key={i} className="comentario-item" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+      <img
+        src={c.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
+        alt={`Foto de perfil de ${c.autorNome}`}
+        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', marginRight: '10px' }}
+      />
+      <span><strong>{c.autorNome}</strong>: {c.conteudo}</span>
+    </div>
+  ))}
+</div>
           <div className="comentarios-form">
              <input
     type="text"
@@ -321,7 +333,7 @@ useEffect(() => {
     value={comentarioTexto}
     onChange={(e) => setComentarioTexto(e.target.value)}
   />
-             <button onClick={comentar}>Publicar</button>
+             <button onClick={comentar}>Enviar</button>
            </div>
               <button className="fechar-modal" onClick={() => setModalComentarios(false)}>×</button>
           </div>
