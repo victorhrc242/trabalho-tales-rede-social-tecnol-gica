@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
-import { FaUser, FaPaperPlane } from 'react-icons/fa';
-import { data } from 'react-router';
+import { FaPaperPlane, FaSearch } from 'react-icons/fa';
 
 axios.defaults.withCredentials = true;
 
@@ -12,23 +11,24 @@ const Mensagens = () => {
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [mensagem, setMensagem] = useState('');
   const [historicoMensagens, setHistoricoMensagens] = useState([]);
-  const [usuarioLogado, setUsuarioLogado] = useState(null); // Aqui guardo o objeto completo do usuário logado
+  const [usuarioLogado, setUsuarioLogado] = useState(null);
+  const [busca, setBusca] = useState('');
+  const [seguindoFiltrado, setSeguindoFiltrado] = useState([]);
+  const [naoLidas, setNaoLidas] = useState({}); // Notificações de mensagens não lidas
 
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
-
   const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
-
   const historicoRef = useRef(historicoMensagens);
   historicoRef.current = historicoMensagens;
 
-  // Buscar dados completos do usuário logado, incluindo foto
+  // Buscar dados do usuário logado
   useEffect(() => {
     const fetchUsuarioLogado = async () => {
       try {
         if (!usuarioLogadoId) return;
         const res = await axios.get(`${API_URL}/api/auth/usuario/${usuarioLogadoId}`);
-        setUsuarioLogado(res.data.dados || res.data); // Ajuste conforme a estrutura da API
+        setUsuarioLogado(res.data.dados || res.data);
       } catch (err) {
         console.error('Erro ao carregar dados do usuário logado:', err);
       }
@@ -36,7 +36,7 @@ const Mensagens = () => {
     fetchUsuarioLogado();
   }, [usuarioLogadoId]);
 
-  // Buscar lista de seguindo com fotos corretas
+  // Buscar usuários seguidos
   useEffect(() => {
     const fetchSeguindo = async () => {
       try {
@@ -57,6 +57,7 @@ const Mensagens = () => {
           })
         );
         setSeguindo(listaCompletada);
+        setSeguindoFiltrado(listaCompletada);
       } catch (err) {
         console.error('Erro ao carregar lista de seguindo:', err);
       }
@@ -65,6 +66,20 @@ const Mensagens = () => {
     fetchSeguindo();
   }, [usuarioLogadoId]);
 
+  // Atualizar lista com base na busca
+  useEffect(() => {
+    if (busca.trim() === '') {
+      setSeguindoFiltrado(seguindo);
+    } else {
+      const termo = busca.toLowerCase();
+      const filtrado = seguindo.filter((item) =>
+        item.usuario.nome_usuario.toLowerCase().includes(termo)
+      );
+      setSeguindoFiltrado(filtrado);
+    }
+  }, [busca, seguindo]);
+
+  // SignalR
   useEffect(() => {
     if (!usuarioLogadoId) return;
 
@@ -82,12 +97,29 @@ const Mensagens = () => {
       .catch((err) => console.error('Erro ao conectar no SignalR:', err));
 
     connection.on('NovaMensagem', (novaMensagem) => {
+      const remetente = novaMensagem.id_remetente;
+      const destinatario = novaMensagem.id_destinatario;
+
       if (
         usuarioSelecionado &&
-        (novaMensagem.id_remetente === usuarioSelecionado.id ||
-          novaMensagem.id_destinatario === usuarioSelecionado.id)
+        (remetente === usuarioSelecionado.id || destinatario === usuarioSelecionado.id)
       ) {
         setHistoricoMensagens((prev) => [...prev, novaMensagem]);
+
+        if (remetente !== usuarioLogadoId) {
+          setNaoLidas((prev) => {
+            const copy = { ...prev };
+            copy[remetente] = 0;
+            return copy;
+          });
+        }
+      } else {
+        if (remetente !== usuarioLogadoId) {
+          setNaoLidas((prev) => {
+            const count = prev[remetente] || 0;
+            return { ...prev, [remetente]: count + 1 };
+          });
+        }
       }
     });
 
@@ -125,6 +157,7 @@ const Mensagens = () => {
 
     fetchMensagens();
   }, [usuarioSelecionado, usuarioLogadoId]);
+
   const enviarMensagem = async () => {
     if (!mensagem.trim() || !usuarioSelecionado) {
       console.warn('Mensagem vazia ou usuário não selecionado');
@@ -154,32 +187,59 @@ const Mensagens = () => {
 
   const iniciarChat = (usuario) => {
     setUsuarioSelecionado(usuario);
+    setNaoLidas((prev) => {
+      const copy = { ...prev };
+      copy[usuario.id] = 0;
+      return copy;
+    });
   };
 
   return (
     <div className="app-container">
       <div className="fixed-header"></div>
-
       <div className="sidebar">
         <div className="sidebar-header">Mensagens</div>
+
         <div className="search-bar">
-          <input type="text" placeholder="Buscar..." />
+          <div className="search-input-container">
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+            <span className="search-icon">
+              <FaSearch />
+            </span>
+          </div>
         </div>
+
         <div className="chat-list">
-          {seguindo.length === 0 ? (
-            <p className="texto-sem-seguidores">Você ainda não segue ninguém.</p>
+          {seguindoFiltrado.length === 0 ? (
+            <p className="texto-sem-seguidores">Nenhum usuário encontrado.</p>
           ) : (
-            seguindo.map((item) => (
+            seguindoFiltrado.map((item) => (
               <div
                 key={item.idAmizade}
                 className="chat-item"
                 onClick={() => iniciarChat(item.usuario)}
               >
                 <img
-                  src={item.usuario.imagem || item.usuario.FotoPerfil || 'https://via.placeholder.com/40'}
+                  src={
+                    item.usuario.imagem ||
+                    item.usuario.FotoPerfil ||
+                    'https://via.placeholder.com/40'
+                  }
                   alt={item.usuario.nome_usuario}
                 />
-                <span>{item.usuario.nome_usuario}</span>
+                <div className="chat-item-info">
+                  <div className="chat-item-header">
+                    <span className="chat-item-nome">{item.usuario.nome_usuario}</span>
+                    {naoLidas[item.usuario.id] > 0 && (
+                      <span className="chat-item-notificacao">{naoLidas[item.usuario.id]}</span>
+                    )}
+                  </div>
+                </div>
               </div>
             ))
           )}
@@ -193,7 +253,7 @@ const Mensagens = () => {
               <img
                 src={usuarioSelecionado.imagem}
                 alt={usuarioSelecionado.nome_usuario}
-              />  
+              />
               <span>{usuarioSelecionado.nome_usuario}</span>
             </div>
 
