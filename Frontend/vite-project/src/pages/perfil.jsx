@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import Comentario from '../Components/Comentario';
 
 const Perfil = () => {
   const location = useLocation();
@@ -187,18 +187,25 @@ const fetchComentarios = async (postId) => {
   return (
     <div className="perfil-container">
       <div className="perfil-header">
-        <div className="foto-perfil">
-          <img
-            src={usuario.imagem || 'https://via.placeholder.com/150'}
-            alt={`Foto de perfil de ${usuario.nome_usuario}`}
-            style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              objectFit: 'cover'
-            }}
-          />
-        </div>
+       <div
+  className="foto-perfil"
+  onClick={() => {
+    // Força um "refresh" da rota atual
+    navigate(0); // Isso recarrega a página inteira
+  }}
+  style={{ cursor: 'pointer' }}
+>
+  <img
+    src={usuario.imagem || 'https://via.placeholder.com/150'}
+    alt={`Foto de perfil de ${usuario.nome_usuario}`}
+    style={{
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      objectFit: 'cover'
+    }}
+  />
+</div>
         <div className="perfil-info">
           <h1>{usuario.nome_usuario}</h1>
           {usuario.id === userId && !isEditing && (
@@ -253,45 +260,19 @@ const fetchComentarios = async (postId) => {
         ))}
       </div>
 
-      {modalPost && (
-        <div className="modal-overlay" onClick={fecharModalPost}>
-          <div className="modal-post-container" onClick={e => e.stopPropagation()}>
-            <div className="modal-post-imagem-container">
-              {modalPost.imagem && (
-                <img src={modalPost.imagem} alt="Imagem do post" />
-              )}
-            </div>
-            <div className="modal-post-conteudo">
-              <div className="modal-post-header">
-                <h3>{usuario.nome_usuario}</h3>
-                <button className="fechar-btn" onClick={fecharModalPost}>×</button>
-              </div>
-
-              <div className="modal-post-comentarios">
-              {comentarios.length === 0 && <p>Sem comentários ainda.</p>}
-  {Array.isArray(comentarios) && comentarios.map((c, idx) => (
-    <div key={idx} className="comentario-item">
-      <strong>{c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
-    
-                  </div>
-                ))}
-              </div>
-
-              <div className="modal-comentar-box">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={novoComentario}
-                  onChange={e => setNovoComentario(e.target.value)}
-                  placeholder="Adicione um comentário..."
-                  onKeyDown={e => e.key === 'Enter' && enviarComentario()}
-                />
-                <button onClick={enviarComentario}>Enviar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+     {modalPost && (
+  <Comentario
+    post={{
+      imagem: modalPost.imagem,
+      autorNome: usuario.nome_usuario
+    }}
+    comentarios={comentarios}
+    comentarioTexto={novoComentario}
+    setComentarioTexto={setNovoComentario}
+    comentar={enviarComentario}
+    fechar={fecharModalPost}
+  />
+)}
     </div>
   );
 };

@@ -9,7 +9,7 @@ import Navbar from './Components/Navbar';
 import Criar from './pages/Criar';
 import Msg from './pages/Mensagens/mensagen';
 import Explore from './pages/Explore/Explore';
-import Notificacao from './pages/Notificação/Notificacao';
+
 function AppWrapper() {
   const location = useLocation();
 
@@ -52,7 +52,7 @@ function AppWrapper() {
         <Route path="/criar" element={<Criar />} />
         <Route path="/mensagen" element={<Msg/>} />
         <Route path="/explore" element={<Explore/>}/>
-        <Route path="/notificacoes" element={<Notificacao/>} />
+        
       </Routes>
     </>
   );
