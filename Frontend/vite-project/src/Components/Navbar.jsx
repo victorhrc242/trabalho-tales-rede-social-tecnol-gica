@@ -78,6 +78,8 @@ function Navbar({ usuarioLogado, deslogar }) {
       carregarDados();
   }, [imagemArquivo],[usuarioLogado?.id, carregarDados]);
 
+  // tema claro e escur
+
   // 🧩 Upload da imagem via Supabase (igual cadastro)
   const uploadImagem = async (file) => {
     const fileName = `${Date.now()}_${file.name}`;
@@ -176,7 +178,7 @@ function Navbar({ usuarioLogado, deslogar }) {
         </div>
 
         {usuarioLogado && (
-          <div className="nav-item">
+          <a onClick={irParaPerfil}><div className="nav-item">
             <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
                 src={usuarioLogado.imagem || 'https://via.placeholder.com/100x100.png?text=Foto'}
@@ -186,6 +188,7 @@ function Navbar({ usuarioLogado, deslogar }) {
               <span className="ola"></span>
             </a>
           </div>
+          </a>
         )}
 
         <div className="perfil-configuracao" onClick={abrirModalOpcoes}>
