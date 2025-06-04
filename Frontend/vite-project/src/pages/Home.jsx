@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import { Heart, MessageCircle } from 'lucide-react';
 import '../css/home.css';
+import Comentario from '../Components/Comentario.jsx';
+
+
 
 function Home() {
   const navigate = useNavigate();
@@ -249,46 +252,19 @@ useEffect(() => {
         ))}
       </ul>
 
-    {modalComentarios && postSelecionado && (
-      <div className="modal-overlay">
-        <div className="comentarios-modal">
-      <div className="imagem-container">
-        <img
-          src={postSelecionado.imagem}
-          alt="Imagem do post"
-          className="imagem-post"
-        />
-      </div>
-       <div className="comentarios-container">
-         <div className="comentarios-header">
-           <strong>{postSelecionado.autorNome}</strong>
-          </div>
-      <div className="comentarios-lista">
-  {comentarios.map((c, i) => (
-    <div key={i} className="comentario-item" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-      <img
-        src={c.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-        alt={`Foto de perfil de ${c.autorNome}`}
-        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', marginRight: '10px' }}
-      />
-      <span><strong>{c.autorNome}</strong>: {c.conteudo}</span>
-    </div>
-  ))}
-</div>
-          <div className="comentarios-form">
-             <input
-    type="text"
-    placeholder="Adicione um comentário..."
-    value={comentarioTexto}
-    onChange={(e) => setComentarioTexto(e.target.value)}
+      
+{modalComentarios && postSelecionado && (
+  <Comentario
+    post={postSelecionado}
+    comentarios={comentarios}
+    comentarioTexto={comentarioTexto}
+    setComentarioTexto={setComentarioTexto}
+    comentar={comentar}
+    fechar={() => setModalComentarios(false)}
   />
-             <button onClick={comentar}>Enviar</button>
-           </div>
-              <button className="fechar-modal" onClick={() => setModalComentarios(false)}>×</button>
-          </div>
-        </div>
-        </div>
-    )}
+)}
+
+
     </div>
   );
 }
