@@ -14,15 +14,23 @@ const Mensagens = () => {
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [busca, setBusca] = useState('');
   const [seguindoFiltrado, setSeguindoFiltrado] = useState([]);
-  const [naoLidas, setNaoLidas] = useState({}); // Notificações de mensagens não lidas
+  const [naoLidas, setNaoLidas] = useState({});
 
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
   const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
-  const historicoRef = useRef(historicoMensagens);
-  historicoRef.current = historicoMensagens;
+  const fimDasMensagensRef = useRef(null);
 
-  // Buscar dados do usuário logado
+  const rolarParaFim = () => {
+    if (fimDasMensagensRef.current) {
+      fimDasMensagensRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    rolarParaFim();
+  }, [historicoMensagens]);
+
   useEffect(() => {
     const fetchUsuarioLogado = async () => {
       try {
@@ -36,7 +44,6 @@ const Mensagens = () => {
     fetchUsuarioLogado();
   }, [usuarioLogadoId]);
 
-  // Buscar usuários seguidos
   useEffect(() => {
     const fetchSeguindo = async () => {
       try {
@@ -66,7 +73,6 @@ const Mensagens = () => {
     fetchSeguindo();
   }, [usuarioLogadoId]);
 
-  // Atualizar lista com base na busca
   useEffect(() => {
     if (busca.trim() === '') {
       setSeguindoFiltrado(seguindo);
@@ -79,7 +85,6 @@ const Mensagens = () => {
     }
   }, [busca, seguindo]);
 
-  // SignalR
   useEffect(() => {
     if (!usuarioLogadoId) return;
 
@@ -264,18 +269,29 @@ const Mensagens = () => {
                 const adjustedDate = dataEnvio.split('.')[0] + 'Z';
                 const formattedDate = new Date(adjustedDate).toLocaleString();
 
+                const isSent = (msg.idRemetente || msg.id_remetente) === usuarioLogadoId;
+
                 return (
                   <div
                     key={msg.id || index}
-                    className={`message ${
-                      (msg.idRemetente || msg.id_remetente) === usuarioLogadoId ? 'sent' : 'received'
-                    }`}
+                    className={`message ${isSent ? 'sent' : 'received'}`}
                   >
                     <p>{msg.conteudo || msg.Conteudo}</p>
-                    <div className="timestamp">{formattedDate}</div>
+                    <div className="timestamp">
+                      {formattedDate}
+                      {isSent && (
+                        <span
+                          className={`check-marks ${msg.lida ? 'lida' : 'enviada'}`}
+                          title={msg.lida ? 'Visualizada' : 'Enviada'}
+                        >
+                          ✔✔
+                        </span>
+                      )}
+                    </div>
                   </div>
                 );
               })}
+              <div ref={fimDasMensagensRef} />
             </div>
 
             <div className="chat-input">
