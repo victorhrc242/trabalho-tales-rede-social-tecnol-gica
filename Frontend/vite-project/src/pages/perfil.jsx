@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
+
 
 const Perfil = () => {
   const location = useLocation();
@@ -91,7 +93,7 @@ const Perfil = () => {
 
       // Envie a requisição de atualização apenas com os campos modificados
       const response = await axios.put(
-        `https://devisocial.up.railway.app/api/auth/editarusuarios/${userId}`,
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/editarusuarios/${userId}`,
         payload
       );
 
@@ -107,7 +109,7 @@ const Perfil = () => {
 const fetchComentarios = async (postId) => {
   try {
     const response = await axios.get(
-      `https://devisocial.up.railway.app/api/Comentario/comentarios/${postId}?comAutor=true`
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${postId}?comAutor=true`
     );
 
     const comentariosArray = response.data?.comentarios || [];
@@ -119,7 +121,7 @@ const fetchComentarios = async (postId) => {
 
         try {
           const userResp = await axios.get(
-            `https://devisocial.up.railway.app/api/auth/usuario/${comentario.autor.id}`
+            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autor.id}`
           );
           return {
             ...comentario,
@@ -167,7 +169,7 @@ const fetchComentarios = async (postId) => {
 
     try {
       await axios.post(
-        'https://devisocial.up.railway.app/api/Comentario/comentarios/',
+        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/',
         payload
       );
       setNovoComentario('');
@@ -182,7 +184,7 @@ const fetchComentarios = async (postId) => {
   const excluirComentario = async (comentarioId) => {
     try {
       await axios.delete(
-        `https://devisocial.up.railway.app/api/Comentario/comentarios/${comentarioId}`
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${comentarioId}`
       );
       await fetchComentarios(modalPost.id);
     } catch (err) {
@@ -281,15 +283,7 @@ const fetchComentarios = async (postId) => {
   {Array.isArray(comentarios) && comentarios.map((c, idx) => (
     <div key={idx} className="comentario-item">
       <strong>{c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
-      {c.autor?.id === usuario.id && (
-        <button
-          className="excluir-comentario-btn"
-          onClick={() => excluirComentario(c.id)}
-          title="Excluir comentário"
-        >
-          🗑️
-        </button>
-                    )}
+    
                   </div>
                 ))}
               </div>

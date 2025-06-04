@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import { Heart, MessageCircle } from 'lucide-react';
 import '../css/home.css';
+import Comentario from '../Components/Comentario.jsx';
+
+
 
 function Home() {
   const navigate = useNavigate();
@@ -114,47 +117,12 @@ useEffect(() => {
     localStorage.removeItem('usuario');
     navigate('/');
   };
-
-  const irParaPerfil = (usuarioId) => {
-    navigate('/Perfil', { state: { userId: usuarioId } });
-  };
-
   const fecharModal = () => {
     setMostrarModal(false);
   };
-
-  const handleCriarPost = async (e) => {
-    e.preventDefault();
-
-    const novoPost = {
-      autorId: usuario.id,
-      conteudo,
-      imagem,
-      tags: tags.split(',').map(tag => tag.trim())
-    };
-
-    try {
-      const response = await fetch('https://devisocial.up.railway.app/api/Feed/criar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(novoPost)
-      });
-
-      if (response.ok) {
-        fecharModal();
-      } else {
-        const erroResp = await response.json();
-        setErro(erroResp.erro || 'Erro ao criar o post');
-      }
-    } catch (err) {
-      console.error('Erro ao criar post:', err);
-      setErro('Erro de conexão com o servidor.');
-    }
-  };
-
   const curtirPost = async (postId) => {
     try {
-      await fetch('https://devisocial.up.railway.app/api/Curtida/curtir', {
+      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, usuarioId: usuario.id })
@@ -172,13 +140,13 @@ useEffect(() => {
     setModalComentarios(true);
 
     try {
-      const response = await fetch(`https://devisocial.up.railway.app/api/Comentario/comentarios/${post.id}`);
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
       const data = await response.json();
 
       const comentariosComNomes = await Promise.all(
         data.comentarios.map(async (comentario) => {
           try {
-            const autorResp = await fetch(`https://devisocial.up.railway.app/api/auth/usuario/${comentario.autorId}`);
+            const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
             const autorData = await autorResp.json();
             return {
               ...comentario,
@@ -209,7 +177,7 @@ useEffect(() => {
     };
 
     try {
-      await fetch('https://devisocial.up.railway.app/api/Comentario/comentar', {
+      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(comentario)
@@ -284,62 +252,19 @@ useEffect(() => {
         ))}
       </ul>
 
-      {mostrarModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Criar Novo Post</h2>
-            <form onSubmit={handleCriarPost}>
-              <textarea placeholder="Escreva algo..." value={conteudo} onChange={(e) => setConteudo(e.target.value)} required />
-              <input type="text" placeholder="URL da imagem (opcional)" value={imagem} onChange={(e) => setImagem(e.target.value)} />
-              <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
-              <br />
-              <button className='button-confirme' type="submit">Enviar</button>
-              <button className='button-cancel' type="button" onClick={fecharModal} style={{ marginLeft: '10px' }}>Cancelar</button>
-            </form>
-          </div>
-        </div>
-      )}
-
-    {modalComentarios && postSelecionado && (
-      <div className="modal-overlay">
-        <div className="comentarios-modal">
-      <div className="imagem-container">
-        <img
-          src={postSelecionado.imagem}
-          alt="Imagem do post"
-          className="imagem-post"
-        />
-      </div>
-       <div className="comentarios-container">
-         <div className="comentarios-header">
-           <strong>{postSelecionado.autorNome}</strong>
-          </div>
-      <div className="comentarios-lista">
-  {comentarios.map((c, i) => (
-    <div key={i} className="comentario-item" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-      <img
-        src={c.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-        alt={`Foto de perfil de ${c.autorNome}`}
-        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', marginRight: '10px' }}
-      />
-      <span><strong>{c.autorNome}</strong>: {c.conteudo}</span>
-    </div>
-  ))}
-</div>
-          <div className="comentarios-form">
-             <input
-    type="text"
-    placeholder="Adicione um comentário..."
-    value={comentarioTexto}
-    onChange={(e) => setComentarioTexto(e.target.value)}
+      
+{modalComentarios && postSelecionado && (
+  <Comentario
+    post={postSelecionado}
+    comentarios={comentarios}
+    comentarioTexto={comentarioTexto}
+    setComentarioTexto={setComentarioTexto}
+    comentar={comentar}
+    fechar={() => setModalComentarios(false)}
   />
-             <button onClick={comentar}>Enviar</button>
-           </div>
-              <button className="fechar-modal" onClick={() => setModalComentarios(false)}>×</button>
-          </div>
-        </div>
-        </div>
-    )}
+)}
+
+
     </div>
   );
 }

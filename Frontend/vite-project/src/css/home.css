@@ -127,6 +127,7 @@ button {
   cursor: pointer;
   font-weight: bold;
   transition: 0.3s;
+  background-color: #007bff;
 }
 
 button + button {
