@@ -531,3 +531,35 @@
   overflow-y: auto;
 }
 
+/* Tema escuro */
+.navbar-lateral.tema-escuro {
+  background-color: #1a1a1a;
+  border-right: 1px solid #333;
+}
+
+.navbar-lateral.tema-escuro .nav-item,
+.navbar-lateral.tema-escuro .perfil-configuracao,
+.navbar-lateral.tema-escuro .ola {
+  color: #fff;
+}
+
+.navbar-lateral.tema-escuro .nav-item:hover,
+.navbar-lateral.tema-escuro .perfil-configuracao:hover {
+  background-color: #333;
+}
+
+.navbar-lateral.tema-escuro .barra-pesquisa input {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+.navbar-lateral.tema-escuro .barra-pesquisa button {
+  background-color: #444;
+}
+
+.navbar-lateral.tema-escuro .resultados-pesquisa {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+}

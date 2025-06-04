@@ -14,6 +14,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [modal, setModal] = useState({ busca: false, opcoes: false, confirmarLogout: false });
   const [imagem, setImagem] = useState('');
+  const [temaEscuro, setTemaEscuro] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [expandida, setExpandida] = useState(false);
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   };
 
   return (
-    <div className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
+    <div className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'} ${temaEscuro ? 'tema-escuro' : ''}`}
       onMouseEnter={() => setExpandida(true)}
       onMouseLeave={() => setExpandida(false)}>
       <nav className="navbar-menu">
@@ -111,7 +112,9 @@ function Navbar({ usuarioLogado, deslogar }) {
             </a>
           </div>
         )}
-
+        <div className="nav-item" onClick={() => setTemaEscuro(!temaEscuro)}>
+  <span>{temaEscuro ? 'Tema Claro' : 'Tema Escuro'}</span>
+</div>
         <div className="perfil-configuracao" onClick={abrirModalOpcoes}>
           <FaCog />
         </div>
