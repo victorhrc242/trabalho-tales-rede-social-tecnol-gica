@@ -1,3 +1,4 @@
+/* === Base Lateral Navbar do CSS1 (mantido) === */
 .navbar-lateral {
   width: 145px;
   position: fixed;
@@ -11,7 +12,7 @@
   flex-direction: column;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   border-right: 1px solid #dbdbdb;
-  z-index: 1; /* Garantir que o navbar tenha um índice menor que o modal */
+  z-index: 1;
 }
 
 .logo {
@@ -21,29 +22,27 @@
   color: #262626;
 }
 
-/* Navbar expandida e minimizada */
+/* Estado expandido/minimizado */
 .navbar-lateral.expandida {
   width: 145px;
-    transition: width 0.3s ease;
+  transition: width 0.3s ease;
   overflow: hidden;
 }
-
 .navbar-lateral.minimizada {
   width: 38px;
   transition: width 0.3s ease;
 }
-
 .navbar-lateral.minimizada .nav-item span,
 .navbar-lateral.minimizada .ola {
   display: none;
 }
-
 .navbar-lateral.minimizada .perfil-foto img {
   margin-left: auto;
   margin-right: auto;
   display: block;
 }
 
+/* Itens */
 .nav-item {
   display: flex;
   align-items: center;
@@ -56,11 +55,9 @@
   transition: background-color 0.2s ease;
   cursor: pointer;
 }
-
 .nav-item:hover {
   background-color: #d4d4d4;
 }
-
 .nav-item svg {
   font-size: 20px;
 }
@@ -78,7 +75,6 @@
   padding: 0;
   cursor: pointer;
 }
-
 .foto-perfil-redonda {
   width: 32px;
   height: 32px;
@@ -86,6 +82,7 @@
   object-fit: cover;
 }
 
+/* Configurações */
 .perfil-configuracao {
   cursor: pointer;
   font-size: 18px;
@@ -94,15 +91,14 @@
   border-radius: 8px;
   transition: background-color 0.2s ease;
 }
-
 .perfil-configuracao:hover {
   background-color: #d4d4d4;
 }
 
+/* Barra de pesquisa */
 .barra-pesquisa {
   margin: 10px 0;
 }
-
 .barra-pesquisa input {
   width: 100%;
   padding: 8px 10px;
@@ -110,7 +106,6 @@
   border-radius: 8px;
   font-size: 14px;
 }
-
 .barra-pesquisa button {
   margin-top: 8px;
   width: 100%;
@@ -121,13 +116,12 @@
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
-
 .barra-pesquisa button:hover {
   background-color: #0f8200;
 }
 
+/* Resultados */
 .resultados-pesquisa {
   background-color: #fff;
   border: 1px solid #dbdbdb;
@@ -136,7 +130,6 @@
   max-height: 200px;
   overflow-y: auto;
 }
-
 .resultado-usuario {
   padding: 10px;
   cursor: pointer;
@@ -144,7 +137,6 @@
   font-size: 14px;
   color: #262626;
 }
-
 .resultado-usuario:hover {
   background-color: #fafafa;
 }
@@ -160,230 +152,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Certificar-se de que o modal aparece sobre o navbar */
+  z-index: 1000;
 }
-.modal-CriarPost{
-  position: fixed;
-  top: 70px;
-  left: 400px;
-  right: 400px;
-  bottom: 25px;
-  border-radius: 15px;
-  background-color: rgb(255, 255, 255);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Certificar-se de que o modal aparece sobre o navbar */
-}
-
-.form-criar-post {
-  width: 700px;        /* ou o tamanho que preferir */
-  height: 500px;       /* altura fixa */
-  display: flex;
-  flex-direction: column;   /* rolagem se o conteúdo passar do limite */
-  padding: 25px;
-}
-
-.area-upload {
-  position: relative;
-  height: 350px;
-  background-color: #f4f4f4;
-  border: 2px #aaa;
-  border-radius: 12px;
-  text-align: center;
-  padding: 40px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.area-upload:hover {
-  background-color: #e8e8e8;
-  border-color: #0095f6;
-}
-
-.area-upload p {
-  font-size: 16px;
-  color: #555;
-  margin-top: 20px;
-}
-
-.area-upload::before {
-  content: "📷";
-  font-size: 48px;
-  color: #aaa;
-  display: block;
-  margin-bottom: 10px;
-  animation: pulse 2s infinite ease-in-out;
-}
-
-.area-upload input[type="file"] {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* Pequena animação no ícone */
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 1;
-  }
-}
-
-.preview-imagem {
-  margin: 10px 0;
-  text-align: center;
-}
-.preview-imagem img {
-  width: 300px;  /* ou qualquer tamanho fixo desejado */
-  height: 200px; /* mantém o tamanho fixo */
-  object-fit: cover; /* mantém o preenchimento e corta o excesso */
-  margin-top: 111px;
-}
-.imagem-preview {
-  border-radius: 12px;
-}
-
-.preview-imagem2 {
-  margin: 10px 0;
-  text-align: center;
-}
-.preview-imagem2 img {
-  width: 400px;  /* ou qualquer tamanho fixo desejado */
-  height: 300px; /* mantém o tamanho fixo */
-  object-fit: cover; /* mantém o preenchimento e corta o excesso */
-  border-radius: 8px;
-}
-.imagem-preview2 {
-  border-radius: 12px;
-}
-
-
-/* Filtros (estilos visuais aplicados via className) */
-.imagem-preview.none { filter: none; }
-.imagem-preview.grayscale { filter: grayscale(100%); }
-.imagem-preview.sepia { filter: sepia(100%); }
-.imagem-preview.invert { filter: invert(100%); }
-.imagem-preview.contrast { filter: contrast(150%); }
-.imagem-preview.saturate { filter: saturate(200%); }
-
-.filtros {
-  margin-bottom: 15px;
-}
-.filtros-opcoes {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.filtro-botao {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  color:#262626;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-.filtro-botao.ativo {
-  background-color: #0095f6;
-  color:white;
-}
-
-/* Botoes */
-.botoes-acoes {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.button-proximo {
-  position: fixed;
-  top: 500px;
-  background-color: #0095f6;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  align-self: flex-end; /* alinha à direita */
-  transition: background-color 0.2s ease;
-}
-
-.button-proximo:hover {
-  background-color: #0080ff;
-}
-
-.button-trocar-imagem{
-  position: fixed;
-  top: 500px;
-  background-color: #0095f6;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  align-self: anchor-center; /* alinha à direita */
-  transition: background-color 0.2s ease;
-}
-
-.fechar-modal-x {
-  position: absolute;
-  top: -80px;
-  right: -400px;
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: #fff;
-  cursor: pointer;
-  z-index: 1010;
-  transition: color 0.2s ease;
-}
-
-.fechar-modal-x-etapa2 {
-  right: -271px; /* ou ajuste fino como -850px se necessário */
-}
-
-.fechar-modal-x:hover {
-  background-color: transparent;
-}
-
-.button-confirme,
-.button-cancel {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.button-confirme {
-  background-color: #0095f6;
-  color: #d4d4d4;
-}
-.button-confirme:hover {
-  background-color: #0077cc;
-}
-
-.button-cancel {
-  background-color: #0095f6;
-  color: #d4d4d4;
-}
-
 
 .modal-conteudo {
   background: #fff;
@@ -393,13 +163,11 @@
   max-width: 90%;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
-
 .modal-conteudo ul {
   list-style: none;
   padding: 0;
   margin: 0 0 20px 0;
 }
-
 .modal-conteudo li {
   padding: 10px;
   border-bottom: 1px solid #f0f0f0;
@@ -408,36 +176,16 @@
   color: #262626;
   transition: background 0.2s;
 }
-
 .modal-conteudo li:hover {
   background-color: #f9f9f9;
 }
 
-.form-criar-post h2{
-    position: relative;
-    left: 30%;
-}
-
-.button-confirmar{
-      position: fixed;
-    top: 500px;
-    background-color: #0095f6;
-    color: white;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    align-self: flex-end;
-    transition: background-color 0.2s ease;
-}
-
+/* Confirmação Logout */
 .botoes-modal {
   display: flex;
   justify-content: space-between;
   gap: 10px;
 }
-
 .btn-confirmar {
   background-color: #ed4956;
   color: #fff;
@@ -446,7 +194,6 @@
   border-radius: 6px;
   cursor: pointer;
 }
-
 .btn-cancelar {
   background-color: #1a6fcf;
   color: #1082ec;
@@ -455,111 +202,163 @@
   border-radius: 6px;
   cursor: pointer;
 }
-.ola{
-  color: black;
-}
 
-.preview-e-filtros{
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.filtros-lado {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  max-width: 250px;
-}
-
-.filtro-miniatura {
-  cursor: pointer;
-  text-align: center;
-  transition: transform 0.2s;
-}
-
-.filtro-miniatura.ativo {
-  border: 2px solid #007bff;
-  border-radius: 8px;
-}
-
-.imagem-miniatura {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 6px;
-  display: block;
-  margin: 0 auto;
-}
-
-/* Exemplo de filtros */
-.imagem-miniatura.none {
-  filter: none;
-}
-.imagem-miniatura.grayscale {
-  filter: grayscale(100%);
-}
-.imagem-miniatura.sepia {
-  filter: sepia(100%);
-}
-.imagem-miniatura.invert {
-  filter: invert(100%);
-}
-.imagem-miniatura.contrast {
-  filter: contrast(200%);
-}
-.imagem-miniatura.saturate {
-  filter: saturate(200%);
-}
-
-.modal-CriarPost-etapa2 {
-  width: 750px; /* ou qualquer valor desejado para a Etapa 2 */
-  left: 300px;
-  justify-content: space-between;
-  padding: 15px;
-}
-
-.filtros-preview {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 15px;
-  flex: 1;
-  padding: 10px;
-  max-height: 320px;
-  overflow-y: auto;
-}
-
-/* Tema escuro */
+/* Tema Escuro */
 .navbar-lateral.tema-escuro {
   background-color: #1a1a1a;
   border-right: 1px solid #333;
 }
-
 .navbar-lateral.tema-escuro .nav-item,
 .navbar-lateral.tema-escuro .perfil-configuracao,
 .navbar-lateral.tema-escuro .ola {
   color: #fff;
 }
-
 .navbar-lateral.tema-escuro .nav-item:hover,
 .navbar-lateral.tema-escuro .perfil-configuracao:hover {
   background-color: #333;
 }
-
 .navbar-lateral.tema-escuro .barra-pesquisa input {
   background-color: #333;
   color: #fff;
   border: 1px solid #555;
 }
-
 .navbar-lateral.tema-escuro .barra-pesquisa button {
   background-color: #444;
 }
-
 .navbar-lateral.tema-escuro .resultados-pesquisa {
   background-color: #2a2a2a;
   color: #fff;
   border: 1px solid #444;
+}
+
+/* === Adições do CSS2 (Navbar Mobile + Responsivo) === */
+
+/* Wrapper principal */
+.navbar-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Topbar Mobile */
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #dbdbdb;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+.navbar-top .logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #262626;
+}
+.icones-topo a {
+  margin-left: 15px;
+  font-size: 20px;
+  color: #262626;
+}
+
+/* Mobile navbar-bottom style (ativa só em mobile por padrão) */
+@media screen and (max-width: 767px) {
+  .navbar-lateral {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: auto;
+    padding: 10px 0;
+    background-color: #fff;
+    border-top: 1px solid #dbdbdb;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    top: auto;
+    left: 0;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+    border-right: none;
+  }
+
+  .navbar-lateral.minimizada,
+  .navbar-lateral.expandida {
+    all: unset; /* Remove qualquer estilo relacionado à expansão no mobile */
+  }
+
+  .navbar-menu {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .nav-item {
+    flex-direction: column;
+    font-size: 0.8rem;
+    color: #262626;
+  }
+
+  .nav-item span {
+    font-size: 0.7rem;
+  }
+
+  .foto-perfil-redonda {
+    width: 28px;
+    height: 28px;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}
+
+/* Desktop override */
+@media screen and (min-width: 768px) {
+  .navbar-container {
+    flex-direction: row;
+  }
+
+  .navbar-top {
+    display: none;
+  }
+
+  .navbar-lateral {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 145px;
+    flex-direction: column;
+    border-top: none;
+    border-right: 1px solid #dbdbdb;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .navbar-menu {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .nav-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    width: 100%;
+  }
+
+  .nav-item span {
+    display: inline;
+  }
+
+  .desktop-only {
+    display: flex;
+  }
 }
