@@ -1,6 +1,7 @@
 import React from 'react';
 import '../css/home.css';
 
+
 function Comentario({
   post,
   comentarios,
