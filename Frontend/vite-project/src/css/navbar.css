@@ -488,3 +488,8 @@
   overflow-y: auto;
 }
 
+@media (max-width: 500px) {
+  .hidden-navbar-mobile {
+    display: none !important;
+  }
+}
