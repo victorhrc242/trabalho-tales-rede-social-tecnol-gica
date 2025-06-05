@@ -5,8 +5,6 @@ import { Heart, MessageCircle } from 'lucide-react';
 import '../css/home.css';
 import Comentario from '../Components/Comentario.jsx';
 
-
-
 function Home() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
@@ -41,14 +39,16 @@ function Home() {
 
     fetchFeed();
   }, [navigate]);
-useEffect(() => {
-  if (usuario.id) {
-    fetchFeed();
-  }
-}, [usuario]);
+
+  useEffect(() => {
+    if (usuario.id) {
+      fetchFeed();
+    }
+  }, [usuario]);
+
   useEffect(() => {
     const connection = new HubConnectionBuilder()
-      .withUrl('https://devisocial.up.railway.app/feedHub', {
+      .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub', {
         transport: HttpTransportType.LongPolling,
       })
       .withAutomaticReconnect()
@@ -75,10 +75,9 @@ useEffect(() => {
 
   const fetchFeed = async () => {
     try {
-       if (!usuario.id) return;
+      if (!usuario.id) return;
 
-  const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`);
-
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`);
       const data = await response.json();
 
       if (response.ok) {
@@ -101,7 +100,6 @@ useEffect(() => {
             }
           })
         );
-
         setPosts(postsComAutores);
       } else {
         setErro(data.erro || 'Erro ao carregar o feed');
@@ -117,9 +115,7 @@ useEffect(() => {
     localStorage.removeItem('usuario');
     navigate('/');
   };
-  const fecharModal = () => {
-    setMostrarModal(false);
-  };
+
   const curtirPost = async (postId) => {
     try {
       await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
@@ -191,6 +187,10 @@ useEffect(() => {
     }
   };
 
+  const irParaPerfil = (id) => {
+    navigate(`/perfil/${id}`);
+  };
+
   return (
     <div className="home-container">
       <hr />
@@ -201,70 +201,71 @@ useEffect(() => {
       <ul>
         {posts.map(post => (
           <li key={post.id} style={{ marginBottom: '20px' }}>
-          <div className="autor-container">
-  <img
-    src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
-    alt={`Foto de perfil de ${post.autorNome}`}
-    onClick={() => irParaPerfil(post.autorId)}
-  />
-  <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)}>{post.autorNome}</span>
-</div>
+            <div className="autor-container">
+              <img
+                src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
+                alt={`Foto de perfil de ${post.autorNome}`}
+                onClick={() => irParaPerfil(post.autorId)}
+              />
+              <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)}>{post.autorNome}</span>
+            </div>
 
+            {post.imagem && (
+              <img src={post.imagem} alt="Imagem do post" className="imagem-post-feed" />
+            )}
 
-{post.imagem && (
-  <img src={post.imagem} alt="Imagem do post" className="imagem-post-feed" />
-)}
+            {post.video && (
+              <video controls className="video-post-feed">
+                <source src={post.video} type="video/mp4" />
+                Seu navegador não suporta vídeos.
+              </video>
+            )}
 
-<div className="botoes-post">
+            <div className="botoes-post">
+              <button className="botao-acao" onClick={() => curtirPost(post.id)}>
+                <Heart
+                  size={20}
+                  color={post.curtidas > 0 ? 'red' : 'black'}
+                  fill={post.curtidas > 0 ? 'red' : 'none'}
+                  style={{ marginRight: '5px' }}
+                />
+                {usuario?.id === post.autorId && post.curtidas !== undefined && `(${post.curtidas})`}
+              </button>
 
-  <button className="botao-acao" onClick={() => curtirPost(post.id)}>
-    <Heart
-      size={20}
-      color={post.curtidas > 0 ? 'red' : 'black'}
-      fill={post.curtidas > 0 ? 'red' : 'none'}
-      style={{ marginRight: '5px' }}
-    />
-   {/* Mostra a contagem só se o usuário for o dono do post */}
-   {usuario?.id === post.autorId && post.curtidas !== undefined && `(${post.curtidas})`}
-  </button>
+              <button className="botao-acao" onClick={() => abrirComentarios(post)}>
+                <MessageCircle size={20} style={{ marginRight: '5px' }} />
+                ({post.comentarios})
+              </button>
+            </div>
 
-  <button className="botao-acao" onClick={() => abrirComentarios(post)}>
-    <MessageCircle size={20} style={{ marginRight: '5px' }} />
-    ({post.comentarios})
-  </button>
-</div>
-
-<div className="post-description">
-  <p>
-    {post.conteudo}
-    {post.tags && post.tags.length > 0 && (
-      <>
-        {' '}
-        {post.tags.map(tag => `#${tag.trim()}`).join(' ')}
-      </>
-    )}
-  </p>
-  <p>{new Date(post.dataPostagem).toLocaleString()}</p>
-</div>
+            <div className="post-description">
+              <p>
+                {post.conteudo}
+                {post.tags && post.tags.length > 0 && (
+                  <>
+                    {' '}
+                    {post.tags.map(tag => `#${tag.trim()}`).join(' ')}
+                  </>
+                )}
+              </p>
+              <p>{new Date(post.dataPostagem).toLocaleString()}</p>
+            </div>
 
             <hr />
           </li>
         ))}
       </ul>
 
-      
-{modalComentarios && postSelecionado && (
-  <Comentario
-    post={postSelecionado}
-    comentarios={comentarios}
-    comentarioTexto={comentarioTexto}
-    setComentarioTexto={setComentarioTexto}
-    comentar={comentar}
-    fechar={() => setModalComentarios(false)}
-  />
-)}
-
-
+      {modalComentarios && postSelecionado && (
+        <Comentario
+          post={postSelecionado}
+          comentarios={comentarios}
+          comentarioTexto={comentarioTexto}
+          setComentarioTexto={setComentarioTexto}
+          comentar={comentar}
+          fechar={() => setModalComentarios(false)}
+        />
+      )}
     </div>
   );
 }
