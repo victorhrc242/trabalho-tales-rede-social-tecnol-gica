@@ -199,18 +199,37 @@ const Mensagens = () => {
     });
   };
 
+  // Nova função para voltar para home (você pode adaptar pra sua rota / lógica)
+  const voltarParaHome = () => {
+    // Aqui você pode colocar sua navegação para home,
+    // Exemplo com window.location:
+    window.location.href = '/'; // ou use react-router se tiver
+  };
+
   const voltarParaSidebar = () => {
     setUsuarioSelecionado(null);
   };
 
   return (
     <div className="app-container">
-    <div className={`fixed-header ${usuarioSelecionado ? 'hidden-mobile' : ''}`}></div>
+      <div className={`fixed-header ${usuarioSelecionado ? 'hidden-mobile' : ''}`}></div>
       <div className="fixed-header"></div>
 
       {/* Sidebar - mostra ou esconde no mobile */}
       <div className={`sidebar ${usuarioSelecionado ? 'hidden-mobile' : ''}`}>
-        <div className="sidebar-header">Mensagens</div>
+        {/* Botão voltar para Home dentro da sidebar */}
+        <div className="sidebar-top">
+         
+          <div className="sidebar-header"> 
+            <button
+            className="btn-voltar-home"
+            onClick={voltarParaHome}
+            aria-label="Voltar para Home"
+          >
+            <FaArrowLeft />
+          </button>
+          Mensagens</div>
+        </div>
 
         <div className="search-bar">
           <div className="search-input-container">
@@ -263,7 +282,7 @@ const Mensagens = () => {
         {usuarioSelecionado ? (
           <>
             <div className="chat-header">
-               <button
+              <button
                 className="btn-voltar"
                 onClick={voltarParaSidebar}
                 aria-label="Voltar"
@@ -323,7 +342,7 @@ const Mensagens = () => {
             </div>
           </>
         ) : (
-          <div className="messages" style={{ padding: '20px' }}>
+          <div className="nenhum-chat-selecionado">
             <p>Selecione um usuário para iniciar o chat.</p>
           </div>
         )}

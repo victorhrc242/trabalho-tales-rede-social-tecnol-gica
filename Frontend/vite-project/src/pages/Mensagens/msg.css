@@ -260,13 +260,16 @@ textarea {
 .btn-voltar {
   display: none;
 }
+/* Fora do media query (desktop) */
+.btn-voltar-home {
+  display: none;
+}
 
 
-
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   * {
     box-sizing: content-box; 
-    }
+  }
   .app-container {
     flex-direction: column;
   }
@@ -280,15 +283,23 @@ textarea {
     height: auto;
     border-right: none;
     border-bottom: 1px solid #ccc;
+    min-height: 100vh; /* garante altura mínima igual à da tela */
   }
 
-  .sidebar-header {
-    padding: 15px;
-    font-size: 1.1em;
-  }
 
-  .search-bar {
-    padding: 8px;
+.sidebar-header {
+  position: relative;
+  font-size: 1.3em;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* texto centralizado */
+  color: white;
+}
+  .sidebar-header .voltar-texto-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;                  /* espaço entre seta e texto */
   }
 
   .chat-list {
@@ -340,6 +351,29 @@ textarea {
     outline: 2px solid #fff;
   }
 
+  /* Botão voltar para home dentro da sidebar */
+.btn-voltar-home {
+    display: flex; /* ou inline-flex, conforme preferir */
+    position: absolute;
+    left: 10px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+  }
+
+  .btn-voltar-home:focus {
+    outline: 2px solid #00376f;
+  }
+
+  /* Garantir que o texto "Mensagens" não quebre linha */
+  .sidebar-header > *:not(.btn-voltar-home) {
+    white-space: nowrap;
+  }
+
   .chat-header img {
     width: 40px;
     height: 40px;
@@ -366,8 +400,9 @@ textarea {
     font-size: 13px;
     padding: 6px 10px;
   }
+  
   .search-input-container input {
-    width: 85%;
+    width: 90%;
     padding: 15px;
     color: #161616;
   }
@@ -380,20 +415,12 @@ textarea {
   .botao-enviar svg {
     font-size: 16px;
   }
-  .fixed-header {
-    display: flex; /* se quiser mostrar no mobile */
-    flex-direction: column;
-    width: 70px;   /* largura que preferir */
-    position: fixed; /* fixo na lateral */
-    z-index: 1000; /* para ficar na frente */
-  }
 
-.fixed-header.hidden-mobile {
+  .fixed-header.hidden-mobile {
     display: none !important;
   }
-  .sidebar{
-    margin-left: 70px; /* mesmo valor da largura da sidebar */
+
+  .search-icon {
+    right: 70px;
   }
 }
-
-
