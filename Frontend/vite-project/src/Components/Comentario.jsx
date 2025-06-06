@@ -1,6 +1,7 @@
 import React from 'react';
 import '../css/home.css';
 
+
 function Comentario({
   post,
   comentarios,
@@ -21,7 +22,7 @@ function Comentario({
         </div>
         <div className="comentarios-container">
           <div className="comentarios-header">
-            <strong>{post.autorNome}</strong>
+            <strong>{post.autorNome || post.autor?.nome || 'Autor'}</strong>
           </div>
 
           <div className="comentarios-lista">
@@ -34,9 +35,10 @@ function Comentario({
                 <img
                   src={
                     c.autorImagem ||
+                    c.autor?.imagem ||
                     'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'
                   }
-                  alt={`Foto de perfil de ${c.autorNome}`}
+                  alt={`Foto de perfil de ${c.autorNome || c.autor?.nome || 'Usuário'}`}
                   style={{
                     width: '40px',
                     height: '40px',
@@ -46,7 +48,7 @@ function Comentario({
                   }}
                 />
                 <span>
-                  <strong>{c.autorNome}</strong>: {c.conteudo}
+                  <strong>{c.autorNome || c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
                 </span>
               </div>
             ))}
