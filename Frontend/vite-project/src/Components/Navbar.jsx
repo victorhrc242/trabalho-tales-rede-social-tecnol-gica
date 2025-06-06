@@ -69,6 +69,11 @@ function Navbar({ usuarioLogado, deslogar }) {
       onMouseLeave={() => setExpandida(false)}
     >
       <nav className="navbar-menu">
+        <div className="logo-navbar">
+  <Link to="/home">
+    <img src="./public/logoParadise.jpg" alt="Logo" className="imagem-logo" />
+  </Link>
+</div>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
 
         <div className="nav-item" onClick={() => setModal(prev => ({ ...prev, busca: !modal.busca }))}>
@@ -146,8 +151,8 @@ function Navbar({ usuarioLogado, deslogar }) {
           <div className="modal-conteudo">
             <p>Tem certeza que deseja sair?</p>
             <div className="botoes-modal">
-              <button className="btn-confirmar" onClick={deslogarERedirecionar}>Sim</button>
-              <button className="btn-cancelar" onClick={cancelarLogout}>Cancelar</button>
+              <button className="btn-cancelar" onClick={deslogarERedirecionar}>Sim</button>
+              <button className="btn-confirmar" onClick={cancelarLogout}>Cancelar</button>
             </div>
           </div>
         </div>
