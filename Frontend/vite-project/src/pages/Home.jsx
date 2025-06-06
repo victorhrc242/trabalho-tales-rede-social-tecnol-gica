@@ -1,9 +1,82 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import { Heart, MessageCircle } from 'lucide-react';
 import '../css/home.css';
 import Comentario from '../Components/Comentario.jsx';
+
+function VideoPlayer({ videoUrl, isActive }) {
+  const videoRef = useRef(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  // Quando isActive muda, toca ou pausa o vídeo
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    if (isActive) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+    }
+  }, [isActive]);
+
+  const toggleMute = (e) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
+  };
+
+  // Clicar no vídeo pausa/play manualmente
+  const handleVideoClick = () => {
+    if (!videoRef.current) return;
+
+    if (videoRef.current.paused) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      <video
+        ref={videoRef}
+        src={videoUrl}
+        muted={isMuted}
+        loop
+        className="video-post-feed"
+        onClick={handleVideoClick}
+        style={{ cursor: 'pointer' }}
+      >
+        Seu navegador não suporta vídeos.
+      </video>
+      <button
+        onClick={toggleMute}
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          right: 10,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          border: 'none',
+          borderRadius: '50%',
+          width: 30,
+          height: 30,
+          cursor: 'pointer',
+          fontSize: 16,
+          lineHeight: '30px',
+          textAlign: 'center',
+          padding: 0,
+        }}
+        aria-label={isMuted ? 'Desmutar vídeo' : 'Mutar vídeo'}
+      >
+        {isMuted ? '🔇' : '🔊'}
+      </button>
+    </div>
+  );
+}
 
 function Home() {
   const navigate = useNavigate();
@@ -18,6 +91,19 @@ function Home() {
   const [comentarioTexto, setComentarioTexto] = useState('');
   const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
+
+  // Guarda o id do post que tem o vídeo ativo (visível)
+  const [videoAtivoId, setVideoAtivoId] = useState(null);
+
+  // Guarda refs dos containers dos vídeos para o IntersectionObserver
+  const videoRefs = useRef({});
+
+  // Registra ref do vídeo pelo postId
+  const registerVideoRef = useCallback((postId, node) => {
+    if (node) {
+      videoRefs.current[postId] = node;
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -72,6 +158,42 @@ function Home() {
       connection.stop().then(() => console.log('🔌 SignalR desconectado da Home'));
     };
   }, []);
+
+  // IntersectionObserver para controlar qual vídeo está ativo (visível)
+  useEffect(() => {
+    if (!posts.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visiveis = entries.filter(entry => entry.isIntersecting && entry.intersectionRatio >= 0.5);
+
+        if (visiveis.length === 0) {
+          setVideoAtivoId(null);
+          return;
+        }
+
+        // Pega o primeiro vídeo visível (pode mudar se quiser lógica diferente)
+        const primeiroVisivel = visiveis[0];
+        const postId = primeiroVisivel.target.getAttribute('data-postid');
+        setVideoAtivoId(postId);
+      },
+      { threshold: 0.5 }
+    );
+
+    posts.forEach(post => {
+      if (post.video && videoRefs.current[post.id]) {
+        observer.observe(videoRefs.current[post.id]);
+      }
+    });
+
+    return () => {
+      posts.forEach(post => {
+        if (post.video && videoRefs.current[post.id]) {
+          observer.unobserve(videoRefs.current[post.id]);
+        }
+      });
+    };
+  }, [posts]);
 
   const fetchFeed = async () => {
     try {
@@ -215,10 +337,12 @@ function Home() {
             )}
 
             {post.video && (
-              <video controls className="video-post-feed">
-                <source src={post.video} type="video/mp4" />
-                Seu navegador não suporta vídeos.
-              </video>
+              <div data-postid={post.id} ref={node => registerVideoRef(post.id, node)}>
+                <VideoPlayer  className="imagem-post-feed"
+                  videoUrl={post.video}
+                  isActive={videoAtivoId === String(post.id)}
+               />
+              </div>
             )}
 
             <div className="botoes-post">
