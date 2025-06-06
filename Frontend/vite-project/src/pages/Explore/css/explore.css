@@ -6,43 +6,83 @@ body, html {
 }
 
 .explore-page {
-  margin-left: 90px; /* ajuste conforme a largura da sua navbar minimizada/expandida */
+  margin-left: 90px;
   padding: 20px;
   box-sizing: border-box;
   min-height: 100vh;
 }
-
-/* Grid principal do Explore */
 .explore-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* maior que 200px */
-  gap: 10px; /* espaço entre imagens */
-  width: 100%;
-  box-sizing: border-box;
+  column-count: 3;
+  column-gap: 10px;
 }
 
+@media (max-width: 800px) {
+  .explore-grid {
+    column-count: 2;
+  }
+}
 
+@media (max-width: 500px) {
+  .explore-grid {
+    column-count: 1;
+  }
+}
+
+.grid-item {
+  break-inside: avoid;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Estilo para imagens: proporção mais curta */
+.grid-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  aspect-ratio: 1 / 1; /* quadrada */
+}
+
+/* Estilo para vídeos: mais altos, tipo reels */
+.grid-item.video video {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  aspect-ratio: 9 / 16; /* vertical, tipo celular */
+}
+
+/* Animação e destaque no hover */
 .grid-item:hover {
   transform: scale(1.01);
 }
 
-.grid-item img,
-.grid-item video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.grid-item:hover .overlay {
+  opacity: 1;
 }
 
 .overlay {
   position: absolute;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   width: 100%;
-  padding: 8px;
-  font-size: 0.85rem;
+  padding: 12px;
+  font-size: 0.9rem;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .explore-page {
+    margin-left: 0;
+    padding: 10px;
+  }
+
+  .explore-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
 

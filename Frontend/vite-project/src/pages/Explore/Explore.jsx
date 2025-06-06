@@ -108,19 +108,25 @@ function Explore() {
         const isVideo = post.video && post.video !== "";
 
         return (
-          <div
-            key={post.id}
-            className={`grid-item ${isVideo ? "video" : ""}`}
-          >
-            {isVideo ? (
-              <video src={post.video} controls muted />
-            ) : (
-              <img src={post.imagem} alt="Postagem" />
-            )}
-            <div className="overlay">
-              <p>{post.conteudo}</p>
-            </div>
-          </div>
+        <div
+  key={post.id}
+  className={`grid-item ${isVideo ? "video" : ""}`}
+>
+  {isVideo ? (
+  <video
+    src={post.video}
+    muted
+    loop
+    playsInline
+    onMouseEnter={(e) => e.target.play()}
+    onMouseLeave={(e) => e.target.pause()}
+  />
+) : (
+  <img src={post.imagem} alt="Postagem" />
+)}
+  
+</div>
+
         );
       })}
     
