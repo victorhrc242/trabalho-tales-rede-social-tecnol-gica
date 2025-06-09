@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
-import { FaPaperPlane, FaSearch, FaArrowLeft } from 'react-icons/fa';
+import { FaPaperPlane, FaSearch } from 'react-icons/fa';
 
 axios.defaults.withCredentials = true;
 
@@ -199,17 +199,10 @@ const Mensagens = () => {
     });
   };
 
-  const voltarParaSidebar = () => {
-    setUsuarioSelecionado(null);
-  };
-
   return (
     <div className="app-container">
-    <div className={`fixed-header ${usuarioSelecionado ? 'hidden-mobile' : ''}`}></div>
       <div className="fixed-header"></div>
-
-      {/* Sidebar - mostra ou esconde no mobile */}
-      <div className={`sidebar ${usuarioSelecionado ? 'hidden-mobile' : ''}`}>
+      <div className="sidebar">
         <div className="sidebar-header">Mensagens</div>
 
         <div className="search-bar">
@@ -258,20 +251,12 @@ const Mensagens = () => {
         </div>
       </div>
 
-      {/* Chat area - mostra ou esconde no mobile */}
-      <div className={`chat-area ${usuarioSelecionado ? '' : 'hidden-mobile'}`}>
+      <div className="chat-area">
         {usuarioSelecionado ? (
           <>
             <div className="chat-header">
-               <button
-                className="btn-voltar"
-                onClick={voltarParaSidebar}
-                aria-label="Voltar"
-              >
-                <FaArrowLeft />
-              </button>
               <img
-                src={usuarioSelecionado.imagem || 'https://via.placeholder.com/40'}
+                src={usuarioSelecionado.imagem}
                 alt={usuarioSelecionado.nome_usuario}
               />
               <span>{usuarioSelecionado.nome_usuario}</span>
