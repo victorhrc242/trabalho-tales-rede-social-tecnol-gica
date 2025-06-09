@@ -1,5 +1,12 @@
+/* GERAL */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #fafafa;
+}
 
-/* barra de pesquisa e storys  */
+/* Topo e stories */
 .top-navbar {
   width: 100%;
   padding: 10px 20px;
@@ -34,6 +41,7 @@
   align-items: center;
   width: 70px;
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .story-bubble img {
@@ -45,28 +53,57 @@
   margin-bottom: 5px;
 }
 
-/* Final da barra de perfil e storys */
-
-/* Container principal da Home */
+/* Container principal */
 .home-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 30px 15px;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  float: 100%;
-  clear: both;
 }
 
+/* Posts */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+}
+
+li img,
+li video {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #f2f2f2;
+  display: block;
+  margin: 10px auto 0 auto;
+}
+
+/* Video player específico */
+.imagem-post-feed {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Autor */
 .autor-container {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   margin-bottom: 10px;
   padding-left: 10px;
 }
-
 
 .autor-container img {
   width: 40px;
@@ -75,88 +112,75 @@
   object-fit: cover;
   margin-right: 10px;
   border: 1px solid #ccc;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .autor-nome {
   font-weight: bold;
   font-size: 14px;
-  margin-right: 458px; /* Espaço entre a imagem e o nome */
-  cursor:pointer;
-}
-
-/* Modal Criar Post */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-textarea, input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  resize: none;
-}
-
-button {
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-  background-color: #007bff;
+  flex-grow: 1;
 }
 
-button + button {
-  margin-left: 10px;
+/* Descrição */
+.post-description p {
+  font-size: 14px;
+  color: #262626;
+  line-height: 1.4;
+  margin: 4px 0;
+  padding-left: 10px;
 }
 
-/* Fundo escuro do modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1500;
-  padding: 10px;
+.post-description p strong {
+  font-weight: 600;
+  margin-right: 6px;
+  color: #262626;
 }
 
+.post-description p:nth-child(2) {
+  color: #3897f0;
+  cursor: pointer;
+}
+
+.post-description p:nth-child(2):hover {
+  text-decoration: underline;
+  color: #2a6cc3;
+}
+
+.post-description p:nth-child(3) {
+  font-size: 12px;
+  color: #8e8e8e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+/* Botões de ação */
+.botoes-post button {
+  background: none;
+  border: none;
+  padding: 6px;
+  color: #222;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.botoes-post .like-button.liked svg {
+  color: red;
+  fill: red;
+}
+
+/* Comentários modal */
 .comentarios-modal {
   display: flex;
+  flex-direction: row;
   background: white;
   width: 90%;
   max-width: 1000px;
   height: 80vh;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 25px rgba(0,0,0,0.3);
-  flex-direction: row;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 
@@ -167,13 +191,12 @@ button + button {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  position: relative;
 }
 
 .imagem-post {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .comentarios-container {
@@ -182,133 +205,19 @@ button + button {
   flex-direction: column;
   padding: 20px;
   border-left: 1px solid #ddd;
-}
-
-.comentarios-header {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 14px;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 20px;
-  margin-bottom: 10px;
-}
-
-.comentarios-lista {
-  flex-grow: 1;
   overflow-y: auto;
-  padding-right: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-size: 14px;
 }
 
-.comentario-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  word-break: break-word;
-}
-
-.comentario-item img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.comentario-conteudo {
-  flex-grow: 1;
-  margin-left: 10px;
-}
-
-.comentario-autor {
-  font-weight: 600;
-  margin-right: 8px;
-}
-
-.comentario-texto {
-  font-weight: 400;
-}
-
-.excluir-comentario-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: #999;
-  margin-left: 10px;
-  transition: color 0.2s ease;
-}
-
-.excluir-comentario-btn:hover {
-  color: red;
-}
-
-.comentarios-form {
-  display: flex;
-  margin-top: 15px;
-  border-top: 1px solid #ddd;
-  padding-top: 10px;
-}
-
-.comentarios-form input {
-  flex-grow: 1;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.comentarios-form input:focus {
-  border-color: #007bff;
-}
-
-.comentarios-form button {
-  margin-left: 10px;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.comentarios-form button:hover {
-  background-color: #0056b3;
-}
-
-.fechar-modal {
-  font-size: 28px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  line-height: 1;
-  font-weight: bold;
-  color: #333;
-  transition: color 0.2s ease;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 0;
-  outline: none;
-}
-
-.fechar-modal:hover {
-  color: #000;
-}
-
-/* Responsividade */
+/* Responsivo */
 @media (max-width: 768px) {
+  .home-container {
+    padding: 20px 10px;
+  }
+
   .comentarios-modal {
     flex-direction: column;
-    height: auto;
     max-height: 90vh;
+    height: auto;
   }
 
   .imagem-container {
@@ -321,126 +230,22 @@ button + button {
     border-left: none;
     border-top: 1px solid #ddd;
   }
+
+  .story-bubble {
+    width: 60px;
+  }
+
+  .story-bubble img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .autor-nome {
+    margin-right: 0;
+  }
+
+  li img,
+  li video {
+    height: auto;
+  }
 }
-/* Feed de Posts */
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 15px;
-}
-
-li img {
-  display: block;
-  max-width: 500px;
-  width: 100%;
-  height: 500px;
-  margin: 10px auto 0 auto; /* Centraliza horizontalmente */
-  object-fit: cover;
-  border-radius: 8px;
-  background-color: #f2f2f2;
-}
-
-
-
-hr {
-  border: 0;
-  border-top: 1px solid #eee;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-strong {
-  font-weight: bold;
-}
-
-/* Estilo do botão para curtir e comentar */
-.botoes-post button {
-  background: none;
-  border: none;
-  padding: 6px;
-  color: #222;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.botoes-post button:hover {
-  opacity: 0.6;
-}
-
-.botoes-post .like-button.liked svg {
-  color: red;
-  fill: red;
-}
-
-
-/* Avatar padrão */
-.autor-container img[src=""] {
-  background: #ccc;
-}
-
-/* Alinhamento do conteúdo à direita */
-.container {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.content {
-  width: 80%;
-  padding: 20px;
-}
-
-.button-confirme:hover {
-  background-color: #0f8200;
-}
-
-.button-cancel:hover {
-  background-color: #ce0101;
-}
-
-.Nomeautor{
-  margin-right: 400px;
-}
-
-/* Estilo geral dos parágrafos do post (conteúdo, tags, data) */
-.post-description p {
-  font-size: 14px;
-  color: #262626; /* preto suave Instagram */
-  line-height: 1.4;
-  margin: 4px 0;
-  padding-left: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-/* Negrito do label (Conteúdo, Tags, Data) */
-.post-description p strong {
-  font-weight: 600;
-  margin-right: 6px;
-  color: #262626;
-}
-
-/* Estilo específico para as tags */
-.post-description p:nth-child(2) {
-  color: #3897f0;
-  cursor: pointer;
-}
-
-.post-description p:nth-child(2):hover {
-  text-decoration: underline;
-  color: #2a6cc3;
-}
-
-/* Data da postagem menor e mais clara */
-.post-description p:nth-child(3) {
-  font-size: 12px;
-  color: #8e8e8e;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 500;
-}
-
