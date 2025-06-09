@@ -1,0 +1,62 @@
+
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #dbdbdb;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.navbar-top .logo {
+  display: flex;
+  align-items: center;
+}
+
+.imagem-logo-top {
+  max-height: 40px;
+  object-fit: contain;
+}
+
+.icones-topo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 20px;
+  color: #262626;
+}
+
+.nav-buscar, .nav-notificacoes {
+  cursor: pointer;
+}
+
+.barra-pesquisa-topo {
+  position: fixed;
+  top: 50px; /* abaixo da navbar */
+  left: 0;
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #dbdbdb;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 9;
+}
+
+.barra-pesquisa-topo input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Esconder essa navbar no desktop */
+@media screen and (min-width: 768px) {
+  .navbar-top {
+    display: none;
+  }
+}

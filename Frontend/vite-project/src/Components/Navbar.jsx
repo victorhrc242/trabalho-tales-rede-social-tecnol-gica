@@ -13,7 +13,6 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [modal, setModal] = useState({ busca: false, opcoes: false, confirmarLogout: false });
   const [imagem, setImagem] = useState('');
-  const [temaEscuro, setTemaEscuro] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [expandida, setExpandida] = useState(false);
   const navigate = useNavigate();
@@ -64,7 +63,7 @@ function Navbar({ usuarioLogado, deslogar }) {
 
   return (
     <div
-      className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'} ${temaEscuro ? 'tema-escuro' : ''}`}
+      className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
       onMouseEnter={() => setExpandida(true)}
       onMouseLeave={() => setExpandida(false)}
     >
@@ -76,8 +75,9 @@ function Navbar({ usuarioLogado, deslogar }) {
 </div>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
 
-        <div className="nav-item" onClick={() => setModal(prev => ({ ...prev, busca: !modal.busca }))}>
+        <div className='nav-buscar'><div className="nav-item" onClick={() => setModal(prev => ({ ...prev, busca: !modal.busca }))}>
           <FaSearch /> <span>Buscar</span>
+        </div>
         </div>
 
         {modal.busca && (
@@ -103,10 +103,10 @@ function Navbar({ usuarioLogado, deslogar }) {
           </div>
         )}
 
-        <Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link>
-        <Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link>
-        <Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link>
-        <Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link>
+        <div className='nav-explore'><Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link></div>
+        <div className='nav-reels'><Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link></div>
+        <div className='nav-mensagens'><Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link></div>
+        <div className='nav-notificacoes'><Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
 
         <div className="nav-item" onClick={() => setMostrarModal(true)}>
           <FaPlusSquare /> <span>Criar Post</span>
@@ -123,11 +123,6 @@ function Navbar({ usuarioLogado, deslogar }) {
             </a>
           </div>
         )}
-
-        <div className="nav-item" onClick={() => setTemaEscuro(!temaEscuro)}>
-          <span>{temaEscuro ? 'Tema Claro' : 'Tema Escuro'}</span>
-        </div>
-
         <div className="perfil-configuracao" onClick={abrirModalOpcoes}>
           <FaCog />
         </div>

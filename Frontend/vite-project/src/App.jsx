@@ -6,6 +6,7 @@ import RecuperarSenha from './pages/RecuperarSenha';
 import Home from './pages/Home';
 import Perfil from './pages/perfil';
 import Navbar from './Components/Navbar';
+import NavbarTop from './Components/NavbarTop';
 import Criar from './Components/Criar';
 import Msg from './pages/Mensagens/mensagen';
 import Explore from './pages/Explore/Explore';
@@ -38,7 +39,10 @@ function AppWrapper() {
     <>
 
          {!deveEsconderNavbar && usuario && (
+          <>
         <Navbar usuarioLogado={usuario} deslogar={deslogar} />
+        <NavbarTop />
+        </>
       )}    
 
 

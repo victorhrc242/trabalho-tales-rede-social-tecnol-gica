@@ -15,6 +15,12 @@
   z-index: 1;
 }
 
+  .navbar-lateral .nav-buscar,
+  .navbar-lateral .nav-notificacoes,
+  .nav-buscar{
+    display: none !important;
+  }
+
 .logo-navbar {
   display: flex;
   align-items: center;
@@ -209,35 +215,6 @@
   cursor: pointer;
 }
 
-/* Tema Escuro */
-.navbar-lateral.tema-escuro {
-  background-color: #1a1a1a;
-  border-right: 1px solid #333;
-}
-.navbar-lateral.tema-escuro .nav-item,
-.navbar-lateral.tema-escuro .perfil-configuracao,
-.navbar-lateral.tema-escuro .ola {
-  color: #fff;
-}
-.navbar-lateral.tema-escuro .nav-item:hover,
-.navbar-lateral.tema-escuro .perfil-configuracao:hover {
-  background-color: #333;
-}
-.navbar-lateral.tema-escuro .barra-pesquisa input {
-  background-color: #333;
-  color: #fff;
-  border: 1px solid #555;
-}
-.navbar-lateral.tema-escuro .barra-pesquisa button {
-  background-color: #444;
-}
-.navbar-lateral.tema-escuro .resultados-pesquisa {
-  background-color: #2a2a2a;
-  color: #fff;
-  border: 1px solid #444;
-}
-
-/* === Adições do CSS2 (Navbar Mobile + Responsivo) === */
 
 /* Wrapper principal */
 .navbar-container {
@@ -247,28 +224,6 @@
 }
 
 /* Topbar Mobile */
-.navbar-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 15px;
-  background-color: #fff;
-  border-bottom: 1px solid #dbdbdb;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 10;
-}
-.navbar-top .logo {
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #262626;
-}
-.icones-topo a {
-  margin-left: 15px;
-  font-size: 20px;
-  color: #262626;
-}
 
 /* Mobile navbar-bottom style (ativa só em mobile por padrão) */
 @media screen and (max-width: 767px) {
@@ -277,7 +232,10 @@
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    height: auto;
+    height: 50px;
+    width: 100% !important;
+    transition: none !important;
+    overflow: visible !important;
     padding: 10px 0;
     background-color: #fff;
     border-top: 1px solid #dbdbdb;
@@ -290,12 +248,36 @@
     border-right: none;
   }
 
+  .navbar-lateral .perfil-configuracao,
+  .navbar-lateral .nav-mensagens,
+  .navbar-lateral .nav-notificacoes,
+  .nav-buscar,.logo-navbar{
+    display: none !important;
+  }
+
   /* Remove estilos de expansão/minimização no mobile */
   .navbar-lateral.minimizada,
   .navbar-lateral.expandida {
     width: 100% !important;
     transition: none !important;
     overflow: visible !important;
+  }
+
+    .navbar-lateral.minimizada ,
+  .navbar-lateral.minimizada .ola {
+        width: 100% !important;
+    transition: none !important;
+    overflow: visible !important;
+  }
+
+  .nav-item span{
+    display: none !important;
+  }
+
+    .navbar-lateral.minimizada .perfil-foto img {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    display: inline !important;
   }
 
   .navbar-menu {
@@ -308,7 +290,9 @@
     flex-direction: column;
     font-size: 0.8rem;
     color: #262626;
+    
   }
+  
 
   .nav-item span {
     font-size: 0.7rem;
@@ -328,65 +312,3 @@
   display: none;
 }
 
-@media screen and (max-width: 767px) {
-  .mobile-only {
-    display: flex !important;
-  }
-
-  /* Navbar superior (topo) */
-  .navbar-top.mobile-only {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50px;
-    background-color: #fff;
-    border-bottom: 1px solid #dbdbdb;
-    z-index: 9999;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 15px;
-    font-size: 1rem;
-  }
-
-  /* Navbar inferior (fundo) */
-  .navbar-lateral.navbar-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #fff;
-    border-top: 1px solid #dbdbdb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-  }
-
-  .navbar-menu {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-  }
-
-  .nav-item {
-    flex-direction: column;
-    align-items: center;
-    font-size: 0.75rem;
-    color: #262626;
-  }
-
-  .nav-item span {
-    font-size: 0.65rem;
-  }
-
-  .desktop-only {
-    display: none !important;
-  }
-
-  body {
-    padding-top: 50px; /* Evita que conteúdo fique por baixo da navbar-top */
-    padding-bottom: 60px; /* Evita que conteúdo fique por baixo da navbar-bottom */
-  }
-}
