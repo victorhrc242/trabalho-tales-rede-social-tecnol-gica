@@ -10,6 +10,7 @@ import Criar from './Components/Criar';
 import Msg from './pages/Mensagens/mensagen';
 import Explore from './pages/Explore/Explore';
 import Kurs from './pages/Kurs';
+import Notificacoes from './pages/Notificacao/Notificacoes ';
 function AppWrapper() {
   const location = useLocation();
 
@@ -38,9 +39,9 @@ function AppWrapper() {
   return (
     <>
 
-         {!deveEsconderNavbar && usuario && (
+         {/* {!deveEsconderNavbar && usuario && (
         <Navbar usuarioLogado={usuario} deslogar={deslogar} />
-      )}    
+      )}     */}
 
 
       <Routes>
@@ -53,6 +54,7 @@ function AppWrapper() {
         <Route path="/mensagen" element={<Msg/>} />
         <Route path="/explore" element={<Explore/>}/>
         <Route path="/reels" element={<Kurs/>}/>
+        <Route path="/notificacoes" element={<Notificacoes/>}/>
       </Routes>
     </>
   );
