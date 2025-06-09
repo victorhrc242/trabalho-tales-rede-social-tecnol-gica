@@ -8,6 +8,8 @@ import {
 import axios from 'axios';
 import CriarPostModal from '../Components/Criar.jsx';
 import '../css/navbar.css';
+import { useLocation } from 'react-router-dom';
+
 
 function Navbar({ usuarioLogado, deslogar }) {
   const [busca, setBusca] = useState('');
@@ -17,6 +19,8 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [expandida, setExpandida] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const toggleNavbar = () => setExpandida(!expandida);
 
@@ -63,9 +67,14 @@ function Navbar({ usuarioLogado, deslogar }) {
   };
 
   return (
-    <div className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
+    <div
+      className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'} ${
+        location.pathname === '/mensagen' ? 'hidden-navbar-mobile' : ''
+      }`}
       onMouseEnter={() => setExpandida(true)}
-      onMouseLeave={() => setExpandida(false)}>
+      onMouseLeave={() => setExpandida(false)}
+    >
+
       <nav className="navbar-menu">
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
         <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
