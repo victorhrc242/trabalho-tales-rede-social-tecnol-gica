@@ -6,7 +6,7 @@
 }
 
 .fixed-header {
-  width: 81px;
+  width: 40px;
   background-color: #33333300;
   color: white;
   display: flex;
@@ -138,7 +138,7 @@
   align-items: center;
   background-color: #00376f;
   color: #fff9f9;
-  padding: 20px;
+  padding: 9px;
   font-size: 1.2em;
 }
 
@@ -239,10 +239,34 @@ textarea {
 .botao-enviar svg {
   font-size: 16px;
 }
+/*marcar como lido*/
+.check-marks {
+  margin-left: 8px;
+  font-size: 0.85em;
+  font-weight: bold;
+  vertical-align: middle;
+  color: rgb(128, 128, 128);
+}
+
+.check-marks.lida {
+  color: #c20a0a; /* azul visualizado */
+}
+/* Espaço flexível para empurrar foto para a direita no header do chat mobile */
+.chat-header-spacer {
+  flex-grow: 1;
+}
+
+/* Botão voltar escondido no desktop */
+.btn-voltar {
+  display: none;
+}
 
 
-/*  */
-@media (max-width: 768px) {
+
+@media (max-width: 500px) {
+  * {
+    box-sizing: content-box; 
+    }
   .app-container {
     flex-direction: column;
   }
@@ -273,18 +297,54 @@ textarea {
   }
 
   .chat-item {
-    padding: 8px;
+    padding: 10px;
+  }
+
+  .sidebar.hidden-mobile {
+    display: none;
   }
 
   .chat-area {
     flex: none;
     flex-grow: 1;
-    height: calc(100vh - 300px); /* ajusta altura relativa à sidebar e header */
+    height: calc(100vh - 60px);
+  }
+
+  .chat-area.hidden-mobile {
+    display: none;
   }
 
   .chat-header {
+    display: flex;
+    align-items: center;
     padding: 15px;
     font-size: 1em;
+    background-color: #00376f;
+    color: #fff9f9;
+    position: relative;
+  }
+
+  .btn-voltar {
+    display: flex;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+  }
+
+  .btn-voltar:focus {
+    outline: 2px solid #fff;
+  }
+
+  .chat-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
   }
 
   .messages {
@@ -306,6 +366,11 @@ textarea {
     font-size: 13px;
     padding: 6px 10px;
   }
+  .search-input-container input {
+    width: 85%;
+    padding: 15px;
+    color: #161616;
+  }
 
   .botao-enviar {
     height: 32px;
@@ -313,30 +378,22 @@ textarea {
   }
 
   .botao-enviar svg {
-    font-size: 14px;
+    font-size: 16px;
+  }
+  .fixed-header {
+    display: flex; /* se quiser mostrar no mobile */
+    flex-direction: column;
+    width: 70px;   /* largura que preferir */
+    position: fixed; /* fixo na lateral */
+    z-index: 1000; /* para ficar na frente */
   }
 
-  .search-input-container input {
-    padding: 6px 30px 6px 10px;
-    font-size: 14px;
+.fixed-header.hidden-mobile {
+    display: none !important;
   }
-
-  .texto-sem-seguidores {
-    font-size: 14px;
-    padding: 10px;
-    text-align: center;
+  .sidebar{
+    margin-left: 70px; /* mesmo valor da largura da sidebar */
   }
 }
 
-/*marcar como lido*/
-.check-marks {
-  margin-left: 8px;
-  font-size: 0.85em;
-  font-weight: bold;
-  vertical-align: middle;
-  color: rgb(128, 128, 128);
-}
 
-.check-marks.lida {
-  color: #c20a0a; /* azul visualizado */
-}
