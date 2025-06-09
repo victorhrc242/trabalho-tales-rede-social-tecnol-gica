@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.12.10",
+    "@ffmpeg/ffmpeg": "^0.12.15",
     "@microsoft/signalr": "^8.0.7",
     "@supabase/supabase-js": "^2.49.5",
     "axios": "^1.8.4",
