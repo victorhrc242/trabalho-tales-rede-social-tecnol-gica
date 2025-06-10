@@ -170,44 +170,6 @@ li video {
   fill: red;
 }
 
-/* Comentários modal */
-.comentarios-modal {
-  display: flex;
-  flex-direction: row;
-  background: white;
-  width: 90%;
-  max-width: 1000px;
-  height: 80vh;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
-  position: relative;
-}
-
-.imagem-container {
-  flex: 1;
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.imagem-post {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.comentarios-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  border-left: 1px solid #ddd;
-  overflow-y: auto;
-}
-
 /* Responsivo */
 @media (max-width: 768px) {
   .home-container {
