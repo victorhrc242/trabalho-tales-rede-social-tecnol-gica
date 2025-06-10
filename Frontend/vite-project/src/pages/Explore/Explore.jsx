@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../Explore/css/explore.css';
-import Comentario from "../../Components/Comentario.jsx";
+
 
 function Explore() {
   const [posts, setPosts] = useState([]);
@@ -9,9 +9,6 @@ function Explore() {
   // Estado para o post atualmente selecionado para mostrar comentários
   const [postSelecionado, setPostSelecionado] = useState(null);
 
-  // Estados para controlar comentários
-  const [comentarios, setComentarios] = useState([]);
-  const [comentarioTexto, setComentarioTexto] = useState('');
 
   const fetexplore = async () => {
     try {

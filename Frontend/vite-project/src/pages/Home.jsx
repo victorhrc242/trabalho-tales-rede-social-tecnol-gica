@@ -396,14 +396,16 @@ function Home() {
       </ul>
 
       {modalComentarios && postSelecionado && (
-        <Comentario
-          post={postSelecionado}
-          comentarios={comentarios}
-          comentarioTexto={comentarioTexto}
-          setComentarioTexto={setComentarioTexto}
-          comentar={comentar}
-          fechar={() => setModalComentarios(false)}
-        />
+       <Comentario
+  post={postSelecionado}
+  comentarios={comentarios}
+  comentarioTexto={comentarioTexto}
+  setComentarioTexto={setComentarioTexto}
+  comentar={comentar}
+  fechar={() => setModalComentarios(false)}
+  curtirPost={curtirPost}
+  usuarioCurtidas={postSelecionado.curtidas}
+/>
       )}
     </div>
   );

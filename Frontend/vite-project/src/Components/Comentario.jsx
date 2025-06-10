@@ -1,28 +1,68 @@
 import React from 'react';
-import '../css/home.css';
+import '../css/comentario.css';
 
 function Comentario({
+
   post,
   comentarios,
   comentarioTexto,
   setComentarioTexto,
   comentar,
-  fechar
+  fechar,
+  curtirPost,         // nova prop
+  usuarioCurtidas     // nova prop opcional (boolean ou número)
+
 }) {
   return (
     <div className="modal-overlay">
       <div className="comentarios-modal">
-        <div className="imagem-container">
-          <img
-            src={post.imagem}
-            alt="Imagem do post"
-            className="imagem-post"
-          />
-        </div>
+       <div className="imagem-container">
+  {post.video ? (
+    <video
+      src={post.video}
+      className="imagem-post"
+      controls
+      autoPlay
+      muted
+      loop
+    />
+  ) : (
+    <img
+      src={post.imagem}
+      alt="Imagem do post"
+      className="imagem-post"
+    />
+  )}
+</div>
+
         <div className="comentarios-container">
+          
           <div className="comentarios-header">
             <strong>{post.autorNome}</strong>
           </div>
+          
+          <div className="botoes-post" style={{ marginBottom: '10px' }}>
+  <button className="botao-acao" onClick={() => curtirPost(post.id)}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      fill={post.curtidas > 0 ? 'red' : 'none'}
+      stroke={post.curtidas > 0 ? 'red' : 'black'}
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      style={{ marginRight: '5px' }}
+    >
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42
+        4.42 3 7.5 3c1.74 0 3.41 0.81
+        4.5 2.09C13.09 3.81 14.76 3
+        16.5 3 19.58 3 22 5.42 22 8.5c0
+        3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+    </svg>
+      {post.curtidas > 0 ? `(${post.curtidas})` : ''}
+  </button>
+</div>
+
 
           <div className="comentarios-lista">
             {comentarios.map((c, i) => (
