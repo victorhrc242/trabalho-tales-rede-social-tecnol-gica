@@ -37,59 +37,59 @@ function VideoPlayer({ videoUrl, isActive, className }) {
   };
 
   return (
-  <div
-  style={{
-    position: 'relative',
-    display: 'block',
-    width: '100%',
-    maxWidth: '500px',
-    margin: '0 auto',
-  }}
->
-  <video
-    ref={videoRef}
-    src={videoUrl}
-    muted={isMuted}
-    loop
-    playsInline
-    className={className}
-    onClick={handleVideoClick}
-    style={{
-      width: '120%',              // Agora ocupa 100% do container
-      height: 'auto',             // Mantém proporção
-      objectFit: 'cover',
-      borderRadius: '12px',
-      display: 'block',
-      margin: '0 auto',
-      cursor: 'pointer',
-      backgroundColor: 'black',
-    }}
-  >
-    Seu navegador não suporta vídeos.
-  </video>
-  <button
-    onClick={toggleMute}
-    style={{
-      position: 'absolute',
-      bottom: 10,
-      right: 10,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      color: 'white',
-      border: 'none',
-      borderRadius: '50%',
-      width: 30,
-      height: 30,
-      cursor: 'pointer',
-      fontSize: 16,
-      lineHeight: '30px',
-      textAlign: 'center',
-      padding: 0,
-    }}
-    aria-label={isMuted ? 'Desmutar vídeo' : 'Mutar vídeo'}
-  >
-    {isMuted ? '🔇' : '🔊'}
-  </button>
-</div>
+    <div
+      style={{
+        position: 'relative',
+        display: 'block',
+        width: '100%',
+        maxWidth: '500px',
+        margin: '0 auto',
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={videoUrl}
+        muted={isMuted}
+        loop
+        playsInline
+        className={className}
+        onClick={handleVideoClick}
+        style={{
+          width: '120%', // Agora ocupa 120% do container para dar zoom
+          height: 'auto',
+          objectFit: 'cover',
+          borderRadius: '12px',
+          display: 'block',
+          margin: '0 auto',
+          cursor: 'pointer',
+          backgroundColor: 'black',
+        }}
+      >
+        Seu navegador não suporta vídeos.
+      </video>
+      <button
+        onClick={toggleMute}
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          right: 10,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          border: 'none',
+          borderRadius: '50%',
+          width: 30,
+          height: 30,
+          cursor: 'pointer',
+          fontSize: 16,
+          lineHeight: '30px',
+          textAlign: 'center',
+          padding: 0,
+        }}
+        aria-label={isMuted ? 'Desmutar vídeo' : 'Mutar vídeo'}
+      >
+        {isMuted ? '🔇' : '🔊'}
+      </button>
+    </div>
   );
 }
 
@@ -107,18 +107,32 @@ function Home() {
   const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
 
-  // Guarda o id do post que tem o vídeo ativo (visível)
   const [videoAtivoId, setVideoAtivoId] = useState(null);
-
-  // Guarda refs dos containers dos vídeos para o IntersectionObserver
   const videoRefs = useRef({});
 
-  // Registra ref do vídeo pelo postId
   const registerVideoRef = useCallback((postId, node) => {
     if (node) {
       videoRefs.current[postId] = node;
     }
   }, []);
+
+  // Função para salvar os posts localmente (cache)
+  const salvarPostsLocalmente = (postsParaSalvar) => {
+    const dadosFiltrados = postsParaSalvar.slice(0, 5).map(post => ({
+      id: post.id,
+      conteudo: post.conteudo,
+      autorNome: post.autorNome,
+      autorImagem: post.autorImagem,
+      imagem: post.imagem,
+      video: post.video,
+      dataPostagem: post.dataPostagem,
+      tags: post.tags,
+      curtidas: post.curtidas,
+      comentarios: post.comentarios,
+      autorId: post.autorId,
+    }));
+    localStorage.setItem('postsSalvos', JSON.stringify(dadosFiltrados));
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -137,16 +151,30 @@ function Home() {
         setUsuario({ nome: 'Desconhecido' });
       }
     }
-
-    fetchFeed();
   }, [navigate]);
 
+  // Carregar posts do cache ao montar
+  useEffect(() => {
+    const cache = localStorage.getItem('postsSalvos');
+    if (cache) {
+      try {
+        const dadosCache = JSON.parse(cache);
+        setPosts(dadosCache);
+        console.log('⚡ Feed carregado do cache');
+      } catch (err) {
+        console.error('Erro ao ler o cache dos posts:', err);
+      }
+    }
+  }, []);
+
+  // Quando o usuário estiver setado, busca o feed
   useEffect(() => {
     if (usuario.id) {
       fetchFeed();
     }
   }, [usuario]);
 
+  // SignalR para novos posts
   useEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub', {
@@ -187,7 +215,7 @@ function Home() {
           return;
         }
 
-        // Pega o primeiro vídeo visível (pode mudar se quiser lógica diferente)
+        // Pega o primeiro vídeo visível
         const primeiroVisivel = visiveis[0];
         const postId = primeiroVisivel.target.getAttribute('data-postid');
         setVideoAtivoId(postId);
@@ -210,6 +238,7 @@ function Home() {
     };
   }, [posts]);
 
+  // Função para buscar feed do backend e salvar localmente
   const fetchFeed = async () => {
     try {
       if (!usuario.id) return;
@@ -238,6 +267,7 @@ function Home() {
           })
         );
         setPosts(postsComAutores);
+        salvarPostsLocalmente(postsComAutores);
       } else {
         setErro(data.erro || 'Erro ao carregar o feed');
       }
@@ -258,7 +288,7 @@ function Home() {
       await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, usuarioId: usuario.id })
+        body: JSON.stringify({ postId, usuarioId: usuario.id }),
       });
       fetchFeed();
     } catch (err) {
@@ -283,12 +313,12 @@ function Home() {
             const autorData = await autorResp.json();
             return {
               ...comentario,
-              autorNome: autorData.nome || 'Usuário'
+              autorNome: autorData.nome || 'Usuário',
             };
           } catch {
             return {
               ...comentario,
-              autorNome: 'Usuário'
+              autorNome: 'Usuário',
             };
           }
         })
@@ -306,14 +336,14 @@ function Home() {
     const comentario = {
       postId: postSelecionado.id,
       autorId: usuario.id,
-      conteudo: comentarioTexto
+      conteudo: comentarioTexto,
     };
 
     try {
       await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(comentario)
+        body: JSON.stringify(comentario),
       });
 
       setComentarioTexto('');
@@ -327,6 +357,18 @@ function Home() {
   const irParaPerfil = (id) => {
     navigate(`/perfil/${id}`);
   };
+
+  // Salvar posts no cache a cada 10 segundos
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      if (posts.length > 0) {
+        salvarPostsLocalmente(posts);
+        console.log('💾 Posts salvos no cache a cada 10 segundos');
+      }
+    }, 10000);
+
+    return () => clearInterval(intervalo);
+  }, [posts]);
 
   return (
     <div className="home-container">
@@ -343,8 +385,11 @@ function Home() {
                 src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
                 alt={`Foto de perfil de ${post.autorNome}`}
                 onClick={() => irParaPerfil(post.autorId)}
+                style={{ cursor: 'pointer' }}
               />
-              <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)}>{post.autorNome}</span>
+              <span className="autor-nome" onClick={() => irParaPerfil(post.autorId)} style={{ cursor: 'pointer' }}>
+                {post.autorNome}
+              </span>
             </div>
 
             {post.imagem && (
@@ -353,10 +398,11 @@ function Home() {
 
             {post.video && (
               <div data-postid={post.id} ref={node => registerVideoRef(post.id, node)}>
-                <VideoPlayer  className="imagem-post-feed"
+                <VideoPlayer
+                  className="imagem-post-feed"
                   videoUrl={post.video}
                   isActive={videoAtivoId === String(post.id)}
-               />
+                />
               </div>
             )}
 

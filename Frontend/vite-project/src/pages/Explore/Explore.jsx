@@ -1,60 +1,122 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import '../Explore/css/explore.css';
 import Comentario from "../../Components/Comentario.jsx";
 
 function Explore() {
-  const [posts, setPosts] = useState([]);
+  const POSTS_BATCH_SIZE = 6;
+
+  const [allPosts, setAllPosts] = useState([]); // Todos os posts carregados da API
+  const [displayedPosts, setDisplayedPosts] = useState([]); // Posts exibidos na tela (incrementais)
   const [erro, setErro] = useState(null);
 
-  // Estado para o post atualmente selecionado para mostrar comentários
+  // Comentários e post selecionado para modal
   const [postSelecionado, setPostSelecionado] = useState(null);
-
-  // Estados para controlar comentários
   const [comentarios, setComentarios] = useState([]);
   const [comentarioTexto, setComentarioTexto] = useState('');
 
-  const fetexplore = async () => {
-    try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed`);
-      const data = await response.json();
+  // Vídeos refs e estado de vídeo ativo
+  const videoRefs = useRef({});
+  const [videoAtivoId, setVideoAtivoId] = useState(null);
 
-      if (response.ok) {
-        const postsComAutores = await Promise.all(
-          data.map(async (post) => {
-            try {
-              const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
-              const autorData = await autorResp.json();
-              return {
-                ...post,
-                autorNome: autorData.nome_usuario || 'Usuário',
-                autorImagem: autorData.imagem || null,
-              };
-            } catch {
-              return {
-                ...post,
-                autorNome: 'Usuário',
-                autorImagem: null,
-              };
-            }
-          })
-        );
+  const LS_POSTS_KEY = 'explore_posts_cache';
 
-        setPosts(postsComAutores);
-      } else {
-        setErro(data.erro || 'Erro ao carregar o feed');
+  // Função para adicionar dados do autor aos posts
+  const addAuthorData = useCallback(async (posts) => {
+    const postsComAutores = await Promise.all(
+      posts.map(async (post) => {
+        try {
+          const autorResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
+          const autorData = await autorResp.json();
+          return {
+            ...post,
+            autorNome: autorData.nome_usuario || 'Usuário',
+            autorImagem: autorData.imagem || null,
+          };
+        } catch {
+          return {
+            ...post,
+            autorNome: 'Usuário',
+            autorImagem: null,
+          };
+        }
+      })
+    );
+    return postsComAutores;
+  }, []);
+
+  // Buscar posts da API e carregar cache localStorage para posts já exibidos
+  useEffect(() => {
+    const fetchPosts = async () => {
+      // Tenta carregar posts já exibidos do localStorage
+      const cached = localStorage.getItem(LS_POSTS_KEY);
+      if (cached) {
+        try {
+          const cachedPosts = JSON.parse(cached);
+          setDisplayedPosts(cachedPosts);
+        } catch {
+          localStorage.removeItem(LS_POSTS_KEY);
+        }
       }
-    } catch (err) {
-      console.error('Erro ao buscar o feed:', err);
-      setErro('Erro ao conectar com o servidor.');
-    }
-  };
 
-  // Função para abrir o modal de comentários, carregando os comentários do post
+      // Busca todos os posts da API
+      try {
+        const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed`);
+        const data = await response.json();
+
+        if (response.ok) {
+          const postsComAutores = await addAuthorData(data);
+          setAllPosts(postsComAutores);
+
+          // Se não há posts exibidos (ex: primeira carga), exibe os primeiros 6
+          setDisplayedPosts(prev => prev.length === 0 ? postsComAutores.slice(0, POSTS_BATCH_SIZE) : prev);
+        } else {
+          setErro(data.erro || 'Erro ao carregar o feed');
+        }
+      } catch (err) {
+        console.error('Erro ao buscar o feed:', err);
+        setErro('Erro ao conectar com o servidor.');
+      }
+    };
+
+    fetchPosts();
+  }, [addAuthorData]);
+
+  // Salva posts exibidos no localStorage sempre que eles mudam
+  useEffect(() => {
+    if (displayedPosts.length > 0) {
+      localStorage.setItem(LS_POSTS_KEY, JSON.stringify(displayedPosts));
+    }
+  }, [displayedPosts]);
+
+  // Carregar mais posts ao chegar perto do fim da lista (infinite scroll)
+  const loadMorePosts = useCallback(() => {
+    if (displayedPosts.length >= allPosts.length) return;
+
+    const nextBatch = allPosts.slice(displayedPosts.length, displayedPosts.length + POSTS_BATCH_SIZE);
+    setDisplayedPosts(prev => [...prev, ...nextBatch]);
+  }, [allPosts, displayedPosts]);
+
+  // Detecta scroll para disparar carregamento incremental
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const nearBottom = document.documentElement.offsetHeight - 300;
+
+      if (scrollPosition >= nearBottom) {
+        loadMorePosts();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadMorePosts]);
+
+  // Abrir modal de comentários e carregar comentários
   const abrirComentarios = async (post) => {
     setPostSelecionado(post);
 
     try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/comentarios/${post.id}`); // Ajuste a URL conforme sua API
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/comentarios/${post.id}`);
       const data = await response.json();
       if (response.ok) {
         setComentarios(data);
@@ -67,7 +129,7 @@ function Explore() {
     }
   };
 
-  // Função para enviar um comentário
+  // Enviar comentário
   const comentar = async () => {
     if (!comentarioTexto.trim()) return;
 
@@ -78,9 +140,8 @@ function Explore() {
         body: JSON.stringify({ conteudo: comentarioTexto }),
       });
       if (response.ok) {
-        // Atualiza a lista de comentários após enviar
         const novoComentario = await response.json();
-        setComentarios([...comentarios, novoComentario]);
+        setComentarios(prev => [...prev, novoComentario]);
         setComentarioTexto('');
       } else {
         console.error('Erro ao enviar comentário');
@@ -97,43 +158,97 @@ function Explore() {
     setComentarioTexto('');
   };
 
+  // Controlar refs dos vídeos
+  const registerVideoRef = (id, node) => {
+    if (node) {
+      videoRefs.current[id] = node;
+    }
+  };
+
+  // IntersectionObserver para play/pause dos vídeos automaticamente
   useEffect(() => {
-    fetexplore();
-  }, []);
+    if (!displayedPosts.length) return;
 
- return (
-  <div className="explore-page">
-    <div className="explore-grid">
-      {posts.map((post) => {
-        const isVideo = post.video && post.video !== "";
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          const video = entry.target;
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            video.play().catch(() => {});
+            setVideoAtivoId(video.dataset.postid);
+          } else {
+            video.pause();
+            if (video.dataset.postid === videoAtivoId) setVideoAtivoId(null);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
 
-        return (
-        <div
-  key={post.id}
-  className={`grid-item ${isVideo ? "video" : ""}`}
->
-  {isVideo ? (
-  <video
-    src={post.video}
-    muted
-    loop
-    playsInline
-    onMouseEnter={(e) => e.target.play()}
-    onMouseLeave={(e) => e.target.pause()}
-  />
-) : (
-  <img src={post.imagem} alt="Postagem" />
-)}
-  
-</div>
+    displayedPosts.forEach(post => {
+      if (post.video && videoRefs.current[post.id]) {
+        observer.observe(videoRefs.current[post.id]);
+      }
+    });
 
-        );
-      })}
-    
+    return () => {
+      displayedPosts.forEach(post => {
+        if (post.video && videoRefs.current[post.id]) {
+          observer.unobserve(videoRefs.current[post.id]);
+        }
+      });
+    };
+  }, [displayedPosts, videoAtivoId]);
+
+  return (
+    <div className="explore-page">
+      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+
+      <div className="explore-grid">
+        {displayedPosts.map(post => {
+          const isVideo = post.video && post.video !== "";
+
+          return (
+            <div
+              key={post.id}
+              className={`grid-item ${isVideo ? "video" : ""}`}
+              onClick={() => abrirComentarios(post)}
+              style={{ cursor: 'pointer' }}
+            >
+              {isVideo ? (
+                <video
+                  src={post.video}
+                  muted
+                  loop
+                  playsInline
+                  data-postid={post.id}
+                  ref={node => registerVideoRef(post.id, node)}
+                  style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                />
+              ) : (
+                <img
+                  src={post.imagem}
+                  alt={`Post de ${post.autorNome}`}
+                  style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {postSelecionado && (
+        <Comentario
+          post={postSelecionado}
+          comentarios={comentarios}
+          comentarioTexto={comentarioTexto}
+          setComentarioTexto={setComentarioTexto}
+          comentar={comentar}
+          fechar={fecharComentarios}
+        />
+      )}
     </div>
-  </div>
-);
-
+  );
 }
 
 export default Explore;
