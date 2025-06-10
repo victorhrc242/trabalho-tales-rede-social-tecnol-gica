@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
-import { FaPaperPlane, FaSearch, FaArrowLeft } from 'react-icons/fa';
+import { FaPaperPlane, FaSearch, FaArrowLeft, FaUser, FaPaintBrush, FaBellSlash, FaTrash   } from 'react-icons/fa';
 
 axios.defaults.withCredentials = true;
 
@@ -338,23 +338,59 @@ const Mensagens = () => {
                 <FaPaperPlane />
               </button>
             </div>
+
+            {/* Modal Perfil */}
+            {modalAberto && (
+             <div className="modal-perfil-overlay" onClick={fecharModal}>
+              <div
+                className="modal-perfil"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className="fechar-modal" onClick={fecharModal} aria-label="Fechar modal">
+                  &times;
+                </button>
+
+                <img
+                  src={usuarioSelecionado.imagem || 'https://via.placeholder.com/100'}
+                  alt={usuarioSelecionado.nome_usuario}
+                  className="modal-foto-perfil"
+                />
+                <p className="modal-nome-usuario">{usuarioSelecionado.nome_usuario}</p>
+             <div className="modal-icones">
+  <div className="icone-item">
+    <button className="icone-btn" aria-label="Perfil">
+      <FaUser size={24} />
+    </button>
+    <span className="icone-label">Perfil</span>
+  </div>
+  <div className="icone-item">
+    <button className="icone-btn" aria-label="Tema do Chat">
+      <FaPaintBrush size={24} />
+    </button>
+    <span className="icone-label">Tema</span>
+  </div>
+  <div className="icone-item">
+    <button className="icone-btn" aria-label="Silenciar Mensagens">
+      <FaBellSlash size={24} />
+    </button>
+    <span className="icone-label">Silenciar</span>
+  </div>
+  <div className="icone-item">
+    <button className="icone-btn" aria-label="Apagar Conversa">
+      <FaTrash size={24} />
+    </button>
+    <span className="icone-label">Apagar</span>
+  </div>
+</div>
+
+              </div>
+            </div>
+            )}
           </>
         ) : (
           <p className="selecionar-usuario-msg">Selecione um usuário para iniciar o chat.</p>
         )}
       </div>
-
-      {/* Modal Perfil */}
-      {modalAberto && (
-        <div className="modal-perfil">
-          <div className="modal-conteudo">
-            <button className="fechar-modal" onClick={fecharModal}>
-              X
-            </button>
-            <h2>Perfil do Usuário</h2>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
