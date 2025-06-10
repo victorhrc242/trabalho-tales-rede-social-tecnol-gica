@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { FaSearch, FaHeart } from 'react-icons/fa';
+import {
+  FaHome, FaSearch, FaCompass, FaVideo, FaPaperPlane,
+  FaHeart, FaPlusSquare, FaCog
+} from 'react-icons/fa';
 import '../css/NavbarTop.css';
-import '../css/navbar.css';
+
 
 function NavbarTop({ usuarioLogado }) {
   const [modal, setModal] = useState({ busca: false, opcoes: false, confirmarLogout: false });
@@ -73,10 +76,9 @@ function NavbarTop({ usuarioLogado }) {
           </div>
         )}
 
-      <div className='nav-notificacoes'>
-        <Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
+      <div className='nav-notificacoes'><Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
+      <div className='nav-mensagens'><Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link></div>
       </div>
-
     </div>
   );
 }
