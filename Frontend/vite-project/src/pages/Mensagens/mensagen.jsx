@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
-import { FaPaperPlane, FaSearch } from 'react-icons/fa';
+import { FaPaperPlane, FaSearch, FaArrowLeft } from 'react-icons/fa';
 
 axios.defaults.withCredentials = true;
 
@@ -15,6 +15,7 @@ const Mensagens = () => {
   const [busca, setBusca] = useState('');
   const [seguindoFiltrado, setSeguindoFiltrado] = useState([]);
   const [naoLidas, setNaoLidas] = useState({});
+  const [modalAberto, setModalAberto] = useState(false);
 
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
@@ -199,11 +200,41 @@ const Mensagens = () => {
     });
   };
 
+  const voltarParaHome = () => {
+    window.location.href = '/';
+  };
+
+  const voltarParaSidebar = () => {
+    setUsuarioSelecionado(null);
+  };
+
+  const abrirModal = () => {
+    setModalAberto(true);
+  };
+
+  const fecharModal = () => {
+    setModalAberto(false);
+  };
+
   return (
     <div className="app-container">
+      <div className={`fixed-header ${usuarioSelecionado ? 'hidden-mobile' : ''}`}></div>
       <div className="fixed-header"></div>
-      <div className="sidebar">
-        <div className="sidebar-header">Mensagens</div>
+
+      {/* Sidebar */}
+      <div className={`sidebar ${usuarioSelecionado ? 'hidden-mobile' : ''}`}>
+        <div className="sidebar-top">
+          <div className="sidebar-header">
+            <button
+              className="btn-voltar-home"
+              onClick={voltarParaHome}
+              aria-label="Voltar para Home"
+            >
+              <FaArrowLeft />
+            </button>
+            Mensagens
+          </div>
+        </div>
 
         <div className="search-bar">
           <div className="search-input-container">
@@ -251,12 +282,18 @@ const Mensagens = () => {
         </div>
       </div>
 
-      <div className="chat-area">
+      {/* Chat area */}
+      <div className={`chat-area ${usuarioSelecionado ? '' : 'hidden-mobile'}`}>
         {usuarioSelecionado ? (
           <>
             <div className="chat-header">
+              <button className="btn-voltar" onClick={voltarParaSidebar} aria-label="Voltar">
+                <FaArrowLeft />
+              </button>
               <img
-                src={usuarioSelecionado.imagem}
+                onClick={abrirModal}
+                style={{ cursor: 'pointer' }}
+                src={usuarioSelecionado.imagem || 'https://via.placeholder.com/40'}
                 alt={usuarioSelecionado.nome_usuario}
               />
               <span>{usuarioSelecionado.nome_usuario}</span>
@@ -264,30 +301,25 @@ const Mensagens = () => {
 
             <div className="messages">
               {historicoMensagens.map((msg, index) => {
-                const dataEnvio = msg.data_envio || msg.DataEnvio;
-                if (!dataEnvio) return null;
-                const adjustedDate = dataEnvio.split('.')[0] + 'Z';
-                const formattedDate = new Date(adjustedDate).toLocaleString();
-
-                const isSent = (msg.idRemetente || msg.id_remetente) === usuarioLogadoId;
+                const isRemetente = msg.id_remetente === usuarioLogadoId;
+                const dataEnvio = msg.data_envio || msg.dataEnvio || new Date().toISOString();
+                const dataFormatada = new Date(dataEnvio).toLocaleString('pt-BR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
 
                 return (
                   <div
-                    key={msg.id || index}
-                    className={`message ${isSent ? 'sent' : 'received'}`}
+                    key={index}
+                    className={`message ${isRemetente ? 'sent' : 'received'}`}
                   >
-                    <p>{msg.conteudo || msg.Conteudo}</p>
-                    <div className="timestamp">
-                      {formattedDate}
-                      {isSent && (
-                        <span
-                          className={`check-marks ${msg.lida ? 'lida' : 'enviada'}`}
-                          title={msg.lida ? 'Visualizada' : 'Enviada'}
-                        >
-                          ✔✔
-                        </span>
-                      )}
+                    <div className="message-content">
+                      <p>{msg.conteudo}</p>
                     </div>
+                    <div className="timestamp">{dataFormatada}</div>
                   </div>
                 );
               })}
@@ -302,17 +334,27 @@ const Mensagens = () => {
                 onChange={(e) => setMensagem(e.target.value)}
                 rows={1}
               />
-              <button onClick={enviarMensagem} className="botao-enviar">
+              <button onClick={enviarMensagem} className="botao-enviar" aria-label="Enviar mensagem">
                 <FaPaperPlane />
               </button>
             </div>
           </>
         ) : (
-          <div className="messages" style={{ padding: '20px' }}>
-            <p>Selecione um usuário para iniciar o chat.</p>
-          </div>
+          <p className="selecionar-usuario-msg">Selecione um usuário para iniciar o chat.</p>
         )}
       </div>
+
+      {/* Modal Perfil */}
+      {modalAberto && (
+        <div className="modal-perfil">
+          <div className="modal-conteudo">
+            <button className="fechar-modal" onClick={fecharModal}>
+              X
+            </button>
+            <h2>Perfil do Usuário</h2>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
