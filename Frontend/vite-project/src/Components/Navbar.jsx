@@ -1,4 +1,3 @@
-// Navbar.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -8,8 +7,6 @@ import {
 import axios from 'axios';
 import CriarPostModal from '../Components/Criar.jsx';
 import '../css/navbar.css';
-import { useLocation } from 'react-router-dom';
-
 
 function Navbar({ usuarioLogado, deslogar }) {
   const [busca, setBusca] = useState('');
@@ -19,8 +16,6 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [expandida, setExpandida] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-
 
   const toggleNavbar = () => setExpandida(!expandida);
 
@@ -57,10 +52,10 @@ function Navbar({ usuarioLogado, deslogar }) {
     }
   };
 
-  const abrirModalOpcoes = () => setModal({ ...modal, opcoes: true });
-  const fecharModalOpcoes = () => setModal({ ...modal, opcoes: false });
+  const abrirModalOpcoes = () => setModal(prev => ({ ...prev, opcoes: true }));
+  const fecharModalOpcoes = () => setModal(prev => ({ ...prev, opcoes: false }));
   const confirmarLogoutFunc = () => setModal({ confirmarLogout: true, opcoes: false, busca: false });
-  const cancelarLogout = () => setModal({ ...modal, confirmarLogout: false });
+  const cancelarLogout = () => setModal(prev => ({ ...prev, confirmarLogout: false }));
   const deslogarERedirecionar = () => {
     deslogar();
     navigate('/');
@@ -68,18 +63,23 @@ function Navbar({ usuarioLogado, deslogar }) {
 
   return (
     <div
-      className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'} ${
-        location.pathname === '/mensagen' ? 'hidden-navbar-mobile' : ''
-      }`}
+      className={`navbar-lateral ${expandida ? 'expandida' : 'minimizada'}`}
       onMouseEnter={() => setExpandida(true)}
       onMouseLeave={() => setExpandida(false)}
     >
-
       <nav className="navbar-menu">
+        <div className="logo-navbar">
+  <Link to="/home">
+    <img src="./public/logoParadise.jpg" alt="Logo" className="imagem-logo" />
+  </Link>
+</div>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
-        <div className="nav-item" onClick={() => setModal({ ...modal, busca: !modal.busca })}>
+
+        <div className='nav-buscar'><div className="nav-item" onClick={() => setModal(prev => ({ ...prev, busca: !modal.busca }))}>
           <FaSearch /> <span>Buscar</span>
         </div>
+        </div>
+
         {modal.busca && (
           <div className="barra-pesquisa">
             <input
@@ -92,6 +92,7 @@ function Navbar({ usuarioLogado, deslogar }) {
             <button onClick={handleBusca}>Buscar</button>
           </div>
         )}
+
         {usuariosEncontrados.length > 0 && (
           <div className="resultados-pesquisa">
             {usuariosEncontrados.map((usuario) => (
@@ -101,10 +102,12 @@ function Navbar({ usuarioLogado, deslogar }) {
             ))}
           </div>
         )}
-        <Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link>
-        <Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link>
-        <Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link>
-        <Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link>
+
+        <div className='nav-explore'><Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link></div>
+        <div className='nav-reels'><Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link></div>
+        <div className='nav-mensagens'><Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link></div>
+        <div className='nav-notificacoes'><Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
+
         <div className="nav-item" onClick={() => setMostrarModal(true)}>
           <FaPlusSquare /> <span>Criar Post</span>
         </div>
@@ -114,13 +117,12 @@ function Navbar({ usuarioLogado, deslogar }) {
             <a onClick={irParaPerfil} className="perfil-foto" aria-label="Ir para o perfil">
               <img
                 src={imagem || 'https://via.placeholder.com/100x100.png?text=Foto'}
-                alt=""
+                alt="Perfil"
                 className="foto-perfil-redonda"
               />
             </a>
           </div>
         )}
-
         <div className="perfil-configuracao" onClick={abrirModalOpcoes}>
           <FaCog />
         </div>
@@ -131,10 +133,22 @@ function Navbar({ usuarioLogado, deslogar }) {
           <div className="modal-conteudo">
             <ul>
               <li onClick={confirmarLogoutFunc}>Sair</li>
-              <li onClick={() => alert('Em breve')}>Configurações</li>
-              <li onClick={() => alert('Em breve')}>Trocar de Conta</li>
+              <li onClick={() => alert('Configurações em breve')}>Configurações</li>
+              <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
             </ul>
             <button className="fechar-modal" onClick={fecharModalOpcoes}>x</button>
+          </div>
+        </div>
+      )}
+
+      {modal.confirmarLogout && (
+        <div className="modal">
+          <div className="modal-conteudo">
+            <p>Tem certeza que deseja sair?</p>
+            <div className="botoes-modal">
+              <button className="btn-cancelar" onClick={deslogarERedirecionar}>Sim</button>
+              <button className="btn-confirmar" onClick={cancelarLogout}>Cancelar</button>
+            </div>
           </div>
         </div>
       )}

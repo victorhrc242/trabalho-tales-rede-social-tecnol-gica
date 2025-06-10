@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { supabase } from '../Components/cliente/supabaseClient';  // ajuste o caminho conforme necessário
+
+const supabase = createClient(
+  'https://vffnyarjcfuagqsgovkd.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg'
+
+);
+
 function Criar({ usuarioLogado, onClose }) {
   const [imagemArquivo, setImagemArquivo] = useState(null);
   const [imagem, setImagem] = useState('');
