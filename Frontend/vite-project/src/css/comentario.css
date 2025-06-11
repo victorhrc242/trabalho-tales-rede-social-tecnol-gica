@@ -178,3 +178,27 @@
     border-top: 1px solid #ddd;
   }
 }
+.botoes-post-comentario {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+.botoes-post-comentario .botao-acao {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  color: #222;
+}
+
+.botoes-post-comentario .botao-acao svg {
+  margin-right: 6px;
+}
+
