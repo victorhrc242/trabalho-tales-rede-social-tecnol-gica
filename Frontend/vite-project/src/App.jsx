@@ -11,11 +11,16 @@ import Criar from './Components/Criar';
 import Msg from './pages/Mensagens/mensagen';
 import Explore from './pages/Explore/Explore';
 import Notificacoes from './pages/Notificacao/Notificacoes ';
+
 function AppWrapper() {
   const location = useLocation();
 
-  const esconderNavbar = ["/", "/cadastro", "/recuperar"];
-  const deveEsconderNavbar = esconderNavbar.includes(location.pathname);
+  const esconderAmbas = ["/", "/cadastro", "/recuperar"];
+  const deveEsconderNavbar = esconderAmbas.includes(location.pathname)|| esconderAmbas.includes(location.pathname);
+
+  const esconderSomenteNavbarTop = ["/mensagen"];
+  const deveEsconderNavbarTop = esconderAmbas.includes(location.pathname) || esconderSomenteNavbarTop.includes(location.pathname);
+
 
   const [usuario, setUsuario] = useState(null);
 
@@ -36,15 +41,19 @@ function AppWrapper() {
     setUsuario(null);
   };
 
+
   return (
     <>
 
-         {!deveEsconderNavbar && usuario && (
+       {usuario && (
           <>
-        <Navbar usuarioLogado={usuario} deslogar={deslogar} />
-        <NavbarTop />
-        </>
-      )}     
+            {!deveEsconderNavbar && (
+              <Navbar usuarioLogado={usuario} deslogar={deslogar} />
+            )}
+            {!deveEsconderNavbarTop && <NavbarTop />}
+          </>
+        )}
+ 
 
 
       <Routes>

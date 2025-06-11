@@ -268,7 +268,7 @@ textarea {
 /* Responcividade */
 @media (max-width: 600px) {
   * {
-    box-sizing: content-box; 
+    box-sizing: border-box; 
   }
   .app-container {
     flex-direction: column;

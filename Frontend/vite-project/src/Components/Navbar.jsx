@@ -69,15 +69,16 @@ function Navbar({ usuarioLogado, deslogar }) {
     >
       <nav className="navbar-menu">
         <div className="logo-navbar">
-  <Link to="/home">
-    <img src="./public/logoParadise.jpg" alt="Logo" className="imagem-logo" />
-  </Link>
-</div>
+          <Link to="/home">
+            <img src="./public/logoParadise.jpg" alt="Logo" className="imagem-logo" />
+          </Link>
+        </div>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
 
-        <div className='nav-buscar'><div className="nav-item" onClick={() => setModal(prev => ({ ...prev, busca: !modal.busca }))}>
-          <FaSearch /> <span>Buscar</span>
-        </div>
+        <div className='nav-buscar'>
+          <div className="nav-item" onClick={() => setModal(prev => ({ ...prev, busca: !modal.busca }))}>
+            <FaSearch /> <span>Buscar</span>
+          </div>
         </div>
 
         {modal.busca && (
@@ -103,10 +104,18 @@ function Navbar({ usuarioLogado, deslogar }) {
           </div>
         )}
 
-        <div className='nav-explore'><Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link></div>
-        <div className='nav-reels'><Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link></div>
-        <div className='nav-mensagens'><Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link></div>
-        <div className='nav-notificacoes'><Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
+        <div className='nav-explore'>
+          <Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link>
+        </div>
+        <div className='nav-reels'>
+          <Link to="/reels" className="nav-item"><FaVideo /> <span>kurz</span></Link>
+        </div>
+        <div className='nav-mensagens'>
+          <Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link>
+        </div>
+        <div className='nav-notificacoes'>
+          <Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link>
+        </div>
 
         <div className="nav-item" onClick={() => setMostrarModal(true)}>
           <FaPlusSquare /> <span>Criar Post</span>
