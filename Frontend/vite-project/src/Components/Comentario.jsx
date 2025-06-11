@@ -87,6 +87,7 @@ function Comentario({
 </div>
 
 {/* ❤️ BOTÃO DE CURTIR (agora aqui) */}
+
 <div className="botoes-post-comentario">
   <button className="botao-acao" onClick={() => curtirPost(post.id)}>
     <svg

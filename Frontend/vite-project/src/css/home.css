@@ -73,35 +73,12 @@ li {
   border-bottom: 1px solid #ccc;
   padding-bottom: 15px;
 }
-/* Posts padrão - reset de tamanho automático */
-li img,
-li video {
-  width: 100%;
-  max-width: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  background-color: #f2f2f2;
-  display: block;
-  margin: 10px auto 0 auto;
-}
-
-/* Imagem no feed */
-li img {
-  height: 0px; /* Altura fixa para imagens */
-}
-
-/* Vídeo no feed */
-li video,
-.imagem-post-feed {
-  height: 400px; /* Altura maior para vídeos */
-}
-
 
 /* Video player específico */
 .imagem-post-feed {
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 600px;
   object-fit: cover;
   border-radius: 12px;
   display: block;

@@ -19,6 +19,7 @@ function Explore() {
   const [videoAtivoId, setVideoAtivoId] = useState(null);
 
   const LS_POSTS_KEY = 'explore_posts_cache';
+  
 
   // Função para adicionar dados do autor aos posts
   const addAuthorData = useCallback(async (posts) => {
@@ -203,7 +204,7 @@ function Explore() {
   return (
     <div className="explore-page">
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
-
+  
       <div className="explore-grid">
         {displayedPosts.map(post => {
           const isVideo = post.video && post.video !== "";
@@ -246,6 +247,7 @@ function Explore() {
           comentar={comentar}
           fechar={fecharComentarios}
         />
+      
       )}
     </div>
   );

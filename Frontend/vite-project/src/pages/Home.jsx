@@ -56,7 +56,7 @@ function VideoPlayer({ videoUrl, isActive, className }) {
         onClick={handleVideoClick}
         style={{
           width: '120%', // Agora ocupa 120% do container para dar zoom
-          height: 'auto',
+          height: '600px',
           objectFit: 'cover',
           borderRadius: '12px',
           display: 'block',
