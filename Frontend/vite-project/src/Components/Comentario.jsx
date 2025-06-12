@@ -38,8 +38,21 @@ function Comentario({
         <div className="comentarios-container">
           
           <div className="comentarios-header">
-            <strong>{post.autorNome}</strong>
-          </div>
+  <strong>{post.autorNome}</strong>
+</div>
+
+<div className="post-conteudo" style={{ margin: '10px 0' }}>
+  <p>{post.conteudo}</p>
+  {post.tags && post.tags.length > 0 && (
+    <p style={{ color: '#555' }}>
+      {post.tags.map((tag, idx) => (
+        <span key={idx} style={{ marginRight: '5px' }}>
+          #{tag.trim()}
+        </span>
+      ))}
+    </p>
+  )}
+</div>
           
 
 
