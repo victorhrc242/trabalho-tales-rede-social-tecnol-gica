@@ -41,6 +41,8 @@ function Comentario({
   <strong>{post.autorNome}</strong>
 </div>
 
+ {/* esta mexido para o conteudo do post que o comentario  */}
+
 <div className="post-conteudo" style={{ margin: '10px 0' }}>
   <p>{post.conteudo}</p>
   {post.tags && post.tags.length > 0 && (
