@@ -43,6 +43,7 @@ function Comentario({
 
  {/* esta mexido para o conteudo do post que o comentario  */}
 
+
 <div className="post-conteudo" style={{ margin: '10px 0' }}>
   <p>{post.conteudo}</p>
   {post.tags && post.tags.length > 0 && (
@@ -56,7 +57,7 @@ function Comentario({
   )}
 </div>
           
-
+<h4>Comentarios</h4>
 
 
           {/* Esse ate então é o penultimo codigo funconal então eu edeixei ele coentado aqui para o uso dele caso o codigo atual não funcione   */}

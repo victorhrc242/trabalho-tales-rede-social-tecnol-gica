@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';  // importar para navegação
 import '../Explore/css/explore.css';
 import Comentario from "../../Components/Comentario.jsx";
 
+
+
 function Explore() {
   const navigate = useNavigate();
 
@@ -210,6 +212,8 @@ function Explore() {
   }, [displayedPosts, videoAtivoId]);
 
   // Função para buscar usuários pela API, pelo nome digitado
+
+
   const buscarUsuarios = async (texto) => {
     if (!texto.trim()) {
       setResultadosUsuarios([]);
@@ -231,8 +235,9 @@ function Explore() {
         setResultadosUsuarios([]);
       }
     } catch (err) {
-      setErroBuscaUsuarios('Erro na comunicação com o servidor.');
-      setResultadosUsuarios([]);
+  console.error('Erro na comunicação com o servidor:', err);
+  setErroBuscaUsuarios('Erro na comunicação com o servidor.');
+  setResultadosUsuarios([]);
     } finally {
       setBuscandoUsuarios(false);
     }
@@ -257,34 +262,34 @@ function Explore() {
 
       <div style={{ marginBottom: '20px' }}>
         <input
-          type="text"
-          placeholder="Buscar usuários pelo nome..."
-          value={buscaTexto}
-          onChange={e => setBuscaTexto(e.target.value)}
-          style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+  type="text"
+  placeholder="Buscar usuários pelo nome..."
+  value={buscaTexto}
+  onChange={e => setBuscaTexto(e.target.value)}
+  style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+/>
+
+{buscandoUsuarios && <p>Buscando usuários...</p>}
+{erroBuscaUsuarios && <p style={{ color: 'red' }}>{erroBuscaUsuarios}</p>}
+
+{resultadosUsuarios.length > 0 && (
+  <ul style={{ listStyle: 'none', padding: 0, marginTop: '8px', border: '1px solid #ddd', borderRadius: '4px', maxHeight: '200px', overflowY: 'auto' }}>
+    {resultadosUsuarios.map(user => (
+      <li
+          key={user.id}
+        style={{ padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #eee' }}
+        onClick={() => irParaPerfil(user.id)}
+      >
+        <img
+          src={user.imagem || 'https://via.placeholder.com/40'}
+          alt={user.nome_usuario}
+          style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
         />
-
-        {buscandoUsuarios && <p>Buscando usuários...</p>}
-        {erroBuscaUsuarios && <p style={{ color: 'red' }}>{erroBuscaUsuarios}</p>}
-
-        {resultadosUsuarios.length > 0 && (
-          <ul style={{ listStyle: 'none', padding: 0, marginTop: '8px', border: '1px solid #ddd', borderRadius: '4px', maxHeight: '200px', overflowY: 'auto' }}>
-            {resultadosUsuarios.map(user => (
-              <li
-                key={user.id}
-                style={{ padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #eee' }}
-                onClick={() => irParaPerfil(user.id)}
-              >
-                <img
-                  src={user.imagem || 'https://via.placeholder.com/40'}
-                  alt={user.nome_usuario}
-                  style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
-                />
-                <span>{user.nome_usuario}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <span>{user.nome_usuario}</span>
+      </li>
+    ))}
+  </ul>
+)}
       </div>
 
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
