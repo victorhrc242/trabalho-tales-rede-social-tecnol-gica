@@ -337,6 +337,9 @@ textarea {
     color: #fff9f9;
     position: relative;
   }
+  .chat-header.hidden-mobile{
+    position: fixed;
+  }
 
   .btn-voltar {
     display: flex;
@@ -397,6 +400,9 @@ textarea {
     padding: 5px 8px;
     height: 45px;
     gap: 6px;
+  }
+  .chat-input.hidden-mobile{
+    position: fixed;
   }
 
   .chat-input textarea.input-mensagem {
