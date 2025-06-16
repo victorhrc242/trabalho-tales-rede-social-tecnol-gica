@@ -128,7 +128,7 @@ function Navbar({ usuarioLogado, deslogar }) {
         </div>
       </nav>
 
-            {/* Modal de Criarção de Post */}
+            {/* Modal de Criarção de Post 
       {mostrarModal && (
     <div className="modal-overlay" onClick={() => {
       setMostrarModal(false);
@@ -140,7 +140,7 @@ function Navbar({ usuarioLogado, deslogar }) {
     <form className="form-criar-post" onSubmit={handleCriarPost}>
   <h2>Criar Novo Post</h2>
 
-  {/* Etapa 1 - Seleção de imagem */}
+  Etapa 1 - Seleção de imagem
   {etapa === 1 && (
     <>
           {!imagemArquivo && (
@@ -195,7 +195,7 @@ function Navbar({ usuarioLogado, deslogar }) {
     )}
     </>
   )}
-  {/* Etapa 2 - Filtros */}
+   Etapa 2 - Filtros 
   {etapa === 2 && imagem && (
     <>
 <div className="preview-e-filtros">
@@ -252,7 +252,7 @@ function Navbar({ usuarioLogado, deslogar }) {
 </div>
     </>
   )}
-    {/* Etapa 3 - Texto e Tags */}
+     Etapa 3 - Texto e Tags 
               {etapa === 3 && (
                 <>
                   <textarea placeholder="Escreva algo..." value={conteudo}
@@ -267,7 +267,7 @@ function Navbar({ usuarioLogado, deslogar }) {
               )}
       </form>
       </div>
-      )
+      ) */}
 
       {modal.opcoes && (
         <div className="modal">
