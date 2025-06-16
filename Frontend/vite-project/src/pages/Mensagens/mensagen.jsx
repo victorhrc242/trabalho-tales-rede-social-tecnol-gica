@@ -22,6 +22,8 @@ const Mensagens = () => {
   const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
   const fimDasMensagensRef = useRef(null);
 
+  const modalRef = useRef(null);
+
   const rolarParaFim = () => {
     if (fimDasMensagensRef.current) {
       fimDasMensagensRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -216,6 +218,26 @@ const Mensagens = () => {
     setModalAberto(false);
   };
 
+  // Modal
+  useEffect(() => {
+  function handleClickFora(event) {
+    if (modalAberto && modalRef.current && !modalRef.current.contains(event.target)) {
+      fecharModal();
+    }
+  }
+
+  if (modalAberto) {
+    document.addEventListener('mousedown', handleClickFora);
+  } else {
+    document.removeEventListener('mousedown', handleClickFora);
+  }
+
+  return () => {
+    document.removeEventListener('mousedown', handleClickFora);
+  };
+}, [modalAberto]);
+
+
   return (
     <div className="app-container">
       <div className={`fixed-header ${usuarioSelecionado ? 'hidden-mobile' : ''}`}></div>
@@ -286,18 +308,24 @@ const Mensagens = () => {
       <div className={`chat-area ${usuarioSelecionado ? '' : 'hidden-mobile'}`}>
         {usuarioSelecionado ? (
           <>
-            <div className="chat-header">
-              <button className="btn-voltar" onClick={voltarParaSidebar} aria-label="Voltar">
-                <FaArrowLeft />
-              </button>
-              <img
-                onClick={abrirModal}
-                style={{ cursor: 'pointer' }}
-                src={usuarioSelecionado.imagem || 'https://via.placeholder.com/40'}
-                alt={usuarioSelecionado.nome_usuario}
-              />
-              <span>{usuarioSelecionado.nome_usuario}</span>
-            </div>
+           <div className="chat-header">
+  <button className="btn-voltar" onClick={voltarParaSidebar} aria-label="Voltar">
+    <FaArrowLeft />
+  </button>
+  <img
+    src={usuarioSelecionado.imagem || 'https://via.placeholder.com/40'}
+    alt={usuarioSelecionado.nome_usuario}
+  />
+  <span>{usuarioSelecionado.nome_usuario}</span>
+  <button
+    className="btn-tres-pontos"
+    onClick={abrirModal}
+    aria-label="Abrir opções"
+  >
+    &#x22EE; {/* ícone vertical três pontos */}
+  </button>
+</div>
+
 
             <div className="messages">
               {historicoMensagens.map((msg, index) => {
@@ -340,52 +368,21 @@ const Mensagens = () => {
             </div>
 
             {/* Modal Perfil */}
-            {modalAberto && (
-             <div className="modal-perfil-overlay" onClick={fecharModal}>
-              <div
-                className="modal-perfil"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button className="fechar-modal" onClick={fecharModal} aria-label="Fechar modal">
-                  &times;
-                </button>
-
-                <img
-                  src={usuarioSelecionado.imagem || 'https://via.placeholder.com/100'}
-                  alt={usuarioSelecionado.nome_usuario}
-                  className="modal-foto-perfil"
-                />
-                <p className="modal-nome-usuario">{usuarioSelecionado.nome_usuario}</p>
-             <div className="modal-icones">
-  <div className="icone-item">
-    <button className="icone-btn" aria-label="Perfil">
-      <FaUser size={24} />
-    </button>
-    <span className="icone-label">Perfil</span>
-  </div>
-  <div className="icone-item">
-    <button className="icone-btn" aria-label="Tema do Chat">
-      <FaPaintBrush size={24} />
-    </button>
-    <span className="icone-label">Tema</span>
-  </div>
-  <div className="icone-item">
-    <button className="icone-btn" aria-label="Silenciar Mensagens">
-      <FaBellSlash size={24} />
-    </button>
-    <span className="icone-label">Silenciar</span>
-  </div>
-  <div className="icone-item">
-    <button className="icone-btn" aria-label="Apagar Conversa">
-      <FaTrash size={24} />
-    </button>
-    <span className="icone-label">Apagar</span>
-  </div>
-</div>
-
-              </div>
+         {modalAberto && (
+          <div className="menu-mobile-overlay">
+            <div
+              className="menu-mobile-content"
+              ref={modalRef}
+            >
+              <div className="menu-item">Perfil</div>
+              <div className="menu-item">Silenciar notificações</div>
+              <div className="menu-item">Apagar Mensagem</div>
+              <div className="menu-item">Tema</div>
             </div>
-            )}
+          </div>
+        )}
+
+
           </>
         ) : (
           <p className="selecionar-usuario-msg">Selecione um usuário para iniciar o chat.</p>
