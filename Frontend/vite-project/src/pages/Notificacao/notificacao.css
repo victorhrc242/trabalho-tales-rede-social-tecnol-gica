@@ -1,0 +1,137 @@
+/* Estilização geral da página de notificações */
+.notificacoes-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  margin-top: 80px; /* Distância da navbar */
+}
+
+.notificacoes-container h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #262626;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+/* Estilização do item de notificação */
+.notificacoes-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notificacoes-container ul li {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f1f1f1;
+  padding: 15px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.notificacoes-container ul li:hover {
+  background-color: #f9f9f9;
+}
+
+/* Mensagem de notificação */
+.notificacoes-container ul li p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+}
+
+/* Data de envio (pequena e discreta) */
+.notificacoes-container ul li small {
+  font-size: 12px;
+  color: #999;
+  margin-left: auto;
+}
+
+/* Estilização de imagem de usuário (se houver) */
+.notificacoes-container ul li img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+/* Quando não há notificações */
+.notificacoes-container p {
+  font-size: 16px;
+  color: #999;
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .notificacoes-container {
+    width: 90%;
+    margin-top: 60px; /* Distância da navbar em telas menores */
+    padding: 15px;
+  }
+
+  .notificacoes-container h2 {
+    font-size: 20px;
+  }
+
+  .notificacoes-container ul li {
+    padding: 12px 0;
+  }
+
+  .notificacoes-container ul li img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .notificacoes-container ul li p {
+    font-size: 13px;
+  }
+
+  .notificacoes-container ul li small {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notificacoes-container {
+    width: 95%;
+    margin-top: 60px; /* Distância da navbar em telas pequenas */
+    padding: 10px;
+  }
+
+  .notificacoes-container h2 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .notificacoes-container ul li {
+    padding: 10px 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notificacoes-container ul li img {
+    width: 50px;
+    height: 50px;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .notificacoes-container ul li p {
+    font-size: 14px;
+  }
+
+  .notificacoes-container ul li small {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+}
