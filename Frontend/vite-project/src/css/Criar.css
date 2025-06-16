@@ -12,43 +12,181 @@
     flex-direction: column;
     gap: 15px;
   }
+
+  /* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-CriarPost {
+  background: white;
+  border-radius: 10px;
+  max-width: 600px; /* limite de largura do modal */
+  width: 90%;
+  max-height: 90vh; /* limite de altura com rolagem */
+  overflow-y: auto; /* permite rolagem caso o conteúdo ultrapasse */
+  padding: 20px;
+  position: relative;
+  z-index: 1001;
+}
+
+.form-criar-post {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
   
   textarea {
-    min-height: 100px;
-    padding: 10px;
-    resize: vertical;
+  min-height: 100px;
+  padding: 10px;
+  resize: vertical;
+  border-radius: 5px;
+  border: 1px solid #ccc;
   }
   
-  input[type="text"] {
-    padding: 10px;
+  input[type="text"],
+  input[type="file"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
   }
   
-  .preview-imagem img {
+/* Área de upload */
+.area-upload {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 30px;
+  height: 400px; /* altura aumentada */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.area-upload:hover {
+  background-color: #f9f9f9;
+}
+
+.area-upload input[type="file"] {
+  display: none; /* esconde o input real */
+}
+
+.preview-imagem2,
+.preview-video {
     max-width: 100%;
-    height: auto;
-    border-radius: 6px;
-    margin-top: 10px;
-  }
-  
-  .botoes-form {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  
-  button {
-    padding: 10px 20px;
-    cursor: pointer;
-  }
+  max-height: 400px; /* limite de altura da imagem */
+  object-fit: contain;
+  border-radius: 10px;
+  margin: 10px auto;
+}
 
-  .button-confirme:hover{
-    background-color: #0f8200;
-  }
+.imagem-preview {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
 
-  .button-cancel:hover{
-    background-color: #ce0101;
-  }
+.preview-imagem2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px; /* Altura fixa para manter layout consistente */
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Estilos para filtros CSS */
+.imagem-preview.none { filter: none; }
+.imagem-preview.grayscale { filter: grayscale(100%); }
+.imagem-preview.sepia { filter: sepia(100%); }
+.imagem-preview.invert { filter: invert(100%); }
+.imagem-preview.contrast { filter: contrast(200%); }
+.imagem-preview.saturate { filter: saturate(200%); }
+
+
+/* Miniaturas dos filtros */
+.filtros-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.filtro-miniatura {
+  cursor: pointer;
+  text-align: center;
+}
+
+.imagem-miniatura {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid transparent;
+}
+
+.filtro-miniatura span {
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.filtro-miniatura.ativo .imagem-miniatura {
+  border-color: #007bff;
+}
   
-  .erro {
-    color: red;
-  }
+
+/* Etapas e botões */
+.botoes-acoes,
+.botoes-form {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.button-confirme:hover {
+  background-color: #0f8200;
+}
+
+.button-cancel:hover {
+  background-color: #ce0101;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.erro {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Ajuste para etapa 2 */
+.modal-CriarPost-etapa2 {
+  max-width: 700px;
+}
