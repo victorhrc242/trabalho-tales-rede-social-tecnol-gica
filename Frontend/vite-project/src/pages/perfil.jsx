@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
 
 
@@ -18,6 +18,9 @@ const Perfil = () => {
   const [comentarios, setComentarios] = useState([]);
   const [novoComentario, setNovoComentario] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const usuarioLogadoId = localStorage.getItem('usuarioLogadoId');
+  const isPerfilProprio = usuario && usuario.id === Number(usuarioLogadoId);
+
   const [nome, setNome] = useState('');
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
@@ -212,9 +215,16 @@ const fetchComentarios = async (postId) => {
         </div>
         <div className="perfil-info">
           <h1>{usuario.nome_usuario}</h1>
-          {usuario.id === userId && !isEditing && (
+          {isPerfilProprio ? (
+            !isEditing && (
+              <div className="botoes-perfil">
+                <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
+              </div>
+            )
+          ) : (
             <div className="botoes-perfil">
-              <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
+              <button >Seguir</button>
+              <button ><Link to="/mensagen" className="nav-item">Enviar Mensagem</Link></button>
             </div>
           )}
           {isEditing && (
