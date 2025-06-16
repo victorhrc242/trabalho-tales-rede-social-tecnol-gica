@@ -56,7 +56,7 @@ function VideoPlayer({ videoUrl, isActive, className }) {
         onClick={handleVideoClick}
         style={{
           width: '120%', // Agora ocupa 120% do container para dar zoom
-          height: 'auto',
+          height: '600px',
           objectFit: 'cover',
           borderRadius: '12px',
           display: 'block',
@@ -442,16 +442,16 @@ function Home() {
       </ul>
 
       {modalComentarios && postSelecionado && (
-       <Comentario
+      <Comentario
   post={postSelecionado}
   comentarios={comentarios}
   comentarioTexto={comentarioTexto}
   setComentarioTexto={setComentarioTexto}
   comentar={comentar}
   fechar={() => setModalComentarios(false)}
-  curtirPost={curtirPost}
-  usuarioCurtidas={postSelecionado.curtidas}
+  usuario={usuario} // Passando o usuário para a função de curtida
 />
+
       )}
     </div>
   );

@@ -235,7 +235,7 @@ const Mensagens = () => {
             Mensagens
           </div>
         </div>
-
+    
         <div className="search-bar">
           <div className="search-input-container">
             <input

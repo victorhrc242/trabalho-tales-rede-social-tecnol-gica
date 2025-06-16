@@ -74,23 +74,11 @@ li {
   padding-bottom: 15px;
 }
 
-li img,
-li video {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 8px;
-  background-color: #f2f2f2;
-  display: block;
-  margin: 10px auto 0 auto;
-}
-
 /* Video player específico */
 .imagem-post-feed {
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 600px;
   object-fit: cover;
   border-radius: 12px;
   display: block;
