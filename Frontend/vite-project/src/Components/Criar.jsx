@@ -208,50 +208,6 @@ function Criar({ usuarioLogado, onClose }) {
 
           {etapa === 2 && (
             <>
-              <div className="preview-e-filtros">
-                <div className="preview-imagem2">
-                  <img
-                    src={imagem}
-                    alt="Pré-visualização"
-                    className={`imagem-preview ${filtroSelecionado}`}
-                  />
-                </div>
-
-                <div className="filtros-preview">
-                  {['none', 'grayscale', 'sepia', 'invert', 'contrast', 'saturate'].map((filtro) => (
-                    <div
-                      key={filtro}
-                      className={`filtro-miniatura ${filtroSelecionado === filtro ? 'ativo' : ''}`}
-                      onClick={() => {
-                        setFiltroSelecionado(filtro);
-                        setFiltroConfirmado(false);
-                      }}
-                    >
-                      <img
-                        src={imagem}
-                        alt={`Filtro ${filtro}`}
-                        className={`imagem-miniatura ${filtro}`}
-                      />
-                      <span>{filtro}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="botoes-acoes">
-                {!filtroConfirmado ? (
-                  <button type="button" onClick={() => {
-                    setFiltroConfirmado(true);
-                    setFiltroConfirmadoValor(filtroSelecionado);
-                  }}>Confirmar filtro</button>
-                ) : (
-                  <button type="button" onClick={() => setEtapa(3)}>Próximo</button>
-                )}
-              </div>
-            </>
-          )}
-                    {etapa === 3 && (
-            <>
               <textarea placeholder="Escreva algo..." value={conteudo} onChange={(e) => setConteudo(e.target.value)} required />
               <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
               <div className="botoes-acoes">
