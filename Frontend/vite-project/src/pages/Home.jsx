@@ -134,7 +134,7 @@ function Home() {
     localStorage.setItem('postsSalvos', JSON.stringify(dadosFiltrados));
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/');
@@ -243,7 +243,7 @@ function Home() {
     try {
       if (!usuario.id) return;
 
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`);
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed/${usuario.id}`);
       const data = await response.json();
 
       if (response.ok) {
@@ -452,8 +452,13 @@ function Home() {
   usuario={usuario} // Passando o usuário para a função de curtida
 />
 
+
       )}
+   
+
+
     </div>
+    
   );
 }
 
