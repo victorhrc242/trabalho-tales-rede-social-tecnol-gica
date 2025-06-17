@@ -17,8 +17,7 @@ function Criar({ usuarioLogado, onClose }) {
   const [tags, setTags] = useState('');
   const [erro, setErro] = useState('');
   const [filtroSelecionado, setFiltroSelecionado] = useState('none');
-  const [filtroConfirmado, setFiltroConfirmado] = useState(false);
-  const [filtroConfirmadoValor, setFiltroConfirmadoValor] = useState('none');
+  const isMobile = window.innerWidth <= 768;
   const [etapa, setEtapa] = useState(1);
 
   // Cria URL para preview e limpa na desmontagem / troca
@@ -133,7 +132,7 @@ function Criar({ usuarioLogado, onClose }) {
         <form className="form-criar-post" onSubmit={handleCriarPost}>
           <h2>Criar Novo Post</h2>
 
-          {etapa === 1 && (
+          {etapa === 1 && ( 
             <>
               {!imagemArquivo && !videoArquivo && (
   <label
@@ -153,13 +152,15 @@ function Criar({ usuarioLogado, onClose }) {
     <input
       type="file"
       accept="image/*,video/*"
+      multiple
+      style={{ display: 'none' }}
+      d="input-galeria"
       onChange={(e) => {
-        const file = e.target.files[0];
-        if (file.type.startsWith('image/')) {
-          setImagemArquivo(file);
-        } else if (file.type.startsWith('video/')) {
-          setVideoArquivo(file);
-        }
+          const files = Array.from(e.target.files);
+          if (files.length > 0) {
+            setGaleriaArquivos(files);
+            setImagemArquivo(files[0]);
+          }
       }}
     />
   </label>
