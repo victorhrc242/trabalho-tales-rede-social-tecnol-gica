@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import '../css/Criar.css';
 
 const supabase = createClient(
   'https://vffnyarjcfuagqsgovkd.supabase.co',
@@ -16,6 +17,8 @@ function Criar({ usuarioLogado, onClose }) {
   const [tags, setTags] = useState('');
   const [erro, setErro] = useState('');
   const [filtroSelecionado, setFiltroSelecionado] = useState('none');
+  const [filtroConfirmado, setFiltroConfirmado] = useState(false);
+  const [filtroConfirmadoValor, setFiltroConfirmadoValor] = useState('none');
   const [etapa, setEtapa] = useState(1);
 
   // Cria URL para preview e limpa na desmontagem / troca
@@ -110,6 +113,8 @@ function Criar({ usuarioLogado, onClose }) {
         setTags('');
         setErro('');
         setFiltroSelecionado('none');
+        setFiltroConfirmado(false);
+        setFiltroConfirmadoValor('none');
       } else {
         const erroResp = await response.json();
         setErro(erroResp.erro || 'Erro ao criar o post');
@@ -122,8 +127,7 @@ function Criar({ usuarioLogado, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div
-        className={`modal-CriarPost ${etapa === 2 ? 'modal-CriarPost-etapa2' : ''}`}
+      <div className={`modal-CriarPost ${etapa === 2 ? 'modal-CriarPost-etapa2' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         <form className="form-criar-post" onSubmit={handleCriarPost}>
@@ -132,33 +136,33 @@ function Criar({ usuarioLogado, onClose }) {
           {etapa === 1 && (
             <>
               {!imagemArquivo && !videoArquivo && (
-                <div
-                  className="area-upload"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const file = e.dataTransfer.files[0];
-                    if (file.type.startsWith('image/')) {
-                      setImagemArquivo(file);
-                    } else if (file.type.startsWith('video/')) {
-                      setVideoArquivo(file);
-                    }
-                  }}
-                >
-                  <p>Arraste uma imagem ou vídeo aqui ou clique para selecionar</p>
-                  <input
-                    type="file"
-                    accept="image/*,video/*"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file.type.startsWith('image/')) {
-                        setImagemArquivo(file);
-                      } else if (file.type.startsWith('video/')) {
-                        setVideoArquivo(file);
-                      }
-                    }}
-                  />
-                </div>
+  <label
+    className="area-upload"
+    onDragOver={(e) => e.preventDefault()}
+    onDrop={(e) => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file.type.startsWith('image/')) {
+        setImagemArquivo(file);
+      } else if (file.type.startsWith('video/')) {
+        setVideoArquivo(file);
+      }
+    }}
+  >
+    <p>Arraste uma imagem ou vídeo aqui<br />ou clique para selecionar</p>
+    <input
+      type="file"
+      accept="image/*,video/*"
+      onChange={(e) => {
+        const file = e.target.files[0];
+        if (file.type.startsWith('image/')) {
+          setImagemArquivo(file);
+        } else if (file.type.startsWith('video/')) {
+          setVideoArquivo(file);
+        }
+      }}
+    />
+  </label>
               )}
 
               {imagem && (
@@ -204,31 +208,14 @@ function Criar({ usuarioLogado, onClose }) {
 
           {etapa === 2 && (
             <>
-              <textarea
-                placeholder="Escreva uma legenda..."
-                value={conteudo}
-                onChange={(e) => setConteudo(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Tags separadas por vírgula"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
-              <select
-                value={filtroSelecionado}
-                onChange={(e) => setFiltroSelecionado(e.target.value)}
-                disabled={!!videoUrl} // desativa filtro para vídeo
-              >
-                <option value="none">Sem Filtro</option>
-                <option value="grayscale">Preto e Branco</option>
-                <option value="sepia">Sépia</option>
-              </select>
-              <div className="botoes-post">
-                <button type="submit">Publicar</button>
-                <button type="button" onClick={() => setEtapa(1)}>
-                  Voltar
-                </button>
+              <textarea placeholder="Escreva algo..." value={conteudo} onChange={(e) => setConteudo(e.target.value)} required />
+              <input type="text" placeholder="Tags separadas por vírgula" value={tags} onChange={(e) => setTags(e.target.value)} />
+              <div className="botoes-acoes">
+                <button className='button-confirme' type="submit">Publicar</button>
+                <button className='button-cancel' type="button" onClick={() => {
+                  onClose();
+                  setEtapa(1);
+                }}>Cancelar</button>
               </div>
             </>
           )}

@@ -11,21 +11,24 @@ body, html {
   box-sizing: border-box;
   min-height: 100vh;
 }
+
 .explore-grid {
   column-count: 3;
   column-gap: 10px;
 }
-
 @media (max-width: 800px) {
   .explore-grid {
     column-count: 2;
   }
 }
-
 @media (max-width: 500px) {
   .explore-grid {
     column-count: 1;
   }
+}
+.explore-grid {
+  column-count: 3;
+  column-gap: 10px;
 }
 
 .grid-item {
@@ -34,27 +37,39 @@ body, html {
   display: block;
 }
 
-/* Estilo para imagens: proporção mais curta */
-.grid-item img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  display: block;
-  aspect-ratio: 1 / 1; /* quadrada */
-}
-
-/* Estilo para vídeos: mais altos, tipo reels */
+.grid-item img,
 .grid-item.video video {
   width: 100%;
   height: auto;
   object-fit: cover;
-  display: block;
-  aspect-ratio: 9 / 16; /* vertical, tipo celular */
+  border-radius: 8px;
 }
 
-/* Animação e destaque no hover */
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Estilo para vídeos: mantém o aspecto vertical, tipo reels */
+.grid-item.video {
+  aspect-ratio: 9 / 16;
+}
+
+.grid-item.video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Hover */
 .grid-item:hover {
   transform: scale(1.01);
+  transition: transform 0.2s ease-in-out;
 }
 
 .grid-item:hover .overlay {
@@ -85,4 +100,19 @@ body, html {
   }
 }
 
+
+.explore-header {
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.barra-pesquisa {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  outline: none;
+}
 

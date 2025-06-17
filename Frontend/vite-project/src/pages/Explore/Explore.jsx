@@ -1,13 +1,24 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';  // importar para navegação
 import '../Explore/css/explore.css';
 import Comentario from "../../Components/Comentario.jsx";
 
+
+
 function Explore() {
+  const navigate = useNavigate();
+
   const POSTS_BATCH_SIZE = 6;
 
   const [allPosts, setAllPosts] = useState([]); // Todos os posts carregados da API
   const [displayedPosts, setDisplayedPosts] = useState([]); // Posts exibidos na tela (incrementais)
   const [erro, setErro] = useState(null);
+
+  // Estados para busca de usuários
+  const [buscaTexto, setBuscaTexto] = useState('');
+  const [resultadosUsuarios, setResultadosUsuarios] = useState([]);
+  const [erroBuscaUsuarios, setErroBuscaUsuarios] = useState(null);
+  const [buscandoUsuarios, setBuscandoUsuarios] = useState(false);
 
   // Comentários e post selecionado para modal
   const [postSelecionado, setPostSelecionado] = useState(null);
@@ -200,8 +211,87 @@ function Explore() {
     };
   }, [displayedPosts, videoAtivoId]);
 
+  // Função para buscar usuários pela API, pelo nome digitado
+
+
+  const buscarUsuarios = async (texto) => {
+    if (!texto.trim()) {
+      setResultadosUsuarios([]);
+      setErroBuscaUsuarios(null);
+      return;
+    }
+
+    setBuscandoUsuarios(true);
+    setErroBuscaUsuarios(null);
+
+    try {
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuarios/busca?nome=${encodeURIComponent(texto)}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setResultadosUsuarios(data || []);
+      } else {
+        setErroBuscaUsuarios(data.erro || 'Erro na busca de usuários.');
+        setResultadosUsuarios([]);
+      }
+    } catch (err) {
+  console.error('Erro na comunicação com o servidor:', err);
+  setErroBuscaUsuarios('Erro na comunicação com o servidor.');
+  setResultadosUsuarios([]);
+    } finally {
+      setBuscandoUsuarios(false);
+    }
+  };
+
+  // Chamar a busca sempre que o texto mudar com debounce simples
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      buscarUsuarios(buscaTexto);
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [buscaTexto]);
+
+  // Navegar para perfil do usuário
+  const irParaPerfil = (usuarioId) => {
+    navigate(`/perfil/${usuarioId}`);
+  };
+
   return (
     <div className="explore-page">
+
+      <div style={{ marginBottom: '20px' }}>
+        <input
+  type="text"
+  placeholder="Buscar usuários pelo nome..."
+  value={buscaTexto}
+  onChange={e => setBuscaTexto(e.target.value)}
+  style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+/>
+
+{buscandoUsuarios && <p>Buscando usuários...</p>}
+{erroBuscaUsuarios && <p style={{ color: 'red' }}>{erroBuscaUsuarios}</p>}
+
+{resultadosUsuarios.length > 0 && (
+  <ul style={{ listStyle: 'none', padding: 0, marginTop: '8px', border: '1px solid #ddd', borderRadius: '4px', maxHeight: '200px', overflowY: 'auto' }}>
+    {resultadosUsuarios.map(user => (
+      <li
+          key={user.id}
+        style={{ padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #eee' }}
+        onClick={() => irParaPerfil(user.id)}
+      >
+        <img
+          src={user.imagem || 'https://via.placeholder.com/40'}
+          alt={user.nome_usuario}
+          style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
+        />
+        <span>{user.nome_usuario}</span>
+      </li>
+    ))}
+  </ul>
+)}
+      </div>
+
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
 
       <div className="explore-grid">
