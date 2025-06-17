@@ -388,17 +388,17 @@ textarea {
   }
 
   .messages {
-    padding: 15px;
+    padding: 20px;
   }
 
   .message {
-    font-size: 13px;
+    font-size: 17px;
     padding: 10px 14px;
   }
 
   .chat-input {
     padding: 5px 8px;
-    height: 45px;
+    height: 60px;
     gap: 6px;
   }
   .chat-input.hidden-mobile{
@@ -406,10 +406,12 @@ textarea {
   }
 
   .chat-input textarea.input-mensagem {
-    font-size: 13px;
-    padding: 6px 10px;
+    font-size: 17px;
+    padding: 8px 10px;
+    height: 43px;
+
   }
-  
+
   .search-input-container input {
     width: 90%;
     padding: 15px;

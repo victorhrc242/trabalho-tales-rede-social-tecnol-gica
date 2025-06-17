@@ -62,6 +62,7 @@
 /* Input com erro */
 .erro-input {
   border-color: red !important;
+  padding: 0%;
 }
 
 /* Título com fonte maior e diferente */
@@ -121,7 +122,6 @@
 /* Links abaixo do formulário */
 .container-login p {
   text-align: center;
-  color: #474747;
   margin-top: 10px;
 }
 .container-login a {
@@ -133,15 +133,6 @@
   text-decoration: underline;
 }
 
-/* Mensagem de erro */
-.erro {
-  color: #5094d8;
-  background-color: #330000;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 8px;
-  text-align: center;
-}
 
 /* Lado direito - imagem */
 .imagem-login {
@@ -218,7 +209,7 @@
   }
 
   .botao-entrar {
-    width: 90%;
+    width: 250px;
     margin-left: 0;
   }
 
@@ -229,6 +220,9 @@
    .linha-esquerda,
   .linha-direita {
     max-width: none; /* Remove limite de largura */
+  }
+  .input-icon-direita{
+    right: 10px;
   }
 
 }
