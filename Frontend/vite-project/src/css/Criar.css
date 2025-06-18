@@ -108,6 +108,48 @@
   margin-bottom: 20px;
 }
 
+/* Estilos para filtros CSS */
+.imagem-preview.none { filter: none; }
+.imagem-preview.grayscale { filter: grayscale(100%); }
+.imagem-preview.sepia { filter: sepia(100%); }
+.imagem-preview.invert { filter: invert(100%); }
+.imagem-preview.contrast { filter: contrast(200%); }
+.imagem-preview.saturate { filter: saturate(200%); }
+
+
+/* Miniaturas dos filtros */
+.filtros-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.filtro-miniatura {
+  cursor: pointer;
+  text-align: center;
+}
+
+.imagem-miniatura {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid transparent;
+}
+
+.filtro-miniatura span {
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.filtro-miniatura.ativo .imagem-miniatura {
+  border-color: #007bff;
+}
+  
+
 /* Etapas e botões */
 .botoes-acoes,
 .botoes-form {
