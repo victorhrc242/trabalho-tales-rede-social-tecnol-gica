@@ -373,7 +373,7 @@ function Home() {
   return (
     <div className="home-container">
       <hr />
-      <h2>Feed</h2>
+      <br /><br />
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
       {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
 
