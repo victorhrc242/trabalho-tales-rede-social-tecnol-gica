@@ -24,6 +24,12 @@ const Mensagens = () => {
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
 
+  // Ações no Menu 
+const [silenciado, setSilenciado] = useState(false);
+const [confirmApagarTudo, setConfirmApagarTudo] = useState(false);
+const [temaSubmenu, setTemaSubmenu] = useState(false);
+const [apagarMensagemIndividual, setApagarMensagemIndividual] = useState(false);
+
   // URL da API
   const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
 
@@ -39,9 +45,6 @@ const Mensagens = () => {
       fimDasMensagensRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-
-  
 
   // Sempre que o histórico de mensagens mudar, rola para a última mensagem
   useEffect(() => {
@@ -159,13 +162,6 @@ const Mensagens = () => {
       setHistoricoMensagens((prev) => prev.filter((msg) => msg.id !== mensagemId));
     });
 
-    // Marca mensagem como lida
-    connection.on('MensagemLida', (mensagemId, lida) => {
-      setHistoricoMensagens((prev) =>
-        prev.map((msg) => (msg.id === mensagemId ? { ...msg, lida } : msg))
-      );
-    });
-
     // Finaliza a conexão ao desmontar o componente
     return () => {
       connection.stop();
@@ -268,6 +264,62 @@ const Mensagens = () => {
     };
   }, [modalAberto]);
 
+  // Levar ao perfil do usuário selecionado
+const handleVerPerfil = () => {
+  window.location.href = `/perfil/${usuarioSelecionado.id}`;
+};
+
+// Toggle silenciar/ativar notificação (implementação a depender da sua API)
+const handleToggleNotificacao = async () => {
+  try {
+    const endpoint = silenciado ? '/api/notifications/ativar' : '/api/notifications/silenciar';
+await axios.post(
+  API_URL + endpoint,
+  { userId: usuarioSelecionado.id }, // body (dados)
+  { withCredentials: true }          // config (opções)
+);
+    setSilenciado(!silenciado);
+  } catch (err) {
+    console.error('Erro ao alterar notificação', err);
+  }
+};
+
+// Iniciar seleção de mensagem para apagar
+const removerMensagem = async (msgId) => {
+  try {
+    await axios.delete(`${API_URL}/api/Mensagens/${msgId}`);
+    setHistoricoMensagens(prev => prev.filter(m => m.id !== msgId));
+  } catch (err) {
+    console.error('Erro ao apagar mensagem', err);
+  } finally {
+    setApagarMensagemIndividual(false); // desativa o modo de apagar após a ação
+  }
+};
+
+const handleApagarMensagem = () => setApagarMensagemIndividual(true);
+
+// Apagar todas mensagens
+const confirmarApagarTudo = async () => {
+  try {
+    await axios.delete(`${API_URL}/api/Mensagens/limpar/${usuarioLogadoId}/${usuarioSelecionado.id}`);
+    setHistoricoMensagens([]);
+  } catch (err) {
+    console.error('Erro ao apagar mensagens', err);
+  } finally {
+    setConfirmApagarTudo(false);
+  }
+};
+
+// Tema
+const toggleTemaSubmenu = () => {
+  setTemaSubmenu(!temaSubmenu);
+};
+
+const handleTema = (novoTema) => {
+  document.documentElement.setAttribute('data-tema', novoTema);
+  setTemaSubmenu(false);
+};
+
 
   return (
     <div className="app-container">
@@ -355,6 +407,7 @@ const Mensagens = () => {
                 alt={usuarioSelecionado.nome_usuario}
               />
               <span>{usuarioSelecionado.nome_usuario}</span>
+
               {/* Botão de menu (3 pontos) para abrir o modal com opções */}
               <button
                 className="btn-tres-pontos"
@@ -382,14 +435,23 @@ const Mensagens = () => {
 
                 return (
                   <div
-                    key={index}
-                    className={`message ${isRemetente ? 'sent' : 'received'}`}
-                  >
-                    <div className="message-content">
-                      <p>{msg.conteudo}</p>
-                    </div>
-                    <div className="timestamp">{dataFormatada}</div>
-                  </div>
+                   key={index}
+      className={`message ${isRemetente ? 'sent' : 'received'}`}
+    >
+      <div className="message-content">
+        <p>{msg.conteudo}</p>
+        {apagarMensagemIndividual && isRemetente && (
+          <button
+            className="btn-apagar-mensagem"
+            onClick={() => removerMensagem(msg.id)}
+            title="Apagar mensagem"
+          >
+            <FaTrash />
+          </button>
+        )}
+      </div>
+      <div className="timestamp">{dataFormatada}</div>
+    </div>
                 );
               })}
 
@@ -417,15 +479,38 @@ const Mensagens = () => {
 
             {/* Modal com opções do chat (ex: Perfil, Silenciar, Apagar, Tema) */}
             {modalAberto && (
-              <div className="menu-mobile-overlay">
-                <div className="menu-mobile-content" ref={modalRef}>
-                  <div className="menu-item">Perfil</div>
-                  <div className="menu-item">Silenciar notificações</div>
-                  <div className="menu-item">Apagar Mensagem</div>
-                  <div className="menu-item">Tema</div>
+            <div className="menu-mobile-overlay">
+              <div className="menu-mobile-content" ref={modalRef}>
+                <div className="menu-item" onClick={handleVerPerfil}>Perfil</div>
+                <div className="menu-item" onClick={handleToggleNotificacao}>
+                  {silenciado ? 'Ativar notificações' : 'Silenciar notificações'}
                 </div>
+               <div className="menu-item" onClick={handleApagarMensagem}>
+                Apagar Mensagem</div>
+                <div className="menu-item" onClick={() => setConfirmApagarTudo(true)}>
+                  Apagar Todas Mensagens
+                </div>
+                <div className="menu-item" onClick={toggleTemaSubmenu}>Tema</div>
+
+                {temaSubmenu && (
+                  <div className="submenu-tema">
+                    <div className="menu-item" onClick={() => handleTema('claro')}>Claro</div>
+                    <div className="menu-item" onClick={() => handleTema('escuro')}>Escuro</div>
+                  </div>
+                )}
               </div>
-            )}
+
+              {confirmApagarTudo && (
+                <div className="confirm-modal">
+                  <p>Deseja apagar todas as Mensagens?</p>
+                  <button onClick={confirmarApagarTudo}>Sim</button>
+                  <button onClick={() => setConfirmApagarTudo(false)}>Não</button>
+                </div>
+              )}
+            </div>
+          )}
+
+
           </>
         ) : (
           // Texto exibido quando nenhum usuário foi selecionado ainda
