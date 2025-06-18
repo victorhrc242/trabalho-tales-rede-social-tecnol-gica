@@ -19,8 +19,7 @@ const Perfil = () => {
   const [novoComentario, setNovoComentario] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const usuarioLogadoId = localStorage.getItem('usuarioLogadoId');
-  const isPerfilProprio = usuario && usuario.id === Number(usuarioLogadoId);
-
+  const isPerfilProprio = usuario && usuario.id === usuarioLogadoId;
   const [nome, setNome] = useState('');
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
@@ -73,7 +72,6 @@ const Perfil = () => {
 
   const editarPerfil = async () => {
     try {
-      // Crie um objeto para o payload apenas com os campos que foram alterados
       const payload = {};
 
       if (nome !== usuario.nome_usuario) {
@@ -88,7 +86,6 @@ const Perfil = () => {
         payload.imagem = imagem;
       }
 
-      // Verifique se há dados para atualizar
       if (Object.keys(payload).length === 0) {
         alert("Não há dados para atualizar.");
         return;
@@ -107,8 +104,7 @@ const Perfil = () => {
       console.error('Erro ao editar perfil:', err);
     }
   };
-// ola chat vc ira mecher aqui mas cuidado pois vc tera que buscar no endpoint que busca o id do usuario e com o id ldo usuario vc ira usalo no endpoint e ira retornar os dados do usuario e isso vai pegar o nome e com esse nome que ira pegar vc ira colocar no lugar da quele nome que esta passando qsl?
- // Função para buscar comentários de um post
+
 const fetchComentarios = async (postId) => {
   try {
     const response = await axios.get(
@@ -215,18 +211,46 @@ const fetchComentarios = async (postId) => {
         </div>
         <div className="perfil-info">
           <h1>{usuario.nome_usuario}</h1>
-          {isPerfilProprio ? (
-            !isEditing && (
-              <div className="botoes-perfil">
-                <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
-              </div>
-            )
-          ) : (
-            <div className="botoes-perfil">
-              <button >Seguir</button>
-              <button ><Link to="/mensagen" className="nav-item">Enviar Mensagem</Link></button>
-            </div>
-          )}
+{isPerfilProprio ? (
+  <>
+    {!isEditing ? (
+      <div className="botoes-perfil">
+        <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
+      </div>
+    ) : (
+      <div className="editar-formulario">
+        <input
+          type="text"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          placeholder="Nome"
+        />
+        <textarea
+          value={biografia}
+          onChange={(e) => setBiografia(e.target.value)}
+          placeholder="Biografia"
+        />
+        <input
+          type="text"
+          value={imagem}
+          onChange={(e) => setImagem(e.target.value)}
+          placeholder="Imagem URL"
+        />
+        <button onClick={editarPerfil}>Salvar</button>
+        <button onClick={() => setIsEditing(false)}>Cancelar</button>
+      </div>
+    )}
+  </>
+) : (
+  <div className="botoes-perfil">
+    <button>Seguir</button>
+    <Link to="/mensagen" className="nav-item">
+      <button>Enviar Mensagem</button>
+    </Link>
+  </div>
+)}
+
+
           {isEditing && (
             <div className="editar-formulario">
               <input

@@ -16,9 +16,6 @@ function Criar({ usuarioLogado, onClose }) {
   const [conteudo, setConteudo] = useState('');
   const [tags, setTags] = useState('');
   const [erro, setErro] = useState('');
-  const [filtroSelecionado, setFiltroSelecionado] = useState('none');
-  const [filtroConfirmado, setFiltroConfirmado] = useState(false);
-  const [filtroConfirmadoValor, setFiltroConfirmadoValor] = useState('none');
   const [etapa, setEtapa] = useState(1);
 
   // Cria URL para preview e limpa na desmontagem / troca
@@ -90,7 +87,6 @@ function Criar({ usuarioLogado, onClose }) {
         imagem: imagemUrl,
         video: videoUrlSupabase,
         tags: tags.split(',').map(tag => tag.trim()),
-        filtro: filtroSelecionado,
       };
 
       const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/criar', {
@@ -112,9 +108,6 @@ function Criar({ usuarioLogado, onClose }) {
         setConteudo('');
         setTags('');
         setErro('');
-        setFiltroSelecionado('none');
-        setFiltroConfirmado(false);
-        setFiltroConfirmadoValor('none');
       } else {
         const erroResp = await response.json();
         setErro(erroResp.erro || 'Erro ao criar o post');
