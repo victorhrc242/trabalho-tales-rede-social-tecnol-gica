@@ -177,6 +177,9 @@ function Comentario({
             />
             <button onClick={comentar}>Enviar</button>
           </div>
+
+
+          
         </div>
       </div>
     </>

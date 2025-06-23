@@ -4,7 +4,6 @@ import '../Explore/css/explore.css';
 import Comentario from "../../Components/Comentario.jsx";
 
 
-
 function Explore() {
   const navigate = useNavigate();
 
@@ -256,6 +255,10 @@ function Explore() {
   const irParaPerfil = (usuarioId) => {
     navigate(`/perfil/${usuarioId}`);
   };
+
+  // CODIGO PARA PASSAR OS POST PARA FRENTE 
+
+  
 
   return (
     <div className="explore-page">

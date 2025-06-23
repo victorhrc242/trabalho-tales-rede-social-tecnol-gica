@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
-
+import Comentario from '../Components/Comentario.jsx'; // componente Comentario importado
 
 const Perfil = () => {
   const location = useLocation();
@@ -27,14 +26,14 @@ const Perfil = () => {
 
   useEffect(() => {
     if (!userId) return navigate('/');
-  console.log(userId)
+    console.log(userId);
     const carregarDados = async () => {
       try {
         // Buscar dados do usuário
         const { data: userData } = await axios.get(
           `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
         );
-      
+
         setUsuario(userData);
         setNome(userData.nome_usuario);
         setBiografia(userData.biografia);
@@ -58,7 +57,7 @@ const Perfil = () => {
 
         setSeguidoresInfo({
           seguidores: seguidoresTotal,
-          seguindo: seguindoTotal
+          seguindo: seguindoTotal,
         });
       } catch (err) {
         console.error('Erro ao carregar dados do perfil:', err);
@@ -87,7 +86,7 @@ const Perfil = () => {
       }
 
       if (Object.keys(payload).length === 0) {
-        alert("Não há dados para atualizar.");
+        alert('Não há dados para atualizar.');
         return;
       }
 
@@ -105,43 +104,42 @@ const Perfil = () => {
     }
   };
 
-const fetchComentarios = async (postId) => {
-  try {
-    const response = await axios.get(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${postId}?comAutor=true`
-    );
+  const fetchComentarios = async (postId) => {
+    try {
+      const response = await axios.get(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${postId}?comAutor=true`
+      );
 
-    const comentariosArray = response.data?.comentarios || [];
+      const comentariosArray = response.data?.comentarios || [];
 
-    // Para cada comentário, buscar o nome atualizado do autor pelo ID
-    const comentariosComNomeAtualizado = await Promise.all(
-      comentariosArray.map(async (comentario) => {
-        if (!comentario.autor?.id) return comentario;
+      // Para cada comentário, buscar o nome atualizado do autor pelo ID
+      const comentariosComNomeAtualizado = await Promise.all(
+        comentariosArray.map(async (comentario) => {
+          if (!comentario.autor?.id) return comentario;
 
-        try {
-          const userResp = await axios.get(
-            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autor.id}`
-          );
-          return {
-            ...comentario,
-            autor: {
-              ...comentario.autor,
-              nome: userResp.data.nome_usuario || comentario.autor.nome,
-            },
-          };
-        } catch {
-          // Caso falhe na requisição, manter o nome antigo
-          return comentario;
-        }
-      })
-    );
+          try {
+            const userResp = await axios.get(
+              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autor.id}`
+            );
+            return {
+              ...comentario,
+              autor: {
+                ...comentario.autor,
+                nome: userResp.data.nome_usuario || comentario.autor.nome,
+              },
+            };
+          } catch {
+            // Caso falhe na requisição, manter o nome antigo
+            return comentario;
+          }
+        })
+      );
 
-    setComentarios(comentariosComNomeAtualizado);
-  } catch (err) {
-    console.error('Erro ao buscar comentários:', err);
-  }
-};
-
+      setComentarios(comentariosComNomeAtualizado);
+    } catch (err) {
+      console.error('Erro ao buscar comentários:', err);
+    }
+  };
 
   // Abre o modal com os comentários do post
   const abrirModalPost = async (post) => {
@@ -154,6 +152,7 @@ const fetchComentarios = async (postId) => {
   const fecharModalPost = () => {
     setModalPost(null);
     setComentarios([]);
+    setNovoComentario('');
   };
 
   // Enviar um novo comentário
@@ -163,7 +162,7 @@ const fetchComentarios = async (postId) => {
     const payload = {
       postId: modalPost.id,
       autorId: usuario.id,
-      conteudo: novoComentario
+      conteudo: novoComentario,
     };
 
     try {
@@ -205,80 +204,64 @@ const fetchComentarios = async (postId) => {
               width: '100%',
               height: '100%',
               borderRadius: '50%',
-              objectFit: 'cover'
+              objectFit: 'cover',
             }}
           />
         </div>
         <div className="perfil-info">
           <h1>{usuario.nome_usuario}</h1>
-{isPerfilProprio ? (
-  <>
-    {!isEditing ? (
-      <div className="botoes-perfil">
-        <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
-      </div>
-    ) : (
-      <div className="editar-formulario">
-        <input
-          type="text"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          placeholder="Nome"
-        />
-        <textarea
-          value={biografia}
-          onChange={(e) => setBiografia(e.target.value)}
-          placeholder="Biografia"
-        />
-        <input
-          type="text"
-          value={imagem}
-          onChange={(e) => setImagem(e.target.value)}
-          placeholder="Imagem URL"
-        />
-        <button onClick={editarPerfil}>Salvar</button>
-        <button onClick={() => setIsEditing(false)}>Cancelar</button>
-      </div>
-    )}
-  </>
-) : (
-  <div className="botoes-perfil">
-    <button>Seguir</button>
-    <Link to="/mensagen" className="nav-item">
-      <button>Enviar Mensagem</button>
-    </Link>
-  </div>
-)}
-
-
-          {isEditing && (
-            <div className="editar-formulario">
-              <input
-                type="text"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                placeholder="Nome"
-              />
-              <textarea
-                value={biografia}
-                onChange={(e) => setBiografia(e.target.value)}
-                placeholder="Biografia"
-              />
-              <input
-                type="text"
-                value={imagem}
-                onChange={(e) => setImagem(e.target.value)}
-                placeholder="Imagem URL"
-              />
-              <button onClick={editarPerfil}>Salvar</button>
-              <button onClick={() => setIsEditing(false)}>Cancelar</button>
+          {isPerfilProprio ? (
+            <>
+              {!isEditing ? (
+                <div className="botoes-perfil">
+                  <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
+                </div>
+              ) : (
+                <div className="editar-formulario">
+                  <input
+                    type="text"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    placeholder="Nome"
+                  />
+                  <textarea
+                    value={biografia}
+                    onChange={(e) => setBiografia(e.target.value)}
+                    placeholder="Biografia"
+                  />
+                  <input
+                    type="text"
+                    value={imagem}
+                    onChange={(e) => setImagem(e.target.value)}
+                    placeholder="Imagem URL"
+                  />
+                  <button onClick={editarPerfil}>Salvar</button>
+                  <button onClick={() => setIsEditing(false)}>Cancelar</button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="botoes-perfil">
+              <button>Seguir</button>
+              <Link to="/mensagen" className="nav-item">
+                <button>Enviar Mensagem</button>
+              </Link>
             </div>
           )}
+
           {!isEditing && (
             <div className="infor-pessoais">
-              <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p><br/>
-              <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p><br/>
-              <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+              <p>
+                <strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}
+              </p>
+              <br />
+              <p>
+                <strong>Seguidores:</strong> {seguidoresInfo.seguidores}
+              </p>
+              <br />
+              <p>
+                <strong>Seguindo:</strong> {seguidoresInfo.seguindo}
+              </p>
             </div>
           )}
         </div>
@@ -299,43 +282,22 @@ const fetchComentarios = async (postId) => {
       </div>
 
       {modalPost && (
-        <div className="modal-overlay" onClick={fecharModalPost}>
-          <div className="modal-post-container" onClick={e => e.stopPropagation()}>
-            <div className="modal-post-imagem-container">
-              {modalPost.imagem && (
-                <img src={modalPost.imagem} alt="Imagem do post" />
-              )}
-            </div>
-            <div className="modal-post-conteudo">
-              <div className="modal-post-header">
-                <h3>{usuario.nome_usuario}</h3>
-                <button className="fechar-btn" onClick={fecharModalPost}>×</button>
-              </div>
-
-              <div className="modal-post-comentarios">
-              {comentarios.length === 0 && <p>Sem comentários ainda.</p>}
-  {Array.isArray(comentarios) && comentarios.map((c, idx) => (
-    <div key={idx} className="comentario-item">
-      <strong>{c.autor?.nome || 'Anônimo'}</strong>: {c.conteudo}
-    
-                  </div>
-                ))}
-              </div>
-
-              <div className="modal-comentar-box">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={novoComentario}
-                  onChange={e => setNovoComentario(e.target.value)}
-                  placeholder="Adicione um comentário..."
-                  onKeyDown={e => e.key === 'Enter' && enviarComentario()}
-                />
-                <button onClick={enviarComentario}>Enviar</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Comentario
+          post={{
+            ...modalPost,
+            autorNome: usuario.nome_usuario,
+          }}
+          comentarios={comentarios}
+          comentarioTexto={novoComentario}
+          setComentarioTexto={setNovoComentario}
+          comentar={enviarComentario}
+          fechar={fecharModalPost}
+          curtirPost={(postId) => {
+            // Implementar lógica de curtir post aqui se quiser
+            console.log('Curtir post:', postId);
+          }}
+          usuarioCurtidas={[]} // caso tenha lista de curtidas, passe aqui
+        />
       )}
     </div>
   );
