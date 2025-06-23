@@ -56,7 +56,7 @@ function VideoPlayer({ videoUrl, isActive, className }) {
         onClick={handleVideoClick}
         style={{
           width: '120%', // Agora ocupa 120% do container para dar zoom
-          height: 'auto',
+          height: '600px',
           objectFit: 'cover',
           borderRadius: '12px',
           display: 'block',
@@ -134,7 +134,7 @@ function Home() {
     localStorage.setItem('postsSalvos', JSON.stringify(dadosFiltrados));
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/');
@@ -243,7 +243,7 @@ function Home() {
     try {
       if (!usuario.id) return;
 
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`);
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed/${usuario.id}`);
       const data = await response.json();
 
       if (response.ok) {
@@ -373,7 +373,7 @@ function Home() {
   return (
     <div className="home-container">
       <hr />
-      <h2>Feed</h2>
+      <br /><br />
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
       {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
 
@@ -442,18 +442,23 @@ function Home() {
       </ul>
 
       {modalComentarios && postSelecionado && (
-       <Comentario
+      <Comentario
   post={postSelecionado}
   comentarios={comentarios}
   comentarioTexto={comentarioTexto}
   setComentarioTexto={setComentarioTexto}
   comentar={comentar}
   fechar={() => setModalComentarios(false)}
-  curtirPost={curtirPost}
-  usuarioCurtidas={postSelecionado.curtidas}
+  usuario={usuario} // Passando o usuário para a função de curtida
 />
+
+
       )}
+   
+
+
     </div>
+    
   );
 }
 

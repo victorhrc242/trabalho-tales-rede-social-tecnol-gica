@@ -43,7 +43,7 @@ export default function RecuperarSenha() {
   const enviarCodigo = async () => {
     setCarregando(true);
     try {
-      await axios.post('https://devisocial.up.railway.app/api/auth/Enviar-codigo', { email });
+      await axios.post('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo', { email });
       setTempoRestante(900); // 15 minutos
       setMensagem('');
       setEtapa(2);

@@ -11,14 +11,28 @@ import Criar from './Components/Criar';
 import Msg from './pages/Mensagens/mensagen';
 import Explore from './pages/Explore/Explore';
 import Notificacoes from './pages/Notificacao/Notificacoes ';
+import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
 function AppWrapper() {
   const location = useLocation();
 
-  const esconderNavbar = ["/", "/cadastro", "/recuperar"];
-  const deveEsconderNavbar = esconderNavbar.includes(location.pathname);
+  // Rotas onde nenhuma navbar deve aparecer
+  const esconderAmbas = ["/", "/cadastro", "/recuperar"];
 
+  // Rotas onde só a navbar superior deve ser escondida
+  const esconderSomenteNavbarTop = ["/mensagen"];
+
+  // Verifica se a tela está em modo mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 767);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Verifica se o usuário está logado
   const [usuario, setUsuario] = useState(null);
-
   useEffect(() => {
     const usuarioSalvo = localStorage.getItem("usuario");
     if (usuarioSalvo) {
@@ -30,22 +44,37 @@ function AppWrapper() {
     }
   }, []);
 
+  // Função para deslogar o usuário
   const deslogar = () => {
     localStorage.removeItem("usuario");
     localStorage.removeItem("token");
     setUsuario(null);
   };
 
+  // Esconde a navbar lateral/inferior em:
+  //    - rotas públicas como login, cadastro, recuperar
+  //    - no mobile, quando estiver na rota /mensagen
+  const deveEsconderNavbar =
+    esconderAmbas.includes(location.pathname) ||
+    (isMobile && location.pathname === "/mensagen");
+
+  //  Esconde a navbar superior em:
+  //    - rotas públicas
+  //    - rota de mensagens (mobile ou desktop)
+  const deveEsconderNavbarTop =
+    esconderAmbas.includes(location.pathname) ||
+    esconderSomenteNavbarTop.includes(location.pathname);
+
   return (
     <>
-
-         {!deveEsconderNavbar && usuario && (
-          <>
-        <Navbar usuarioLogado={usuario} deslogar={deslogar} />
-        <NavbarTop />
+       {usuario && (
+        <>
+          {!deveEsconderNavbar && (
+            <Navbar usuarioLogado={usuario} deslogar={deslogar} />
+          )}
+          {!deveEsconderNavbarTop && <NavbarTop />}
         </>
-      )}     
-
+      )} 
 
       <Routes>
         <Route path="/" element={<Login />} />
@@ -54,14 +83,15 @@ function AppWrapper() {
         <Route path="/home" element={<Home />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/criar" element={<Criar />} />
-        <Route path="/mensagen" element={<Msg/>} />
-        <Route path="/explore" element={<Explore/>}/>
-     
-        <Route path="/notificacoes" element={<Notificacoes/>}/>
+        <Route path="/mensagen" element={<Msg />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/notificacoes" element={<Notificacoes />} />
+        <Route path="/configuracoes" element={<Configuracoes />} />
       </Routes>
     </>
   );
 }
+
 function App() {
   return (
     <BrowserRouter>
