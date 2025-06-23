@@ -29,6 +29,9 @@ const [silenciado, setSilenciado] = useState(false);
 const [confirmApagarTudo, setConfirmApagarTudo] = useState(false);
 const [temaSubmenu, setTemaSubmenu] = useState(false);
 const [apagarMensagemIndividual, setApagarMensagemIndividual] = useState(false);
+//Modal de Confirmação 
+const confirmRef = useRef(null);
+
 
   // URL da API
   const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
@@ -245,24 +248,38 @@ const [apagarMensagemIndividual, setApagarMensagemIndividual] = useState(false);
     setModalAberto(false);
   };
 
-  // Fecha o modal se clicar fora
-  useEffect(() => {
-    function handleClickFora(event) {
-      if (modalAberto && modalRef.current && !modalRef.current.contains(event.target)) {
-        fecharModal();
-      }
+  // Fecha apenas o menu de opções se clicar fora dele
+useEffect(() => {
+  function handleClickForaMenu(event) {
+    if (modalAberto && modalRef.current && !modalRef.current.contains(event.target)) {
+      fecharModal();
     }
+  }
 
-    if (modalAberto) {
-      document.addEventListener('mousedown', handleClickFora);
-    } else {
-      document.removeEventListener('mousedown', handleClickFora);
+  document.addEventListener('mousedown', handleClickForaMenu);
+  return () => {
+    document.removeEventListener('mousedown', handleClickForaMenu);
+  };
+}, [modalAberto]);
+
+// Fecha somente o modal de confirmação (Sim/Não) se clicar fora dele
+useEffect(() => {
+  function handleClickForaConfirm(event) {
+    if (
+      confirmApagarTudo &&
+      confirmRef.current &&
+      !confirmRef.current.contains(event.target)
+    ) {
+      setConfirmApagarTudo(false);
     }
+  }
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickFora);
-    };
-  }, [modalAberto]);
+  document.addEventListener('mousedown', handleClickForaConfirm);
+  return () => {
+    document.removeEventListener('mousedown', handleClickForaConfirm);
+  };
+}, [confirmApagarTudo]);
+
 
   // Levar ao perfil do usuário selecionado
 const handleVerPerfil = () => {
@@ -295,20 +312,21 @@ const removerMensagem = async (msgId) => {
     setApagarMensagemIndividual(false); // desativa o modo de apagar após a ação
   }
 };
-
 const handleApagarMensagem = () => setApagarMensagemIndividual(true);
 
 // Apagar todas mensagens
 const confirmarApagarTudo = async () => {
+  setConfirmApagarTudo(false); // <- fecha imediatamente o modal
+  
   try {
     await axios.delete(`${API_URL}/api/Mensagens/limpar/${usuarioLogadoId}/${usuarioSelecionado.id}`);
     setHistoricoMensagens([]);
   } catch (err) {
     console.error('Erro ao apagar mensagens', err);
-  } finally {
-    setConfirmApagarTudo(false);
   }
 };
+
+
 
 // Tema
 const toggleTemaSubmenu = () => {
@@ -477,19 +495,16 @@ const handleTema = (novoTema) => {
               </button>
             </div>
 
-            {/* Modal com opções do chat (ex: Perfil, Silenciar, Apagar, Tema) */}
-            {modalAberto && (
+                    {/* Modal com opções do chat */}
+          {modalAberto && (
             <div className="menu-mobile-overlay">
               <div className="menu-mobile-content" ref={modalRef}>
                 <div className="menu-item" onClick={handleVerPerfil}>Perfil</div>
                 <div className="menu-item" onClick={handleToggleNotificacao}>
                   {silenciado ? 'Ativar notificações' : 'Silenciar notificações'}
                 </div>
-               <div className="menu-item" onClick={handleApagarMensagem}>
-                Apagar Mensagem</div>
-                <div className="menu-item" onClick={() => setConfirmApagarTudo(true)}>
-                  Apagar Todas Mensagens
-                </div>
+                <div className="menu-item" onClick={handleApagarMensagem}>Apagar Mensagem</div>
+                <div className="menu-item" onClick={() => setConfirmApagarTudo(true)}>Apagar Todas Mensagens</div>
                 <div className="menu-item" onClick={toggleTemaSubmenu}>Tema</div>
 
                 {temaSubmenu && (
@@ -499,17 +514,34 @@ const handleTema = (novoTema) => {
                   </div>
                 )}
               </div>
-
-              {confirmApagarTudo && (
-                <div className="confirm-modal">
-                  <p>Deseja apagar todas as Mensagens?</p>
-                  <button onClick={confirmarApagarTudo}>Sim</button>
-                  <button onClick={() => setConfirmApagarTudo(false)}>Não</button>
-                </div>
-              )}
             </div>
           )}
+          {/* Fim Modal de opiçoes */}
 
+          {/* 🔥 Modal de Confirmação - FORA do menu! */}
+          {confirmApagarTudo && (
+            <div className="confirm-modal" ref={confirmRef}>
+              <p>Deseja apagar todas as Mensagens?</p>
+              <button
+                className="btn-sim"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setConfirmApagarTudo(false);
+                  setModalAberto(false); // <- fecha o menu também
+                  confirmarApagarTudo(); // <- função correta
+                }}
+              >Sim</button>
+              <button
+                className="btn-nao"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setConfirmApagarTudo(false);
+                  setModalAberto(false); // <- fecha o menu também
+                }}
+              >Não</button>
+            </div>
+          )}
+          {/* Fim Modal Confirmação */}
 
           </>
         ) : (

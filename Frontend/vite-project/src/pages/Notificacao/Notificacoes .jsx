@@ -51,21 +51,61 @@ function Notificacoes() {
       console.error('Erro ao buscar notificações:', err);
     }
   };
+  // Seguir Usuario
+  const seguirUsuario = async (idUsuario) => {
+  try {
+    const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguir`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usuario1: usuario.id,
+        usuario2: idUsuario,
+      }),
+    });
+
+    if (resposta.ok) {
+      // Atualizar notificações para refletir novo estado
+      fetchNotificacoes();
+    }
+  } catch (err) {
+    console.error("Erro ao seguir usuário:", err);
+  }
+};
 
   return (
     <div className="notificacoes-container">
-      <h2>Notificações</h2>
-      {notificacoes.length === 0 && <p>Não há notificações</p>}
+    <h2>Notificações</h2>
+    {notificacoes.length === 0 && <p>Não há notificações</p>}
 
-      <ul>
-        {notificacoes.map((notificacao) => (
-          <li key={notificacao.id}>
-            <p>{notificacao.mensagem}</p>
-            <small>{new Date(notificacao.dataEnvio).toLocaleString()}</small>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {notificacoes.map((notificacao) => (
+        <li key={notificacao.id}>
+          <img
+            src={
+              notificacao.remetente?.imagem ||
+              "https://via.placeholder.com/40"
+            }
+            alt="Foto de perfil"
+          />
+          <div className="info-notificacao">
+            <p>
+              <strong>{notificacao.remetente?.nome_usuario || "Usuário"}</strong> Seguiu você
+            </p>
+            <small>
+              {new Date(notificacao.dataEnvio).toLocaleString("pt-BR")}
+            </small>
+          </div>
+          {notificacao.seguido ? (
+            <button className="btn-seguindo">Seguindo</button>
+          ) : (
+            <button className="btn-seguir" onClick={() => seguirUsuario(notificacao.remetente.id)}>
+              Seguir
+            </button>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
   );
 }
 
