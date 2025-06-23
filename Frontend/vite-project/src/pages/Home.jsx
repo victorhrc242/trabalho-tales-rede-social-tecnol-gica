@@ -354,9 +354,9 @@ function Home() {
     }
   };
 
-  const irParaPerfil = (id) => {
-    navigate(`/perfil/${id}`);
-  };
+const irParaPerfil = (id) => {
+  navigate(`/perfil/${id}`, { state: { userId: id } });
+};
 
   // Salvar posts no cache a cada 10 segundos
   useEffect(() => {
@@ -451,15 +451,9 @@ function Home() {
   fechar={() => setModalComentarios(false)}
   usuario={usuario} // Passando o usuário para a função de curtida
 />
-
-
       )}
-   
-
-
     </div>
     
   );
 }
-
 export default Home;

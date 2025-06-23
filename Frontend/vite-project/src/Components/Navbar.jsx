@@ -48,7 +48,7 @@ function Navbar({ usuarioLogado, deslogar }) {
 
   const irParaPerfil = () => {
     if (usuarioLogado?.id) {
-      navigate('/perfil', { state: { userId: usuarioLogado.id } });
+      navigate('/perfil/:id', { state: { userId: usuarioLogado.id } });
     }
   };
 
@@ -70,7 +70,7 @@ function Navbar({ usuarioLogado, deslogar }) {
       <nav className="navbar-menu">
         <div className="logo-navbar">
   <Link to="/home">
-    <img src="./public/logoParadise.jpg" alt="Logo" className="imagem-logo" />
+    <img src="../LogoParadise.jpg" alt="Logo" className="imagem-logo" />
   </Link>
 </div>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>

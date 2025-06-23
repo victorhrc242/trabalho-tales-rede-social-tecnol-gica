@@ -81,7 +81,7 @@ function AppWrapper() {
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/recuperar" element={<RecuperarSenha />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/perfil/:id" element={<Perfil />} />
         <Route path="/criar" element={<Criar />} />
         <Route path="/mensagen" element={<Msg />} />
         <Route path="/explore" element={<Explore />} />

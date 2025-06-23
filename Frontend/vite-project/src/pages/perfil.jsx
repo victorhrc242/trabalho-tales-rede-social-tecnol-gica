@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
 
 
 const Perfil = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const userId = location.state?.userId;
-
+  const { id: idDaUrl } = useParams();
+  const userId = location.state?.userId || idDaUrl;
   const [usuario, setUsuario] = useState(null);
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
