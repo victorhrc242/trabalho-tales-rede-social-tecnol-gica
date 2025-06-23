@@ -1,0 +1,149 @@
+.config-container {
+  width: 91%;
+  max-width: 1500px; /* corrigido de 15000px para 1500px */
+  margin: 25px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  background: white;
+  color: #333;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 30px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-left: 95px;
+}
+
+.config-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 30px 0;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.btn-voltar {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #262626;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.btn-voltar:hover {
+  color: #0095f6;
+}
+
+.config-body {
+  display: flex;
+  flex: 1;
+  min-height: 500px;
+}
+
+/* Menu vertical */
+.tabs-ig {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #dbdbdb;
+  background-color: #fafafa;
+  width: 320px;
+  min-height: 500px;
+}
+
+.tabs-ig button {
+  padding: 20px 32px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #262626;
+  background: transparent;
+  border: none;
+  border-left: 4px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.tabs-ig button:hover {
+  background-color: #e6f0ff;
+  border-left-color: #0095f6;
+}
+
+.tabs-ig button.active {
+  background-color: #e6f0ff;
+  border-left-color: #0095f6;
+  font-weight: 700;
+}
+
+/* Conteúdo ao lado */
+.content-area {
+  flex: 1;
+  padding: 40px 60px;
+  overflow-y: auto;
+  min-height: 500px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .config-container {
+    padding: 0 15px;
+  }
+
+  .config-body {
+    flex-direction: column;
+  }
+
+  .tabs-ig {
+    width: 100%;
+    min-height: auto;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid #dbdbdb;
+    overflow-x: auto;
+  }
+
+  .tabs-ig button {
+    flex: 1;
+    padding: 15px 10px;
+    text-align: center;
+    border-left: none;
+    border-bottom: 4px solid transparent;
+  }
+
+  .tabs-ig button:hover {
+    background-color: #e6f0ff;
+    border-left: none;
+    border-bottom-color: #0095f6;
+  }
+
+  .tabs-ig button.active {
+    border-left: none;
+    border-bottom-color: #0095f6;
+  }
+
+  .content-area {
+    padding: 20px 15px;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 500px) {
+  .btn-voltar {
+    font-size: 1.5rem;
+  }
+
+  .tabs-ig button {
+    font-size: 1rem;
+    padding: 12px 8px;
+  }
+
+  .content-area {
+    padding: 15px 10px;
+  }
+}

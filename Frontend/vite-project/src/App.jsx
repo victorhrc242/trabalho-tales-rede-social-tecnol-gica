@@ -11,7 +11,7 @@ import Criar from './Components/Criar';
 import Msg from './pages/Mensagens/mensagen';
 import Explore from './pages/Explore/Explore';
 import Notificacoes from './pages/Notificacao/Notificacoes ';
-
+import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
 function AppWrapper() {
   const location = useLocation();
 
@@ -67,14 +67,14 @@ function AppWrapper() {
 
   return (
     <>
-      {usuario && (
+       {usuario && (
         <>
           {!deveEsconderNavbar && (
             <Navbar usuarioLogado={usuario} deslogar={deslogar} />
           )}
           {!deveEsconderNavbarTop && <NavbarTop />}
         </>
-      )}
+      )} 
 
       <Routes>
         <Route path="/" element={<Login />} />
@@ -86,6 +86,7 @@ function AppWrapper() {
         <Route path="/mensagen" element={<Msg />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/notificacoes" element={<Notificacoes />} />
+        <Route path="/configuracoes" element={<Configuracoes />} />
       </Routes>
     </>
   );

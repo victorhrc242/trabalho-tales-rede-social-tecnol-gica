@@ -29,7 +29,11 @@ function Navbar({ usuarioLogado, deslogar }) {
       console.error('Erro ao buscar usuários:', error);
     }
   }, [busca]);
-
+  //      configuração
+const irParaConfiguracoes = () => {
+  fecharModalOpcoes(); // fecha o modal antes de navegar
+  navigate('/configuracoes'); // rota que você deve criar
+};
   const carregarDados = useCallback(async () => {
     if (!usuarioLogado?.id) return;
     try {
@@ -282,18 +286,18 @@ function Navbar({ usuarioLogado, deslogar }) {
         </div>
       )}
 
-      {modal.confirmarLogout && (
-        <div className="modal">
-          <div className="modal-conteudo">
-            <p>Tem certeza que deseja sair?</p>
-            <div className="botoes-modal">
-              <button className="btn-cancelar" onClick={deslogarERedirecionar}>Sim</button>
-              <button className="btn-confirmar" onClick={cancelarLogout}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
-
+   {modal.opcoes && (
+  <div className="modal">
+    <div className="modal-conteudo">
+      <ul>
+        <li onClick={confirmarLogoutFunc}>Sair</li>
+        <li onClick={irParaConfiguracoes}>Configurações</li>
+        <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
+      </ul>
+      <button className="fechar-modal" onClick={fecharModalOpcoes}>x</button>
+    </div>
+  </div>
+)}
       {mostrarModal && (
         <CriarPostModal usuarioLogado={usuarioLogado} onClose={() => setMostrarModal(false)} />
       )}
