@@ -25,7 +25,7 @@
   height: 100%;
   font-size: 1.3rem;
   font-weight: 500;
-  color: #000000;
+  color: #363636;
   text-align: center;
   padding: 2rem;
   background-color: #f5f5f5;
@@ -262,7 +262,7 @@ textarea {
 }
 
 /* Botão voltar escondido no desktop */
-.btn-voltar {
+.btn-voltar-chat {
   display: none;
 }
 /* Fora do media query (desktop) */
@@ -407,8 +407,38 @@ textarea {
   cursor: pointer;
   opacity: 0.9;
 }
+/* Mensagem Apagando Mensagens */
+.mensagem-apagando-overlay {
+  position: fixed;
+  top: 60px; /* Ajuste conforme seu layout */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
 
+/* Visualização */
+.status-risquinhos {
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-left: 8px;
+  float: right;
+}
 
+/* Cinza quando ainda não foi lida */
+.status-risquinhos.nao-lida {
+  color: #888; /* cinza */
+}
+
+/* Cor quando foi lida */
+.status-risquinhos.lida {
+  color: #ac1919; 
+}
 
 
 /* Responcividade */
@@ -489,7 +519,7 @@ textarea {
     z-index: 10;
   }
 
-  .btn-voltar {
+  .btn-voltar-chat {
     display: flex;
     background: none;
     border: none;
@@ -499,9 +529,11 @@ textarea {
     align-items: center;
     justify-content: center;
     margin-right: 10px;
+    padding: revert-layer;
+
   }
 
-  .btn-voltar:focus {
+  .btn-voltar-chat:focus {
     outline: 2px solid #fff;
   }
 
@@ -535,14 +567,34 @@ textarea {
     margin-right: 10px;
   }
 
-  .messages {
-    padding: 20px;
-  }
-
   .message {
-    font-size: 17px;
-    padding: 10px 14px;
-  }
+  font-size: 16px;
+  padding: 10px 14px;
+  max-width: 90vw;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.message-content p {
+  margin: 0;
+  text-align: left;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
 
   .chat-input {
     padding: 5px 8px;
@@ -585,5 +637,6 @@ textarea {
   .search-icon {
     right: 70px;
   }
+ 
 }
 
