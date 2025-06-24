@@ -93,18 +93,22 @@ body {
   width: 100%;
   border-top: 1px solid #dbdbdb;
   padding-top: 30px;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 por linha */
+  gap: 15px; /* Espaçamento entre posts */
+  justify-items: center; /* Centraliza os posts horizontalmente */
 }
 
 .post {
   display: inline-block;
-  width: 293px;
+  width: 100%;
+  max-width: 293px;
   height: 293px;
-  margin: 10px;
   overflow: hidden;
   background-color: #fff;
   border: 1px solid #dbdbdb;
   border-radius: 4px;
-  vertical-align: top;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -155,7 +159,18 @@ body {
     height: auto;
     aspect-ratio: 1 / 1;
   }
+
+  .perfil-posts {
+  grid-template-columns: repeat(2, 1fr); /* 2 por linha no tablet */
 }
+
+@media (max-width: 480px) {
+  .perfil-posts {
+    grid-template-columns: 1fr; /* 1 por linha no celular */
+  }
+}
+}
+
 
 /* Loading e erro */
 .loading,
