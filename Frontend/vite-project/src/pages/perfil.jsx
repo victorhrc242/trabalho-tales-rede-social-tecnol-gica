@@ -4,6 +4,8 @@ import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
 
+//https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
+
 const Perfil = () => {
   const location = useLocation();
   const navigate = useNavigate();
