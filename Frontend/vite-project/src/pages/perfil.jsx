@@ -244,36 +244,11 @@ const fetchComentarios = async (postId) => {
 ) : (
   <div className="botoes-perfil">
     <button>Seguir</button>
-    <Link to="/mensagen" className="nav-item">
+    <Link to="/mensagen" className="botoes-perfil">
       <button>Enviar Mensagem</button>
     </Link>
   </div>
 )}
-
-
-          {isEditing && (
-            <div className="editar-formulario">
-              <input
-                type="text"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                placeholder="Nome"
-              />
-              <textarea
-                value={biografia}
-                onChange={(e) => setBiografia(e.target.value)}
-                placeholder="Biografia"
-              />
-              <input
-                type="text"
-                value={imagem}
-                onChange={(e) => setImagem(e.target.value)}
-                placeholder="Imagem URL"
-              />
-              <button onClick={editarPerfil}>Salvar</button>
-              <button onClick={() => setIsEditing(false)}>Cancelar</button>
-            </div>
-          )}
           {!isEditing && (
             <div className="infor-pessoais">
               <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p><br/>
