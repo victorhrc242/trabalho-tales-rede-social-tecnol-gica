@@ -135,7 +135,7 @@ const [seguindoUsuario, setSeguindoUsuario] = useState({});
   const abrirComentarios = async post => {
     setPostSelecionado(post);
     try {
-      const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
+      // const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
       const data = await resp.json();
       setComentarios(resp.ok ? data : []);
     } catch {
