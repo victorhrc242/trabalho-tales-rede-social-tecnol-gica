@@ -27,16 +27,16 @@ const Mensagens = () => {
   // Ações no Menu 
 const [silenciado, setSilenciado] = useState(false);
 const [confirmApagarTudo, setConfirmApagarTudo] = useState(false);
-const [temaSubmenu, setTemaSubmenu] = useState(false);
 const [apagarMensagemIndividual, setApagarMensagemIndividual] = useState(false);
 //Modal de Confirmação 
 const confirmRef = useRef(null);
+const [apagandoTudo, setApagandoTudo] = useState(false);
 
 
   // URL da API
   const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
 
-  // Referência usada para rolar a visualização para a última mensagem
+  //  usada para rolar a visualização para a última mensagem
   const fimDasMensagensRef = useRef(null);
 
   // Referência para detectar cliques fora do modal
@@ -130,35 +130,35 @@ const confirmRef = useRef(null);
       .catch((err) => console.error('Erro ao conectar no SignalR:', err));
 
     // Recebe nova mensagem
-    connection.on('NovaMensagem', (novaMensagem) => {
-      const remetente = novaMensagem.id_remetente;
-      const destinatario = novaMensagem.id_destinatario;
+   connection.on('NovaMensagem', (novaMensagem) => {
+    const remetente = novaMensagem.id_remetente;
+    const destinatario = novaMensagem.id_destinatario;
 
-      // Se estiver conversando com quem enviou, adiciona direto
-      if (
-        usuarioSelecionado &&
-        (remetente === usuarioSelecionado.id || destinatario === usuarioSelecionado.id)
-      ) {
-        setHistoricoMensagens((prev) => [...prev, novaMensagem]);
+    if (
+      usuarioSelecionado &&
+      (remetente === usuarioSelecionado.id || destinatario === usuarioSelecionado.id)
+    ) {
+      setHistoricoMensagens((prev) => [...prev, novaMensagem]);
 
-        // Zera o contador de mensagens não lidas
-        if (remetente !== usuarioLogadoId) {
-          setNaoLidas((prev) => {
-            const copy = { ...prev };
-            copy[remetente] = 0;
-            return copy;
-          });
-        }
-      } else {
-        // Se for outra conversa, incrementa o contador
-        if (remetente !== usuarioLogadoId) {
-          setNaoLidas((prev) => {
-            const count = prev[remetente] || 0;
-            return { ...prev, [remetente]: count + 1 };
-          });
-        }
+      // Se a mensagem for recebida (não enviada pelo usuário logado), marca como lida
+      if (remetente !== usuarioLogadoId) {
+        marcarMensagemComoLida(novaMensagem.id);  // <-- Chamada para marcar como lida
+
+        setNaoLidas((prev) => {
+          const copy = { ...prev };
+          copy[remetente] = 0;
+          return copy;
+        });
       }
-    });
+    } else {
+      if (remetente !== usuarioLogadoId) {
+        setNaoLidas((prev) => {
+          const count = prev[remetente] || 0;
+          return { ...prev, [remetente]: count + 1 };
+        });
+      }
+    }
+  });
 
     // Remove mensagem apagada
     connection.on('MensagemApagada', (mensagemId) => {
@@ -178,16 +178,38 @@ const confirmRef = useRef(null);
       return;
     }
 
+// Quando o usuário selecionado ou o usuário logado mudam,
+// esta função busca todas as mensagens trocadas entre eles na API.
+// O resultado é armazenado no estado `historicoMensagens` para exibir no chat.
+// Caso a requisição falhe, um erro será exibido no console.
     const fetchMensagens = async () => {
-      try {
-        const res = await axios.get(
-          `${API_URL}/api/Mensagens/mensagens/${usuarioLogadoId}/${usuarioSelecionado.id}`
-        );
-        setHistoricoMensagens(res.data.mensagens || []);
-      } catch (err) {
-        console.error('Erro ao buscar histórico de mensagens:', err);
+  try {
+    const res = await axios.get(
+      `${API_URL}/api/Mensagens/mensagens/${usuarioLogadoId}/${usuarioSelecionado.id}`
+    );
+
+    // Marcar todas as mensagens carregadas como lidas (para o usuário selecionado)
+    const mensagensCarregadas = res.data.mensagens || [];
+    setHistoricoMensagens(mensagensCarregadas);
+
+    // Marcar cada mensagem não lida como lida, só as que são do outro usuário
+    mensagensCarregadas.forEach((msg) => {
+      if (msg.id_remetente !== usuarioLogadoId && !msg.lida) { // supondo que existe o campo 'lida'
+        marcarMensagemComoLida(msg.id);
       }
-    };
+    });
+
+    // Limpa o contador de mensagens não lidas para o usuário selecionado
+    setNaoLidas((prev) => {
+      const copy = { ...prev };
+      copy[usuarioSelecionado.id] = 0;
+      return copy;
+    });
+
+  } catch (err) {
+    console.error('Erro ao buscar histórico de mensagens:', err);
+  }
+};
 
     fetchMensagens();
   }, [usuarioSelecionado, usuarioLogadoId]);
@@ -316,31 +338,46 @@ const handleApagarMensagem = () => setApagarMensagemIndividual(true);
 
 // Apagar todas mensagens
 const confirmarApagarTudo = async () => {
-  setConfirmApagarTudo(false); // <- fecha imediatamente o modal
-  
+  setApagandoTudo(true);
+  setConfirmApagarTudo(false); // fecha o modal de confirmação
+  setModalAberto(false);       // fecha o menu também
+
   try {
-    await axios.delete(`${API_URL}/api/Mensagens/limpar/${usuarioLogadoId}/${usuarioSelecionado.id}`);
+    // Faz um DELETE para cada mensagem do histórico
+    await Promise.all(
+      historicoMensagens.map((mensagem) =>
+        axios.delete(`${API_URL}/api/Mensagens/${mensagem.id}`)
+      )
+    );
+
+    // Limpa o estado local após apagar todas
     setHistoricoMensagens([]);
   } catch (err) {
-    console.error('Erro ao apagar mensagens', err);
+    console.error('Erro ao apagar mensagens:', err);
+  } finally {
+    setApagandoTudo(false);
   }
 };
 
-
-
-// Tema
-const toggleTemaSubmenu = () => {
-  setTemaSubmenu(!temaSubmenu);
-};
-
-const handleTema = (novoTema) => {
-  document.documentElement.setAttribute('data-tema', novoTema);
-  setTemaSubmenu(false);
+// Função para marcar uma mensagem como lida pela API
+const marcarMensagemComoLida = async (mensagemId) => {
+  try {
+    await axios.put(`${API_URL}/api/Mensagens/marcar-como-lida/${mensagemId}`);
+    // Pode atualizar localmente se quiser (ex: atualizar contador ou status da mensagem)
+  } catch (err) {
+    console.error('Erro ao marcar mensagem como lida:', err);
+  }
 };
 
 
   return (
     <div className="app-container">
+      {/* Modal com Mensagem Apagando todas Mensagens */}
+       {apagandoTudo && (
+      <div className="mensagem-apagando-overlay">
+        Apagando mensagens...
+      </div>
+    )}
       {/* Cabeçalho fixo, pode ser usado para título ou estilo visual */}
       <div className={`fixed-header ${usuarioSelecionado ? 'hidden-mobile' : ''}`}></div>
       <div className="fixed-header"></div>
@@ -349,7 +386,7 @@ const handleTema = (novoTema) => {
       <div className={`sidebar ${usuarioSelecionado ? 'hidden-mobile' : ''}`}>
         <div className="sidebar-top">
           <div className="sidebar-header">
-            {/* Botão para voltar à tela inicial */}
+            {/* Botão para voltar à tela inicial Somnete no Mobile */}
             <button
               className="btn-voltar-home"
               onClick={voltarParaHome}
@@ -415,9 +452,9 @@ const handleTema = (novoTema) => {
       <div className={`chat-area ${usuarioSelecionado ? '' : 'hidden-mobile'}`}>
         {usuarioSelecionado ? (
           <>
-            {/* Cabeçalho do chat com botão de voltar, nome e imagem do usuário */}
+            {/* Cabeçalho do chat com botão de voltar, nome e imagem do usuário (Somente Mobile) */}
             <div className="chat-header">
-              <button className="btn-voltar" onClick={voltarParaSidebar} aria-label="Voltar">
+              <button className="btn-voltar-chat" onClick={voltarParaSidebar} aria-label="Voltar">
                 <FaArrowLeft />
               </button>
               <img
@@ -452,24 +489,34 @@ const handleTema = (novoTema) => {
                 });
 
                 return (
-                  <div
-                   key={index}
-      className={`message ${isRemetente ? 'sent' : 'received'}`}
-    >
-      <div className="message-content">
-        <p>{msg.conteudo}</p>
-        {apagarMensagemIndividual && isRemetente && (
-          <button
-            className="btn-apagar-mensagem"
-            onClick={() => removerMensagem(msg.id)}
-            title="Apagar mensagem"
-          >
-            <FaTrash />
-          </button>
-        )}
-      </div>
-      <div className="timestamp">{dataFormatada}</div>
-    </div>
+                <div
+                key={index}
+                  className={`message ${isRemetente ? 'sent' : 'received'}`}
+                >
+                 <div className="message-content">
+                  <p>{msg.conteudo}</p>
+                  {/* Ícones de status de leitura: dois risquinhos */}
+                  {isRemetente && (
+                    <span
+                      className={`status-risquinhos ${msg.lida ? 'lida' : 'nao-lida'}`}
+                      title={msg.lida ? 'Lida' : 'Entregue'}
+                    >
+                      ✓✓
+                    </span>
+                  )}
+                  {apagarMensagemIndividual && isRemetente && (
+                    <button
+                      className="btn-apagar-mensagem"
+                      onClick={() => removerMensagem(msg.id)}
+                      title="Apagar mensagem"
+                    >
+                      <FaTrash />
+                    </button>
+                  )}
+                </div>
+
+                  <div className="timestamp">{dataFormatada}</div>
+                </div>
                 );
               })}
 
@@ -505,40 +552,34 @@ const handleTema = (novoTema) => {
                 </div>
                 <div className="menu-item" onClick={handleApagarMensagem}>Apagar Mensagem</div>
                 <div className="menu-item" onClick={() => setConfirmApagarTudo(true)}>Apagar Todas Mensagens</div>
-                <div className="menu-item" onClick={toggleTemaSubmenu}>Tema</div>
-
-                {temaSubmenu && (
-                  <div className="submenu-tema">
-                    <div className="menu-item" onClick={() => handleTema('claro')}>Claro</div>
-                    <div className="menu-item" onClick={() => handleTema('escuro')}>Escuro</div>
-                  </div>
-                )}
               </div>
             </div>
           )}
           {/* Fim Modal de opiçoes */}
 
-          {/* 🔥 Modal de Confirmação - FORA do menu! */}
+          {/*  Modal de Confirmação - FORA do menu! */}
           {confirmApagarTudo && (
             <div className="confirm-modal" ref={confirmRef}>
               <p>Deseja apagar todas as Mensagens?</p>
+              {/* Sim */}
               <button
-                className="btn-sim"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setConfirmApagarTudo(false);
-                  setModalAberto(false); // <- fecha o menu também
-                  confirmarApagarTudo(); // <- função correta
-                }}
-              >Sim</button>
-              <button
-                className="btn-nao"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setConfirmApagarTudo(false);
-                  setModalAberto(false); // <- fecha o menu também
-                }}
-              >Não</button>
+              className="btn-sim"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!apagandoTudo) confirmarApagarTudo();
+              }}
+              disabled={apagandoTudo}
+            >{apagandoTudo ? 'Apagando...' : 'Sim'}</button>
+            {/* Não */}
+            <button
+              className="btn-nao"
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirmApagarTudo(false);
+                setModalAberto(false);
+              }}
+              disabled={apagandoTudo}
+            >Não </button>
             </div>
           )}
           {/* Fim Modal Confirmação */}
