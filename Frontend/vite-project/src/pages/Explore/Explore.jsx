@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import '../Explore/css/explore.css';
 import Comentario from '../../Components/Comentario.jsx';
 
-function Explore() {
+function Explore({ usuarioLogado }) {
   const navigate = useNavigate();
-
+const usuario = JSON.parse(localStorage.getItem('usuario'));
+const usuarioPrincipalId = usuario?.id;
   const POSTS_BATCH_SIZE = 6;
 
   const [allPosts, setAllPosts] = useState([]);
@@ -23,6 +24,11 @@ function Explore() {
 
   const videoRefs = useRef({});
   const [videoAtivoId, setVideoAtivoId] = useState(null);
+
+  // Aqui: estado para quem você já segue
+  // Inicialize como um objeto: { usuarioId: true }
+const [seguindoUsuario, setSeguindoUsuario] = useState({});
+
 
   const LS_POSTS_KEY = 'explore_posts_cache';
 
@@ -78,6 +84,14 @@ function Explore() {
     };
 
     fetchPosts();
+
+    // Opcional: buscar quem você já segue ao montar o componente,
+    // para isso, você precisaria de uma API que retorne os ids seguidos.
+    // Exemplo simples:
+    // fetch('API_PARA_LISTAR_SEGUIDOS')
+    //   .then(res => res.json())
+    //   .then(data => setSeguindoUsuario(data.reduce((acc, u) => ({ ...acc, [u.id]: true }), {})))
+    //   .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -86,7 +100,6 @@ function Explore() {
     }
   }, [displayedPosts]);
 
-  // ✅ Evita duplicatas ao carregar mais posts
   const loadMorePosts = () => {
     setDisplayedPosts(prev => {
       const nextBatch = allPosts.slice(prev.length, prev.length + POSTS_BATCH_SIZE);
@@ -111,7 +124,6 @@ function Explore() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [allPosts]);
 
-  // ✅ Debug: verificação de IDs duplicados
   useEffect(() => {
     const ids = displayedPosts.map(p => p.id);
     const duplicados = ids.filter((id, i) => ids.indexOf(id) !== i);
@@ -194,33 +206,47 @@ function Explore() {
     };
   }, [displayedPosts, videoAtivoId]);
 
-  const buscarUsuarios = async texto => {
-    if (!texto.trim()) {
-      setResultadosUsuarios([]);
-      setErroBuscaUsuarios(null);
-      return;
-    }
-
-    setBuscandoUsuarios(true);
+ const buscarUsuarios = async texto => {
+  if (!texto.trim()) {
+    setResultadosUsuarios([]);
     setErroBuscaUsuarios(null);
+    setSeguindoUsuario({});
+    return;
+  }
 
-    try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
-      const data = await response.json();
+  setBuscandoUsuarios(true);
+  setErroBuscaUsuarios(null);
 
-      if (response.ok && data) {
-        setResultadosUsuarios([data]);
-      } else {
-        setResultadosUsuarios([]);
-        setErroBuscaUsuarios('Usuário não encontrado.');
-      }
-    } catch {
-      setErroBuscaUsuarios('Erro na comunicação com o servidor.');
+  try {
+    const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
+    const data = await response.json();
+
+    if (response.ok && data) {
+      const usuario = Array.isArray(data) ? data[0] : data;
+      setResultadosUsuarios([usuario]);
+
+      // Verificar se já segue
+      const seguirResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue?usuario1=${usuarioPrincipalId}&usuario2=${usuario.id}`);
+      const seguirData = await seguirResp.json();
+console.log(usuarioLogado)
+      setSeguindoUsuario(prev => ({
+        ...prev,
+        [usuario.id]: seguirResp.ok && seguirData.estaSeguindo,
+      }));
+    } else {
       setResultadosUsuarios([]);
-    } finally {
-      setBuscandoUsuarios(false);
+      setErroBuscaUsuarios('Usuário não encontrado.');
+      setSeguindoUsuario({});
     }
-  };
+  } catch {
+    setErroBuscaUsuarios('Erro na comunicação com o servidor.');
+    setResultadosUsuarios([]);
+    setSeguindoUsuario({});
+  } finally {
+    setBuscandoUsuarios(false);
+  }
+};
+
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -233,6 +259,31 @@ function Explore() {
   const irParaPerfil = nomeUsuario => {
     navigate(`/perfil/${nomeUsuario}`);
   };
+
+ const seguirUsuario = async usuarioIdParaSeguir => {
+  try {
+    const resp = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        usuario1: usuarioPrincipalId,
+        usuario2: usuarioIdParaSeguir,
+      }),
+    });
+
+    if (resp.ok) {
+      setSeguindoUsuario(prev => ({
+        ...prev,
+        [usuarioIdParaSeguir]: true,
+      }));
+    } else {
+      console.error('Erro ao seguir usuário');
+    }
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+  }
+};
+
 
   return (
     <div className="explore-page">
@@ -249,19 +300,47 @@ function Explore() {
         {erroBuscaUsuarios && <p style={{ color: 'red' }}>{erroBuscaUsuarios}</p>}
 
         {resultadosUsuarios.length > 0 && (
-          <ul style={{ listStyle: 'none', padding: 0, marginTop: '8px', border: '1px solid #ddd', borderRadius: '4px', maxHeight: '200px', overflowY: 'auto' }}>
+          <ul
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              marginTop: '8px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              maxHeight: '200px',
+              overflowY: 'auto',
+            }}
+          >
             {resultadosUsuarios.map(user => (
               <li
                 key={user.id}
-                style={{ padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #eee' }}
-                onClick={() => irParaPerfil(user.nome_usuario)}
+                style={{
+                  padding: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  borderBottom: '1px solid #eee',
+                  justifyContent: 'space-between',
+                }}
               >
-                <img
-                  src={user.imagem || 'https://via.placeholder.com/40'}
-                  alt={user.nome_usuario}
-                  style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
-                />
-                <span>{user.nome_usuario}</span>
+                <div
+                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  onClick={() => irParaPerfil(user.nome_usuario)}
+                >
+                  <img
+                    src={user.imagem || 'https://via.placeholder.com/40'}
+                    alt={user.nome_usuario}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
+                  />
+                  <span>{user.nome_usuario}</span>
+                </div>
+
+               {!seguindoUsuario[user.id] ? (
+  <button onClick={() => seguirUsuario(user.id)}>Seguir</button>
+) : (
+  <span>Seguindo</span>
+)}
+
               </li>
             ))}
           </ul>
