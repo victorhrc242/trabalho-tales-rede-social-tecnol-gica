@@ -244,7 +244,7 @@ const fetchComentarios = async (postId) => {
 ) : (
   <div className="botoes-perfil">
     <button>Seguir</button>
-    <Link to="/mensagen" className="nav-item">
+    <Link to="/mensagen" className="botoes-perfil">
       <button>Enviar Mensagem</button>
     </Link>
   </div>
