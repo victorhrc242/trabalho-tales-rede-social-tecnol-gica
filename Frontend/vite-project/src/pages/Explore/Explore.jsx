@@ -4,6 +4,7 @@ import '../Explore/css/explore.css';
 import Comentario from '../../Components/Comentario.jsx';
 
 
+
 function Explore() {
   const navigate = useNavigate();
 
