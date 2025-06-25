@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../configuraçãoes/configuraçãoes.css';
 
-const Configuracoes = () => {
+const Configuracoes = ({ usuarioLogado }) => {
   const [abaAtiva, setAbaAtiva] = useState('notificacoes');
-  const [usuario, setUsuario] = useState(null);
-  const usuarioId = '7a3d0051-e41f-4edb-80b1-ab97824fc30b'; // ID fixo, pode vir de props, contexto, etc.
+ const usuario = JSON.parse(localStorage.getItem('usuario'));
+const usuarioId  = usuario?.id;
 
   useEffect(() => {
     // Quando a aba "Conta" for ativada, busca os dados do usuário

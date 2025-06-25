@@ -218,22 +218,26 @@ const [seguindoUsuario, setSeguindoUsuario] = useState({});
   setErroBuscaUsuarios(null);
 
   try {
-    const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
+    const response = await fetch(`https://localhost:7051/api/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
     const data = await response.json();
 
-    if (response.ok && data) {
-      const usuario = Array.isArray(data) ? data[0] : data;
-      setResultadosUsuarios([usuario]);
+  if (response.ok && Array.isArray(data)) {
+  setResultadosUsuarios(data);
 
-      // Verificar se já segue
-      const seguirResp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue?usuario1=${usuarioPrincipalId}&usuario2=${usuario.id}`);
-      const seguirData = await seguirResp.json();
-console.log(usuarioLogado)
-      setSeguindoUsuario(prev => ({
-        ...prev,
-        [usuario.id]: seguirResp.ok && seguirData.estaSeguindo,
-      }));
-    } else {
+  // Opcional: buscar se segue cada um
+  for (const usuario of data) {
+    const seguirResp = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue?usuario1=${usuarioPrincipalId}&usuario2=${usuario.id}`
+    );
+    const seguirData = await seguirResp.json();
+
+    setSeguindoUsuario(prev => ({
+      ...prev,
+      [usuario.id]: seguirResp.ok && seguirData.estaSeguindo,
+    }));
+  }
+}
+ else {
       setResultadosUsuarios([]);
       setErroBuscaUsuarios('Usuário não encontrado.');
       setSeguindoUsuario({});
@@ -296,7 +300,7 @@ console.log(usuarioLogado)
           style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
         />
 
-        {buscandoUsuarios && <p>Buscando usuários...</p>}
+        {buscandoUsuarios && <p></p>}
         {erroBuscaUsuarios && <p style={{ color: 'red' }}>{erroBuscaUsuarios}</p>}
 
         {resultadosUsuarios.length > 0 && (
