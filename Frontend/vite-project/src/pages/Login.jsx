@@ -57,8 +57,8 @@ function Login() {
       }
 
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      setErro('Erro ao conectar com o servidor');
+      console.error('Erro ao fazer login');
+      setErro('Usuario ou Senha Incorreta');
     }
   };
 

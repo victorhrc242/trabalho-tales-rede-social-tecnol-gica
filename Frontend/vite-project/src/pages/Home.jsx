@@ -354,9 +354,9 @@ function Home() {
     }
   };
 
-  const irParaPerfil = (id) => {
-    navigate(`/perfil/${id}`);
-  };
+const irParaPerfil = (id) => {
+  navigate(`/perfil/${id}`, { state: { userId: id } });
+};
 
   // Salvar posts no cache a cada 10 segundos
   useEffect(() => {
@@ -373,7 +373,7 @@ function Home() {
   return (
     <div className="home-container">
       <hr />
-      <h2>Feed</h2>
+      <br /><br />
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
       {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
 
@@ -451,15 +451,9 @@ function Home() {
   fechar={() => setModalComentarios(false)}
   usuario={usuario} // Passando o usuário para a função de curtida
 />
-
-
       )}
-   
-
-
     </div>
     
   );
 }
-
 export default Home;

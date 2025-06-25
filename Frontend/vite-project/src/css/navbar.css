@@ -250,8 +250,8 @@
 
   .navbar-lateral .perfil-configuracao,
   .navbar-lateral .nav-mensagens,
-  .navbar-lateral .nav-notificacoes,
-  .nav-buscar,.logo-navbar{
+  .navbar-lateral,
+  .nav-buscar{
     display: none !important;
   }
 
