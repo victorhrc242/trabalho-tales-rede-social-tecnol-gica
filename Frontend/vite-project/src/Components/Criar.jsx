@@ -163,7 +163,7 @@ function Criar({ usuarioLogado, onClose }) {
                   <img
                     src={imagem}
                     alt="Pré-visualização"
-                    className={`imagem-preview ${filtroSelecionado}`}
+                    className={`imagem-preview`}
                   />
                 </div>
               )}
