@@ -218,7 +218,7 @@ const [seguindoUsuario, setSeguindoUsuario] = useState({});
   setErroBuscaUsuarios(null);
 
   try {
-    const response = await fetch(`https://localhost:7051/api/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
+    const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
     const data = await response.json();
 
   if (response.ok && Array.isArray(data)) {
