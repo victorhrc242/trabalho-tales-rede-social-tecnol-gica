@@ -273,15 +273,14 @@ const irParaConfiguracoes = () => {
       </div>
       ) */}
 
-      {modal.opcoes && (
+      {modal.confirmarLogout && (
         <div className="modal">
           <div className="modal-conteudo">
-            <ul>
-              <li onClick={confirmarLogoutFunc}>Sair</li>
-              <li onClick={() => alert('Configurações em breve')}>Configurações</li>
-              <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
-            </ul>
-            <button className="fechar-modal" onClick={fecharModalOpcoes}>x</button>
+            <p>Tem certeza que deseja sair?</p>
+            <div className="botoes-modal">
+              <button className="btn-cancelar" onClick={deslogarERedirecionar}>Sim</button>
+              <button className="btn-confirmar" onClick={cancelarLogout}>Cancelar</button>
+            </div>
           </div>
         </div>
       )}

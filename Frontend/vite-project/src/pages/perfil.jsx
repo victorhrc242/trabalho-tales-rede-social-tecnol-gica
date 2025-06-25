@@ -27,6 +27,8 @@ const Perfil = ({ usuarioLogado }) => {
   const [novoComentario, setNovoComentario] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [estaSeguindo, setEstaSeguindo] = useState(false);
+  const [imagemArquivo, setImagemArquivo] = useState(null);
+const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   const [nome, setNome] = useState('');
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
@@ -252,12 +254,24 @@ const Perfil = ({ usuarioLogado }) => {
           </div>
         )}
 
-        {isPerfilProprio ? (
+        {isPerfilProprio ?  (
           <>
-            {!isEditing ? (
-              <div className="botoes-perfil">
-                <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
-              </div>
+     {/* Editar */}
+    {!isEditing ? (
+      <div className="botoes-perfil">
+        <button
+          className="btn-editar-perfil"
+          onClick={() => {
+            if (window.innerWidth <= 768) {
+              setShowEditarModalMobile(true); // abre modal mobile
+            } else {
+              setIsEditing(true); // edição inline para desktop
+            }
+          }}
+        >
+          Editar Perfil
+        </button>
+      </div>
             ) : (
               <div className="editar-formulario">
                 <input
@@ -296,7 +310,68 @@ const Perfil = ({ usuarioLogado }) => {
         )}
       </div>
     </div>
+    
+{showEditarModalMobile && (
+  <div className="modal-editar-mobile">
+    <div className="editar-topo">
+      <h2>Editar Perfil</h2>
+      <button onClick={() => setShowEditarModalMobile(false)}>×</button>
+    </div>
 
+    <div className="editar-foto-container">
+      <label className="editar-foto-label">
+        <img
+          src={
+            imagemArquivo
+              ? URL.createObjectURL(imagemArquivo)
+              : imagem || 'https://via.placeholder.com/150'
+          }
+          alt="Foto de perfil"
+          className="foto-perfil-preview"
+        />
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+              setImagemArquivo(file);
+              const reader = new FileReader();
+              reader.onloadend = () => setImagem(reader.result); // preview + enviar depois
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
+      </label>
+      <button
+        className="btn-alterar-foto"
+        onClick={() => document.querySelector('.editar-foto-label input').click()}
+      >
+        Alterar foto de perfil
+      </button>
+    </div>
+
+    <div className="editar-campos">
+      <input
+        type="text"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+        placeholder="Nome"
+      />
+      <textarea
+        value={biografia}
+        onChange={(e) => setBiografia(e.target.value)}
+        placeholder="Biografia"
+      />
+    </div>
+
+    <div className="editar-botoes">
+      <button onClick={editarPerfil}>Salvar</button>
+      <button onClick={() => setShowEditarModalMobile(false)}>Cancelar</button>
+    </div>
+  </div>
+)}
     <div className="perfil-posts">
       {posts.map((post) => (
         <div
