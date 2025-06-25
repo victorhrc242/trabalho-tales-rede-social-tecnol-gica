@@ -201,6 +201,44 @@ function Home() {
       connection.stop().then(() => console.log('🔌 SignalR desconectado da Home'));
     };
   }, []);
+useEffect(() => {
+  const curtidaConnection = new HubConnectionBuilder()
+    .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
+      transport: HttpTransportType.LongPolling,
+    })
+    .withAutomaticReconnect()
+    .build();
+
+  curtidaConnection
+    .start()
+    .then(() => {
+      console.log('✅ Conectado ao CurtidaHub');
+
+      // Evento emitido no controller C#
+      curtidaConnection.on('ReceberCurtida', (postId, usuarioId, foiCurtida) => {
+        console.log('❤️ Curtida recebida em tempo real:', { postId, usuarioId, foiCurtida });
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => {
+            if (post.id === postId) {
+              const curtidasAtualizadas = foiCurtida
+                ? (post.curtidas || 0) + 1
+                : Math.max(0, (post.curtidas || 0) - 1);
+              return { ...post, curtidas: curtidasAtualizadas };
+            }
+            return post;
+          })
+        );
+      });
+    })
+    .catch((err) => {
+      console.error('❌ Erro ao conectar ao CurtidaHub:', err);
+    });
+
+  return () => {
+    curtidaConnection.stop().then(() => console.log('🔌 CurtidaHub desconectado'));
+  };
+}, []);
 
   // IntersectionObserver para controlar qual vídeo está ativo (visível)
   useEffect(() => {
@@ -283,19 +321,29 @@ function Home() {
     navigate('/');
   };
 
-  const curtirPost = async (postId) => {
-    try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, usuarioId: usuario.id }),
-      });
-      fetchFeed();
-    } catch (err) {
-      console.error('Erro ao curtir:', err);
-    }
-  };
+const curtirOuDescurtir = async (postId, jaCurtiu) => {
+  const endpoint = jaCurtiu
+    ? 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir'
+    : 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
 
+  try {
+    const resposta = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        postId: postId,
+        usuarioId: usuario.id,
+      }),
+    });
+
+    if (!resposta.ok) {
+      const erro = await resposta.json();
+      console.error('Erro ao curtir/descurtir:', erro);
+    }
+  } catch (err) {
+    console.error('Erro de rede ao curtir/descurtir:', err);
+  }
+};
   const abrirComentarios = async (post) => {
     setPostSelecionado(post);
     setComentarioTexto('');
@@ -407,14 +455,19 @@ const irParaPerfil = (id) => {
             )}
 
             <div className="botoes-post">
+              
               <button className="botao-acao" onClick={() => curtirPost(post.id)}>
-                <Heart
-                  size={20}
-                  color={post.curtidas > 0 ? 'red' : 'black'}
-                  fill={post.curtidas > 0 ? 'red' : 'none'}
-                  style={{ marginRight: '5px' }}
-                />
-                {usuario?.id === post.autorId && post.curtidas !== undefined && `(${post.curtidas})`}
+            <span
+  className="icone"
+  onClick={() => curtirOuDescurtir(post.id, post.usuarioCurtiu)}
+  style={{ cursor: 'pointer' }}
+>
+  <Heart
+    color={post.usuarioCurtiu ? 'red' : 'black'}
+    fill={post.usuarioCurtiu ? 'red' : 'none'}
+  />
+  {post.curtidas || 0}
+</span>
               </button>
 
               <button className="botao-acao" onClick={() => abrirComentarios(post)}>
