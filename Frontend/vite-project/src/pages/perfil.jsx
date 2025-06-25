@@ -230,29 +230,30 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
  return (
   <div className="perfil-container">
-    <div className="perfil-header">
-      <div className="foto-perfil">
-        <img
-          src={usuario.imagem || 'https://via.placeholder.com/150'}
-          alt={`Foto de perfil de ${usuario.nome_usuario}`}
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            objectFit: 'cover'
-          }}
-        />
-      </div>
-      <div className="perfil-info">
-        <h1>{usuario.nome_usuario}</h1>
+<div className="perfil-header">
+  <div className="foto-perfil-bloco">
+    <div className="foto-perfil">
+      <img
+        src={usuario.imagem || 'https://via.placeholder.com/150'}
+        alt={`Foto de perfil de ${usuario.nome_usuario}`}
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          objectFit: 'cover'
+        }}
+      />
+    </div>
+    <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
+  </div>
 
-        {!isEditing && (
-          <div className="infor-pessoais">
-            <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p><br/>
-            <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p><br/>
-            <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
-          </div>
-        )}
+  <div className="perfil-info">
+    {!isEditing && (
+      <div className="infor-pessoais">
+        <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+        <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+      </div>
+    )}
 
         {isPerfilProprio ?  (
           <>
