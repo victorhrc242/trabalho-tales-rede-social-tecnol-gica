@@ -27,6 +27,8 @@ const Perfil = ({ usuarioLogado }) => {
   const [novoComentario, setNovoComentario] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [estaSeguindo, setEstaSeguindo] = useState(false);
+  const [imagemArquivo, setImagemArquivo] = useState(null);
+const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   const [nome, setNome] = useState('');
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
@@ -228,36 +230,49 @@ const Perfil = ({ usuarioLogado }) => {
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
  return (
   <div className="perfil-container">
-    <div className="perfil-header">
-      <div className="foto-perfil">
-        <img
-          src={usuario.imagem || 'https://via.placeholder.com/150'}
-          alt={`Foto de perfil de ${usuario.nome_usuario}`}
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            objectFit: 'cover'
-          }}
-        />
+<div className="perfil-header">
+  <div className="foto-perfil-bloco">
+    <div className="foto-perfil">
+      <img
+        src={usuario.imagem || 'https://via.placeholder.com/150'}
+        alt={`Foto de perfil de ${usuario.nome_usuario}`}
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          objectFit: 'cover'
+        }}
+      />
+    </div>
+    <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
+  </div>
+
+  <div className="perfil-info">
+    {!isEditing && (
+      <div className="infor-pessoais">
+        <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+        <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
       </div>
-      <div className="perfil-info">
-        <h1>{usuario.nome_usuario}</h1>
+    )}
 
-        {!isEditing && (
-          <div className="infor-pessoais">
-            <p><strong>Biografia:</strong> {usuario.biografia || 'Sem biografia'}</p><br/>
-            <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p><br/>
-            <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
-          </div>
-        )}
-
-        {isPerfilProprio ? (
+        {isPerfilProprio ?  (
           <>
-            {!isEditing ? (
-              <div className="botoes-perfil">
-                <button onClick={() => setIsEditing(true)}>Editar Perfil</button>
-              </div>
+     {/* Editar */}
+    {!isEditing ? (
+      <div className="botoes-perfil">
+        <button
+          className="btn-editar-perfil"
+          onClick={() => {
+            if (window.innerWidth <= 768) {
+              setShowEditarModalMobile(true); // abre modal mobile
+            } else {
+              setIsEditing(true); // edição inline para desktop
+            }
+          }}
+        >
+          Editar Perfil
+        </button>
+      </div>
             ) : (
               <div className="editar-formulario">
                 <input
@@ -296,7 +311,68 @@ const Perfil = ({ usuarioLogado }) => {
         )}
       </div>
     </div>
+    
+{showEditarModalMobile && (
+  <div className="modal-editar-mobile">
+    <div className="editar-topo">
+      <h2>Editar Perfil</h2>
+      <button onClick={() => setShowEditarModalMobile(false)}>×</button>
+    </div>
 
+    <div className="editar-foto-container">
+      <label className="editar-foto-label">
+        <img
+          src={
+            imagemArquivo
+              ? URL.createObjectURL(imagemArquivo)
+              : imagem || 'https://via.placeholder.com/150'
+          }
+          alt="Foto de perfil"
+          className="foto-perfil-preview"
+        />
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+              setImagemArquivo(file);
+              const reader = new FileReader();
+              reader.onloadend = () => setImagem(reader.result); // preview + enviar depois
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
+      </label>
+      <button
+        className="btn-alterar-foto"
+        onClick={() => document.querySelector('.editar-foto-label input').click()}
+      >
+        Alterar foto de perfil
+      </button>
+    </div>
+
+    <div className="editar-campos">
+      <input
+        type="text"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+        placeholder="Nome"
+      />
+      <textarea
+        value={biografia}
+        onChange={(e) => setBiografia(e.target.value)}
+        placeholder="Biografia"
+      />
+    </div>
+
+    <div className="editar-botoes">
+      <button onClick={editarPerfil}>Salvar</button>
+      <button onClick={() => setShowEditarModalMobile(false)}>Cancelar</button>
+    </div>
+  </div>
+)}
     <div className="perfil-posts">
       {posts.map((post) => (
         <div
