@@ -152,7 +152,6 @@ function Home() {
       }
     }
   }, [navigate]);
-
   // Carregar posts do cache ao montar
   useEffect(() => {
     const cache = localStorage.getItem('postsSalvos');
@@ -216,7 +215,6 @@ useEffect(() => {
 
       // Evento emitido no controller C#
       curtidaConnection.on('ReceberCurtida', (postId, usuarioId, foiCurtida) => {
-        console.log('❤️ Curtida recebida em tempo real:', { postId, usuarioId, foiCurtida });
 
         setPosts((prevPosts) =>
           prevPosts.map((post) => {
@@ -321,29 +319,68 @@ useEffect(() => {
     navigate('/');
   };
 
-const curtirOuDescurtir = async (postId, jaCurtiu) => {
-  const endpoint = jaCurtiu
-    ? 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir'
-    : 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
+const curtirPost = async (postId, jaCurtiu) => {
+  const endpointVerificarCurtida = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${postId}`;
+  const endpointCurtir = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
+  const endpointDescurtir = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
 
   try {
-    const resposta = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        postId: postId,
-        usuarioId: usuario.id,
-      }),
+    // 1. Verificando se o usuário já curtiu o post
+    const respostaVerificar = await fetch(endpointVerificarCurtida, {
+      method: 'GET',
+      headers: { 'accept': '*/*' },
     });
 
-    if (!resposta.ok) {
-      const erro = await resposta.json();
-      console.error('Erro ao curtir/descurtir:', erro);
+    const dadosCurtidas = await respostaVerificar.json();
+
+    if (!respostaVerificar.ok) {
+      console.error('Erro ao verificar curtidas do post:', dadosCurtidas);
+      return;
+    }
+
+    // 2. Verificando se o usuário já curtiu
+    const usuarioJaCurtiu = dadosCurtidas.curtidas.some(curtida => curtida.usuarioId === usuario.id);
+
+    // 3. Determinando qual ação executar (curtir ou descurtir)
+    const endpoint = usuarioJaCurtiu ? endpointDescurtir : endpointCurtir;
+    const body = JSON.stringify({
+      postId: postId,
+      usuarioId: usuario.id,
+    });
+
+    // 4. Enviando a requisição para curtir/descurtir
+    const respostaCurtir = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body,
+    });
+
+    const dadosResposta = await respostaCurtir.json();
+
+    if (!respostaCurtir.ok) {
+      console.error('Erro ao curtir/descurtir:', dadosResposta);
+      alert(`Erro: ${dadosResposta.mensagem}`);
+    } else {
+      console.log('Curtida/Descurtida realizada com sucesso');
+      // Atualizar o estado do feed após a ação
+      setPosts(prevPosts =>
+        prevPosts.map(post => {
+          if (post.id === postId) {
+            const curtidasAtualizadas = usuarioJaCurtiu
+              ? Math.max(0, post.curtidas - 1)
+              : post.curtidas + 1;
+
+            return { ...post, curtidas: curtidasAtualizadas };
+          }
+          return post;
+        })
+      );
     }
   } catch (err) {
     console.error('Erro de rede ao curtir/descurtir:', err);
   }
 };
+
   const abrirComentarios = async (post) => {
     setPostSelecionado(post);
     setComentarioTexto('');
@@ -456,18 +493,14 @@ const irParaPerfil = (id) => {
 
             <div className="botoes-post">
               
-              <button className="botao-acao" onClick={() => curtirPost(post.id)}>
-            <span
-  className="icone"
-  onClick={() => curtirOuDescurtir(post.id, post.usuarioCurtiu)}
-  style={{ cursor: 'pointer' }}
->
-  <Heart
-    color={post.usuarioCurtiu ? 'red' : 'black'}
-    fill={post.usuarioCurtiu ? 'red' : 'none'}
-  />
-  {post.curtidas || 0}
-</span>
+               <button className="botao-acao" onClick={() => curtirPost(post.id)}>
+                <Heart
+                  size={20}
+                  color={post.curtidas > 0 ? 'red' : 'black'}
+                  fill={post.curtidas > 0 ? 'red' : 'none'}
+                  style={{ marginRight: '5px' }}
+                />
+                {usuario?.id === post.autorId && post.curtidas !== undefined && `(${post.curtidas})`}
               </button>
 
               <button className="botao-acao" onClick={() => abrirComentarios(post)}>
