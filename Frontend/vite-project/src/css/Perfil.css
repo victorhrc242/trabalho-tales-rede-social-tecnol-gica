@@ -336,3 +336,104 @@ body {
     padding: 15px;
   }
 }
+
+@media (max-width: 768px) {
+ .perfil-header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .foto-perfil-bloco {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nome-mobile {
+    font-size: 18px;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  .perfil-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    flex: 1;
+  }
+
+  .infor-pessoais p {
+    margin: 0;
+    font-size: 14px;
+    text-align: right;
+  }
+}
+
+.modal-editar-mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.editar-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editar-foto-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.foto-perfil-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.btn-alterar-foto {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.editar-campos {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editar-campos input,
+.editar-campos textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1em;
+}
+
+.editar-botoes {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+

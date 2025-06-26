@@ -152,7 +152,6 @@ function Home() {
       }
     }
   }, [navigate]);
-
   // Carregar posts do cache ao montar
   useEffect(() => {
     const cache = localStorage.getItem('postsSalvos');
@@ -201,6 +200,43 @@ function Home() {
       connection.stop().then(() => console.log('🔌 SignalR desconectado da Home'));
     };
   }, []);
+useEffect(() => {
+  const curtidaConnection = new HubConnectionBuilder()
+    .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
+      transport: HttpTransportType.LongPolling,
+    })
+    .withAutomaticReconnect()
+    .build();
+
+  curtidaConnection
+    .start()
+    .then(() => {
+      console.log('✅ Conectado ao CurtidaHub');
+
+      // Evento emitido no controller C#
+      curtidaConnection.on('ReceberCurtida', (postId, usuarioId, foiCurtida) => {
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => {
+            if (post.id === postId) {
+              const curtidasAtualizadas = foiCurtida
+                ? (post.curtidas || 0) + 1
+                : Math.max(0, (post.curtidas || 0) - 1);
+              return { ...post, curtidas: curtidasAtualizadas };
+            }
+            return post;
+          })
+        );
+      });
+    })
+    .catch((err) => {
+      console.error('❌ Erro ao conectar ao CurtidaHub:', err);
+    });
+
+  return () => {
+    curtidaConnection.stop().then(() => console.log('🔌 CurtidaHub desconectado'));
+  };
+}, []);
 
   // IntersectionObserver para controlar qual vídeo está ativo (visível)
   useEffect(() => {
@@ -283,18 +319,67 @@ function Home() {
     navigate('/');
   };
 
-  const curtirPost = async (postId) => {
-    try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, usuarioId: usuario.id }),
-      });
-      fetchFeed();
-    } catch (err) {
-      console.error('Erro ao curtir:', err);
+const curtirPost = async (postId, jaCurtiu) => {
+  const endpointVerificarCurtida = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${postId}`;
+  const endpointCurtir = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
+  const endpointDescurtir = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
+
+  try {
+    // 1. Verificando se o usuário já curtiu o post
+    const respostaVerificar = await fetch(endpointVerificarCurtida, {
+      method: 'GET',
+      headers: { 'accept': '*/*' },
+    });
+
+    const dadosCurtidas = await respostaVerificar.json();
+
+    if (!respostaVerificar.ok) {
+      console.error('Erro ao verificar curtidas do post:', dadosCurtidas);
+      return;
     }
-  };
+
+    // 2. Verificando se o usuário já curtiu
+    const usuarioJaCurtiu = dadosCurtidas.curtidas.some(curtida => curtida.usuarioId === usuario.id);
+
+    // 3. Determinando qual ação executar (curtir ou descurtir)
+    const endpoint = usuarioJaCurtiu ? endpointDescurtir : endpointCurtir;
+    const body = JSON.stringify({
+      postId: postId,
+      usuarioId: usuario.id,
+    });
+
+    // 4. Enviando a requisição para curtir/descurtir
+    const respostaCurtir = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body,
+    });
+
+    const dadosResposta = await respostaCurtir.json();
+
+    if (!respostaCurtir.ok) {
+      console.error('Erro ao curtir/descurtir:', dadosResposta);
+      alert(`Erro: ${dadosResposta.mensagem}`);
+    } else {
+      console.log('Curtida/Descurtida realizada com sucesso');
+      // Atualizar o estado do feed após a ação
+      setPosts(prevPosts =>
+        prevPosts.map(post => {
+          if (post.id === postId) {
+            const curtidasAtualizadas = usuarioJaCurtiu
+              ? Math.max(0, post.curtidas - 1)
+              : post.curtidas + 1;
+
+            return { ...post, curtidas: curtidasAtualizadas };
+          }
+          return post;
+        })
+      );
+    }
+  } catch (err) {
+    console.error('Erro de rede ao curtir/descurtir:', err);
+  }
+};
 
   const abrirComentarios = async (post) => {
     setPostSelecionado(post);
@@ -407,7 +492,8 @@ const irParaPerfil = (id) => {
             )}
 
             <div className="botoes-post">
-              <button className="botao-acao" onClick={() => curtirPost(post.id)}>
+              
+               <button className="botao-acao" onClick={() => curtirPost(post.id)}>
                 <Heart
                   size={20}
                   color={post.curtidas > 0 ? 'red' : 'black'}

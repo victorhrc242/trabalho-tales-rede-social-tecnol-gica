@@ -12,6 +12,8 @@ import Msg from './pages/Mensagens/mensagen';
 import Explore from './pages/Explore/Explore';
 import Notificacoes from './pages/Notificacao/Notificacoes ';
 import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
+import Kurz from './pages/kurz/Kurz';
+
 function AppWrapper() {
   const location = useLocation();
 
@@ -77,17 +79,19 @@ function AppWrapper() {
       )} 
 
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/recuperar" element={<RecuperarSenha />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/perfil/:id" element={<Perfil />} />
-        <Route path="/criar" element={<Criar />} />
-        <Route path="/mensagen" element={<Msg />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/notificacoes" element={<Notificacoes />} />
-        <Route path="/configuracoes" element={<Configuracoes />} />
-      </Routes>
+  <Route path="/" element={<Login />} />
+  <Route path="/cadastro" element={<Cadastro />} />
+  <Route path="/recuperar" element={<RecuperarSenha />} />
+  <Route path="/home" element={<Home />} />
+  <Route path="/perfil/:id" element={<Perfil />} />
+  <Route path="/criar" element={<Criar />} />
+  <Route path="/mensagen" element={<Msg />} />
+  <Route path="/explore" element={<Explore />} />
+  <Route path="/notificacoes" element={<Notificacoes />} />
+  <Route path="/configuracoes" element={<Configuracoes />} />
+  <Route path="/kurz" element={<Kurz />} /> 
+</Routes>
+
     </>
   );
 }

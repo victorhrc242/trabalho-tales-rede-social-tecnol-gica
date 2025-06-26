@@ -250,7 +250,7 @@
 
   .navbar-lateral .perfil-configuracao,
   .navbar-lateral .nav-mensagens,
-  .navbar-lateral,
+  .navbar-lateral, 
   .nav-buscar{
     display: none !important;
   }
