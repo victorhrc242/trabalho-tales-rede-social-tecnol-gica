@@ -94,7 +94,6 @@ body {
   width: 100%;
   border-top: 1px solid #dbdbdb;
   padding-top: 30px;
-
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 por linha */
   gap: 15px; /* Espaçamento entre posts */
@@ -168,6 +167,7 @@ body {
 @media (max-width: 480px) {
   .perfil-posts {
     grid-template-columns: 1fr; /* 1 por linha no celular */
+
   }
 }
 }
