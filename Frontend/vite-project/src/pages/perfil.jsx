@@ -231,37 +231,51 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
  return (
   <div className="perfil-container">
 <div className="perfil-header">
-<div className="foto-perfil-bloco">
-  <div className="foto-perfil">
-    <img
-      src={usuario.imagem || 'https://via.placeholder.com/150'}
-      alt={`Foto de perfil de ${usuario.nome_usuario}`}
-      style={{
-        width: '100%',
-        height: '100%',
-        borderRadius: '50%',
-        objectFit: 'cover'
-      }}
-    />
+  <div className="foto-perfil-bloco">
+    <div className="foto-perfil">
+      <img
+        src={usuario.imagem || 'https://via.placeholder.com/150'}
+        alt={`Foto de perfil de ${usuario.nome_usuario}`}
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          objectFit: 'cover'
+        }}
+      />
+    </div>
+    {/* VERSÃO MOBILE */}
+    <div className="nome-e-editar nome-e-editar-mobile">
+      <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
+      {isPerfilProprio && !isEditing && (
+        <button
+          className="btn-editar-perfil"
+          onClick={() => setShowEditarModalMobile(true)}
+        >
+          Editar Perfil
+        </button>
+      )}
+    </div>
   </div>
-    <div className="nome-e-editar">
-  <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
-  {isPerfilProprio && !isEditing && (
-    <button
-      className="btn-editar-perfil"
-      onClick={() => {
-        if (window.innerWidth <= 768) {
-          setShowEditarModalMobile(true);
-        } else {
-          setIsEditing(true);
-        }
-      }}
-    >
-      Editar Perfil
-    </button>
-  )}
-</div>
-</div>
+
+  {/* VERSÃO DESKTOP - movida para ao lado da imagem */}
+  <div className="perfil-info-desktop">
+    <div className="topo-nome-botao">
+      <h1 className="nome-desktop">{usuario.nome_usuario}</h1>
+      {isPerfilProprio && !isEditing && (
+        <button
+          className="btn-editar-perfil"
+          onClick={() => setIsEditing(true)}
+        >
+          Editar Perfil
+        </button>
+      )}
+    </div>
+    <div className="infor-pessoais-desktop">
+      <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+      <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+    </div>
+  </div>
 
   <div className="perfil-info">
     {!isEditing && (
