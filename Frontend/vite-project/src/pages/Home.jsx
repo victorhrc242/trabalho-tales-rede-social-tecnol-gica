@@ -4,6 +4,9 @@ import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import { Heart, MessageCircle } from 'lucide-react';
 import '../css/home.css';
 import Comentario from '../Components/Comentario.jsx';
+import { Search } from 'lucide-react';
+
+
 
 function VideoPlayer({ videoUrl, isActive, className }) {
   const videoRef = useRef(null);
@@ -456,6 +459,7 @@ const irParaPerfil = (id) => {
   }, [posts]);
 
   return (
+    <>
     <div className="home-container">
       <hr />
       <br /><br />
@@ -539,7 +543,27 @@ const irParaPerfil = (id) => {
 />
       )}
     </div>
+
+    {/* ✅ MODAIS FIXOS APENAS EM DESKTOP */}
+    <div className="modal-pesquisa">
+      <div className="input-wrapper">
+        <input type="text" placeholder="Pesquisar usuários..." />
+        <Search />
+      </div>
+    </div>
+
+    <div className="modal-notificacoes">
+      <h3>Notificações</h3>
+      <div className="notificacao-item">
+        <img src="https://via.placeholder.com/32" alt="avatar" />
+        <div>
+          <span>Nome_usuario</span>
+          <span className="data">data e hora</span>
+        </div>
+      </div>
+    </div>
     
+    </>
   );
 }
 export default Home;

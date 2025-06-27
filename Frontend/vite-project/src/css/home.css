@@ -56,10 +56,12 @@ body {
 /* Container principal */
 .home-container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0 auto 0; /* margem esquerda aumentada */
   padding: 30px 15px;
   background-color: #fff;
   border-radius: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Posts */
@@ -201,3 +203,103 @@ li {
 }
 
 /*barra de notificações */
+
+/* Modal de pesquisa (estilo igual da imagem) */
+.modal-pesquisa {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  width: 300px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  padding: 10px;
+}
+
+.modal-pesquisa .input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 5px 10px;
+}
+
+.modal-pesquisa input {
+  border: none;
+  flex: 1;
+  outline: none;
+  font-size: 14px;
+  padding: 6px;
+  background: transparent;
+}
+
+.modal-pesquisa svg {
+  width: 18px;
+  height: 18px;
+  color: #888;
+}
+
+/* Modal de notificações (estilo igual da imagem) */
+.modal-notificacoes {
+  position: fixed;
+  top: 180px;
+  right: 40px;
+  width: 260px;
+  max-height: 450px;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  z-index: 1000;
+}
+
+.modal-notificacoes h3 {
+  margin-top: 0;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.notificacao-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.notificacao-item img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.notificacao-item span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.notificacao-item .data {
+  display: block;
+  font-size: 12px;
+  color: #888;
+}
+/* ---------- MODAIS: Só para DESKTOP ---------- */
+@media (max-width: 768px) {
+  .modal-pesquisa,
+  .modal-notificacoes {
+    display: none !important;
+  }
+}
+
+/* ---------- AJUSTAR home-container no DESKTOP ---------- */
+@media (min-width: 1024px) {
+  .home-container {
+    margin-left: 150px; 
+  }
+}
+

@@ -32,6 +32,9 @@ const Cadastro = () => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarRepetirSenha, setMostrarRepetirSenha] = useState(false);
 
+  //Modal de Cadastro feito com sucesso
+  const [sucessoCadastro, setSucessoCadastro] = useState(false);
+
   // Carregar imagem padrão como arquivo para o preview da foto
   useEffect(() => {
     if (etapa === 2 && !fotoPerfilArquivo) {
@@ -126,8 +129,12 @@ const Cadastro = () => {
         return;
       }
 
-      alert('Cadastro realizado com sucesso!');
+     setSucessoCadastro(true);
+     setTimeout(() => {
+      setSucessoCadastro(false);
       navigate('/');
+    }, 3000); // modal some após 3 segundos e redireciona
+
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
       setErro('Erro ao conectar com o servidor');
@@ -154,6 +161,8 @@ const Cadastro = () => {
 
     return ''; // senha válida
   };
+
+
 
   return (
     <footer>
@@ -330,7 +339,12 @@ const Cadastro = () => {
               Já tem uma conta? <Link to="/">Entrar</Link>
             </p>
 
-            {erro && <p className="erro">{erro}</p>}
+           {sucessoCadastro && (
+          <div className="success-toast">Cadastro realizado com sucesso!</div>
+        )}
+        {erro && <p className="error-message">{erro}</p>}
+
+            
           </form>
         </div>
       </div>
