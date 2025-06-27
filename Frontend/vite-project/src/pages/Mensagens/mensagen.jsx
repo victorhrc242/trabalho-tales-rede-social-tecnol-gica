@@ -70,31 +70,28 @@ const [apagandoTudo, setApagandoTudo] = useState(false);
 
   // Carrega os usuários que o logado está seguindo
   useEffect(() => {
-    const fetchSeguindo = async () => {
-      try {
-        if (!usuarioLogadoId) return;
-        const res = await axios.get(`${API_URL}/api/Amizades/seguindo/${usuarioLogadoId}`);
-        const listaCompletada = await Promise.all(
-          res.data.seguindo.map(async (item) => {
-            const userRes = await axios.get(`${API_URL}/api/auth/usuario/${item.usuario2}`);
-            const usuarioDados = userRes.data.dados || userRes.data;
-            return {
-              idAmizade: item.id,
-              dataSolicitacao: item.dataSolicitacao,
-              usuario: {
-                ...usuarioDados,
-                id: item.usuario2,
-              },
-            };
-          })
-        );
-        setSeguindo(listaCompletada);
-        setSeguindoFiltrado(listaCompletada);
-      } catch (err) {
-        console.error('Erro ao carregar lista de seguindo:', err);
-      }
-    };
+const fetchSeguindo = async () => {
+  try {
+    if (!usuarioLogadoId) return;
 
+    const res = await axios.get(`${API_URL}/api/Mensagens/conversas/${usuarioLogadoId}`);
+
+    // Como a API já retorna os dados dos usuários, não precisamos de chamadas adicionais
+    const listaCompletada = res.data.usuarios.map((item) => ({
+      idAmizade: item.id, // ou null se não tiver amizade
+      usuario: {
+        id: item.id,
+        nome_usuario: item.nome_usuario,
+        imagem: item.fotoPerfil,
+      },
+    }));
+
+    setSeguindo(listaCompletada);
+    setSeguindoFiltrado(listaCompletada);
+  } catch (err) {
+    console.error('Erro ao carregar lista de seguindo:', err);
+  }
+};
     fetchSeguindo();
   }, [usuarioLogadoId]);
 
