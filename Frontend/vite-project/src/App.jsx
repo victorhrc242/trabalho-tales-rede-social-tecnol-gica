@@ -74,11 +74,11 @@ function AppWrapper() {
           {!deveEsconderNavbar && (
             <Navbar usuarioLogado={usuario} deslogar={deslogar} />
           )}
-          {!deveEsconderNavbarTop && <NavbarTop />}
+          {!deveEsconderNavbarTop && <NavbarTop />} 
         </>
       )} 
 
-      <Routes>
+  <Routes>
   <Route path="/" element={<Login />} />
   <Route path="/cadastro" element={<Cadastro />} />
   <Route path="/recuperar" element={<RecuperarSenha />} />
