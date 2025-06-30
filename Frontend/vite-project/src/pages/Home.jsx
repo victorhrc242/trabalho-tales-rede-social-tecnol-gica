@@ -5,6 +5,7 @@ import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import FeedItem from '../Components/Home/FeedItem';
 import Comentario from '../Components/Comentario';
 import '../css/home.css';
+import { FaSearch, FaBell } from 'react-icons/fa';
 
 function Home() {
   const navigate = useNavigate();
@@ -18,12 +19,14 @@ function Home() {
   const [videoAtivoId, setVideoAtivoId] = useState(null);
   const videoRefs = useRef({});
 
+  // Registra a referência dos vídeos para o observer de interseção 
   const registerVideoRef = useCallback((postId, node) => {
     if (node) {
       videoRefs.current[postId] = node;
     }
   }, []);
 
+  // Salva localmente os posts no localStorage para cache 
   const salvarPostsLocalmente = (postsParaSalvar) => {
     const dadosFiltrados = postsParaSalvar.slice(0, 5).map(post => ({
       id: post.id,
@@ -41,6 +44,7 @@ function Home() {
     localStorage.setItem('postsSalvos', JSON.stringify(dadosFiltrados));
   };
 
+  // Verifica token e carrega dados do usuário ao montar 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -58,21 +62,29 @@ function Home() {
     }
   }, [navigate]);
 
- useEffect(() => {
-  const cache = localStorage.getItem('postsSalvos');
-  if (cache) {
-    try {
-      setPosts(JSON.parse(cache));
-    } catch (erro) {
-      console.error('Erro ao carregar posts do cache:', erro);
+  //  Tenta carregar posts do cache localStorage antes de buscar na API 
+  useEffect(() => {
+    const cache = localStorage.getItem('postsSalvos');
+    if (cache) {
+      try {
+        setPosts(JSON.parse(cache));
+      } catch (erro) {
+        console.error('Erro ao carregar posts do cache:', erro);
+      }
     }
-  }
-}, []);
+  }, []);
 
+  //  Sempre que usuário mudar (ou carregar), busca o feed atualizado 
   useEffect(() => {
     if (usuario.id) fetchFeed();
-  },);
+  }, [usuario.id]); //  Corrigido: adicionado dependência correta para evitar chamadas infinitas 
 
+  const [notificacoes, setNotificacoes] = useState([
+    'Você curtiu um post.',
+    'Alguém comentou sua foto.',
+  ]); // mock inicial
+
+  //  Conexão SignalR para receber novos posts em tempo real 
   useEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub', {
@@ -90,6 +102,7 @@ function Home() {
     return () => connection.stop();
   }, []);
 
+  //  Conexão SignalR para atualizações de curtidas em tempo real 
   useEffect(() => {
     const curtidaConnection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
@@ -117,6 +130,7 @@ function Home() {
     return () => curtidaConnection.stop();
   }, []);
 
+  //  Observer para controlar qual vídeo está ativo (visível) 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -143,6 +157,7 @@ function Home() {
     };
   }, [posts]);
 
+  //  Busca os posts do feed da API e adiciona dados do autor 
   const fetchFeed = async () => {
     try {
       const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed/${usuario.id}`);
@@ -170,14 +185,12 @@ function Home() {
     }
   };
 
+  //  Função para curtir ou descurtir um post 
   const curtirPost = async (postId) => {
     const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${postId}`;
     const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
     const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
 
-
-
-    
     try {
       const res = await fetch(verificarUrl, { method: 'GET' });
       const data = await res.json();
@@ -194,6 +207,7 @@ function Home() {
     }
   };
 
+  //  Abre modal de comentários carregando os comentários do post 
   const abrirComentarios = async (post) => {
     setPostSelecionado(post);
     setComentarioTexto('');
@@ -222,6 +236,7 @@ function Home() {
     }
   };
 
+  // Envia um novo comentário e atualiza os dados do post 
   const comentar = async () => {
     if (!comentarioTexto.trim()) return;
     const comentario = { postId: postSelecionado.id, autorId: usuario.id, conteudo: comentarioTexto };
@@ -240,10 +255,12 @@ function Home() {
     }
   };
 
+  //  Navega para o perfil do usuário 
   const irParaPerfil = (id) => {
     navigate(`/perfil/${id}`, { state: { userId: id } });
   };
 
+  //  Salva os posts periodicamente no localStorage para cache 
   useEffect(() => {
     const i = setInterval(() => {
       if (posts.length > 0) salvarPostsLocalmente(posts);
@@ -251,38 +268,112 @@ function Home() {
     return () => clearInterval(i);
   }, [posts]);
 
+  // Buscar
+  const [resultadosBusca, setResultadosBusca] = useState([]);
+
+  //Busca usuários pelo termo digitado 
+  const buscarUsuarios = async (termo) => {
+    if (!termo.trim()) {
+      setResultadosBusca([]);
+      return;
+    }
+    try {
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`);
+      const data = await response.json();
+
+      if (Array.isArray(data)) {
+        const resultadosFiltrados = data.filter(u =>
+          u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase())
+        );
+        setResultadosBusca(resultadosFiltrados);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      setResultadosBusca([]);
+    }
+  };
+
   return (
-    <div className="home-container">
-      <hr /><br /><br />
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
-      {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
+    <div className="pagina-container">
+      {/* Feed principal */}
+      <div className="home-container">
+        <hr /><br /><br />
+        {erro && <p style={{ color: 'red' }}>{erro}</p>}
+        {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
 
-      <ul>
-        {posts.map(post => (
-          <FeedItem
-            key={post.id}
-            post={post}
+        <ul>
+          {posts.map(post => (
+            <FeedItem
+              key={post.id}
+              post={post}
+              usuario={usuario}
+              videoAtivoId={videoAtivoId}
+              curtirPost={curtirPost}
+              abrirComentarios={abrirComentarios}
+              irParaPerfil={irParaPerfil}
+              registerVideoRef={registerVideoRef}
+            />
+          ))}
+        </ul>
+
+        {modalComentarios && postSelecionado && (
+          <Comentario
+            post={postSelecionado}
+            comentarios={comentarios}
+            comentarioTexto={comentarioTexto}
+            setComentarioTexto={setComentarioTexto}
+            comentar={comentar}
+            fechar={() => setModalComentarios(false)}
             usuario={usuario}
-            videoAtivoId={videoAtivoId}
-            curtirPost={curtirPost}
-            abrirComentarios={abrirComentarios}
-            irParaPerfil={irParaPerfil}
-            registerVideoRef={registerVideoRef}
           />
-        ))}
-      </ul>
+        )}
+      </div>
 
-      {modalComentarios && postSelecionado && (
-        <Comentario
-          post={postSelecionado}
-          comentarios={comentarios}
-          comentarioTexto={comentarioTexto}
-          setComentarioTexto={setComentarioTexto}
-          comentar={comentar}
-          fechar={() => setModalComentarios(false)}
-          usuario={usuario}
-        />
-      )}
+      {/* Lateral direita: Notificações + busca */}
+      <div className="lateral-direita">
+        <div style={{ position: 'relative' }}>
+          <FaSearch style={{ position: 'absolute', top: '40%', left: '10px', transform: 'translateY(-50%)', color: '#888' }} />
+          <input
+            type="text"
+            placeholder="Buscar usuários..."
+            className="barra-pesquisa-usuarios"
+            style={{ paddingLeft: '30px', borderRadius: '20px' }}
+            onChange={e => buscarUsuarios(e.target.value)}
+          />
+
+          {/* Resultados da busca */}
+          {resultadosBusca.length > 0 && (
+            <ul className="resultados-busca">
+              {resultadosBusca.map((usuario, index) => (
+                <li
+                  key={index}
+                  onClick={() => irParaPerfil(usuario.id)}
+                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', padding: '5px 0' }}
+                >
+                  <img
+                    src={usuario.imagem || 'https://via.placeholder.com/40'}
+                    alt="avatar"
+                    className="avatar-busca"
+                    style={{ width: '30px', height: '30px', borderRadius: '50%' }}
+                  />
+                  <span>{usuario.nome_usuario || usuario.nome}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="notificacoes-box">
+          <h4 style={{ textAlign: 'center' }}>
+            <FaBell style={{ marginRight: '6px' }} /> Notificações
+          </h4>
+          <ul>
+            {notificacoes.map((n, index) => (
+              <li key={index}>{n}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
