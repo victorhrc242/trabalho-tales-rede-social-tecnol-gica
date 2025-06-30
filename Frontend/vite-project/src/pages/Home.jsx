@@ -175,6 +175,9 @@ function Home() {
     const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
     const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
 
+
+
+    
     try {
       const res = await fetch(verificarUrl, { method: 'GET' });
       const data = await res.json();
