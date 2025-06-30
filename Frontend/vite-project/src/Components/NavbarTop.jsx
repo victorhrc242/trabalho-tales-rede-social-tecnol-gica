@@ -46,7 +46,7 @@ function NavbarTop({ usuarioLogado }) {
     <div className="navbar-top">
       <div className="logo">
         <Link to="/home">
-          <img src="../public/logoParadise.jpg" alt="Logo" className="imagem-logo-top" />
+          <img src="./public/logoParadise.jpg" alt="Logo" className="imagem-logo-top" />
         </Link>
       </div>
 

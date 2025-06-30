@@ -244,37 +244,7 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
         }}
       />
     </div>
-    {/* VERSÃO MOBILE */}
-    <div className="nome-e-editar nome-e-editar-mobile">
-      <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
-      {isPerfilProprio && !isEditing && (
-        <button
-          className="btn-editar-perfil"
-          onClick={() => setShowEditarModalMobile(true)}
-        >
-          Editar Perfil
-        </button>
-      )}
-    </div>
-  </div>
-
-  {/* VERSÃO DESKTOP - movida para ao lado da imagem */}
-  <div className="perfil-info-desktop">
-    <div className="topo-nome-botao">
-      <h1 className="nome-desktop">{usuario.nome_usuario}</h1>
-      {isPerfilProprio && !isEditing && (
-        <button
-          className="btn-editar-perfil"
-          onClick={() => setIsEditing(true)}
-        >
-          Editar Perfil
-        </button>
-      )}
-    </div>
-    <div className="infor-pessoais-desktop">
-      <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
-      <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
-    </div>
+    <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
   </div>
 
   <div className="perfil-info">
@@ -288,9 +258,23 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
         {isPerfilProprio ?  (
           <>
      {/* Editar */}
-    {!isEditing ? null : (
+    {!isEditing ? (
+      <div className="botoes-perfil">
+        <button
+          className="btn-editar-perfil"
+          onClick={() => {
+            if (window.innerWidth <= 768) {
+              setShowEditarModalMobile(true); // abre modal mobile
+            } else {
+              setIsEditing(true); // edição inline para desktop
+            }
+          }}
+        >
+          Editar Perfil
+        </button>
+      </div>
+            ) : (
               <div className="editar-formulario">
-                <h3>Nome</h3>
                 <input
                   type="text"
                   value={nome}
@@ -338,15 +322,14 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     <div className="editar-foto-container">
       <label className="editar-foto-label">
         <img
-        src={usuario.imagem || 'https://via.placeholder.com/150'}
-        alt={`Foto de perfil de ${usuario.nome_usuario}`}
-        style={{
-          width: '100%',
-          height: '100px',
-          borderRadius: '50%',
-          objectFit: 'cover'
-        }}
-      />
+          src={
+            imagemArquivo
+              ? URL.createObjectURL(imagemArquivo)
+              : imagem || 'https://via.placeholder.com/150'
+          }
+          alt="Foto de perfil"
+          className="foto-perfil-preview"
+        />
         <input
           type="file"
           accept="image/*"
@@ -371,23 +354,22 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     </div>
 
     <div className="editar-campos">
-      <h5>Nome</h5>
       <input
         type="text"
         value={nome}
         onChange={(e) => setNome(e.target.value)}
         placeholder="Nome"
       />
-      <h5>Biografia</h5>
       <textarea
         value={biografia}
         onChange={(e) => setBiografia(e.target.value)}
         placeholder="Biografia"
       />
     </div>
+
     <div className="editar-botoes">
-      <button className='btn-confirmar' onClick={editarPerfil}>Salvar</button>
-      <button className='btn-cancelar' onClick={() => setShowEditarModalMobile(false)}>Cancelar</button>
+      <button onClick={editarPerfil}>Salvar</button>
+      <button onClick={() => setShowEditarModalMobile(false)}>Cancelar</button>
     </div>
   </div>
 )}
