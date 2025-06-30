@@ -391,19 +391,24 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     </div>
   </div>
 )}
-    <div className="perfil-posts">
-      {posts.map((post) => (
-        <div
-          key={post.id}
-          className="post"
-          onClick={() => abrirModalPost(post)}
-          style={{ cursor: 'pointer' }}
-        >
-          {post.imagem && <img src={post.imagem} alt="Imagem do post" />}
-          <hr />
-        </div>
-      ))}
-    </div>
+      <div className="explore-grid">
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            className="grid-item"
+            onClick={() => abrirModalPost(post)}
+            style={{ cursor: 'pointer' }}
+          >
+            {post.imagem && (
+              <img
+                src={post.imagem}
+                alt="Imagem do post"
+                style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
 
     {modalPost && (
       <div className="modal-overlay" onClick={fecharModalPost}>

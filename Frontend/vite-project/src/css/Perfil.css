@@ -136,6 +136,98 @@ body {
   display: none;
 }
 
+/* Explore Grid - adaptado para perfil */
+.explore-grid {
+  column-count: 3;
+  column-gap: 10px;
+}
+
+@media (max-width: 800px) {
+  .explore-grid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 500px) {
+  .explore-grid {
+    column-count: 1;
+  }
+}
+
+.grid-item {
+  width: 293px;
+  height: 293px;
+  break-inside: avoid;
+  margin-bottom: 10px;
+  display: block;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.grid-item img,
+.grid-item.video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Estilo para vídeos */
+.grid-item.video {
+  aspect-ratio: auto; /* Remove aspect ratio */
+}
+
+.grid-item.video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Hover */
+.grid-item:hover {
+  transform: scale(1.01);
+  transition: transform 0.2s ease-in-out;
+}
+
+.grid-item:hover .overlay {
+  opacity: 1;
+}
+.overlay {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  width: 100%;
+  padding: 12px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Responsivo adicional para grid */
+@media (max-width: 600px) {
+  .explore-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-item {
+    width: 105px;
+    height: 105px;
+  }
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
   .perfil-header {
