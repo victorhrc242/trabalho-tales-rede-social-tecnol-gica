@@ -1,0 +1,194 @@
+/* Container principal */
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 20px 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Cabeçalho */
+.container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+/* Botão sair */
+.btn-sair {
+  float: right;
+  background-color: #e74c3c;
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-sair:hover {
+  background-color: #c0392b;
+}
+
+/* Cards de denúncia */
+.card-denuncia {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-denuncia:hover {
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.15);
+}
+
+/* Texto dentro do card */
+.card-denuncia p {
+  margin: 6px 0;
+  font-size: 15px;
+}
+
+/* Botões dentro do card */
+.card-denuncia button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  color: white;
+  margin-right: 10px;
+}
+
+.btn-deletar-denuncia {
+  background-color: #e74c3c;
+}
+
+.btn-deletar-denuncia:hover {
+  background-color: #c0392b;
+}
+
+.btn-ver-post {
+  background-color: #2980b9;
+}
+
+.btn-ver-post:hover {
+  background-color: #1c5980;
+}
+
+/* Modal fundo */
+.modal-fundo {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Modal conteúdo */
+.modal-conteudo {
+  background-color: white;
+  border-radius: 12px;
+  padding: 30px 25px;
+  max-width: 550px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  position: relative;
+  font-size: 16px;
+  color: #222;
+}
+
+/* Botão fechar modal */
+.btn-fechar {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+}
+
+.btn-fechar:hover {
+  color: #000;
+}
+
+/* Imagem post */
+.modal-conteudo img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: block;
+}
+
+/* Video post */
+.modal-conteudo video {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: block;
+}
+
+/* Botão deletar post no modal */
+.btn-deletar-post {
+  background-color: #e74c3c;
+  border: none;
+  padding: 12px 20px;
+  color: white;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+  transition: background-color 0.25s ease;
+}
+
+.btn-deletar-post:hover {
+  background-color: #c0392b;
+}
+
+/* Input login */
+.input-senha {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1.5px solid #ccc;
+  font-size: 16px;
+  outline-color: #2980b9;
+  margin-right: 12px;
+  width: 250px;
+}
+
+/* Botão login */
+.btn-login {
+  background-color: #2980b9;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.btn-login:hover {
+  background-color: #1c5980;
+}
+
+/* Mensagem centralizada */
+.msg-centralizada {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 40px;
+  color: #555;
+}
