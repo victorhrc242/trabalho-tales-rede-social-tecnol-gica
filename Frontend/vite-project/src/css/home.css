@@ -337,8 +337,10 @@ li {
   color: #333;
   display: flex;
   align-items: center;
+  justify-content: center; /* centraliza horizontalmente */
   gap: 6px;
 }
+
 
 .notificacoes-box ul {
   list-style: none;
