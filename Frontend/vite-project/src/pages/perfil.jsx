@@ -285,34 +285,72 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
       </div>
     )}
 
-        {isPerfilProprio ?  (
-          <>
-     {/* Editar */}
-    {!isEditing ? null : (
-              <div className="editar-formulario">
-                <h3>Nome</h3>
-                <input
-                  type="text"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  placeholder="Nome"
-                />
-                <textarea
-                  value={biografia}
-                  onChange={(e) => setBiografia(e.target.value)}
-                  placeholder="Biografia"
-                />
-                <input
-                  type="text"
-                  value={imagem}
-                  onChange={(e) => setImagem(e.target.value)}
-                  placeholder="Imagem URL"
-                />
-                <button onClick={editarPerfil}>Salvar</button>
-                <button onClick={() => setIsEditing(false)}>Cancelar</button>
-              </div>
-            )}
-          </>
+        {isPerfilProprio ? (
+  <>
+    {/* MODAL DE EDIÇÃO - DESKTOP */}
+    {isEditing && (
+      <div className="modal-overlay" onClick={() => setIsEditing(false)}>
+        <div className="modal-editar-desktop" onClick={(e) => e.stopPropagation()}>
+          <div className="editar-header">
+            <h2>Editar Perfil</h2>
+            <button className="btn-fechar" onClick={() => setIsEditing(false)}>×</button>
+          </div>
+          <div className="editar-conteudo">
+             <div className="editar-foto-container-desktop">
+  <div className="foto-wrapper">
+    <label className="editar-foto-label">
+      <img
+        src={usuario.imagem || 'https://via.placeholder.com/150'}
+        alt={`Foto de perfil de ${usuario.nome_usuario}`}
+        className="foto-perfil-preview"
+      />
+      <input
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files[0];
+          if (file && file.type.startsWith('image/')) {
+            setImagemArquivo(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setImagem(reader.result);
+            reader.readAsDataURL(file);
+          }
+        }}
+      />
+    </label>
+  </div>
+  <div className="botao-wrapper">
+    <button
+      className="btn-alterar-foto"
+      onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
+    >
+      Alterar foto de perfil
+    </button>
+  </div>
+</div>
+            <label>Nome</label>
+            <input
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Nome"
+            />
+            <label>Biografia</label>
+            <textarea
+              value={biografia}
+              onChange={(e) => setBiografia(e.target.value)}
+              placeholder="Biografia"
+            />
+            <div className="editar-botoes">
+              <button onClick={editarPerfil}>Salvar</button>
+              <button onClick={() => setIsEditing(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
         ) : (
           <div className="botoes-perfil">
             {estaSeguindo ? (
