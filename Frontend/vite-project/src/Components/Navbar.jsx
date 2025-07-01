@@ -15,6 +15,7 @@ function Navbar({ usuarioLogado, deslogar }) {
   const [imagem, setImagem] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
   const [expandida, setExpandida] = useState(false);
+  const [naoLidas, setNaoLidas] = useState({});
   const navigate = useNavigate();
 
   const toggleNavbar = () => setExpandida(!expandida);
@@ -49,7 +50,22 @@ const irParaConfiguracoes = () => {
   useEffect(() => {
     carregarDados();
   }, [carregarDados]);
+useEffect(() => {
+  const fetchNaoLidas = async () => {
+    if (!usuarioLogado?.id) return;
+    try {
+      const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/nao-lidas/${usuarioLogado.id}`);
+      if (res.data.sucesso) {
+        setNaoLidas(res.data.naoLidas);
+      }
+    } catch (e) {
+      console.error('Erro ao buscar não-lidas:', e);
+    }
+  };
+  fetchNaoLidas();
 
+  // opcional: re-carregar quando a aba de Mensagens for visitada
+}, [usuarioLogado?.id]);
   const irParaPerfil = () => {
     if (usuarioLogado?.id) {
       navigate('/perfil/:id', { state: { userId: usuarioLogado.id } });
@@ -109,7 +125,18 @@ const irParaConfiguracoes = () => {
 
         <div className='nav-explore'><Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link></div>
         <div className='nav-reels'><Link to="/kurz" className="nav-item"><FaVideo /> <span>kurz</span></Link></div>
-        <div className='nav-mensagens'><Link to="/mensagen" className="nav-item"><FaPaperPlane /> <span>Mensagens</span></Link></div>
+      <div className='nav-mensagens'>
+  <Link to="/mensagen" className="nav-item">
+    <FaPaperPlane />
+    <span>Mensagens</span>
+    { /* Badge: soma de todas as não lidas (ou apenas de um chat?) */ }
+    { Object.values(naoLidas).reduce((a, b) => a + b, 0) > 0 && (
+      <span className="badge-mensagens">
+        {Object.values(naoLidas).reduce((a, b) => a + b, 0)}
+      </span>
+    )}
+  </Link>
+</div>
         <div className='nav-notificacoes'><Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
 
         <div className="nav-item" onClick={() => setMostrarModal(true)}>
