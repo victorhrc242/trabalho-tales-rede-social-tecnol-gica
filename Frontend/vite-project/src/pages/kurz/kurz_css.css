@@ -1,63 +1,66 @@
 .kurz-feed {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 0;
+  margin: 0;
 }
 
+/* Cada vídeo ocupa toda a altura do card, centralizado */
 .kurz-card {
+  scroll-snap-align: start;
   width: 400px;
-  margin-bottom: 40px;
+  height: 700px;
+  margin: 20px 0;
   position: relative;
+  flex-shrink: 0;
 }
 
+/* Container do vídeo com tamanho fixo */
 .video-container {
   position: relative;
   width: 100%;
-  height: 600px;
+  height: 100%;
   border-radius: 16px;
   overflow: hidden;
   background-color: black;
 }
 
+/* Wrapper que envolve o vídeo (mantém altura cheia) */
 .video-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative; /* NECESSÁRIO para posicionar elementos absolutos dentro */
+}
+
+/* O vídeo ocupa 84% da altura do card (como você pediu) */
+.video {
   position: relative;
   width: 100%;
-  height: 100%;
-}
-
-.video {
-  width: 100%;
-  height: 100%;
+  height: 84%;
   object-fit: cover;
-  cursor: pointer;
   border-radius: 16px;
-}
-
-.mute-btn {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.4);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  font-size: 16px;
   cursor: pointer;
+  display: block;
 }
 
+/* Ícones dentro do vídeo */
 .video-icons {
   position: absolute;
   right: 10px;
-  bottom: 20px;
+  bottom: 16%;
   display: flex;
   flex-direction: column;
   gap: 20px;
   align-items: center;
+  z-index: 10;
+  pointer-events: auto;
 }
 
+/* Botões e número de curtidas/comentários */
 .video-icons button {
   background: none;
   border: none;
@@ -72,29 +75,24 @@
   font-size: 14px;
 }
 
-.video-caption {
-  margin-top: 10px;
-  font-size: 15px;
-  color: #333;
-  text-align: left;
-  max-width: 400px;
-}
-
+/* Legenda e autor, dentro do vídeo */
 .video-overlay-info {
   position: absolute;
-  bottom: 15px;
+  bottom: 18%; /* antes era 5%, agora sobe para ficar dentro dos 84% */
   left: 10px;
   right: 10px;
   color: white;
-  background: rgba(0, 0, 0, 0.45);
+  background: transparent;
   border-radius: 10px;
   padding: 10px;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
+
+/* Autor */
 .video-author {
   display: flex;
   align-items: center;
@@ -119,4 +117,6 @@
   line-height: 1.4;
   word-break: break-word;
 }
+
+/* Botão de mute também dentro do vídeo */
 

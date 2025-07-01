@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
-import Comentario from '../../Components/Comentario';  // ajuste o caminho conforme a sua estrutura
+import Comentario from '../../Components/Comentario';
 import './kurz_css.css';
 
 function VideoPlayer({ videoUrl, isActive }) {
@@ -42,9 +42,9 @@ function VideoPlayer({ videoUrl, isActive }) {
         className="video"
         onClick={handleVideoClick}
       />
-      <button className="mute-btn" onClick={toggleMute}>
+      {/* <button className="mute-btn" onClick={toggleMute}>
         {isMuted ? '🔇' : '🔊'}
-      </button>
+      </button> */}
     </div>
   );
 }
@@ -52,18 +52,12 @@ function VideoPlayer({ videoUrl, isActive }) {
 const Kurz = () => {
   const [videos, setVideos] = useState([]);
   const [curtidas, setCurtidas] = useState({});
-  const [usuarioCurtidas, setUsuarioCurtidas] = useState([]); // IDs dos posts curtidos pelo usuário
+  const [usuarioCurtidas, setUsuarioCurtidas] = useState([]);
   const [videoAtual, setVideoAtual] = useState(0);
-
-  // Estados para o modal de comentários
   const [modalComentarios, setModalComentarios] = useState(false);
   const [postSelecionado, setPostSelecionado] = useState(null);
-  const [comentarios, setComentarios] = useState({});
-
-  // Estado para o texto do comentário novo
   const [comentarioTexto, setComentarioTexto] = useState('');
-
-  const videoRefs = useRef([]);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     async function fetchVideos() {
@@ -84,38 +78,73 @@ const Kurz = () => {
     fetchVideos();
   }, []);
 
-  // Abrir modal passando o post clicado
+  // Scroll controlado com setas e roda do mouse
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setVideoAtual((prev) => Math.min(prev + 1, videos.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setVideoAtual((prev) => Math.max(prev - 1, 0));
+      }
+    };
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        setVideoAtual((prev) => Math.min(prev + 1, videos.length - 1));
+      } else {
+        setVideoAtual((prev) => Math.max(prev - 1, 0));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    const container = containerRef.current;
+    if (container) container.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if (container) container.removeEventListener('wheel', handleWheel);
+    };
+  }, [videos]);
+
+  // Scroll para o vídeo atual
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      const target = container.children[videoAtual];
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [videoAtual]);
+
   const abrirComentarios = (post) => {
     setPostSelecionado(post);
     setModalComentarios(true);
     setComentarioTexto('');
   };
 
-  // Fechar modal
   const fecharComentarios = () => {
     setModalComentarios(false);
     setPostSelecionado(null);
   };
 
-  // Curtir post (exemplo simples)
   const curtirPost = (postId) => {
     setCurtidas(prev => ({
       ...prev,
       [postId]: (prev[postId] || 0) + 1,
     }));
 
-    // Marcar que o usuário curtiu esse post para mudar a cor do coração no modal
     if (!usuarioCurtidas.includes(postId)) {
       setUsuarioCurtidas(prev => [...prev, postId]);
     }
   };
-  
 
-  // Função para enviar comentário (exemplo local, você pode adaptar para API)
   const comentar = () => {
     if (!comentarioTexto.trim() || !postSelecionado) return;
 
-    // Atualiza o array de comentários localmente (ideal seria fazer na API)
     const novoComentario = {
       id: Date.now(),
       autorNome: 'Você',
@@ -135,7 +164,6 @@ const Kurz = () => {
 
     setVideos(novosVideos);
 
-    // Atualiza o postSelecionado com o novo comentário
     setPostSelecionado(prev => ({
       ...prev,
       comentarios: [...(prev.comentarios || []), novoComentario],
@@ -143,61 +171,46 @@ const Kurz = () => {
 
     setComentarioTexto('');
   };
-  
 
   if (!videos.length) return <div className="kurz-loading">Carregando vídeos...</div>;
 
   return (
-    <div className="kurz-feed">
+    <div className="kurz-feed" ref={containerRef}>
+      {videos.map((video, index) => (
+        <div className="kurz-card" key={video.id}>
+          <VideoPlayer
+            videoUrl={video.video}
+            isActive={videoAtual === index}
+          />
 
-     {videos.map((video, index) => (
+          <div className="video-overlay-info">
+            <div className="video-author">
+              <img
+                src={video.autorImagem || 'https://i.pravatar.cc/40'}
+                alt={video.autorNome}
+                className="video-author-avatar"
+              />
+              <span className="video-author-name">{video.autorNome}</span>
+            </div>
+            <p className="video-caption-text">{video.caption || 'Sem legenda'}</p>
+          </div>
 
-  <div className="kurz-card" key={video.id}>
-
-    {/* Vídeo */}
-    <div className="video-container" ref={el => (videoRefs.current[index] = el)}>
-  <VideoPlayer
-    videoUrl={video.video}
-    isActive={videoAtual === index}
-    
-  />
-
-  {/* Legenda sobre o vídeo */}
- <div className="video-overlay-info">
-  <div className="video-author">
-    <img
-      src={video.autorImagem || 'https://i.pravatar.cc/40'}
-      alt={video.autorNome}
-      className="video-author-avatar"
-    />
-    <span className="video-author-name">{video.autorNome}</span>
-  </div>
-  <p className="video-caption-text">{video.caption || 'Sem legenda'}</p>
-</div>
-
-  {/* Ícones sobrepostos */}
-  <div className="video-icons">
-
-    <button onClick={() => curtirPost(video.id)}>
-      <Heart
-        size={28}
-        color={curtidas[video.id] > 0 ? 'red' : 'white'}
-        fill={curtidas[video.id] > 0 ? 'red' : 'none'}
-      />
-      <span>{curtidas[video.id]}</span>
-    </button>
-    <button onClick={() => abrirComentarios(video)}>
-      <MessageCircle size={28} color="white" />
-      <span>{video.comentarios?.length || 0}</span>
-    </button>
-  </div>
-</div>
-
-   
-  </div>
-))}
-
-       
+          <div className="video-icons">
+            <button onClick={() => curtirPost(video.id)}>
+              <Heart
+                size={28}
+                color={curtidas[video.id] > 0 ? 'red' : 'white'}
+                fill={curtidas[video.id] > 0 ? 'red' : 'none'}
+              />
+              <span>{curtidas[video.id]}</span>
+            </button>
+            <button onClick={() => abrirComentarios(video)}>
+              <MessageCircle size={28} color="white" />
+              <span>{video.comentarios?.length || 0}</span>
+            </button>
+          </div>
+        </div>
+      ))}
 
       {modalComentarios && postSelecionado && (
         <Comentario
