@@ -10,7 +10,7 @@ body {
 .perfil-container {
   max-width: 935px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 65px 20px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
@@ -26,7 +26,7 @@ body {
 
 .foto-perfil,
 .foto-perfil-placeholder {
-  width: 150px;
+   width: 150px;
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
@@ -34,7 +34,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 48px;
   font-weight: bold;
   color: white;
   overflow: hidden;
@@ -71,6 +70,15 @@ body {
   cursor: pointer;
   font-weight: 600;
   transition: background-color 0.2s ease;
+  
+}
+
+.btn-confirmar hover{
+  background-color: #1ba816;
+}
+
+.btn-cancelar hover{
+  background-color: #b11616;
 }
 
 .botoes-perfil button:hover {
@@ -93,7 +101,6 @@ body {
   width: 100%;
   border-top: 1px solid #dbdbdb;
   padding-top: 30px;
-
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 por linha */
   gap: 15px; /* Espaçamento entre posts */
@@ -127,6 +134,98 @@ body {
 .post p,
 .post hr {
   display: none;
+}
+
+/* Explore Grid - adaptado para perfil */
+.explore-grid {
+  column-count: 3;
+  column-gap: 10px;
+}
+
+@media (max-width: 800px) {
+  .explore-grid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 500px) {
+  .explore-grid {
+    column-count: 1;
+  }
+}
+
+.grid-item {
+  width: 293px;
+  height: 293px;
+  break-inside: avoid;
+  margin-bottom: 10px;
+  display: block;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.grid-item img,
+.grid-item.video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Estilo para vídeos */
+.grid-item.video {
+  aspect-ratio: auto; /* Remove aspect ratio */
+}
+
+.grid-item.video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Hover */
+.grid-item:hover {
+  transform: scale(1.01);
+  transition: transform 0.2s ease-in-out;
+}
+
+.grid-item:hover .overlay {
+  opacity: 1;
+}
+.overlay {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  width: 100%;
+  padding: 12px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Responsivo adicional para grid */
+@media (max-width: 600px) {
+  .explore-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-item {
+    width: 105px;
+    height: 105px;
+  }
 }
 
 /* Responsivo */
@@ -167,10 +266,83 @@ body {
 @media (max-width: 480px) {
   .perfil-posts {
     grid-template-columns: 1fr; /* 1 por linha no celular */
+    
   }
+  .perfil-info-desktop {
+  display: none !important;
+}
 }
 }
 
+/* Esconde a versão desktop no mobile */
+.nome-e-editar-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.perfil-header {
+  display: flex;
+  align-items: flex-start; /* Alinha pelo topo */
+  justify-content: flex-start;
+  gap: 40px;
+  margin-bottom: 40px;
+  flex-wrap: nowrap;
+}
+
+.perfil-info-desktop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start; /* importante */
+  gap: 10px;
+  flex: 1; /* ajuda a ocupar o espaço restante */
+}
+
+@media (min-width: 769px) {
+  /* Esconde a versão mobile no desktop */
+  .nome-e-editar-mobile {
+    display: none !important;
+  }
+
+  .perfil-info-desktop {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .topo-nome-botao {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .nome-desktop {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+
+  .infor-pessoais{
+    display: none !important;
+  }
+
+  .infor-pessoais-desktop {
+    display: flex;
+    gap: 30px;
+    margin-top: 8px;
+  }
+
+  .infor-pessoais-desktop p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+  }
+}
 
 /* Loading e erro */
 .loading,
@@ -325,6 +497,7 @@ body {
     flex-direction: column;
     height: auto;
     max-height: 90vh;
+    
   }
 
   .modal-post-imagem-container {
@@ -335,9 +508,7 @@ body {
   .modal-post-conteudo {
     padding: 15px;
   }
-}
 
-@media (max-width: 768px) {
  .perfil-header {
     flex-direction: row;
     align-items: flex-start;
@@ -369,6 +540,19 @@ body {
     margin: 0;
     font-size: 14px;
     text-align: right;
+  }
+
+    .botoes-perfil {
+    margin-top: 4px;
+    display: flex;
+    justify-content: center;
+    
+  }
+
+  .btn-editar-perfil {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 4px;
   }
 }
 
@@ -409,8 +593,8 @@ body {
 .btn-alterar-foto {
   margin-top: 10px;
   padding: 8px 12px;
-  background-color: #007aff;
-  color: white;
+  background-color: #ffffff00;
+  color: #007bff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -435,5 +619,71 @@ body {
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
+}
+
+.perfil-header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centraliza a foto + info */
+  gap: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.foto-perfil-bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.perfil-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.infor-pessoais {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.infor-pessoais p {
+  margin: 0;
+  font-size: 15px;
+  color: #555;
+  text-align: center;
+}
+
+/* Botão Editar ajustado */
+.btn-editar-perfil {
+  border: 1px solid #0a66c2;
+  background-color: #0a66c2;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.nome-e-editar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 12px;
+}
+
+.nome-e-editar .btn-editar-perfil {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+.btn-editar-perfil:hover {
+  background-color: #044280;
 }
 

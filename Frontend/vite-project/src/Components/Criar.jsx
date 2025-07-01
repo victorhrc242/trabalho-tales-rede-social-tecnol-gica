@@ -141,7 +141,7 @@ function Criar({ usuarioLogado, onClose }) {
     <>
       {/* Modal principal */}
       {modalAberto && (
-        <div className="modal-overlay" onClick={() => setModalAberto(false)}>
+        <div className="modal-overlay" onClick={onClose}>
           <div
             className={`modal-CriarPost ${etapa === 2 ? 'modal-CriarPost-etapa2' : ''}`}
             onClick={(e) => e.stopPropagation()}
@@ -232,13 +232,13 @@ function Criar({ usuarioLogado, onClose }) {
                       {enviando ? 'Postando...' : 'Publicar'}
                     </button>
                     <button
-                      className='button-cancel'
-                      type="button"
-                      onClick={() => {
-                        setModalAberto(false);
-                        setEtapa(1);
-                      }}
-                    >Cancelar</button>
+                    className='button-cancel'
+                    type="button"
+                    onClick={() => {
+                      setEtapa(1);
+                      onClose();
+                    }}
+                  >Cancelar</button>
                   </div>
                 </>
               )}
