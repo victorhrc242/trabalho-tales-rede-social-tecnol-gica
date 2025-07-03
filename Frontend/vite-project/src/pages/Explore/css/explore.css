@@ -96,9 +96,16 @@ body, html {
   }
 
   .explore-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* Mantém as colunas como no desktop (3 colunas), só ajusta o espaçamento */
+    column-count: 3;
+    column-gap: 3px; /* menor espaço entre colunas */
+  }
+
+  .grid-item {
+    margin-bottom: 3px; /* menor espaço entre os itens */
   }
 }
+
 
 
 .explore-header {
@@ -110,9 +117,11 @@ body, html {
   width: 100%;
   padding: 10px 15px;
   font-size: 16px;
-  border-radius: 20px;
+  border-radius: 15px;
   border: 1px solid #ccc;
   box-sizing: border-box;
   outline: none;
 }
+
+
 
