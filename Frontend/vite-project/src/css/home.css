@@ -385,7 +385,7 @@ li {
   border-radius: 50%;
   flex-shrink: 0;
   object-fit: cover;
-  border: 2px solid #007bff;
+  border: 1px solid #007bff;
 }
 
 .info-notificacao {
@@ -395,32 +395,6 @@ li {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-/* Botão seguir estilizado */
-.btn-seguir {
-  align-self: flex-start;
-  padding: 6px 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,123,255,0.6);
-  transition: background-color 0.3s ease;
-}
-
-.btn-seguir:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-.btn-seguir:disabled {
-  background-color: #999;
-  cursor: default;
-  box-shadow: none;
-  color: #eee;
 }
 
 
