@@ -73,11 +73,11 @@ body {
   
 }
 
-.btn-confirmar hover{
+.btn-confirmar :hover{
   background-color: #1ba816;
 }
 
-.btn-cancelar hover{
+.btn-cancelar:hover{
   background-color: #b11616;
 }
 

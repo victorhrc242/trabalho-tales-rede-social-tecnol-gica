@@ -2,9 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
 
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
+const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Perfil = ({ usuarioLogado }) => {
   const location = useLocation();
@@ -123,13 +128,34 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     carregarDados();
   }, [userId, navigate, usuarioLogadoId]);
 
+  const uploadImagem = async (file) => {
+  const fileName = `${Date.now()}_${file.name}`;
+  const { data, error } = await supabase.storage
+    .from('imagens-usuarios')
+    .upload(`perfil/${fileName}`, file);
+
+  if (error) {
+    console.error('Erro ao fazer upload:', error);
+    throw error;
+  }
+
+  const urlPublica = `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/${fileName}`;
+  return urlPublica;
+};
+
   const editarPerfil = async () => {
     try {
       const payload = {};
 
       if (nome !== usuario.nome_usuario) payload.nome_usuario = nome;
       if (biografia !== usuario.biografia) payload.biografia = biografia;
-      if (imagem !== usuario.FotoPerfil) payload.imagem = imagem;
+      if (imagemArquivo) {
+      const novaUrlImagem = await uploadImagem(imagemArquivo);
+      payload.FotoPerfil = novaUrlImagem;
+      setImagem(novaUrlImagem); // atualiza a imagem no preview também
+    } else if (imagem !== usuario.FotoPerfil) {
+      payload.FotoPerfil = imagem;
+    }
 
       if (Object.keys(payload).length === 0) {
         alert('Não há dados para atualizar.');
@@ -141,10 +167,12 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
         payload
       );
 
-      setUsuario(response.data[0]);
+      setUsuario(response.data[0] || response.data);
       setIsEditing(false);
+      setShowEditarModalMobile(false);
     } catch (err) {
       console.error('Erro ao editar perfil:', err);
+      alert('Erro ao editar perfil. Verifique os dados e tente novamente.');  
     }
   };
 
@@ -322,7 +350,7 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   </div>
   <div className="botao-wrapper">
     <button
-      className="btn-alterar-foto"
+      className="botoes-perfil"
       onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
     >
       Alterar foto de perfil
@@ -344,7 +372,7 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
             />
             <div className="editar-botoes">
               <button onClick={editarPerfil}>Salvar</button>
-              <button onClick={() => setIsEditing(false)}>Cancelar</button>
+              <button className='cancelar' onClick={() => setIsEditing(false)}>Cancelar</button>
             </div>
           </div>
         </div>
