@@ -107,7 +107,6 @@ body, html {
 }
 
 
-
 .explore-header {
   margin-bottom: 20px;
   padding: 0 10px;
@@ -123,5 +122,16 @@ body, html {
   outline: none;
 }
 
+/* Por padrão, a barra está oculta */
+.barra-pesquisa {
+  display: none;
+}
+
+/* No mobile, mostra a barra */
+@media (max-width: 600px) {
+  .barra-pesquisa {
+    display: block; /* ou inline-block */
+  }
+}
 
 

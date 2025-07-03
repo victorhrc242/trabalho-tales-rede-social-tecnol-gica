@@ -133,23 +133,23 @@ function Comentario({
             )}
           </div>
 
-         <div className="comentarios-lista">
+        <div className="comentarios-lista">
   {comentarios.map((c, i) => {
     const comentarioJaCurtiu = usuarioCurtidas?.includes(c.id);
     return (
       <div key={c.id || i} className="comentario-item">
         <img
-          src={
-            c.autorImagem ||
-            'https://via.placeholder.com/40'
-          }
+          src={c.autorImagem || 'https://via.placeholder.com/40'}
           alt={`Foto de perfil de ${c.autorNome}`}
           className="autor-imagem"
         />
         <div className="comentario-conteudo">
           <div className="comentario-header">
             <span className="comentario-autor">{c.autorNome}</span>
-            <button className="botao-acao" onClick={() => curtirPost(c.id)}>
+          </div>
+          <span className="comentario-texto">{c.conteudo}</span>
+          <div className="botao-acao">
+            <button className={`botao-acao ${comentarioJaCurtiu ? 'curtido' : ''}`} onClick={() => curtirPost(c.id)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -165,7 +165,6 @@ function Comentario({
               </svg>
             </button>
           </div>
-          <span className="comentario-texto">{c.conteudo}</span>
         </div>
       </div>
     );
