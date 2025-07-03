@@ -24,6 +24,9 @@ function Criar({ usuarioLogado, onClose }) {
   const [enviando, setEnviando] = useState(false);
   const [mostrarMiniModal, setMostrarMiniModal] = useState(false);
   const [modalAberto, setModalAberto] = useState(true);
+  //Sugestões de tgas
+  const [sugestoesTags, setSugestoesTags] = useState([]);
+
 
   // Criação de URL de preview para imagem/vídeo
   useEffect(() => {
@@ -136,7 +139,38 @@ function Criar({ usuarioLogado, onClose }) {
     }
   };
 
-  // Renderização
+  // sugestões de tags
+  const buscarTags = async (texto) => {
+  const ultimaPalavra = texto.split(',').pop().trim();
+  if (ultimaPalavra.length < 1) {
+    setSugestoesTags([]);
+    return;
+  }
+
+  try {
+    const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/tags?busca=${ultimaPalavra}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setSugestoesTags(data);
+      }
+    } else {
+      setSugestoesTags([]);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar tags:', error);
+    setSugestoesTags([]);
+  }
+};
+useEffect(() => {
+  const delayDebounceFn = setTimeout(() => {
+    buscarTags(tags);
+  }, 500); // 500ms debounce
+
+  return () => clearTimeout(delayDebounceFn);
+}, [tags]);
+
+
   return (
     <>
       {/* Modal principal */}
@@ -221,12 +255,45 @@ function Criar({ usuarioLogado, onClose }) {
                     onChange={(e) => setConteudo(e.target.value)}
                     required
                   />
-                  <input
-                    type="text"
-                    placeholder="Tags separadas por vírgula"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                  />
+           {/* Campo de tags com sugestões */}
+              <div className="sugestoes-tags-wrapper">
+                <input
+                  type="text"
+                  placeholder="Tags separadas por vírgula"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  onFocus={() => buscarTags(tags)}
+                />
+
+                {/* Sugestões tipo "chip" horizontal */}
+            {tags && sugestoesTags.length > 0 && (
+              <div className="sugestoes-chip-container">
+                {sugestoesTags
+                  .filter(tag => {
+                    const ultima = tags.split(',').pop().trim().toLowerCase();
+                    return tag.toLowerCase().startsWith(ultima);
+                  })
+                  .map((tag, index) => (
+                    <div
+                      key={index}
+                      className="chip-sugestao"
+                      onClick={() => {
+                        const tagsArray = tags.split(',').map(t => t.trim());
+                        tagsArray.pop(); // remove a palavra incompleta
+                        if (!tagsArray.includes(tag)) {
+                          tagsArray.push(tag);
+                          setTags(tagsArray.join(', ') + ', ');
+                        }
+                        setSugestoesTags([]);
+                      }}
+                    >
+                      {tag}
+                    </div>
+                  ))}
+              </div>
+            )}
+              </div>
+
                   <div className="botoes-acoes">
                     <button className='button-confirme' type="submit" disabled={enviando}>
                       {enviando ? 'Postando...' : 'Publicar'}

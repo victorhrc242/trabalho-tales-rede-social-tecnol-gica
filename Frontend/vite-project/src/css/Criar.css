@@ -247,3 +247,62 @@ button:hover {
     transform: translateY(0);
   }
 }
+/* Segestão de tgas */
+.sugestoes-tags-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  position: relative;
+}
+
+.sugestoes-chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 5px 0;
+}
+
+.chip-sugestao {
+  padding: 6px 12px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chip-sugestao:hover {
+  background-color: #e0e0e0;
+}
+.sugestoes-tags-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  position: relative;
+}
+
+.sugestoes-chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 5px 0;
+}
+
+.chip-sugestao {
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 14px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chip-sugestao:hover {
+  background-color: #e0e0e0;
+}

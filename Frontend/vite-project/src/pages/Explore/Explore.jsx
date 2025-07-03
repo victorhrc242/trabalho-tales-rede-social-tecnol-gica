@@ -288,17 +288,17 @@ const [seguindoUsuario, setSeguindoUsuario] = useState({});
   }
 };
 
-
   return (
     <div className="explore-page">
       <div style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          placeholder="Buscar usuários pelo nome..."
-          value={buscaTexto}
-          onChange={e => setBuscaTexto(e.target.value)}
-          style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
+       <input
+        className="barra-pesquisa"
+       type="text"  //esta impedindo de arredondar as bordas
+        placeholder="Buscar usuários pelo nome..."
+        value={buscaTexto}
+        onChange={e => setBuscaTexto(e.target.value)}
+        style={{borderRadius: '15px'}}
+      />
 
         {buscandoUsuarios && <p></p>}
         {erroBuscaUsuarios && <p style={{ color: 'red' }}>{erroBuscaUsuarios}</p>}
