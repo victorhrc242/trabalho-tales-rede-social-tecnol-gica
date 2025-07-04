@@ -57,7 +57,7 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
       alert('Erro ao seguir usuário. Tente novamente.');
     }
   };
-
+  
   useEffect(() => {
     if (!userId) {
       navigate('/');
@@ -71,9 +71,9 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
           `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
         );
         setUsuario(userData);
-        setNome(userData.nome_usuario || '');
+        setNome(userData.nome || '');
         setBiografia(userData.biografia || '');
-        setImagem(userData.FotoPerfil || '');
+        setImagem(userData.imagem || '');
 
         // Carregar posts do usuário
         const { data: postsData } = await axios.get(
@@ -147,15 +147,15 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     try {
       const payload = {};
 
-      if (nome !== usuario.nome_usuario) payload.nome_usuario = nome;
-      if (biografia !== usuario.biografia) payload.biografia = biografia;
-      if (imagemArquivo) {
-      const novaUrlImagem = await uploadImagem(imagemArquivo);
-      payload.FotoPerfil = novaUrlImagem;
-      setImagem(novaUrlImagem); // atualiza a imagem no preview também
-    } else if (imagem !== usuario.FotoPerfil) {
-      payload.FotoPerfil = imagem;
-    }
+      if (nome !== usuario.nome) payload.nome = nome;
+if (biografia !== usuario.biografia) payload.biografia = biografia;
+if (imagemArquivo) {
+  const novaUrlImagem = await uploadImagem(imagemArquivo);
+  payload.imagem = novaUrlImagem;
+  setImagem(novaUrlImagem);
+} else if (imagem !== usuario.imagem) {
+  payload.imagem = imagem;
+}
 
       if (Object.keys(payload).length === 0) {
         alert('Não há dados para atualizar.');

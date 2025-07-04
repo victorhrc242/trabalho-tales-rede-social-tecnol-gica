@@ -20,7 +20,8 @@ function NavbarTop({ usuarioLogado }) {
   }, []);
 
   // Verifica se está na rota /mensagen
-  const isOnMensagensPage = location.pathname === '/mensagen';
+  const isOnMensagensPage = location.pathname.startsWith('/mensagen') ||
+     location.pathname.startsWith('/perfil');;
 
   // Se for mobile e estiver na /mensagen, não renderiza nada
   if (isMobile && isOnMensagensPage) {
