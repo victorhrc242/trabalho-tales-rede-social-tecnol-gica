@@ -57,7 +57,7 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
       alert('Erro ao seguir usuário. Tente novamente.');
     }
   };
-  
+
   useEffect(() => {
     if (!userId) {
       navigate('/');
@@ -302,6 +302,9 @@ if (imagemArquivo) {
     <div className="infor-pessoais-desktop">
       <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
       <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+      {usuario.biografia && (
+    <p className="biografia">{usuario.biografia}</p>
+  )} 
     </div>
   </div>
 
