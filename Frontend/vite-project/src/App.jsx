@@ -13,7 +13,7 @@ import Explore from './pages/Explore/Explore';
 import Notificacoes from './pages/Notificacao/Notificacoes ';
 import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
 import Kurz from './pages/kurz/Kurz';
-
+import DenunciasAdmin from './adm/DenunciasAdmin';
 function AppWrapper() {
   const location = useLocation();
 
@@ -90,6 +90,7 @@ function AppWrapper() {
   <Route path="/notificacoes" element={<Notificacoes />} />
   <Route path="/configuracoes" element={<Configuracoes />} />
   <Route path="/kurz" element={<Kurz />} /> 
+  <Route path="/adm-painel-de-denuncias2025/2026" element={<DenunciasAdmin/>}/>
 </Routes>
 
     </>
