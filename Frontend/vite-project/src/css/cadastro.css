@@ -7,8 +7,6 @@
   padding: 20px;
 }
 
-
-
 /* Modal (caixa do formulário) */
 .signup-box {
   background-color: transparent;
@@ -60,7 +58,7 @@
 
 /* Inputs e textarea */
 .signup-form input[type="text"],
-.signup-form input,
+.signup-form input, /* <-- ESSA LINHA inclui todos os inputs (redundante com a linha anterior) */
 .signup-form textarea {
   background-color: #ffffff;
   border: 1px solid #0a66c2;
@@ -165,7 +163,6 @@
   font-weight: 500;
 }
 
-
 /* Foto de perfil - imagem circular */
 .profile-photo-preview {
   width: 100px;
@@ -175,7 +172,7 @@
   border: 2px solid #0a66c2;
   cursor: pointer;
   display: block;
-  margin: 0 auto 1rem auto;
+  margin: 0 auto 10px auto; /* Reduzido de 1rem para 10px */
   background-color: #eee;
   transition: box-shadow 0.3s ease;
 }
@@ -199,7 +196,7 @@
 .input-wrapper {
   position: relative;
   width: 70%;
-  margin: 0 auto 20px auto; /* Centraliza o input no formulário */
+  margin: 0 auto 10px auto; /* Diminuído para 10px */
 }
 
 /* Estilo dos inputs */
@@ -229,12 +226,6 @@
   pointer-events: none;
 }
 
-/* Reduz o espaçamento entre os campos */
-.input-wrapper {
-  position: relative;
-  width: 70%;
-  margin: 0 auto 10px auto; /* Diminuído de 20px para 10px */
-}
 /* estilo da escreita da dta de nascimento */
 .input-label {
   display: block;
@@ -244,6 +235,7 @@
   font-weight: 500;
   margin-left: 4px;
 }
+
 .custom-datepicker-input {
   width: 100%;
   padding: 12px;
@@ -254,41 +246,13 @@
   color: #262626;
 }
 
-
-
-
-
-/* Reduz espaço abaixo da imagem de perfil */
-.profile-photo-preview {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #0a66c2;
-  cursor: pointer;
-  display: block;
-  margin: 0 auto 10px auto; /* Antes: 1rem, agora: 10px */
-  background-color: #eee;
-  transition: box-shadow 0.3s ease;
-}
-
-/* Adicional: diminui espaço entre textarea (bio) e botão */
-.signup-form textarea {
-  height: 120px;
-  resize: vertical;
-  margin-bottom: 10px; /* Adicionado para reduzir espaço extra */
-}
-
-
-
-
 /* Responsividade para qualquer celular */
 @media screen and (max-width: 600px) {
 
   /* Reset e correção universal */
-* {
-  box-sizing: border-box;
-}
+  * {
+    box-sizing: border-box;
+  }
 
   html, body {
     margin: 0;
@@ -347,3 +311,45 @@
     margin-bottom: 14px;
   }
 }
+
+/* Mensagem toast de erro */
+.error-toast {
+  position: absolute;
+  z-index: 9999;
+  background-color: #ff4d4f;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+  font-size: 14px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.error-toast button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  float: right;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media screen and (max-width: 600px) {
+  .error-toast.responsive-position {
+    position: fixed !important;
+    top: 50px !important; /* Ajuste essa distância para ficar próximo ao h2 */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 90% !important;
+    max-width: 350px;
+    box-sizing: border-box;
+    z-index: 10000;
+  }
+}
+
