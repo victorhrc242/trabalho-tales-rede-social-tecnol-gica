@@ -119,7 +119,6 @@
 /* Parágrafo e link */
 .signup-form p {
   text-align: center;
-  color: #474747;
   margin-top: 10px;
 }
 
@@ -134,8 +133,8 @@
 
 /* Mensagem de erro */
 .error-message {
-  color: #5094d8;
-  background-color: #330000;
+  color: #ffffff;
+  background-color: #da0909;
   padding: 10px;
   margin-top: 10px;
   border-radius: 8px;
@@ -279,7 +278,15 @@
   margin-bottom: 10px; /* Adicionado para reduzir espaço extra */
 }
 
-
+/* Texto validar senha */
+.senha-texto {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 4px;   /* espaço pequeno entre input e texto */
+  margin-bottom: 10px; /* espaço depois do texto */
+  color: #292929;
+}
 
 
 /* Responsividade para qualquer celular */
@@ -346,4 +353,26 @@
     height: 85px;
     margin-bottom: 14px;
   }
+}
+
+
+.success-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #28a745;
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-size: 16px;
+  z-index: 1000;
+  animation: fadeInOut 3s ease forwards;
+}
+
+/* animação para fade */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10%, 90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
 }

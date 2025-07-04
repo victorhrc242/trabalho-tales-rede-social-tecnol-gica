@@ -17,7 +17,6 @@ const Mensagens = () => {
   const [usuarioLogado, setUsuarioLogado] = useState(null); // Dados do usuário logado
   const [busca, setBusca] = useState(''); // Texto de busca na lista de usuários
   const [seguindoFiltrado, setSeguindoFiltrado] = useState([]); // Lista filtrada com base na busca
-
   const [naoLidas, setNaoLidas] = useState({}); // Contador de mensagens não lidas por usuário
   const [modalAberto, setModalAberto] = useState(false); // Estado para controle do modal (menu do chat)
 
@@ -89,10 +88,6 @@ const fetchSeguindo = async () => {
 
     setSeguindo(listaCompletada);
     setSeguindoFiltrado(listaCompletada);
-    const resNaoLidas = await axios.get(`${API_URL}/api/Mensagens/nao-lidas/${usuarioLogadoId}`);
-if (resNaoLidas.data.sucesso) {
-  setNaoLidas(resNaoLidas.data.naoLidas); // Já está no formato { remetenteId: count }
-}
   } catch (err) {
     console.error('Erro ao carregar lista de seguindo:', err);
   }

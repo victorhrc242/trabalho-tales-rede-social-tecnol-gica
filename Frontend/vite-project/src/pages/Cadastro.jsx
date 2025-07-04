@@ -3,8 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import '../css/cadastro.css';
 //importaçao dos icons
-import { FaUser, FaEnvelope, FaLock, FaUserCircle } from 'react-icons/fa';
-
+import { FaUser, FaEnvelope, FaLock, FaUserCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 // Supabase config
 const supabase = createClient(
@@ -25,9 +24,19 @@ const Cadastro = () => {
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
+  // controle de foco senha (mantido caso queira para outras funcionalidades)
+  const [senhaFocus, setSenhaFocus] = useState(false);
+  const [repetirSenhaFocus, setRepetirSenhaFocus] = useState(false);
+
+  // controla visibilidade da senha
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarRepetirSenha, setMostrarRepetirSenha] = useState(false);
+
+  //Modal de Cadastro feito com sucesso
+  const [sucessoCadastro, setSucessoCadastro] = useState(false);
+
   // Carregar imagem padrão como arquivo para o preview da foto
   useEffect(() => {
-    // Só carregar quando entrar na etapa 2 e se ainda não tiver foto selecionada
     if (etapa === 2 && !fotoPerfilArquivo) {
       const carregarImagemPadrao = async () => {
         try {
@@ -61,6 +70,12 @@ const Cadastro = () => {
   const handleProximaEtapa = (e) => {
     e.preventDefault();
     setErro('');
+
+    const mensagemErro = validarSenha(senha);
+    if (mensagemErro) {
+      setErro(mensagemErro);
+      return;
+    }
 
     if (senha !== repetirSenha) {
       setErro('As senhas não coincidem');
@@ -114,153 +129,227 @@ const Cadastro = () => {
         return;
       }
 
-      alert('Cadastro realizado com sucesso!');
+     setSucessoCadastro(true);
+     setTimeout(() => {
+      setSucessoCadastro(false);
       navigate('/');
+    }, 3000); // modal some após 3 segundos e redireciona
+
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
       setErro('Erro ao conectar com o servidor');
     }
   };
 
- return (
-  <footer>
-    <div className="signup-container">
-      <div className="signup-box">
-        <form
-          className={`signup-form ${etapa === 1 ? 'step-one' : 'step-two'}`}
-          onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
-        >
-          <h2>Devisocial</h2>
-          <p>Cadastre-se para ver fotos e vídeos dos seus amigos.</p>
+  // Validação da senha
+  const validarSenha = (senha) => {
+    const tem6ouMais = senha.length >= 6;
+    const temMaiuscula = /[A-Z]/.test(senha);
+    const temMinuscula = /[a-z]/.test(senha);
+    const temNumero = /\d/.test(senha);
+    const temEspecial = /[^A-Za-z0-9]/.test(senha); // caracteres especiais proibidos
 
-          {etapa === 1 ? (
-            <>
-              <div className="input-wrapper">
+    if (!tem6ouMais) {
+      return 'A senha deve ter no mínimo 6 caracteres.';
+    }
+    if (temEspecial) {
+      return 'A senha não pode conter caracteres especiais.';
+    }
+    if (!temMaiuscula || !temMinuscula || !temNumero) {
+      return 'A senha deve conter letras maiúsculas, minúsculas e números.';
+    }
+
+    return ''; // senha válida
+  };
+
+
+
+  return (
+    <footer>
+      <div className="signup-container">
+        <div className="signup-box">
+          <form
+            className={`signup-form ${etapa === 1 ? 'step-one' : 'step-two'}`}
+            onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
+          >
+            <h2>Devisocial</h2>
+            <p>Cadastre-se para ver fotos e vídeos dos seus amigos.</p>
+
+            {etapa === 1 ? (
+              <>
+                <div className="input-wrapper">
+                  <input
+                    type="text"
+                    placeholder="Nome completo"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    required
+                  />
+                  <FaUser className="input-icon" />
+                </div>
+                <div className="input-wrapper">
+                  <input
+                    type="email"
+                    placeholder="E-mail"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                  <FaEnvelope className="input-icon" />
+                </div>
+
+                <div className="input-wrapper">
+                  <input
+                    // mostrar senha quando mostrarSenha=true
+                    type={mostrarSenha ? 'text' : 'password'}
+                    placeholder="Senha"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    onFocus={() => setSenhaFocus(true)} // quando foco entrar
+                    onBlur={() => setSenhaFocus(false)} // quando foco sair
+                    required
+                  />
+                  {/* ícone do olho sempre visível para mostrar/ocultar senha */}
+                  {mostrarSenha ? (
+                    <FaEyeSlash
+                      className="input-icon"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setMostrarSenha(false)}
+                      title="Ocultar senha"
+                    />
+                  ) : (
+                    <FaEye
+                      className="input-icon"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setMostrarSenha(true)}
+                      title="Mostrar senha"
+                    />
+                  )}
+                </div>
+                {senhaFocus && (
+                  <p className="senha-texto">
+                    Senha com mínimo 6 caracteres, letras maiúsculas, minúsculas e números.
+                  </p>
+                )}
+
+                <div className="input-wrapper">
+                  <input
+                    type={mostrarRepetirSenha ? 'text' : 'password'}
+                    placeholder="Confirme senha"
+                    value={repetirSenha}
+                    onChange={(e) => setRepetirSenha(e.target.value)}
+                    onFocus={() => setRepetirSenhaFocus(true)}
+                    onBlur={() => setRepetirSenhaFocus(false)}
+                    required
+                  />
+                  {/* ícone do olho sempre visível para mostrar/ocultar repetir senha */}
+                  {mostrarRepetirSenha ? (
+                    <FaEyeSlash
+                      className="input-icon"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setMostrarRepetirSenha(false)}
+                      title="Ocultar senha"
+                    />
+                  ) : (
+                    <FaEye
+                      className="input-icon"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setMostrarRepetirSenha(true)}
+                      title="Mostrar senha"
+                    />
+                  )}
+                </div>
+                {repetirSenhaFocus && (
+                  <p className="senha-texto">Digite a mesma senha para Confirmar.</p>
+                )}
+
+                <div className="input-wrapper">
+                  <label htmlFor="data-nascimento" className="input-label">Data de Nascimento</label>
+                  <input
+                    id="data-nascimento"
+                    type="date"
+                    value={dataAniversario}
+                    onChange={(e) => setDataAniversario(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <button type="submit" className="next-button">Próximo</button>
+
+                <div className="divider-with-text">
+                  <span className="line"></span>
+                  <span className="or">ou</span>
+                  <span className="line"></span>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Foto de perfil - preview circular e clicável */}
+                <label htmlFor="photoInput">
+                  <img
+                    src={
+                      fotoPerfilArquivo
+                        ? URL.createObjectURL(fotoPerfilArquivo)
+                        : 'https://via.placeholder.com/100x100.png?text=Foto'
+                    }
+                    alt="Foto de perfil"
+                    className="profile-photo-preview"
+                  />
+                </label>
                 <input
-                  type="text"
-                  placeholder="Nome completo"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  required
+                  type="file"
+                  id="photoInput"
+                  accept="image/*"
+                  className="file-input-hidden"
+                  onChange={(e) => setFotoPerfilArquivo(e.target.files[0])}
                 />
-                <FaUser className="input-icon" />
-              </div>
-              <div className="input-wrapper">
-                <input
-                  type="email"
-                  placeholder="E-mail"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <FaEnvelope className="input-icon" />
-              </div>
-              <div className="input-wrapper">
-                <input
-                  type="password"
-                  placeholder="Senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  required
-                />
-                <FaLock className="input-icon" />
-              </div>
-              <div className="input-wrapper">
-                <input
-                  type="password"
-                  placeholder="Confirme senha"
-                  value={repetirSenha}
-                  onChange={(e) => setRepetirSenha(e.target.value)}
-                  required
-                />
-                <FaLock className="input-icon" />
-              </div>
 
-              <div className="input-wrapper">
-              <label htmlFor="data-nascimento" className="input-label">Data de Nascimento</label>
-              <input
-                id="data-nascimento"
-                type="date"
-                value={dataAniversario}
-                onChange={(e) => setDataAniversario(e.target.value)}
-                required
-              />
-            </div>
+                <div className="input-wrapper">
+                  <input
+                    type="text"
+                    placeholder="Nome de usuário"
+                    value={nome_usuario}
+                    onChange={(e) => setNome_usuario(e.target.value)}
+                    required
+                  />
+                  <FaUserCircle className="input-icon" />
+                </div>
 
-              
-              <button type="submit" className="next-button">Próximo</button>
+                <div className="input-wrapper">
+                  <textarea
+                    placeholder="Biografia"
+                    value={biografia}
+                    onChange={(e) => setBiografia(e.target.value)}
+                  />
+                </div>
 
-            <div className="divider-with-text">
-            <span className="line"></span>
-            <span className="or">ou</span>
-            <span className="line"></span>
-          </div>
+                <p>
+                  As pessoas que usam nosso serviço podem ter carregado suas informações
+                  de contato no Instagram. <a href="#">Saiba mais</a>. Ao se cadastrar,
+                  você concorda com nossos <a href="#">Termos</a>,{' '}
+                  <a href="#">Política de Privacidade</a> e{' '}
+                  <a href="#">Política de Cookies</a>.
+                </p>
 
-            </>
-          ) : (
-            <>
-              {/* Foto de perfil - preview circular e clicável */}
-              <label htmlFor="photoInput">
-                <img
-                  src={
-                    fotoPerfilArquivo
-                      ? URL.createObjectURL(fotoPerfilArquivo)
-                      : 'https://via.placeholder.com/100x100.png?text=Foto'
-                  }
-                  alt="Foto de perfil"
-                  className="profile-photo-preview"
-                />
-              </label>
-              <input
-                type="file"
-                id="photoInput"
-                accept="image/*"
-                className="file-input-hidden"
-                onChange={(e) => setFotoPerfilArquivo(e.target.files[0])}
-              />
+                <button type="submit" className="signup-button">Cadastrar</button>
+              </>
+            )}
 
-              <div className="input-wrapper">
-                <input
-                  type="text"
-                  placeholder="Nome de usuário"
-                  value={nome_usuario}
-                  onChange={(e) => setNome_usuario(e.target.value)}
-                  required
-                />
-                <FaUserCircle className="input-icon" />
-              </div>
+            <p className="login-link">
+              Já tem uma conta? <Link to="/">Entrar</Link>
+            </p>
 
-              <div className="input-wrapper">
-                <textarea
-                  placeholder="Biografia"
-                  value={biografia}
-                  onChange={(e) => setBiografia(e.target.value)}
-                />
-              </div>
+           {sucessoCadastro && (
+          <div className="success-toast">Cadastro realizado com sucesso!</div>
+        )}
+        {erro && <p className="error-message">{erro}</p>}
 
-              <p>
-                As pessoas que usam nosso serviço podem ter carregado suas informações
-                de contato no Instagram. <a href="#">Saiba mais</a>. Ao se cadastrar,
-                você concorda com nossos <a href="#">Termos</a>,{' '}
-                <a href="#">Política de Privacidade</a> e{' '}
-                <a href="#">Política de Cookies</a>.
-              </p>
-
-              <button type="submit" className="signup-button">Cadastrar</button>
-            </>
-          )}
-
-          <p>
-            Já tem uma conta? <Link to="/">Logar</Link>
-          </p>
-
-          {erro && <p className="error-message">{erro}</p>}
-        </form>
+            
+          </form>
+        </div>
       </div>
-    </div>
-  </footer>
-);
-
+    </footer>
+  );
 };
 
 export default Cadastro;
