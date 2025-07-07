@@ -405,3 +405,22 @@ li {
   padding: 20px 0;
   cursor: default;
 }
+.seguindo-label{
+  font-size: 14px;
+  color: #999;
+  margin-top: 10px;
+  margin-left: 50px;
+  background-color: #4363b9;
+  border-radius: 10px;
+  padding: 8px 16px;
+}
+.botao-seguir{
+  background-color: #4363b9;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 50px;
+}
