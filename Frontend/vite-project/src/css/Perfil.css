@@ -49,9 +49,7 @@ body {
 }
 
 .biografia {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #333;
+  margin: 4px !important;
   max-width: 500px;
   white-space: pre-wrap; /* preserva quebras de linha */
 }
@@ -340,6 +338,13 @@ body {
   }
 
   .infor-pessoais-desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 8px;
+  }
+
+  .infor-seguidores-desktop{
     display: flex;
     gap: 30px;
     margin-top: 8px;

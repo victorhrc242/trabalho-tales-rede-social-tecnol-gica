@@ -290,7 +290,19 @@ if (imagemArquivo) {
   <div className="perfil-info-desktop">
     <div className="topo-nome-botao">
       <h1 className="nome-desktop">{usuario.nome_usuario}</h1>
-      {isPerfilProprio && !isEditing && (
+      
+    </div>
+    <div className="infor-pessoais-desktop">
+      <div className='infor-seguidores-desktop'>
+      <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+      <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+      </div>
+      {usuario.biografia && (
+    <p className="biografia">{usuario.biografia}</p>
+  )} 
+    </div>
+
+    {isPerfilProprio && !isEditing && (
         <button
           className="btn-editar-perfil"
           onClick={() => setIsEditing(true)}
@@ -298,14 +310,7 @@ if (imagemArquivo) {
           Editar Perfil
         </button>
       )}
-    </div>
-    <div className="infor-pessoais-desktop">
-      <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
-      <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
-      {usuario.biografia && (
-    <p className="biografia">{usuario.biografia}</p>
-  )} 
-    </div>
+
   </div>
 
   <div className="perfil-info">
