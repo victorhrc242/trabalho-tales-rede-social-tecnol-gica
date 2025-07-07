@@ -100,18 +100,59 @@ if (resNaoLidas.data.sucesso) {
     fetchSeguindo();
   }, [usuarioLogadoId]);
 
-  // Atualiza a lista de usuários filtrados com base no termo de busca
-  useEffect(() => {
+useEffect(() => {
+  const buscarUsuariosSeguidos = async () => {
     if (busca.trim() === '') {
+      // Mostra apenas os com quem já conversou
       setSeguindoFiltrado(seguindo);
     } else {
-      const termo = busca.toLowerCase();
-      const filtrado = seguindo.filter((item) =>
-        item.usuario.nome_usuario.toLowerCase().includes(termo)
-      );
-      setSeguindoFiltrado(filtrado);
+      try {
+        // 1. Busca todos os usuários que o logado está seguindo
+        const res = await axios.get(`${API_URL}/api/Amizades/seguindo/${usuarioLogadoId}`);
+        const amizades = res.data.seguindo || [];
+
+        // 2. Para cada amizade, busca os dados do usuário seguido (usuario2)
+        const usuariosSeguidos = await Promise.all(
+          amizades.map(async (amizade) => {
+            const usuarioId = amizade.usuario2;
+
+            try {
+              const userRes = await axios.get(`${API_URL}/api/auth/usuario/${usuarioId}`);
+              const dados = userRes.data.dados || userRes.data;
+
+              return {
+                idAmizade: amizade.id,
+                usuario: {
+                  id: dados.id,
+                  nome_usuario: dados.nome_usuario,
+                  imagem: dados.imagem // Imagem de perfil
+                },
+              };
+            } catch (err) {
+              console.error(`Erro ao buscar dados do usuário ${usuarioId}:`, err);
+              return null;
+            }
+          })
+        );
+
+        // 3. Remove os que deram erro e filtra pelo texto buscado
+        const listaFiltrada = usuariosSeguidos
+          .filter(Boolean)
+          .filter((item) =>
+            item.usuario.nome_usuario.toLowerCase().includes(busca.toLowerCase())
+          );
+
+        setSeguindoFiltrado(listaFiltrada);
+      } catch (err) {
+        console.error('Erro ao buscar usuários seguidos:', err);
+      }
     }
-  }, [busca, seguindo]);
+  };
+
+  buscarUsuariosSeguidos();
+}, [busca, usuarioLogadoId,seguindo]);
+
+
 
   // Conecta ao SignalR e escuta eventos em tempo real
   useEffect(() => {
