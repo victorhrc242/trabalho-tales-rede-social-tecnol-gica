@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../css/recuperarSenha.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function RecuperarSenha() {
   const [etapa, setEtapa] = useState(1);
@@ -13,9 +14,13 @@ export default function RecuperarSenha() {
   const [carregando, setCarregando] = useState(false);
   const [mensagemSucesso, setMensagemSucesso] = useState('');
 
+  const [mostrarNovaSenha, setMostrarNovaSenha] = useState(false);
+  const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
+  const [novaSenhaEmFoco, setNovaSenhaEmFoco] = useState(false);
+  const [confirmarSenhaEmFoco, setConfirmarSenhaEmFoco] = useState(false);
+
   const [tempoRestante, setTempoRestante] = useState(0);
   const intervaloRef = useRef(null);
-
   const navigate = useNavigate();
 
   const formatarTempo = (segundos) => {
@@ -44,7 +49,7 @@ export default function RecuperarSenha() {
     setCarregando(true);
     try {
       await axios.post('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo', { email });
-      setTempoRestante(900); // 15 minutos
+      setTempoRestante(300);
       setMensagem('');
       setEtapa(2);
     } catch (erro) {
@@ -64,6 +69,8 @@ export default function RecuperarSenha() {
   };
 
   const redefinirSenha = async () => {
+    setMensagem('');
+
     if (novaSenha.length < 8) {
       setMensagem('A senha deve ter no mínimo 8 caracteres.');
       return;
@@ -80,6 +87,7 @@ export default function RecuperarSenha() {
       setMensagem('A senha deve conter pelo menos um número.');
       return;
     }
+
     if (novaSenha !== confirmarSenha) {
       setMensagem('As senhas não coincidem.');
       return;
@@ -112,21 +120,33 @@ export default function RecuperarSenha() {
     <div className="recuperar-container">
       <div className="recuperar-box">
 
+        {/* Toast de sucesso */}
         {mensagemSucesso && (
           <div className="box-sucesso">{mensagemSucesso}</div>
+        )}
+
+        {/* Toast de erro flutuante */}
+        {mensagem && !mensagemSucesso && (
+          <div className="toast-erro">
+            {mensagem}
+            <button onClick={() => setMensagem('')}>×</button>
+          </div>
         )}
 
         <h2>Recuperar Senha</h2>
 
         {etapa === 1 && (
           <form onSubmit={(e) => { e.preventDefault(); enviarCodigo(); }}>
-            <input
-              type="email"
-              placeholder="Digite seu e-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <div className="input-wrapper">
+              <input
+                type="email"
+                placeholder="Digite seu e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <FaEnvelope className="input-icon-direita" />
+            </div>
             <button type="submit" disabled={carregando}>
               {carregando ? "Enviando..." : "Enviar Código"}
             </button>
@@ -159,27 +179,45 @@ export default function RecuperarSenha() {
 
         {etapa === 3 && (
           <form onSubmit={(e) => { e.preventDefault(); redefinirSenha(); }}>
-            <input
-              type="password"
-              placeholder="Nova Senha"
-              value={novaSenha}
-              onChange={(e) => setNovaSenha(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Confirme a Nova Senha"
-              value={confirmarSenha}
-              onChange={(e) => setConfirmarSenha(e.target.value)}
-              required
-            />
+            <div className="input-wrapper">
+              <input
+                type={mostrarNovaSenha ? 'text' : 'password'}
+                placeholder="Nova Senha"
+                value={novaSenha}
+                onChange={(e) => setNovaSenha(e.target.value)}
+                onFocus={() => setNovaSenhaEmFoco(true)}
+                onBlur={() => setNovaSenhaEmFoco(false)}
+                required
+              />
+              {!novaSenhaEmFoco && (
+                mostrarNovaSenha
+                  ? <FaEyeSlash className="input-icon-direita" onClick={() => setMostrarNovaSenha(false)} />
+                  : <FaEye className="input-icon-direita" onClick={() => setMostrarNovaSenha(true)} />
+              )}
+            </div>
+
+            <div className="input-wrapper">
+              <input
+                type={mostrarConfirmarSenha ? 'text' : 'password'}
+                placeholder="Confirme a Nova Senha"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                onFocus={() => setConfirmarSenhaEmFoco(true)}
+                onBlur={() => setConfirmarSenhaEmFoco(false)}
+                required
+              />
+              {!confirmarSenhaEmFoco && (
+                mostrarConfirmarSenha
+                  ? <FaEyeSlash className="input-icon-direita" onClick={() => setMostrarConfirmarSenha(false)} />
+                  : <FaEye className="input-icon-direita" onClick={() => setMostrarConfirmarSenha(true)} />
+              )}
+            </div>
+
             <button type="submit" disabled={carregando}>
               {carregando ? "Atualizando..." : "Atualizar Senha"}
             </button>
           </form>
         )}
-
-        {mensagem && !mensagemSucesso && <p className="mensagem">{mensagem}</p>}
 
         <div className="separador-ou">
           <div className="linha-esquerda"></div>

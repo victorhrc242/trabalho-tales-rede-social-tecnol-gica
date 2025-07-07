@@ -40,6 +40,9 @@ const Cadastro = () => {
   // Estado para detectar responsividade
   const [isResponsive, setIsResponsive] = useState(window.innerWidth <= 600);
 
+  // Estado que controla a exibição do modal
+  const [showModalSucesso, setShowModalSucesso] = useState(false);  
+
   // Escuta resize para atualizar isResponsive
   useEffect(() => {
     const handleResize = () => {
@@ -160,8 +163,15 @@ const Cadastro = () => {
         return;
       }
 
-      alert('Cadastro realizado com sucesso!');
-      navigate('/');
+      // Exibe o modal de sucesso
+      setShowModalSucesso(true);
+      
+      // Fecha automaticamente após 3 segundos
+      setTimeout(() => {
+        setShowModalSucesso(false);
+        navigate('/');
+      }, 3000);
+
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
       setErro('Erro ao conectar com o servidor');
@@ -185,6 +195,7 @@ const Cadastro = () => {
   return (
     <footer>
       <div className="signup-container" style={{ position: 'relative' }}>
+        {/* Modal de erros*/}
         {toastErro.mensagem && (
           <div
             className={`error-toast ${isResponsive ? 'responsive-position' : ''}`}
@@ -196,12 +207,13 @@ const Cadastro = () => {
             </button>
           </div>
         )}
+       
         <div className="signup-box">
           <form
             className={`signup-form ${etapa === 1 ? 'step-one' : 'step-two'}`}
             onSubmit={etapa === 1 ? handleProximaEtapa : handleCadastro}
           >
-            <h2>Devisocial</h2>
+            <h2>Paradise</h2>
             <p>Cadastre-se para ver fotos e vídeos dos seus amigos.</p>
 
             {etapa === 1 ? (
@@ -358,6 +370,13 @@ const Cadastro = () => {
           </form>
         </div>
       </div>
+
+      {/* Modal de cadastro realizado com sucesso */}
+      {showModalSucesso && (
+        <div className="modal-sucesso">
+          <span>Cadastro realizado com sucesso!</span>
+        </div>
+      )}
     </footer>
   );
 };
