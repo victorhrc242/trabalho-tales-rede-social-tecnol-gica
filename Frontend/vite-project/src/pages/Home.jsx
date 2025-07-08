@@ -8,6 +8,7 @@ import Comentario from '../Components/Comentario';
 import '../css/home.css';
 
 import { FaSearch, FaBell } from 'react-icons/fa';
+import { MdMargin } from 'react-icons/md';
 
 function Home() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ function Home() {
   const [notificacoes, setNotificacoes] = useState([]);
   // Resultados da busca por usuários
   const [resultadosBusca, setResultadosBusca] = useState([]);
+const [termoBusca, setTermoBusca] = useState('');
 
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
@@ -232,43 +234,63 @@ function Home() {
   };
 
   // Busca usuários pelo termo digitado para a barra de busca lateral
-  const buscarUsuarios = async (termo) => {
-    if (!termo.trim()) {
-      setResultadosBusca([]);
-      return;
-    }
-    try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`);
-      const data = await response.json();
+ const buscarUsuarios = async (termo) => {
+  if (!termo.trim()) {
+    setResultadosBusca([]);
+    return;
+  }
 
-      if (Array.isArray(data)) {
-        const resultadosFiltrados = data.filter(u =>
-          u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase())
-        );
-        setResultadosBusca(resultadosFiltrados);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-      setResultadosBusca([]);
-    }
-  };
+  try {
+    const responseUsuarios = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`);
+    const dataUsuarios = await responseUsuarios.json();
+
+    if (!Array.isArray(dataUsuarios)) return;
+
+    const resultadosFiltrados = dataUsuarios.filter(u =>
+      u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase()) && u.id !== usuario.id
+    );
+
+    // Buscar a lista de quem o usuário logado já segue
+    const resSeguidores = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`);
+    const dataSeguidores = await resSeguidores.json();
+    const idsSeguindo = dataSeguidores.seguindo?.map(s => s.usuario2) || [];
+
+    // Adicionar flag "jaSegue"
+    const resultadosComStatus = resultadosFiltrados.map(u => ({
+      ...u,
+      jaSegue: idsSeguindo.includes(u.id)
+    }));
+
+    setResultadosBusca(resultadosComStatus);
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    setResultadosBusca([]);
+  }
+};
 
   // Seguir usuário a partir da notificação
-  const seguirUsuario = async (idUsuario) => {
-    try {
-      const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguir`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usuario1: usuario.id, usuario2: idUsuario }),
-      });
+const seguirUsuarioRapido = async (idUsuario) => {
+  try {
+    const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuario1: usuario.id, usuario2: idUsuario }),
+    });
 
-      if (resposta.ok) {
-        fetchNotificacoes(); // Atualiza notificações após seguir
-      }
-    } catch (err) {
-      console.error("Erro ao seguir usuário:", err);
+    if (resposta.ok) {
+      // Atualiza a lista de busca para refletir que o usuário agora está seguindo
+      setResultadosBusca(prev =>
+        prev.map(u =>
+          u.id === idUsuario ? { ...u, jaSegue: true } : u
+        )
+      );
+    } else {
+      console.error('Erro ao seguir:', resposta.status);
     }
-  };
+  } catch (err) {
+    console.error("Erro ao seguir usuário rapidamente:", err);
+  }
+};
 
   // Navega para o perfil do usuário selecionado
   const irParaPerfil = (id) => {
@@ -407,25 +429,51 @@ function Home() {
         {/* Campo de busca de usuários */}
         <div className="campo-busca">
           <FaSearch className="icone-busca" />
-           <input
-            placeholder="Buscar usuários..."
-            className="barra-pesquisa-usuarios"
-            onChange={e => buscarUsuarios(e.target.value)}
-          />
+       <input
+  placeholder="Buscar usuários..."
+  className="barra-pesquisa-usuarios"
+  value={termoBusca}
+  onChange={e => {
+    const valor = e.target.value;
+    setTermoBusca(valor);
+    buscarUsuarios(valor); // chama a busca toda vez que o texto mudar
+  }}
+/>
+
           {/* Resultados da busca */}
           {resultadosBusca.length > 0 && (
-            <ul className="resultados-busca">
-              {resultadosBusca.map((usuario, index) => (
-                <li key={index} onClick={() => irParaPerfil(usuario.id)}>
-                  <img
-                    src={usuario.imagem || 'https://via.placeholder.com/40'}
-                    alt="avatar"
-                    className="avatar-busca"
-                  />
-                  <span>{usuario.nome_usuario || usuario.nome}</span>
-                </li>
-              ))}
-            </ul>
+          <ul className="resultados-busca">
+  {resultadosBusca.map((usuarioPesquisado, index) => (
+    <li key={index} className="usuario-pesquisado">
+      <img
+        src={usuarioPesquisado.imagem || 'https://via.placeholder.com/40'}
+        alt="avatar"
+        className="avatar-busca"
+        onClick={() => irParaPerfil(usuarioPesquisado.id)}
+        style={{ cursor: 'pointer' }}
+      />
+      <div className="info-usuario">
+        <span onClick={() => irParaPerfil(usuarioPesquisado.id)} style={{ cursor: 'pointer' }}>
+          {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
+        </span>
+
+        {!usuarioPesquisado.jaSegue && (
+          <button
+            className="botao-seguir"
+            onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
+          >
+            Seguir
+          </button>
+        )}
+
+        {usuarioPesquisado.jaSegue && (
+          <span className="seguindo-label">Seguindo</span>
+        )}
+      </div>
+    </li>
+  ))}
+</ul>
+
           )}
         </div>
 

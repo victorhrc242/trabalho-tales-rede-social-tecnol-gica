@@ -7,6 +7,18 @@
   overflow: hidden;
 }
 
+.autor-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.autor-imagem {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
 /* essa merda dessas tres linha de coidigo qiue estavam interferindo quando o usuario entrava no modo mobile  */
 

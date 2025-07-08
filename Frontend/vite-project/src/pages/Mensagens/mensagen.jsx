@@ -17,7 +17,7 @@ const Mensagens = () => {
   const [usuarioLogado, setUsuarioLogado] = useState(null); // Dados do usuário logado
   const [busca, setBusca] = useState(''); // Texto de busca na lista de usuários
   const [seguindoFiltrado, setSeguindoFiltrado] = useState([]); // Lista filtrada com base na busca
-
+  const [usuariosSeguidos, setUsuariosSeguidos] = useState([]);
   const [naoLidas, setNaoLidas] = useState({}); // Contador de mensagens não lidas por usuário
   const [modalAberto, setModalAberto] = useState(false); // Estado para controle do modal (menu do chat)
 
@@ -69,50 +69,81 @@ const [apagandoTudo, setApagandoTudo] = useState(false);
     fetchUsuarioLogado();
   }, [usuarioLogadoId]);
 
-  // Carrega os usuários que o logado está seguindo
-  useEffect(() => {
-const fetchSeguindo = async () => {
-  try {
-    if (!usuarioLogadoId) return;
+ // Carrega os chats atuais (usuários com quem já conversou)
+useEffect(() => {
+  const fetchChats = async () => {
+    try {
+      if (!usuarioLogadoId) return;
 
-    const res = await axios.get(`${API_URL}/api/Mensagens/conversas/${usuarioLogadoId}`);
+      const res = await axios.get(`${API_URL}/api/Mensagens/conversas/${usuarioLogadoId}`);
 
-    // Como a API já retorna os dados dos usuários, não precisamos de chamadas adicionais
-    const listaCompletada = res.data.usuarios.map((item) => ({
-      idAmizade: item.id, // ou null se não tiver amizade
-      usuario: {
-        id: item.id,
-        nome_usuario: item.nome_usuario,
-        imagem: item.fotoPerfil,
-      },
-    }));
+      const listaChats = res.data.usuarios.map((item) => ({
+        idAmizade: item.id,
+        usuario: {
+          id: item.id,
+          nome_usuario: item.nome_usuario,
+          imagem: item.fotoPerfil,
+        },
+      }));
 
-    setSeguindo(listaCompletada);
-    setSeguindoFiltrado(listaCompletada);
-    const resNaoLidas = await axios.get(`${API_URL}/api/Mensagens/nao-lidas/${usuarioLogadoId}`);
-if (resNaoLidas.data.sucesso) {
-  setNaoLidas(resNaoLidas.data.naoLidas); // Já está no formato { remetenteId: count }
-}
-  } catch (err) {
-    console.error('Erro ao carregar lista de seguindo:', err);
-  }
-};
-    fetchSeguindo();
-  }, [usuarioLogadoId]);
+      setSeguindo(listaChats);
+      setSeguindoFiltrado(listaChats);
 
-  // Atualiza a lista de usuários filtrados com base no termo de busca
-  useEffect(() => {
-    if (busca.trim() === '') {
-      setSeguindoFiltrado(seguindo);
-    } else {
-      const termo = busca.toLowerCase();
-      const filtrado = seguindo.filter((item) =>
-        item.usuario.nome_usuario.toLowerCase().includes(termo)
-      );
-      setSeguindoFiltrado(filtrado);
+    } catch (err) {
+      console.error(err);
     }
-  }, [busca, seguindo]);
+  };
 
+  fetchChats();
+}, [usuarioLogadoId]);
+
+// Carrega lista completa de usuários seguidos para busca
+useEffect(() => {
+  const fetchSeguidos = async () => {
+    try {
+      if (!usuarioLogadoId) return;
+
+      const res = await axios.get(`${API_URL}/api/Amizades/seguindo/${usuarioLogadoId}`);
+      const amizades = res.data.seguindo || [];
+
+      const usuarios = await Promise.all(
+        amizades.map(async (amizade) => {
+          const userRes = await axios.get(`${API_URL}/api/auth/usuario/${amizade.usuario2}`);
+          const dados = userRes.data.dados || userRes.data;
+
+          return {
+            idAmizade: amizade.id,
+            usuario: {
+              id: dados.id,
+              nome_usuario: dados.nome_usuario,
+              imagem: dados.imagem || dados.fotoPerfil,
+            },
+          };
+        })
+      );
+
+      setUsuariosSeguidos(usuarios.filter(Boolean));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchSeguidos();
+}, [usuarioLogadoId]);
+
+// Efeito que filtra os usuários a mostrar baseado na busca
+useEffect(() => {
+  if (busca.trim() === '') {
+    // Quando não digita nada, mostra só os chats atuais
+    setSeguindoFiltrado(seguindo);
+  } else {
+    // Quando digita algo, filtra a lista completa de usuários seguidos
+    const filtrados = usuariosSeguidos.filter((item) =>
+      item.usuario.nome_usuario.toLowerCase().includes(busca.toLowerCase())
+    );
+    setSeguindoFiltrado(filtrados);
+  }
+}, [busca, seguindo, usuariosSeguidos]);
   // Conecta ao SignalR e escuta eventos em tempo real
   useEffect(() => {
     if (!usuarioLogadoId) return;

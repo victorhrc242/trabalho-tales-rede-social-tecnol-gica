@@ -9,7 +9,6 @@ function NavbarTop({ usuarioLogado }) {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Atualiza isMobile ao redimensionar a tela
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -19,12 +18,11 @@ function NavbarTop({ usuarioLogado }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Verifica se está na rota /mensagen
-  const isOnMensagensPage = location.pathname.startsWith('/mensagen') ||
-     location.pathname.startsWith('/perfil');;
+  const isOnMensagensPage = location.pathname === '/mensagen';
+  const isOnExplorarPage = location.pathname === '/Explore'; // nova verificação
 
-  // Se for mobile e estiver na /mensagen, não renderiza nada
-  if (isMobile && isOnMensagensPage) {
+  // Se for mobile e estiver na /mensagen ou /explorar, não renderiza nada
+  if (isMobile && (isOnMensagensPage || isOnExplorarPage)) {
     return null;
   }
 

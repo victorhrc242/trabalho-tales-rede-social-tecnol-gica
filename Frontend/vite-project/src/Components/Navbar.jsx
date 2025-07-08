@@ -7,7 +7,7 @@ import {
 import axios from 'axios';
 import CriarPostModal from '../Components/Criar.jsx';
 import '../css/navbar.css';
-
+import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 function Navbar({ usuarioLogado, deslogar }) {
   const [busca, setBusca] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
@@ -50,21 +50,64 @@ const irParaConfiguracoes = () => {
   useEffect(() => {
     carregarDados();
   }, [carregarDados]);
+//    usa o SignalR para contar as mensagens em tempo real
 useEffect(() => {
+  if (!usuarioLogado?.id) return;
+
+  const usuarioLogadoId = usuarioLogado.id;
+  const connection = new HubConnectionBuilder()
+  //    essa URL deve ser a do seu servidor SignalR     essa ea msm url   do component mensagem 
+    .withUrl(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/mensagensHub?userId=${usuarioLogadoId}`, {
+      transport: HttpTransportType.WebSockets,
+      withCredentials: true,
+    })
+    .withAutomaticReconnect()
+    .build();
+//  aqui eu passo a url para fazer a contagen da quantidade de mensagen logo a pos logar no site 
   const fetchNaoLidas = async () => {
-    if (!usuarioLogado?.id) return;
     try {
-      const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/nao-lidas/${usuarioLogado.id}`);
+      const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/nao-lidas/${usuarioLogadoId}`);
       if (res.data.sucesso) {
         setNaoLidas(res.data.naoLidas);
       }
     } catch (e) {
-      console.error('Erro ao buscar não-lidas:', e);
+      console.error('Erro ao buscar mensagens não lidas:', e);
     }
   };
-  fetchNaoLidas();
 
-  // opcional: re-carregar quando a aba de Mensagens for visitada
+  connection.start()
+    .then(() => {
+      console.log('✅ Conectado ao SignalR');
+
+      connection.on('NovaMensagem', (novaMensagem) => {
+        const remetente = novaMensagem.id_remetente;
+        const destinatario = novaMensagem.id_destinatario;
+
+        if (destinatario === usuarioLogadoId) {
+          setNaoLidas((prev) => {
+            const count = prev[remetente] || 0;
+            return { ...prev, [remetente]: count + 1 };
+          });
+        }
+      });
+
+      connection.on('MensagemLida', () => {
+        fetchNaoLidas();
+      });
+
+      connection.on('MensagemApagada', () => {
+        fetchNaoLidas();
+      });
+
+      fetchNaoLidas();
+    })
+    .catch((err) => {
+      console.error('❌ Erro ao conectar no SignalR:', err);
+    });
+
+  return () => {
+    connection.stop();
+  };
 }, [usuarioLogado?.id]);
   const irParaPerfil = () => {
     if (usuarioLogado?.id) {
@@ -125,18 +168,20 @@ useEffect(() => {
 
         <div className='nav-explore'><Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link></div>
         <div className='nav-reels'><Link to="/kurz" className="nav-item"><FaVideo /> <span>kurz</span></Link></div>
-      <div className='nav-mensagens'>
+     <div className='nav-mensagens'>
   <Link to="/mensagen" className="nav-item">
-    <FaPaperPlane />
+    <div style={{ position: 'relative' }}>
+      <FaPaperPlane />
+      {Object.values(naoLidas).reduce((a, b) => a + b, 0) > 0 && (
+        <span className="badge-mensagens">
+          {Object.values(naoLidas).reduce((a, b) => a + b, 0)}
+        </span>
+      )}
+    </div>
     <span>Mensagens</span>
-    { /* Badge: soma de todas as não lidas (ou apenas de um chat?) */ }
-    { Object.values(naoLidas).reduce((a, b) => a + b, 0) > 0 && (
-      <span className="badge-mensagens">
-        {Object.values(naoLidas).reduce((a, b) => a + b, 0)}
-      </span>
-    )}
   </Link>
 </div>
+
         <div className='nav-notificacoes'><Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
 
         <div className="nav-item" onClick={() => setMostrarModal(true)}>

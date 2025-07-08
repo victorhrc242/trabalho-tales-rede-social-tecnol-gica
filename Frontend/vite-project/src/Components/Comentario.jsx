@@ -63,12 +63,11 @@ function Comentario({
     document.removeEventListener('touchend', onDragEnd);
     document.removeEventListener('mouseup', onDragEnd);
   };
+
   const jaCurtiu = usuarioCurtidas?.includes(post.id);
 
   return (
     <>
-      {/* <div className="modal-overlay" /> */}
-
       <div
         className={`comentarios-modal ${isMobile ? 'mobile' : ''}`}
         style={isMobile && modalHeight ? { height: modalHeight } : {}}
@@ -108,7 +107,14 @@ function Comentario({
 
         <div className="comentarios-container">
           <div className="comentarios-header">
-            <strong>{post.autorNome}</strong>
+            <div className="autor-info">
+              <img
+                src={post.autorImagem || 'https://via.placeholder.com/40'}
+                alt={`Foto de perfil de ${post.autorNome}`}
+                className="autor-imagem"
+              />
+              <strong>{post.autorNome}</strong>
+            </div>
             <button className="fechar-modal" onClick={fechar}>
               ×
             </button>
@@ -127,46 +133,44 @@ function Comentario({
             )}
           </div>
 
-          <h4>Comentários</h4>
-
-          <div className="comentarios-lista">
-            {comentarios.map((c, i) => (
-              <div key={c.id || i} className="comentario-item">
-                <img
-                  src={
-                    c.autorImagem ||
-                    'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'
-                  }
-                  alt={`Foto de perfil de ${c.autorNome}`}
-                />
-                <div className="comentario-conteudo">
-                  <span className="comentario-autor">{c.autorNome}</span>
-                  <span className="comentario-texto">{c.conteudo}</span>
-                </div>
-              </div>
-            ))}
+        <div className="comentarios-lista">
+  {comentarios.map((c, i) => {
+    const comentarioJaCurtiu = usuarioCurtidas?.includes(c.id);
+    return (
+      <div key={c.id || i} className="comentario-item">
+        <img
+          src={c.autorImagem || 'https://via.placeholder.com/40'}
+          alt={`Foto de perfil de ${c.autorNome}`}
+          className="autor-imagem"
+        />
+        <div className="comentario-conteudo">
+          <div className="comentario-header">
+            <span className="comentario-autor">{c.autorNome}</span>
           </div>
-
-          <div className="botoes-post-comentario">
-            <button className="botao-acao" onClick={() => curtirPost(post.id)}>
+          <span className="comentario-texto">{c.conteudo}</span>
+          <div className="botao-acao">
+            <button className={`botao-acao ${comentarioJaCurtiu ? 'curtido' : ''}`} onClick={() => curtirPost(c.id)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="20"
-                fill={usuarioCurtidas ? 'red' : 'none'}
-                stroke={usuarioCurtidas ? 'red' : 'black'}
-                strokeWidth="2"
                 viewBox="0 0 24 24"
+                fill={comentarioJaCurtiu ? 'red' : 'none'}
+                stroke={comentarioJaCurtiu ? 'red' : 'black'}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-                  2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 
-                  4.5 2.09C13.09 3.81 14.76 3 
-                  16.5 3 19.58 3 22 5.42 22 8.5c0 
-                  3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                <path d="M20.84 4.61c-1.54-1.34-3.76-1.34-5.3 0L12 7.17l-3.54-2.56c-1.54-1.34-3.76-1.34-5.3 0-1.78 1.54-1.78 4.04 0 5.58L12 21.35l8.84-11.16c1.78-1.54 1.78-4.04 0-5.58z" />
               </svg>
-              
             </button>
           </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
 
           <div className="comentarios-form">
             <input
