@@ -3,13 +3,13 @@ import '../configuraçãoes/configuraçãoes.css';
 
 const Configuracoes = ({ usuarioLogado }) => {
   const [abaAtiva, setAbaAtiva] = useState('notificacoes');
- const usuario = JSON.parse(localStorage.getItem('usuario'));
-const usuarioId  = usuario?.id;
+  const [usuario, setUsuario] = useState(() => JSON.parse(localStorage.getItem('usuario'))); // Estado inicial vem do localStorage
+  const usuarioId  = usuario?.id;
 
   useEffect(() => {
     // Quando a aba "Conta" for ativada, busca os dados do usuário
-    if (abaAtiva === 'notificacoes') {
-      fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuarioId}`, {
+    if (abaAtiva === 'notificacoes' && usuarioId) {
+      fetch(`http://localhost:5124/api/auth/usuario/${usuarioId}`, {
         headers: {
           accept: '*/*',
         },
@@ -21,11 +21,10 @@ const usuarioId  = usuario?.id;
           return res.json();
         })
         .then((data) => {
-          setUsuario(data);
+          setUsuario(data); // Atualiza o estado com os dados da API
         })
         .catch((error) => {
           console.error(error);
-          setUsuario(null);
         });
     }
   }, [abaAtiva, usuarioId]);
@@ -71,13 +70,13 @@ const usuarioId  = usuario?.id;
         <main className="content-area">
           {abaAtiva === 'notificacoes' && (
             <div>
-              <h3>Configurações de Conta</h3>
+              <h3>Informações da Conta</h3>
               {usuario ? (
                 <div>
-               
                   <p><strong>Nome:</strong> {usuario.nome}</p>
-                  <p><strong>Nome usuário:</strong> {usuario.nome_usuario}</p>
                   <p><strong>Email:</strong> {usuario.email}</p>
+                  <p><strong>Biografia:</strong> {usuario.biografia}</p>
+                  <p><strong>Data de Aniversário:</strong> {new Date(usuario.dataaniversario + 'T00:00:00Z').toLocaleDateString('pt-BR')}</p>
                 </div>
               ) : (
                 <p>Carregando dados do usuário...</p>
