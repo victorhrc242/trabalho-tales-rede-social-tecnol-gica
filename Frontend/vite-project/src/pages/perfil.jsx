@@ -11,7 +11,7 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-const Perfil = ({ usuarioLogado }) => {
+const Perfil = ({ usuarioLogado, deslogar }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id: idDaUrl } = useParams();
@@ -27,6 +27,7 @@ const Perfil = ({ usuarioLogado }) => {
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
   const [loading, setLoading] = useState(true);
+  const [mostrarConfirmarLogout, setMostrarConfirmarLogout] = useState(false);
   const [modalOpcoes, setModalOpcoes] = useState(false);
   const [modalPost, setModalPost] = useState(null);
   const [comentarios, setComentarios] = useState([]);
@@ -243,6 +244,16 @@ if (imagemArquivo) {
       console.error('Erro ao enviar comentário:', err);
     }
   };
+
+  const confirmarLogout = () => {
+  localStorage.removeItem('usuario');
+  deslogar();
+  navigate('/');
+};
+
+const cancelarLogout = () => {
+  setMostrarConfirmarLogout(false);
+};
 
   const excluirComentario = async (comentarioId) => {
     try {
@@ -531,15 +542,27 @@ if (imagemArquivo) {
         </div>
       </div>
     )}
+
+{mostrarConfirmarLogout && (
+  <div className="modal-logout-overlay" onClick={cancelarLogout}>
+    <div className="modal-logout-content" onClick={(e) => e.stopPropagation()}>
+      <p className="modal-logout-text">Tem certeza que deseja sair?</p>
+      <div className="modal-logout-buttons">
+        <button className="btn-confirmar" onClick={confirmarLogout}>Sair</button>
+        <button className="btn-cancelar" onClick={cancelarLogout}>Cancelar</button>
+      </div>
+    </div>
+  </div>
+)}
     
                 {modalOpcoes && (
             <div className="modal">
               <div className="modal-conteudo">
                 <ul>
                   <li onClick={() => {
-                    localStorage.removeItem('usuario');
-                    navigate('/');
-                  }}>Sair</li>
+                  setModalOpcoes(false);
+                  setMostrarConfirmarLogout(true);
+                }}>Sair</li>
                   <li onClick={() => {
                     setModalOpcoes(false);
                     navigate('/configuracoes');

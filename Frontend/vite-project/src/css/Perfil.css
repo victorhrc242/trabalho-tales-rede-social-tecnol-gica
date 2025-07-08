@@ -599,6 +599,40 @@ body {
   display: none; /* Esconde por padrão (desktop) */
 }
 
+/* Modal de logout - adaptado para mobile */
+.modal-logout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-logout-content {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 350px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modal-logout-text {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.modal-logout-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
 @media (max-width: 768px) {
   .configuracao-mobile {
     display: block;
