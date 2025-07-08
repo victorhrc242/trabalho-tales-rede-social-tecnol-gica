@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/login.css';
 import { Link, useNavigate } from 'react-router-dom';
-// icons
+// Importação dos ícones
 import { FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Login() {
@@ -9,10 +9,9 @@ function Login() {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
-  const [senhaEmFoco, setSenhaEmFoco] = useState(false);
   const navigate = useNavigate();
 
-  // Redireciona se já estiver logado
+  // Redireciona automaticamente para a Home se o token já existir (usuário já logado)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -20,6 +19,7 @@ function Login() {
     }
   }, [navigate]);
 
+  // Função de login
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -72,8 +72,10 @@ function Login() {
       <div className="modal-login">
         <div className="formulario">
           <h2 className="titulo-login">Paradise</h2>
-          {/* formulario de login */}
+
+          {/* Formulário de login */}
           <form onSubmit={handleLogin}>
+            {/* Campo de e-mail com ícone */}
             <div className="input-wrapper">
               <input
                 type="email"
@@ -85,28 +87,27 @@ function Login() {
               <FaEnvelope className="input-icon-direita" />
             </div>
 
+            {/* Campo de senha com ícone de olho que alterna a visibilidade */}
             <div className="input-wrapper">
               <input
                 type={mostrarSenha ? 'text' : 'password'}
                 placeholder="Digite sua senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                onFocus={() => setSenhaEmFoco(true)}
-                onBlur={() => setSenhaEmFoco(false)}
                 required
               />
-              {!senhaEmFoco &&
-                (mostrarSenha ? (
-                  <FaEyeSlash
-                    className="input-icon-direita"
-                    onClick={() => setMostrarSenha(false)}
-                  />
-                ) : (
-                  <FaEye
-                    className="input-icon-direita"
-                    onClick={() => setMostrarSenha(true)}
-                  />
-                ))}
+              {/* Ícone de olho que aparece somente fora do foco */}
+              {mostrarSenha ? (
+                <FaEyeSlash
+                  className="input-icon-direita senha"
+                  onClick={() => setMostrarSenha(false)}
+                />
+              ) : (
+                <FaEye
+                  className="input-icon-direita senha"
+                  onClick={() => setMostrarSenha(true)}
+                />
+              )}
             </div>
 
             <br />
@@ -125,6 +126,7 @@ function Login() {
           <p>Não tem uma conta? <Link to="/cadastro">Cadastrar</Link></p>
         </div>
 
+        {/* Lado direito com imagem decorativa */}
         <div className="imagem-login"></div>
       </div>
     </div>

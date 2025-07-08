@@ -318,3 +318,48 @@
     }
 }
 
+/* Ícone de notificação mesmo quando minimizado */
+.navbar-lateral.minimizada .nav-mensagens-item {
+  position: relative;
+}
+
+/* notificação */
+
+/* Wrapper para garantir posicionamento do badge mesmo minimizado */
+.mensagem-icone-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo do número de mensagens não lidas */
+.badge-mensagens {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color:  #0095f6;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+  z-index: 2;
+}
+
+
+
+/* AGORA — esconde somente o <span> filho direto de .nav-item (o label “Mensagens”), 
+   mas mantém visível o badge aninhado dentro de .mensagem-icone-wrapper */
+.navbar-lateral.minimizada .nav-item > span,
+.navbar-lateral.minimizada .ola {
+  display: none;
+}
+
+/* Garante que o badge continue visível mesmo minimizado */
+.navbar-lateral.minimizada .mensagem-icone-wrapper .badge-mensagens {
+  display: block;
+  position: absolute;
+  top: -6px;
+  right: -10px;
+}
