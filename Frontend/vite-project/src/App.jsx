@@ -21,7 +21,7 @@ function AppWrapper() {
   const esconderAmbas = ["/", "/cadastro", "/recuperar"];
 
   // Rotas onde só a navbar superior deve ser escondida
-  const esconderSomenteNavbarTop = ["/mensagen", "/explore"];
+  const esconderSomenteNavbarTop = ["/mensagen", "/explore", "/perfil",  "/perfil/:id"];
 
   // Verifica se a tela está em modo mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
@@ -65,7 +65,9 @@ function AppWrapper() {
   //    - rota de mensagens (mobile ou desktop)
   const deveEsconderNavbarTop =
     esconderAmbas.includes(location.pathname) ||
-    esconderSomenteNavbarTop.includes(location.pathname);
+    esconderSomenteNavbarTop.some(path =>
+    location.pathname.startsWith(path.replace(':id', ''))
+    );
 
   return (
     <>

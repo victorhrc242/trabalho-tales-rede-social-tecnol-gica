@@ -4,7 +4,7 @@ import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
-
+import { FaCog } from 'react-icons/fa';
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
 const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
@@ -27,6 +27,7 @@ const Perfil = ({ usuarioLogado }) => {
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
   const [loading, setLoading] = useState(true);
+  const [modalOpcoes, setModalOpcoes] = useState(false);
   const [modalPost, setModalPost] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [novoComentario, setNovoComentario] = useState('');
@@ -259,6 +260,11 @@ if (imagemArquivo) {
  return (
   <div className="perfil-container">
 <div className="perfil-header">
+  {isPerfilProprio && (
+  <div className="configuracao-mobile">
+    <FaCog onClick={() => setModalOpcoes(true)} />
+  </div>
+)}
   <div className="foto-perfil-bloco">
     <div className="foto-perfil">
       <img
@@ -275,6 +281,9 @@ if (imagemArquivo) {
     {/* VERSÃO MOBILE */}
     <div className="nome-e-editar nome-e-editar-mobile">
       <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
+      {usuario.biografia && (
+    <p className='bio-mobile'>{usuario.biografia}</p>
+  )} 
       {isPerfilProprio && !isEditing && (
         <button
           className="btn-editar-perfil"
@@ -522,6 +531,25 @@ if (imagemArquivo) {
         </div>
       </div>
     )}
+    
+                {modalOpcoes && (
+            <div className="modal">
+              <div className="modal-conteudo">
+                <ul>
+                  <li onClick={() => {
+                    localStorage.removeItem('usuario');
+                    navigate('/');
+                  }}>Sair</li>
+                  <li onClick={() => {
+                    setModalOpcoes(false);
+                    navigate('/configuracoes');
+                  }}>Configurações</li>
+                  <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
+                </ul>
+                <button className="fechar-modal" onClick={() => setModalOpcoes(false)}>x</button>
+              </div>
+            </div>
+          )}
   </div>
 )};
 export default Perfil;

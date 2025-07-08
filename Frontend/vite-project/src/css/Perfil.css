@@ -356,6 +356,9 @@ body {
     color: #555;
   }
 }
+  .bio-mobile{
+    margin: 0px;
+  }
 
 /* Loading e erro */
 .loading,
@@ -589,6 +592,29 @@ body {
     font-size: 12px;
     padding: 5px 10px;
     border-radius: 4px;
+  }
+}
+
+.configuracao-mobile {
+  display: none; /* Esconde por padrão (desktop) */
+}
+
+@media (max-width: 768px) {
+  .configuracao-mobile {
+    display: block;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+    font-size: 24px;
+    color: #333;
+    background: white;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .configuracao-mobile:hover {
+    background-color: #f0f0f0;
   }
 }
 
