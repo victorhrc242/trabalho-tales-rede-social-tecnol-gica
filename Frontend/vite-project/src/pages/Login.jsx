@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import '../css/login.css';
 import { Link, useNavigate } from 'react-router-dom';
-//icons 
-import { FaEnvelope, FaLock } from 'react-icons/fa';
+// icons
+import { FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [senhaEmFoco, setSenhaEmFoco] = useState(false);
   const navigate = useNavigate();
 
-  // visibilidade da senha
-
-  
-
+  // Redireciona se já estiver logado
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -28,9 +27,9 @@ function Login() {
       const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, senha })
+        body: JSON.stringify({ email, senha }),
       });
 
       const data = await response.json();
@@ -51,62 +50,78 @@ function Login() {
         } else {
           setErro('Token não retornado pelo servidor.');
         }
-
       } else {
         setErro(data.message || 'Falha no login');
       }
-
     } catch (error) {
       console.error('Erro ao fazer login');
-      setErro('Usuario ou Senha Incorreta');
+      setErro('Usuário ou senha incorreta');
     }
   };
 
-
-
   return (
-    <div className='container-login'>
+    <div className="container-login">
+      {/* Modal flutuante de erro */}
+      {erro && (
+        <div className="error-toast-login">
+          <span>{erro}</span>
+          <button onClick={() => setErro('')}>×</button>
+        </div>
+      )}
+
       <div className="modal-login">
         <div className="formulario">
-          <h2 className="titulo-login">Devisocial</h2>
+          <h2 className="titulo-login">Paradise</h2>
           {/* formulario de login */}
-         <form onSubmit={handleLogin}>
-          <div className="input-wrapper">
-            <input
-              type="email"
-              placeholder="Digite seu email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <FaEnvelope className="input-icon-direita" />
-          </div>
+          <form onSubmit={handleLogin}>
+            <div className="input-wrapper">
+              <input
+                type="email"
+                placeholder="Digite seu email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <FaEnvelope className="input-icon-direita" />
+            </div>
 
-          <div className="input-wrapper">
-            <input
-              type="password"
-              placeholder="Digite sua senha"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              required
-            />
-            <FaLock className="input-icon-direita" />
+            <div className="input-wrapper">
+              <input
+                type={mostrarSenha ? 'text' : 'password'}
+                placeholder="Digite sua senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                onFocus={() => setSenhaEmFoco(true)}
+                onBlur={() => setSenhaEmFoco(false)}
+                required
+              />
+              {!senhaEmFoco &&
+                (mostrarSenha ? (
+                  <FaEyeSlash
+                    className="input-icon-direita"
+                    onClick={() => setMostrarSenha(false)}
+                  />
+                ) : (
+                  <FaEye
+                    className="input-icon-direita"
+                    onClick={() => setMostrarSenha(true)}
+                  />
+                ))}
+            </div>
+
+            <br />
+            <button className="botao-entrar" type="submit">Entrar</button>
+          </form>
+
+          <br />
+          <div className="linha-ou-container">
+            <div className="linha-esquerda"></div>
+            <div className="ou">ou</div>
+            <div className="linha-direita"></div>
           </div>
 
           <br />
-          <button className='botao-entrar' type="submit">Entrar</button>
-        </form>
-
-          <br />
-        <div className="linha-ou-container">
-          <div className="linha-esquerda"></div>
-          <div className="ou">ou</div>
-          <div className="linha-direita"></div>
-        </div>
-
-        <br />
-          {erro && <p className="erro">{erro}</p>}
-          <p className="esq"><Link to="/recuperar">Esqueceu a senha?</Link></p> 
+          <p className="esq"><Link to="/recuperar">Esqueceu a senha?</Link></p>
           <p>Não tem uma conta? <Link to="/cadastro">Cadastrar</Link></p>
         </div>
 

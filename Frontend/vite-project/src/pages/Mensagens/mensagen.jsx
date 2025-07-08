@@ -17,7 +17,7 @@ const Mensagens = () => {
   const [usuarioLogado, setUsuarioLogado] = useState(null); // Dados do usuário logado
   const [busca, setBusca] = useState(''); // Texto de busca na lista de usuários
   const [seguindoFiltrado, setSeguindoFiltrado] = useState([]); // Lista filtrada com base na busca
-
+  const [usuariosSeguidos, setUsuariosSeguidos] = useState([]);
   const [naoLidas, setNaoLidas] = useState({}); // Contador de mensagens não lidas por usuário
   const [modalAberto, setModalAberto] = useState(false); // Estado para controle do modal (menu do chat)
 
@@ -69,91 +69,81 @@ const [apagandoTudo, setApagandoTudo] = useState(false);
     fetchUsuarioLogado();
   }, [usuarioLogadoId]);
 
-  // Carrega os usuários que o logado está seguindo
-  useEffect(() => {
-const fetchSeguindo = async () => {
-  try {
-    if (!usuarioLogadoId) return;
-
-    const res = await axios.get(`${API_URL}/api/Mensagens/conversas/${usuarioLogadoId}`);
-
-    // Como a API já retorna os dados dos usuários, não precisamos de chamadas adicionais
-    const listaCompletada = res.data.usuarios.map((item) => ({
-      idAmizade: item.id, // ou null se não tiver amizade
-      usuario: {
-        id: item.id,
-        nome_usuario: item.nome_usuario,
-        imagem: item.fotoPerfil,
-      },
-    }));
-
-    setSeguindo(listaCompletada);
-    setSeguindoFiltrado(listaCompletada);
-    const resNaoLidas = await axios.get(`${API_URL}/api/Mensagens/nao-lidas/${usuarioLogadoId}`);
-if (resNaoLidas.data.sucesso) {
-  setNaoLidas(resNaoLidas.data.naoLidas); // Já está no formato { remetenteId: count }
-}
-  } catch (err) {
-    console.error('Erro ao carregar lista de seguindo:', err);
-  }
-};
-    fetchSeguindo();
-  }, [usuarioLogadoId]);
-
+ // Carrega os chats atuais (usuários com quem já conversou)
 useEffect(() => {
-  const buscarUsuariosSeguidos = async () => {
-    if (busca.trim() === '') {
-      // Mostra apenas os com quem já conversou
-      setSeguindoFiltrado(seguindo);
-    } else {
-      try {
-        // 1. Busca todos os usuários que o logado está seguindo
-        const res = await axios.get(`${API_URL}/api/Amizades/seguindo/${usuarioLogadoId}`);
-        const amizades = res.data.seguindo || [];
+  const fetchChats = async () => {
+    try {
+      if (!usuarioLogadoId) return;
 
-        // 2. Para cada amizade, busca os dados do usuário seguido (usuario2)
-        const usuariosSeguidos = await Promise.all(
-          amizades.map(async (amizade) => {
-            const usuarioId = amizade.usuario2;
+      const res = await axios.get(`${API_URL}/api/Mensagens/conversas/${usuarioLogadoId}`);
 
-            try {
-              const userRes = await axios.get(`${API_URL}/api/auth/usuario/${usuarioId}`);
-              const dados = userRes.data.dados || userRes.data;
+      const listaChats = res.data.usuarios.map((item) => ({
+        idAmizade: item.id,
+        usuario: {
+          id: item.id,
+          nome_usuario: item.nome_usuario,
+          imagem: item.fotoPerfil,
+        },
+      }));
 
-              return {
-                idAmizade: amizade.id,
-                usuario: {
-                  id: dados.id,
-                  nome_usuario: dados.nome_usuario,
-                  imagem: dados.imagem // Imagem de perfil
-                },
-              };
-            } catch (err) {
-              console.error(`Erro ao buscar dados do usuário ${usuarioId}:`, err);
-              return null;
-            }
-          })
-        );
+      setSeguindo(listaChats);
+      setSeguindoFiltrado(listaChats);
 
-        // 3. Remove os que deram erro e filtra pelo texto buscado
-        const listaFiltrada = usuariosSeguidos
-          .filter(Boolean)
-          .filter((item) =>
-            item.usuario.nome_usuario.toLowerCase().includes(busca.toLowerCase())
-          );
-
-        setSeguindoFiltrado(listaFiltrada);
-      } catch (err) {
-        console.error('Erro ao buscar usuários seguidos:', err);
-      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  buscarUsuariosSeguidos();
-}, [busca, usuarioLogadoId,seguindo]);
+  fetchChats();
+}, [usuarioLogadoId]);
 
+// Carrega lista completa de usuários seguidos para busca
+useEffect(() => {
+  const fetchSeguidos = async () => {
+    try {
+      if (!usuarioLogadoId) return;
 
+      const res = await axios.get(`${API_URL}/api/Amizades/seguindo/${usuarioLogadoId}`);
+      const amizades = res.data.seguindo || [];
 
+      const usuarios = await Promise.all(
+        amizades.map(async (amizade) => {
+          const userRes = await axios.get(`${API_URL}/api/auth/usuario/${amizade.usuario2}`);
+          const dados = userRes.data.dados || userRes.data;
+
+          return {
+            idAmizade: amizade.id,
+            usuario: {
+              id: dados.id,
+              nome_usuario: dados.nome_usuario,
+              imagem: dados.imagem || dados.fotoPerfil,
+            },
+          };
+        })
+      );
+
+      setUsuariosSeguidos(usuarios.filter(Boolean));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchSeguidos();
+}, [usuarioLogadoId]);
+
+// Efeito que filtra os usuários a mostrar baseado na busca
+useEffect(() => {
+  if (busca.trim() === '') {
+    // Quando não digita nada, mostra só os chats atuais
+    setSeguindoFiltrado(seguindo);
+  } else {
+    // Quando digita algo, filtra a lista completa de usuários seguidos
+    const filtrados = usuariosSeguidos.filter((item) =>
+      item.usuario.nome_usuario.toLowerCase().includes(busca.toLowerCase())
+    );
+    setSeguindoFiltrado(filtrados);
+  }
+}, [busca, seguindo, usuariosSeguidos]);
   // Conecta ao SignalR e escuta eventos em tempo real
   useEffect(() => {
     if (!usuarioLogadoId) return;
