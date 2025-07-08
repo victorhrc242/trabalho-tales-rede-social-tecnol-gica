@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-
 import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
 
@@ -27,7 +26,6 @@ const Perfil = ({ usuarioLogado }) => {
   const [usuario, setUsuario] = useState(null);
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
-  const [modalOpcoes, setModalOpcoes] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modalPost, setModalPost] = useState(null);
   const [comentarios, setComentarios] = useState([]);
@@ -260,11 +258,6 @@ if (imagemArquivo) {
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
  return (
   <div className="perfil-container">
-    {isPerfilProprio && (
-  <div className="configuracao-mobile">
-    <FaCog onClick={() => setModalOpcoes(true)} />
-  </div>
-)}
 <div className="perfil-header">
   <div className="foto-perfil-bloco">
     <div className="foto-perfil">
@@ -529,25 +522,6 @@ if (imagemArquivo) {
         </div>
       </div>
     )}
-
-                {modalOpcoes && (
-            <div className="modal">
-              <div className="modal-conteudo">
-                <ul>
-                  <li onClick={() => {
-                    localStorage.removeItem('usuario');
-                    navigate('/');
-                  }}>Sair</li>
-                  <li onClick={() => {
-                    setModalOpcoes(false);
-                    navigate('/configuracoes');
-                  }}>Configurações</li>
-                  <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
-                </ul>
-                <button className="fechar-modal" onClick={() => setModalOpcoes(false)}>x</button>
-              </div>
-            </div>
-          )}
   </div>
 )};
 export default Perfil;

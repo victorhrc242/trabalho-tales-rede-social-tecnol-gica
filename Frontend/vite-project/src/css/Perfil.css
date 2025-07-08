@@ -592,31 +592,6 @@ body {
   }
 }
 
-.configuracao-mobile {
-  display: none; /* Esconde por padrão (desktop) */
-}
-
-@media (max-width: 768px) {
-  .configuracao-mobile {
-    display: block;
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 999;
-    font-size: 24px;
-    color: #333;
-    background: white;
-    border-radius: 50%;
-    padding: 10px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-  }
-
-  .configuracao-mobile:hover {
-    background-color: #f0f0f0;
-  }
-}
-
 .modal-editar-mobile {
   position: fixed;
   top: 0;
