@@ -424,3 +424,32 @@ li {
   font-size: 14px;
   margin-left: 50px;
 }
+
+
+.info-usuario {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+.acao-usuario {
+  margin-left: auto;
+}
+
+.botao-seguir {
+  background-color: #4363b9;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.botao-seguir.seguindo {
+  background-color: #ccc;
+  color: #333;
+  cursor: default;
+}
