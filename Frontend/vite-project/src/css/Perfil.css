@@ -717,15 +717,6 @@ body {
   margin-top: 20px;
 }
 
-.perfil-header {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* centraliza a foto + info */
-  gap: 40px;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-}
-
 .foto-perfil-bloco {
   display: flex;
   flex-direction: column;
