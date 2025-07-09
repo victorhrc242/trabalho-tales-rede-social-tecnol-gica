@@ -217,11 +217,13 @@ function Comentario({
               const comentarioJaCurtiu = usuarioCurtidas?.includes(c.id);
               return (
                 <div key={c.id || i} className="comentario-item">
+                      <a href={`/perfil/${c.autorId}`} className="comentario-avatar-link">
                   <img
                     src={c.autorImagem || 'https://via.placeholder.com/40'}
                     alt={`Foto de perfil de ${c.autorNome}`}
                     className="autor-imagem"
                   />
+                  </a>
                   <div className="comentario-conteudo">
                     <div className="comentario-header">
                       <span className="comentario-autor">{c.autorNome}</span>
