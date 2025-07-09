@@ -1,3 +1,5 @@
+/* arquivo: comentario.css */
+
 /* === DESKTOP === */
 .comentarios-modal {
   position: fixed;
@@ -32,8 +34,6 @@
 
 /* Desktop */
 .comentarios-modal {
-
-
   height: 80vh;
   width: 90%;
   max-width: 1000px;
@@ -41,6 +41,7 @@
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
   flex-direction: row;
 }
+
 .imagem-container {
   flex: 1;
   background: black;
@@ -213,11 +214,9 @@
   margin-right: 6px;
 }
 
-
-
 /* === MOBILE === */
 @media (max-width: 768px) {
- .comentarios-modal.mobile {
+  .comentarios-modal.mobile {
     flex-direction: column;
     bottom: 0;
     top: auto;
@@ -228,17 +227,31 @@
     border-radius: 20px 20px 0 0;
     animation: slideUp 0.3s ease-in-out;
   }
+
+  /* ** Alteração importante para mostrar imagem no mobile ** */
   .imagem-container {
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 250px; /* altura fixa para imagem/vídeo */
+    width: 100%;
+    background-color: black;
+    overflow: hidden;
   }
 
+  .imagem-post {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+
+  /* Removido o display: none que escondia a imagem no mobile */
+  /* .imagem-container {
+       display: none !important;
+  } */
 
   .comentarios-modal.expanded {
     height: 100vh;
-  }
-
-  .imagem-container {
-    display: none !important;
   }
 
   .comentarios-container {
@@ -252,7 +265,7 @@
     animation: slideUp 0.3s ease-in-out;
   }
 
-   .comentarios-form {
+  .comentarios-form {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -308,3 +321,4 @@
     }
   }
 }
+
