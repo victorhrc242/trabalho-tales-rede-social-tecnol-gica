@@ -30,6 +30,11 @@ function Home() {
   // Resultados da busca por usuários
   const [resultadosBusca, setResultadosBusca] = useState([]);
   const [termoBusca, setTermoBusca] = useState('');
+  //Carregar
+  const [paginaAtual, setPaginaAtual] = useState(0);
+  const [carregandoMais, setCarregandoMais] = useState(false);
+  const [temMaisPosts, setTemMaisPosts] = useState(true);
+
 
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
@@ -376,6 +381,66 @@ function Home() {
     return () => clearInterval(intervalId);
   }, [posts]);
 
+  //Loader
+ const carregarMaisPosts = async () => {
+  if (carregandoMais || !temMaisPosts) return;
+  setCarregandoMais(true);
+
+  try {
+    const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feedPaginado/${usuario.id}?pagina=${paginaAtual + 1}&tamanhoPagina=5`);
+    const data = await response.json();
+
+    if (response.ok && data.length > 0) {
+      const novosPostsComAutores = await Promise.all(
+        data.map(async post => {
+          try {
+            const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
+            const autor = await resp.json();
+            return {
+              ...post,
+              autorNome: autor.nome_usuario || 'Usuário',
+              autorImagem: autor.imagem || null,
+            };
+          } catch {
+            return { ...post, autorNome: 'Usuário', autorImagem: null };
+          }
+        })
+      );
+
+      setPosts(prev => [...prev, ...novosPostsComAutores]);
+      setPaginaAtual(prev => prev + 1);
+
+      // ⚠️ Se vierem menos de 5, então não tem mais
+      if (data.length < 5) {
+        setTemMaisPosts(false);
+      }
+    } else {
+      // ⚠️ Nenhum post novo = acabou
+      setTemMaisPosts(false);
+    }
+  } catch (err) {
+    console.error('Erro ao carregar mais posts:', err);
+  } finally {
+    // ✅ Só finaliza carregamento depois de tudo
+    setCarregandoMais(false);
+  }
+};
+
+
+useEffect(() => {
+  const handleScroll = () => {
+    const scrollFinal = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
+    if (scrollFinal && !carregandoMais && temMaisPosts) {
+      carregarMaisPosts();
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, [carregandoMais, temMaisPosts, usuario.id, paginaAtual]);
+
+  
+
   return (
     <div className="pagina-container">
 
@@ -383,7 +448,13 @@ function Home() {
       <div className="home-container">
         <hr /><br /><br />
         {erro && <p style={{ color: 'red' }}>{erro}</p>}
-        {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
+        {posts.length === 0 && !erro && !carregandoMais && <p>Nenhum post encontrado.</p>}
+{posts.length === 0 && !erro && carregandoMais && (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div className="loader"></div>
+  </div>
+)}
+
 
         <ul>
           {posts.map(post => (
@@ -399,6 +470,14 @@ function Home() {
             />
           ))}
         </ul>
+
+ {carregandoMais && (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div className="loader"></div>
+  </div>
+)}
+
+
 
         {/* Modal de comentários */}
         {modalComentarios && postSelecionado && (
@@ -418,16 +497,23 @@ function Home() {
       <div className="lateral-direita">
         <div className="campo-busca">
           <FaSearch className="icone-busca" />
-          <input
-            placeholder="Buscar usuários..."
-            className="barra-pesquisa-usuarios"
-            value={termoBusca}
-            onChange={e => {
-              const valor = e.target.value;
-              setTermoBusca(valor);
+         <input
+          placeholder="Buscar usuários..."
+          className="barra-pesquisa-usuarios"
+          value={termoBusca}
+          onChange={e => {
+            const valor = e.target.value;
+            setTermoBusca(valor);
+
+            // Quando o campo ficar vazio, limpa os resultados imediatamente
+            if (valor.trim() === '') {
+              setResultadosBusca([]);
+            } else {
               buscarUsuarios(valor);
-            }}
-          />
+            }
+          }}
+        />
+
           {/* Resultados da busca */}
           {resultadosBusca.length > 0 && (
             <ul className="resultados-busca">
