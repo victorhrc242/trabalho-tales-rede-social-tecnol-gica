@@ -376,7 +376,7 @@ const cancelarLogout = () => {
   </div>
   <div className="botao-wrapper">
     <button
-      className="botoes-perfil"
+      className="editar-botoes"
       onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
     >
       Alterar foto de perfil
