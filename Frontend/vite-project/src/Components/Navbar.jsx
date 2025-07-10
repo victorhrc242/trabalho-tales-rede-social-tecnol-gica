@@ -132,10 +132,10 @@ useEffect(() => {
     >
       <nav className="navbar-menu">
         <div className="logo-navbar">
-  <Link to="/home">
-    <img src="../LogoParadise.jpg" alt="Logo" className="imagem-logo" />
-  </Link>
-</div>
+        <Link to="/home">
+          <img src="../LogoParadise.jpg" alt="Logo" className="imagem-logo" />
+        </Link>
+      </div>
         <Link to="/home" className="nav-item"><FaHome /> <span>Home</span></Link>
 
         <div className='nav-buscar'><div className="nav-item" onClick={() => setModal(prev => ({ ...prev, busca: !modal.busca }))}>
@@ -168,9 +168,10 @@ useEffect(() => {
 
         <div className='nav-explore'><Link to="/explore" className="nav-item"><FaCompass /> <span>Explorar</span></Link></div>
         <div className='nav-reels'><Link to="/kurz" className="nav-item"><FaVideo /> <span>kurz</span></Link></div>
-     <div className='nav-mensagens'>
+
+    <div className='nav-mensagens'>
   <Link to="/mensagen" className="nav-item">
-    <div style={{ position: 'relative' }}>
+    <div className="mensagem-icone-wrapper">
       <FaPaperPlane />
       {Object.values(naoLidas).reduce((a, b) => a + b, 0) > 0 && (
         <span className="badge-mensagens">
@@ -181,6 +182,7 @@ useEffect(() => {
     <span>Mensagens</span>
   </Link>
 </div>
+
 
         <div className='nav-notificacoes'><Link to="/notificacoes" className="nav-item"><FaHeart /> <span>Notificações</span></Link></div>
 

@@ -1,3 +1,4 @@
+/* Estilos Gerais */
 .kurz-feed {
   height: 100vh;
   overflow-y: scroll;
@@ -7,6 +8,26 @@
   align-items: center;
   padding: 0;
   margin: 0;
+  position: relative;
+}
+.kurz-loading{
+ text-align: center;
+  font-size: 18px;
+  padding: 40px 0;
+  color: #888;
+}
+
+/* Seta na parte superior esquerda */
+.seta-voltar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 20;
 }
 
 /* Cada vídeo ocupa toda a altura do card, centralizado */
@@ -36,7 +57,7 @@
   position: relative; /* NECESSÁRIO para posicionar elementos absolutos dentro */
 }
 
-/* O vídeo ocupa 84% da altura do card (como você pediu) */
+/* O vídeo ocupa 92% da altura do card (como você pediu) */
 .video {
   position: relative;
   width: 100%;
@@ -78,7 +99,7 @@
 /* Legenda e autor, dentro do vídeo */
 .video-overlay-info {
   position: absolute;
-  bottom: 18%; /* antes era 5%, agora sobe para ficar dentro dos 84% */
+  bottom: 18%;
   left: 10px;
   right: 10px;
   color: white;
@@ -90,7 +111,6 @@
   flex-direction: column;
   gap: 6px;
 }
-
 
 /* Autor */
 .video-author {
@@ -120,3 +140,56 @@
 
 /* Botão de mute também dentro do vídeo */
 
+/* Responsividade para Mobile */
+@media (max-width: 1180px) {
+  /* Ajusta a largura e altura dos cards para ocupar toda a tela */
+  .kurz-card {
+    width: 100%;
+    height: 100vh; /* Preenche a altura da tela */
+    margin: 0;
+  }
+
+  /* Tira a navbar no mobile */
+  .navbar {
+    display: none; /* Ou qualquer classe da sua navbar */
+  }
+
+  /* Ajusta a posição da seta para que fique visível no mobile */
+  .seta-voltar {
+    font-size: 28px;
+    top: 15px;
+    left: 15px;
+  }
+
+  /* Ajuste para o modal de comentários */
+  .modal-comentarios {
+    width: 100%;
+    height: 100vh;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  /* Ajusta o conteúdo do vídeo para ocupar toda a altura do card */
+  .video-wrapper {
+    height: 100%;
+  }
+
+  .video {
+    height: 100%; /* Vídeo ocupa 100% da altura */
+  }
+
+  /* Outros ajustes no layout */
+  .video-icons {
+    right: 10px;
+    bottom: 8%;
+  }
+
+  /* Ajusta o tamanho da fonte */
+  .video-author-name {
+    font-size: 12px;
+  }
+
+  .video-caption-text {
+    font-size: 12px;
+  }
+}

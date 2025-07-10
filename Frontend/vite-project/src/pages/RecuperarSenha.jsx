@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function RecuperarSenha() {
+  // Etapas do processo: 1 - Email, 2 - Código, 3 - Nova Senha
   const [etapa, setEtapa] = useState(1);
   const [email, setEmail] = useState('');
   const [codigo, setCodigo] = useState('');
@@ -14,21 +15,23 @@ export default function RecuperarSenha() {
   const [carregando, setCarregando] = useState(false);
   const [mensagemSucesso, setMensagemSucesso] = useState('');
 
+  // Controle visual dos campos de senha
   const [mostrarNovaSenha, setMostrarNovaSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
-  const [novaSenhaEmFoco, setNovaSenhaEmFoco] = useState(false);
-  const [confirmarSenhaEmFoco, setConfirmarSenhaEmFoco] = useState(false);
 
+  // Cronômetro do código
   const [tempoRestante, setTempoRestante] = useState(0);
   const intervaloRef = useRef(null);
   const navigate = useNavigate();
 
+  // Formata o tempo no formato mm:ss
   const formatarTempo = (segundos) => {
     const min = Math.floor(segundos / 60);
     const seg = segundos % 60;
     return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
   };
 
+  // Inicia o cronômetro quando o código é enviado
   useEffect(() => {
     if (etapa === 2 && tempoRestante > 0) {
       intervaloRef.current = setInterval(() => {
@@ -45,6 +48,7 @@ export default function RecuperarSenha() {
     return () => clearInterval(intervaloRef.current);
   }, [etapa, tempoRestante]);
 
+  // Envia o código para o email
   const enviarCodigo = async () => {
     setCarregando(true);
     try {
@@ -58,6 +62,7 @@ export default function RecuperarSenha() {
     setCarregando(false);
   };
 
+  // Valida o código enviado por email
   const validarCodigo = () => {
     if (!codigo.trim()) {
       setMensagem('Digite o código recebido.');
@@ -68,23 +73,19 @@ export default function RecuperarSenha() {
     clearInterval(intervaloRef.current);
   };
 
+  // Redefine a senha com nova validação de segurança
   const redefinirSenha = async () => {
     setMensagem('');
 
-    if (novaSenha.length < 8) {
-      setMensagem('A senha deve ter no mínimo 8 caracteres.');
-      return;
-    }
-    if (!/[A-Z]/.test(novaSenha)) {
-      setMensagem('A senha deve conter pelo menos uma letra maiúscula.');
-      return;
-    }
-    if (!/[a-z]/.test(novaSenha)) {
-      setMensagem('A senha deve conter pelo menos uma letra minúscula.');
-      return;
-    }
-    if (!/[0-9]/.test(novaSenha)) {
-      setMensagem('A senha deve conter pelo menos um número.');
+    // Validação personalizada:
+    const senhaValida = novaSenha.length >= 6 &&
+      /[A-Z]/.test(novaSenha) &&            // Pelo menos uma letra maiúscula
+      /[0-9]/.test(novaSenha) &&            // Pelo menos um número
+      /[^A-Za-z0-9\s]/.test(novaSenha) &&   // Pelo menos um caractere especial (exceto espaço)
+      !/\s/.test(novaSenha);                // Sem espaços
+
+    if (!senhaValida) {
+      setMensagem('A senha deve ter no mínimo 6 caracteres, incluindo uma letra maiúscula, um número e um caractere especial (sem espaços).');
       return;
     }
 
@@ -117,27 +118,26 @@ export default function RecuperarSenha() {
   };
 
   return (
-    <div className="recuperar-container">
-      <div className="recuperar-box">
+    <div className="rec-senha-container">
 
-        {/* Toast de sucesso */}
-        {mensagemSucesso && (
-          <div className="box-sucesso">{mensagemSucesso}</div>
-        )}
+      <div className="rec-senha-box">
+        {/* Mensagem de sucesso flutuante */}
+        {mensagemSucesso && <div className="rec-senha-sucesso">{mensagemSucesso}</div>}
 
-        {/* Toast de erro flutuante */}
+        {/* Toast de erro flutuante no canto superior direito */}
         {mensagem && !mensagemSucesso && (
-          <div className="toast-erro">
+          <div className="rec-senha-toast-erro">
             {mensagem}
-            <button onClick={() => setMensagem('')}>×</button>
+            <button onClick={() => setMensagem('')} aria-label="Fechar mensagem de erro">×</button>
           </div>
         )}
 
         <h2>Recuperar Senha</h2>
 
+        {/* Etapa 1: Inserir email */}
         {etapa === 1 && (
           <form onSubmit={(e) => { e.preventDefault(); enviarCodigo(); }}>
-            <div className="input-wrapper">
+            <div className="rec-senha-input-wrapper">
               <input
                 type="email"
                 placeholder="Digite seu e-mail"
@@ -145,7 +145,7 @@ export default function RecuperarSenha() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <FaEnvelope className="input-icon-direita" />
+              <FaEnvelope className="rec-senha-input-icon" />
             </div>
             <button type="submit" disabled={carregando}>
               {carregando ? "Enviando..." : "Enviar Código"}
@@ -153,6 +153,7 @@ export default function RecuperarSenha() {
           </form>
         )}
 
+        {/* Etapa 2: Inserir código */}
         {etapa === 2 && (
           <form onSubmit={(e) => { e.preventDefault(); validarCodigo(); }}>
             <input
@@ -162,9 +163,9 @@ export default function RecuperarSenha() {
               onChange={(e) => setCodigo(e.target.value)}
               required
             />
-            <div className="recuperar-buttons">
+            <div className="rec-senha-buttons">
               {tempoRestante > 0 ? (
-                <div className="cronometro">
+                <div className="rec-senha-cronometro">
                   Código válido por: <strong>{formatarTempo(tempoRestante)}</strong>
                 </div>
               ) : (
@@ -177,40 +178,33 @@ export default function RecuperarSenha() {
           </form>
         )}
 
+        {/* Etapa 3: Nova senha */}
         {etapa === 3 && (
           <form onSubmit={(e) => { e.preventDefault(); redefinirSenha(); }}>
-            <div className="input-wrapper">
+            <div className="rec-senha-input-wrapper">
               <input
                 type={mostrarNovaSenha ? 'text' : 'password'}
                 placeholder="Nova Senha"
                 value={novaSenha}
                 onChange={(e) => setNovaSenha(e.target.value)}
-                onFocus={() => setNovaSenhaEmFoco(true)}
-                onBlur={() => setNovaSenhaEmFoco(false)}
                 required
               />
-              {!novaSenhaEmFoco && (
-                mostrarNovaSenha
-                  ? <FaEyeSlash className="input-icon-direita" onClick={() => setMostrarNovaSenha(false)} />
-                  : <FaEye className="input-icon-direita" onClick={() => setMostrarNovaSenha(true)} />
-              )}
+              {mostrarNovaSenha
+                ? <FaEyeSlash className="rec-senha-input-icon" onClick={() => setMostrarNovaSenha(false)} />
+                : <FaEye className="rec-senha-input-icon" onClick={() => setMostrarNovaSenha(true)} />}
             </div>
 
-            <div className="input-wrapper">
+            <div className="rec-senha-input-wrapper">
               <input
                 type={mostrarConfirmarSenha ? 'text' : 'password'}
                 placeholder="Confirme a Nova Senha"
                 value={confirmarSenha}
                 onChange={(e) => setConfirmarSenha(e.target.value)}
-                onFocus={() => setConfirmarSenhaEmFoco(true)}
-                onBlur={() => setConfirmarSenhaEmFoco(false)}
                 required
               />
-              {!confirmarSenhaEmFoco && (
-                mostrarConfirmarSenha
-                  ? <FaEyeSlash className="input-icon-direita" onClick={() => setMostrarConfirmarSenha(false)} />
-                  : <FaEye className="input-icon-direita" onClick={() => setMostrarConfirmarSenha(true)} />
-              )}
+              {mostrarConfirmarSenha
+                ? <FaEyeSlash className="rec-senha-input-icon" onClick={() => setMostrarConfirmarSenha(false)} />
+                : <FaEye className="rec-senha-input-icon" onClick={() => setMostrarConfirmarSenha(true)} />}
             </div>
 
             <button type="submit" disabled={carregando}>
@@ -219,11 +213,13 @@ export default function RecuperarSenha() {
           </form>
         )}
 
-        <div className="separador-ou">
-          <div className="linha-esquerda"></div>
-          <div className="ou">ou</div>
-          <div className="linha-direita"></div>
+        {/* Separador "ou" e links */}
+        <div className="rec-senha-ou-separador">
+          <div className="rec-senha-linha-esq"></div>
+          <div className="rec-senha-ou">ou</div>
+          <div className="rec-senha-linha-dir"></div>
         </div>
+
         <p><Link to="/">Voltar para o login</Link></p>
         <p>Não tem uma conta? <Link to="/cadastro">Cadastrar</Link></p>
       </div>

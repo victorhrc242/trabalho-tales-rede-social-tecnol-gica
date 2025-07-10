@@ -1,16 +1,16 @@
 /* Container principal */
-.recuperar-container {
+.rec-senha-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #ffffff;
   padding: 20px;
 }
 
-.recuperar-box {
+.rec-senha-box {
   position: relative;
-  background-color: #e7e7e7;
+  background-color: #ffffff;
+  border: 2px solid #0a66c2; /* Borda azul adicionada */
   border-radius: 16px;
   padding: 50px;
   width: 500px;
@@ -18,7 +18,8 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-.recuperar-box h2 {
+
+.rec-senha-box h2 {
   color: #0a66c2;
   font-size: 36px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -27,13 +28,13 @@
   padding: 10px;
 }
 
-.recuperar-box form {
+.rec-senha-box form {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.recuperar-box input {
+.rec-senha-box input {
   background-color: #ffffff;
   border: 1px solid #0a66c2;
   border-radius: 8px;
@@ -46,17 +47,17 @@
   transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-.recuperar-box input:focus {
+.rec-senha-box input:focus {
   outline: none;
   border-color: #0a66c2;
   box-shadow: 0 0 5px rgba(10, 102, 194, 0.3);
 }
 
-.recuperar-box input::placeholder {
+.rec-senha-box input::placeholder {
   color: #666666;
 }
 
-.recuperar-box button {
+.rec-senha-box button {
   background-color: #0a66c2;
   color: white;
   border: none;
@@ -68,55 +69,57 @@
   transition: background 0.3s;
 }
 
-.recuperar-box button:hover {
+.rec-senha-box button:hover {
   background-color: #084b9a;
 }
 
-.recuperar-buttons {
+.rec-senha-buttons {
   display: flex;
   justify-content: center;
   gap: 15px;
   margin-top: 10px;
 }
 
-.recuperar-box p {
+.rec-senha-box p {
   text-align: center;
   color: #474747;
   margin-top: 10px;
 }
 
-.recuperar-box a {
+.rec-senha-box a {
   color: #0a66c2;
   text-decoration: none;
 }
 
-.recuperar-box a:hover {
+.rec-senha-box a:hover {
   text-decoration: underline;
 }
 
-.separador-ou {
+/* Separador de "ou" */
+.rec-senha-ou-separador {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 20px 0;
 }
 
-.linha-esquerda,
-.linha-direita {
+.rec-senha-linha-esq,
+.rec-senha-linha-dir {
   flex: 1;
   height: 1px;
   background-color: #000000;
   margin: 0 10px;
 }
 
-.ou {
+.rec-senha-ou {
   font-size: 15px;
   color: #030303;
   font-weight: bold;
   white-space: nowrap;
 }
 
-.cronometro {
+/* Cronômetro */
+.rec-senha-cronometro {
   display: flex;
   align-items: center;
   background-color: #0a66c2;
@@ -128,7 +131,8 @@
   user-select: none;
 }
 
-.box-sucesso {
+/* Toast de sucesso */
+.rec-senha-sucesso {
   background-color: #0a66c2;
   color: white;
   padding: 12px 20px;
@@ -140,17 +144,18 @@
   box-shadow: 0 0 10px rgba(10, 102, 194, 0.7);
 }
 
-/* Ícone à direita nos inputs */
-.input-wrapper {
+/* Wrapper com ícone no input */
+.rec-senha-input-wrapper {
   position: relative;
 }
 
-.input-wrapper input {
+.rec-senha-input-wrapper input {
   width: 100%;
   padding-right: 40px;
 }
 
-.input-icon-direita {
+/* Ícone no campo */
+.rec-senha-input-icon {
   position: absolute;
   top: 35%;
   right: 15px;
@@ -161,7 +166,7 @@
 }
 
 /* Toast flutuante de erro */
-.toast-erro {
+.rec-senha-toast-erro {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -178,7 +183,7 @@
   gap: 10px;
 }
 
-.toast-erro button {
+.rec-senha-toast-erro button {
   background: transparent;
   border: none;
   color: white;
@@ -188,11 +193,11 @@
 
 /* Responsivo */
 @media (max-width: 600px) {
-  .recuperar-container {
+  .rec-senha-container {
     padding: 10px;
   }
 
-  .recuperar-box {
+  .rec-senha-box {
     width: 100%;
     max-width: 95%;
     padding: 30px 20px;
@@ -202,64 +207,48 @@
     box-shadow: none;
   }
 
-  .recuperar-box h2 {
+  .rec-senha-box h2 {
     font-size: 26px;
   }
 
-  .recuperar-box input {
+  .rec-senha-box input {
     font-size: 14px;
     padding: 10px;
   }
 
-  .recuperar-box button {
+  .rec-senha-box button {
     font-size: 14px;
     padding: 12px;
   }
 
-  .recuperar-buttons {
+  .rec-senha-buttons {
     flex-direction: column;
     gap: 10px;
   }
 
-  .cronometro,
-  .box-sucesso {
+  .rec-senha-cronometro,
+  .rec-senha-sucesso {
     font-size: 14px;
     padding: 10px 15px;
   }
 
-  .linha-esquerda,
-  .linha-direita {
+  .rec-senha-linha-esq,
+  .rec-senha-linha-dir {
     margin: 0 5px;
   }
 
-  .ou {
+  .rec-senha-ou {
     font-size: 13px;
   }
 
-  .toast-erro {
+  .rec-senha-toast-erro {
     top: 10px;
     right: 10px;
     font-size: 14px;
     padding: 10px 15px;
   }
 
-  .input-icon-direita {
+  .rec-senha-input-icon {
     right: 10px;
   }
-}
-.toast-erro {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #f44336;
-  color: white;
-  padding: 14px 20px;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
 }

@@ -29,7 +29,7 @@ function Home() {
   const [notificacoes, setNotificacoes] = useState([]);
   // Resultados da busca por usuários
   const [resultadosBusca, setResultadosBusca] = useState([]);
-const [termoBusca, setTermoBusca] = useState('');
+  const [termoBusca, setTermoBusca] = useState('');
 
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
@@ -83,7 +83,6 @@ const [termoBusca, setTermoBusca] = useState('');
       const data = await response.json();
 
       if (response.ok) {
-        // Enriquecer posts com dados do autor
         const postsComAutores = await Promise.all(
           data.map(async post => {
             try {
@@ -116,7 +115,6 @@ const [termoBusca, setTermoBusca] = useState('');
       const data = await response.json();
 
       if (data.notificacoes) {
-        // Buscar dados do remetente para cada notificação
         const notificacoesComRemetente = await Promise.all(
           data.notificacoes.map(async (n) => {
             const remetenteId = n.mensagem.match(/([0-9a-f\-]{36})/)?.[1];
@@ -233,71 +231,68 @@ const [termoBusca, setTermoBusca] = useState('');
     }
   };
 
-  // Busca usuários pelo termo digitado para a barra de busca lateral
- const buscarUsuarios = async (termo) => {
-  if (!termo.trim()) {
-    setResultadosBusca([]);
-    return;
-  }
-
-  try {
-    const responseUsuarios = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`);
-    const dataUsuarios = await responseUsuarios.json();
-
-    if (!Array.isArray(dataUsuarios)) return;
-
-    const resultadosFiltrados = dataUsuarios.filter(u =>
-      u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase()) && u.id !== usuario.id
-    );
-
-    // Buscar a lista de quem o usuário logado já segue
-    const resSeguidores = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`);
-    const dataSeguidores = await resSeguidores.json();
-    const idsSeguindo = dataSeguidores.seguindo?.map(s => s.usuario2) || [];
-
-    // Adicionar flag "jaSegue"
-    const resultadosComStatus = resultadosFiltrados.map(u => ({
-      ...u,
-      jaSegue: idsSeguindo.includes(u.id)
-    }));
-
-    setResultadosBusca(resultadosComStatus);
-  } catch (error) {
-    console.error('Erro ao buscar usuários:', error);
-    setResultadosBusca([]);
-  }
-};
-
-  // Seguir usuário a partir da notificação
-const seguirUsuarioRapido = async (idUsuario) => {
-  try {
-    const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ usuario1: usuario.id, usuario2: idUsuario }),
-    });
-
-    if (resposta.ok) {
-      // Atualiza a lista de busca para refletir que o usuário agora está seguindo
-      setResultadosBusca(prev =>
-        prev.map(u =>
-          u.id === idUsuario ? { ...u, jaSegue: true } : u
-        )
-      );
-    } else {
-      console.error('Erro ao seguir:', resposta.status);
+  // Busca usuários pelo termo digitado
+  const buscarUsuarios = async (termo) => {
+    if (!termo.trim()) {
+      setResultadosBusca([]);
+      return;
     }
-  } catch (err) {
-    console.error("Erro ao seguir usuário rapidamente:", err);
-  }
-};
 
-  // Navega para o perfil do usuário selecionado
+    try {
+      const responseUsuarios = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`);
+      const dataUsuarios = await responseUsuarios.json();
+
+      if (!Array.isArray(dataUsuarios)) return;
+
+      const resultadosFiltrados = dataUsuarios.filter(u =>
+        u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase()) && u.id !== usuario.id
+      );
+
+      const resSeguidores = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`);
+      const dataSeguidores = await resSeguidores.json();
+      const idsSeguindo = dataSeguidores.seguindo?.map(s => s.usuario2) || [];
+
+      const resultadosComStatus = resultadosFiltrados.map(u => ({
+        ...u,
+        jaSegue: idsSeguindo.includes(u.id)
+      }));
+
+      setResultadosBusca(resultadosComStatus);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      setResultadosBusca([]);
+    }
+  };
+
+  // Seguir usuário rapidamente
+  const seguirUsuarioRapido = async (idUsuario) => {
+    try {
+      const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario1: usuario.id, usuario2: idUsuario }),
+      });
+
+      if (resposta.ok) {
+        setResultadosBusca(prev =>
+          prev.map(u =>
+            u.id === idUsuario ? { ...u, jaSegue: true } : u
+          )
+        );
+      } else {
+        console.error('Erro ao seguir:', resposta.status);
+      }
+    } catch (err) {
+      console.error("Erro ao seguir usuário rapidamente:", err);
+    }
+  };
+
+  // Ir para o perfil
   const irParaPerfil = (id) => {
     navigate(`/perfil/${id}`, { state: { userId: id } });
   };
 
-  // Conexão SignalR para receber novos posts em tempo real
+  // Conexão com SignalR - feed e curtidas
   useEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub', {
@@ -317,7 +312,6 @@ const seguirUsuarioRapido = async (idUsuario) => {
     return () => connection.stop();
   }, []);
 
-  // Conexão SignalR para atualizações de curtidas em tempo real
   useEffect(() => {
     const curtidaConnection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
@@ -347,11 +341,10 @@ const seguirUsuarioRapido = async (idUsuario) => {
     return () => curtidaConnection.stop();
   }, []);
 
-  // IntersectionObserver para identificar vídeo ativo (visível > 50%)
+  // IntersectionObserver para vídeos
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // Filtra vídeos que estão visíveis pelo menos 50%
         const visiveis = entries.filter(entry => entry.isIntersecting && entry.intersectionRatio >= 0.5);
         if (visiveis.length === 0) return setVideoAtivoId(null);
         const postId = visiveis[0].target.getAttribute('data-postid');
@@ -360,14 +353,12 @@ const seguirUsuarioRapido = async (idUsuario) => {
       { threshold: 0.5 }
     );
 
-    // Observa vídeos dos posts com vídeo
     posts.forEach(post => {
       if (post.video && videoRefs.current[post.id]) {
         observer.observe(videoRefs.current[post.id]);
       }
     });
 
-    // Cleanup ao desmontar ou posts mudarem
     return () => {
       posts.forEach(post => {
         if (post.video && videoRefs.current[post.id]) {
@@ -377,14 +368,13 @@ const seguirUsuarioRapido = async (idUsuario) => {
     };
   }, [posts]);
 
-  // Salva posts no localStorage a cada 10 segundos para cache
+  // Salva posts no cache local a cada 10s
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (posts.length > 0) salvarPostsLocalmente(posts);
     }, 10000);
     return () => clearInterval(intervalId);
   }, [posts]);
-
 
   return (
     <div className="pagina-container">
@@ -424,86 +414,80 @@ const seguirUsuarioRapido = async (idUsuario) => {
         )}
       </div>
 
-      {/* Lateral direita: Busca + Notificações */}
+      {/* Lateral: busca + notificações */}
       <div className="lateral-direita">
-        {/* Campo de busca de usuários */}
         <div className="campo-busca">
           <FaSearch className="icone-busca" />
-       <input
-  placeholder="Buscar usuários..."
-  className="barra-pesquisa-usuarios"
-  value={termoBusca}
-  onChange={e => {
-    const valor = e.target.value;
-    setTermoBusca(valor);
-    buscarUsuarios(valor); // chama a busca toda vez que o texto mudar
-  }}
-/>
-
+          <input
+            placeholder="Buscar usuários..."
+            className="barra-pesquisa-usuarios"
+            value={termoBusca}
+            onChange={e => {
+              const valor = e.target.value;
+              setTermoBusca(valor);
+              buscarUsuarios(valor);
+            }}
+          />
           {/* Resultados da busca */}
           {resultadosBusca.length > 0 && (
-          <ul className="resultados-busca">
-  {resultadosBusca.map((usuarioPesquisado, index) => (
-    <li key={index} className="usuario-pesquisado">
-      <img
-        src={usuarioPesquisado.imagem || 'https://via.placeholder.com/40'}
-        alt="avatar"
-        className="avatar-busca"
-        onClick={() => irParaPerfil(usuarioPesquisado.id)}
-        style={{ cursor: 'pointer' }}
-      />
-      <div className="info-usuario">
-        <span onClick={() => irParaPerfil(usuarioPesquisado.id)} style={{ cursor: 'pointer' }}>
-          {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
-        </span>
-
-        {!usuarioPesquisado.jaSegue && (
-          <button
-            className="botao-seguir"
-            onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
-          >
-            Seguir
-          </button>
-        )}
-
-        {usuarioPesquisado.jaSegue && (
-          <span className="seguindo-label">Seguindo</span>
-        )}
-      </div>
-    </li>
-  ))}
-</ul>
-
+            <ul className="resultados-busca">
+              {resultadosBusca.map((usuarioPesquisado, index) => (
+                <li key={index} className="usuario-pesquisado">
+                  <img
+                    src={usuarioPesquisado.imagem || 'https://via.placeholder.com/40'}
+                    alt="avatar"
+                    className="avatar-busca"
+                    onClick={() => irParaPerfil(usuarioPesquisado.id)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <div className="info-usuario">
+                    <span onClick={() => irParaPerfil(usuarioPesquisado.id)} style={{ cursor: 'pointer' }}>
+                      {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
+                    </span>
+                    <div className="acao-usuario">
+                      {usuarioPesquisado.jaSegue ? (
+                        <button className="botao-seguir seguindo" disabled>Seguindo</button>
+                      ) : (
+                        <button
+                          className="botao-seguir"
+                          onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
+                        >
+                          Seguir
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
 
         {/* Notificações */}
-      <div className="notificacoes-box">
-        <h4 ><FaBell /> Notificações</h4>
-        <ul>
-          {notificacoes.length === 0 ? (
-            <li>Não há notificações</li>
-          ) : (
-            notificacoes.map((notificacao) => (
-              <li key={notificacao.id} className="notificacao-item">
-          <img
-            src={notificacao.remetente?.imagem || "https://via.placeholder.com/40"}
-            alt="Foto de perfil"
-            className="avatar-busca"
-            onClick={() => irParaPerfil(notificacao.remetente?.id)}
-            style={{ cursor: 'pointer' }}
-          />
-          <div className="info-notificacao" onClick={() => irParaPerfil(notificacao.remetente?.id)} style={{ cursor: 'pointer' }}>
-            <p><strong>{notificacao.remetente?.nome_usuario}</strong> {notificacao.mensagem}</p>
-          </div>
-        </li>
-
-            ))
-          )}
-        </ul>
+        <div className="notificacoes-box">
+          <h4><FaBell /> Notificações</h4>
+          <ul>
+            {notificacoes.length === 0 ? (
+              <li>Não há notificações</li>
+            ) : (
+              notificacoes.map((notificacao) => (
+                <li key={notificacao.id} className="notificacao-item">
+                  <img
+                    src={notificacao.remetente?.imagem || "https://via.placeholder.com/40"}
+                    alt="Foto de perfil"
+                    className="avatar-busca"
+                    onClick={() => irParaPerfil(notificacao.remetente?.id)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <div className="info-notificacao" onClick={() => irParaPerfil(notificacao.remetente?.id)} style={{ cursor: 'pointer' }}>
+                    <p><strong>{notificacao.remetente?.nome_usuario}</strong> {notificacao.mensagem}</p>
+                  </div>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
       </div>
-      </div>
-
     </div>
   );
 }

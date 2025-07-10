@@ -27,8 +27,6 @@ const Cadastro = () => {
   // Estados para exibir ou esconder a senha
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarRepetirSenha, setMostrarRepetirSenha] = useState(false);
-  const [senhaEmFoco, setSenhaEmFoco] = useState(false);
-  const [repetirSenhaEmFoco, setRepetirSenhaEmFoco] = useState(false);
 
   // Refs para inputs de senha
   const senhaRef = useRef();
@@ -242,7 +240,7 @@ const Cadastro = () => {
                   <FaEnvelope className="input-icon" />
                 </div>
 
-                {/* Senha com olho */}
+                {/* Senha com olho SEM sumir o ícone ao focar */}
                 <div className="input-wrapper">
                   <input
                     ref={senhaRef}
@@ -250,19 +248,17 @@ const Cadastro = () => {
                     placeholder="Senha"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
-                    onFocus={() => setSenhaEmFoco(true)}
-                    onBlur={() => setSenhaEmFoco(false)}
                     required
                   />
-                  {!senhaEmFoco &&
-                    (mostrarSenha ? (
-                      <FaEyeSlash className="input-icon" onClick={() => setMostrarSenha(false)} />
-                    ) : (
-                      <FaEye className="input-icon" onClick={() => setMostrarSenha(true)} />
-                    ))}
+                  {/* Ícone de olho SEM sumir nunca */}
+                  {mostrarSenha ? (
+                    <FaEyeSlash className="input-icon" onClick={() => setMostrarSenha(false)} />
+                  ) : (
+                    <FaEye className="input-icon" onClick={() => setMostrarSenha(true)} />
+                  )}
                 </div>
 
-                {/* Confirmar Senha com olho */}
+                {/* Confirmar Senha com olho SEM sumir o ícone ao focar */}
                 <div className="input-wrapper">
                   <input
                     ref={repetirSenhaRef}
@@ -270,16 +266,14 @@ const Cadastro = () => {
                     placeholder="Confirme senha"
                     value={repetirSenha}
                     onChange={(e) => setRepetirSenha(e.target.value)}
-                    onFocus={() => setRepetirSenhaEmFoco(true)}
-                    onBlur={() => setRepetirSenhaEmFoco(false)}
                     required
                   />
-                  {!repetirSenhaEmFoco &&
-                    (mostrarRepetirSenha ? (
-                      <FaEyeSlash className="input-icon" onClick={() => setMostrarRepetirSenha(false)} />
-                    ) : (
-                      <FaEye className="input-icon" onClick={() => setMostrarRepetirSenha(true)} />
-                    ))}
+                  {/* Ícone de olho SEM sumir nunca */}
+                  {mostrarRepetirSenha ? (
+                    <FaEyeSlash className="input-icon" onClick={() => setMostrarRepetirSenha(false)} />
+                  ) : (
+                    <FaEye className="input-icon" onClick={() => setMostrarRepetirSenha(true)} />
+                  )}
                 </div>
 
                 {/* Data de nascimento */}
