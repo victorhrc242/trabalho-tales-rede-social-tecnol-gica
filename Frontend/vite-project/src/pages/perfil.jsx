@@ -245,14 +245,12 @@ if (imagemArquivo) {
     }
   };
 
-  const confirmarLogout = () => {
-  localStorage.removeItem('usuario');
-  deslogar();
-  navigate('/');
+const confirmarLogout = () => {
+  deslogar();       // <- chama a função passada via props, que deve limpar o estado global
+  navigate('/');    // <- redireciona para a página de login (ou onde a rota "/" leve)
 };
-
 const cancelarLogout = () => {
-  setMostrarConfirmarLogout(false);
+  setMostrarConfirmarLogout(false); // apenas fecha o modal
 };
 
   const excluirComentario = async (comentarioId) => {
@@ -378,7 +376,7 @@ const cancelarLogout = () => {
   </div>
   <div className="botao-wrapper">
     <button
-      className="botoes-perfil"
+      className="editar-botoes"
       onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
     >
       Alterar foto de perfil
