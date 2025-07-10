@@ -64,10 +64,12 @@ body {
 .botoes-perfil {
   display: flex;
   gap: 10px;
+  margin-top: 54px; /* empurra os botões para baixo */
+  width: 100%; /* força quebra se estiver em container flex */
 }
 
 .botoes-perfil button {
-  padding: 8px 16px;
+  padding: 8px 30px;
   font-size: 14px;
   border: 1px solid #0a66c2;
   border-radius: 6px;
@@ -738,6 +740,8 @@ body {
   justify-content: center;
   align-items: center;
   margin: 10px 0;
+  margin-top: 66px;
+  width: 100%;
 }
 
 .infor-pessoais p {
