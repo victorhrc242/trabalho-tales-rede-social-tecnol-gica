@@ -10,21 +10,68 @@ function Comentario({
   comentar,
   fechar,
   usuarioCurtidas,
-  usuario,  // adicionei para usar o id do usuário
-  setComentarios // para atualizar a lista de comentários quando curtir/descurtir
+  usuario,  // ID e dados do usuário logado, usado para curtidas
+  setComentarios // para atualizar comentários após curtir/descurtir
 }) {
+  // Estado para identificar se está em tela mobile (largura <= 768px)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // Estado que controla a altura do modal no mobile para drag resizing
   const [modalHeight, setModalHeight] = useState(window.innerHeight * 0.7);
+
+  // Refs para controlar posição inicial do drag no modal
   const startY = useRef(null);
   const startHeight = useRef(null);
 
-  // Estado local para curtidas nos comentários, para atualizar UI na hora
+  // Estado local dos comentários (para atualizar curtidas UI em tempo real)
   const [comentariosState, setComentariosState] = useState(comentarios || []);
 
+  // Sincroniza o estado local sempre que o prop "comentarios" mudar
   useEffect(() => {
     setComentariosState(comentarios);
   }, [comentarios]);
 
+  // Carrega os dados dos autores dos comentários (nome e imagem)
+  // Se o comentário ainda não tiver esses dados, faz fetch na API para buscar
+  useEffect(() => {
+    const carregarAutores = async () => {
+      const atualizados = await Promise.all(
+        comentariosState.map(async (comentario) => {
+          if (!comentario.autorNome || !comentario.autorImagem) {
+            try {
+              const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+              const autor = await res.json();
+
+              // Retorna o comentário com dados do autor anexados
+              return {
+                ...comentario,
+                autorNome: autor.nome_usuario || 'Usuário',
+                autorImagem: autor.imagem || 'https://via.placeholder.com/40',
+              };
+            } catch (err) {
+              console.error('Erro ao buscar autor do comentário:', err);
+              // Se falhar, retorna com valores padrão
+              return {
+                ...comentario,
+                autorNome: 'Usuário',
+                autorImagem: 'https://via.placeholder.com/40',
+              };
+            }
+          } else {
+            return comentario;
+          }
+        })
+      );
+
+      setComentariosState(atualizados);
+    };
+
+    // Só carrega se houver comentários na lista
+    if (comentariosState?.length > 0) {
+      carregarAutores();
+    }
+  }, [comentariosState]);
+
+  // Detecta mudanças no tamanho da janela para ajustar UI mobile/desktop
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -36,13 +83,13 @@ function Comentario({
       }
     };
 
-    handleResize();
+    handleResize(); // Executa na montagem
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Conexão SignalR para receber curtidas em comentários em tempo real
+  // Configura conexão SignalR para receber atualizações em tempo real de curtidas nos comentários
   useEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
@@ -53,50 +100,50 @@ function Comentario({
 
     connection.start()
       .then(() => {
+        // Quando receber um evento de curtida, atualiza o estado local de comentários
         connection.on('ReceberCurtida', (postIdRecebido, usuarioId, foiCurtida) => {
-          // Atualiza só se for o post do modal aberto
-          if (postIdRecebido === post.id) {
-            // Atualiza curtidas no post (se quiser, pode implementar, mas no seu componente original não tem)
-            // Atualiza curtidas dos comentários (caso seja comentário)
-            setComentariosState(prevComentarios =>
-              prevComentarios.map(c => {
-                if (c.id === postIdRecebido) {
-                  // Aqui postIdRecebido é do post, não comentário, então provavelmente você quer atualizar apenas o post
-                  // Para comentários, provavelmente a conexão precisaria diferenciar
-                  return c;
-                }
-                return c;
-              })
-            );
-          }
+          setComentariosState(prevComentarios =>
+            prevComentarios.map(c => {
+              if (c.id === postIdRecebido) {
+                const curtidasAtualizadas = foiCurtida
+                  ? (c.curtidas || 0) + 1
+                  : Math.max(0, (c.curtidas || 0) - 1);
+                return { ...c, curtidas: curtidasAtualizadas };
+              }
+              return c;
+            })
+          );
         });
       })
       .catch(err => console.error('Erro ao conectar curtidaHub:', err));
 
+    // Cleanup desconecta SignalR ao desmontar componente
     return () => connection.stop();
-  }, [post.id]);
+  }, []);
 
-  // Função curtirPost que verifica se o usuário já curtiu e faz requisição para curtir/descurtir
+  // Função para curtir ou descurtir um comentário
+  // Faz requisições para APIs apropriadas e atualiza UI localmente
   const curtirPost = async (comentarioId) => {
     const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${comentarioId}`;
     const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
     const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
 
     try {
-      // Verifica se já curtiu o comentário
+      // Verifica se usuário já curtiu
       const res = await fetch(verificarUrl, { method: 'GET' });
       const data = await res.json();
       const jaCurtiuAgora = data.curtidas?.some(c => c.usuarioId === usuario.id);
 
       const endpoint = jaCurtiuAgora ? descurtirUrl : curtirUrl;
 
+      // Envia curtida ou descurtida para o servidor
       await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId: comentarioId, usuarioId: usuario.id }),
       });
 
-      // Atualiza localmente para UX instantâneo (opcional)
+      // Atualiza curtidas localmente para feedback imediato
       setComentariosState(prev =>
         prev.map(c => {
           if (c.id === comentarioId) {
@@ -114,6 +161,7 @@ function Comentario({
     }
   };
 
+  // Funções para arrastar e redimensionar o modal (somente mobile)
   const onDragStart = (e) => {
     startY.current = e.touches ? e.touches[0].clientY : e.clientY;
     startHeight.current = modalHeight;
@@ -151,6 +199,7 @@ function Comentario({
         className={`comentarios-modal ${isMobile ? 'mobile' : ''}`}
         style={isMobile && modalHeight ? { height: modalHeight } : {}}
       >
+        {/* Handle para arrastar modal no mobile */}
         {isMobile && (
           <div
             className="drag-handle"
@@ -167,6 +216,7 @@ function Comentario({
           />
         )}
 
+        {/* Exibição do post: vídeo ou imagem */}
         {!isMobile && (
           <div className="imagem-container">
             {post.video ? (
@@ -185,6 +235,7 @@ function Comentario({
         )}
 
         <div className="comentarios-container">
+          {/* Cabeçalho com dados do autor do post e botão fechar */}
           <div className="comentarios-header">
             <div className="autor-info">
               <img
@@ -195,10 +246,11 @@ function Comentario({
               <strong>{post.autorNome}</strong>
             </div>
             <button className="fechar-modal" onClick={fechar}>
-              ×
+              x
             </button>
           </div>
 
+          {/* Conteúdo do post e tags */}
           <div className="post-conteudo">
             <p>{post.conteudo}</p>
             {post.tags?.length > 0 && (
@@ -212,23 +264,32 @@ function Comentario({
             )}
           </div>
 
+          {/* Lista de comentários */}
           <div className="comentarios-lista">
             {comentariosState.map((c, i) => {
+              // Verifica se o usuário atual já curtiu este comentário
               const comentarioJaCurtiu = usuarioCurtidas?.includes(c.id);
               return (
                 <div key={c.id || i} className="comentario-item">
-                      <a href={`/perfil/${c.autorId}`} className="comentario-avatar-link">
-                  <img
-                    src={c.autorImagem || 'https://via.placeholder.com/40'}
-                    alt={`Foto de perfil de ${c.autorNome}`}
-                    className="autor-imagem"
-                  />
+                  {/* Link para perfil do autor do comentário */}
+                  <a href={`/perfil/${c.autorId}`} className="comentario-avatar-link">
+                    <img
+                      src={
+                        c.autor?.imagem || c.autorImagem ||
+                        'https://via.placeholder.com/40'
+                      }
+                      alt={`Foto de ${c.autor?.nome_usuario || c.autorNome || 'Usuário'}`}
+                      className="comentario-avatar"
+                    />
                   </a>
+
                   <div className="comentario-conteudo">
                     <div className="comentario-header">
                       <span className="comentario-autor">{c.autorNome}</span>
                     </div>
                     <span className="comentario-texto">{c.conteudo}</span>
+
+                    {/* Botão para curtir/descurtir comentário */}
                     <div className="botao-acao">
                       <button
                         className={`botao-acao ${comentarioJaCurtiu ? 'curtido' : ''}`}
@@ -256,6 +317,7 @@ function Comentario({
             })}
           </div>
 
+          {/* Formulário para adicionar novo comentário */}
           <div className="comentarios-form">
             <input
               type="text"
