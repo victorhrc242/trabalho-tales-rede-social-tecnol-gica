@@ -133,15 +133,43 @@ const [seguindoUsuario, setSeguindoUsuario] = useState({});
   }, [displayedPosts]);
 
   const abrirComentarios = async post => {
-    setPostSelecionado(post);
-    try {
-      // const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
-      const data = await resp.json();
-      setComentarios(resp.ok ? data : []);
-    } catch {
+  setPostSelecionado(post);
+  try {
+    const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
+    const data = await resp.json();
+
+    if (resp.ok && Array.isArray(data)) {
+      // Para cada comentário, buscar os dados do autor
+      const comentariosComAutor = await Promise.all(
+        data.map(async comentario => {
+          try {
+            const resAutor = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+            const autorData = await resAutor.json();
+
+            return {
+              ...comentario,
+              autorNome: autorData.nome_usuario || 'Usuário',
+              autorImagem: autorData.imagem || null,
+            };
+          } catch {
+            return {
+              ...comentario,
+              autorNome: 'Usuário',
+              autorImagem: null,
+            };
+          }
+        })
+      );
+
+      setComentarios(comentariosComAutor);
+    } else {
       setComentarios([]);
     }
-  };
+  } catch {
+    setComentarios([]);
+  }
+};
+
 
   const comentar = async () => {
     if (!comentarioTexto.trim()) return;
