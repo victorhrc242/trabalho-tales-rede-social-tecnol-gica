@@ -246,8 +246,8 @@ if (imagemArquivo) {
   };
 
 const confirmarLogout = () => {
-  deslogar();     
-  navigate('/'); 
+  deslogar();       // <- chama a função passada via props, que deve limpar o estado global
+  navigate('/');    // <- redireciona para a página de login (ou onde a rota "/" leve)
 };
 const cancelarLogout = () => {
   setMostrarConfirmarLogout(false); // apenas fecha o modal
