@@ -90,6 +90,7 @@ const Kurz = () => {
   // Estados para vídeos, curtidas, usuário, vídeo atual, controle do modal e comentários
   const [videos, setVideos] = useState([]);
   const [curtidas, setCurtidas] = useState({});
+    const [comentariosCount, setComentariosCount] = useState({});
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [videoAtual, setVideoAtual] = useState(0);
   const [modalComentarios, setModalComentarios] = useState(false);
@@ -158,6 +159,12 @@ const Kurz = () => {
           likes[v.id] = v.curtidas || 0;
         });
         setCurtidas(likes);
+        const commentsCount = {};
+        videosComAutor.forEach((v) => {
+          commentsCount[v.id] = v.comentariosCount || 0;
+        });
+        setComentariosCount(commentsCount);
+
       } catch (e) {
         console.error(e);
       }
@@ -229,6 +236,7 @@ const abrirComentarios = async (post) => {
             ...comentario,
             autorNome: autor.nome_usuario || 'Usuário',
             autorImagem: autor.imagem || 'https://via.placeholder.com/40'
+            
           };
         } catch (error) {
           console.warn('Erro ao buscar autor do comentário', comentario.autorId, error);
@@ -340,11 +348,11 @@ const abrirComentarios = async (post) => {
                   color={curtidas[video.id] > 0 ? 'red' : 'white'}
                   fill={curtidas[video.id] > 0 ? 'red' : 'none'}
                 />
-                <span>{curtidas[video.id]}</span>
+                
               </button>
               <button onClick={() => abrirComentarios(video)} aria-label="Comentários">
                 <MessageCircle size={28} color="white" />
-                <span>{video.comentarios?.length || 0}</span>
+                <span>{comentariosCount[video.id] || 0}</span>
               </button>
             </div>
           </div>
