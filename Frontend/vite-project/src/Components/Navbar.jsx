@@ -8,6 +8,8 @@ import axios from 'axios';
 import CriarPostModal from '../Components/Criar.jsx';
 import '../css/navbar.css';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
+
+
 function Navbar({ usuarioLogado, deslogar }) {
   const [busca, setBusca] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
@@ -35,6 +37,11 @@ const irParaConfiguracoes = () => {
   fecharModalOpcoes(); // fecha o modal antes de navegar
   navigate('/configuracoes'); // rota que você deve criar
 };
+//Trocar de conta
+const trocarDeConta =() =>{
+  fecharModalOpcoes();
+  navigate('/trocarConta')
+}
   const carregarDados = useCallback(async () => {
     if (!usuarioLogado?.id) return;
     try {
@@ -225,7 +232,7 @@ useEffect(() => {
       <ul>
         <li onClick={confirmarLogoutFunc}>Sair</li>
         <li onClick={irParaConfiguracoes}>Configurações</li>
-        <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
+        <li onClick={trocarDeConta}>Trocar de Conta</li>
       </ul>
       <button className="fechar-modal" onClick={fecharModalOpcoes}>x</button>
     </div>

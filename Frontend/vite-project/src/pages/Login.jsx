@@ -35,21 +35,28 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Login bem-sucedido:', data);
+  console.log('Login bem-sucedido:', data);
 
-        if (data.token) {
-          localStorage.setItem('token', data.token);
+  if (data.token) {
+    localStorage.setItem('token', data.token);
 
-          if (data.user) {
-            localStorage.setItem('usuario', JSON.stringify(data.user));
-          } else {
-            console.warn('Usuário não retornado pela API.');
-          }
+    if (data.user) {
+      localStorage.setItem('usuario', JSON.stringify(data.user));
 
-          navigate('/Home');
-        } else {
-          setErro('Token não retornado pelo servidor.');
-        }
+      //  Adiciona à lista de contas salvas
+      let usuariosRecentes = JSON.parse(localStorage.getItem('usuariosRecentes')) || [];
+      usuariosRecentes = usuariosRecentes.filter((u) => u.id !== data.user.id);
+      usuariosRecentes.unshift(data.user);
+      localStorage.setItem('usuariosRecentes', JSON.stringify(usuariosRecentes));
+    } else {
+      console.warn('Usuário não retornado pela API.');
+    }
+
+    navigate('/Home');
+  } else {
+    setErro('Token não retornado pelo servidor.');
+  }
+
       } else {
         setErro(data.message || 'Falha no login');
       }
