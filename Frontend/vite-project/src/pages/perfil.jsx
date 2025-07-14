@@ -497,8 +497,21 @@ const cancelarLogout = () => {
                 alt="Imagem do post"
                 style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
               />
+
             )}
-          </div>
+
+            {post.video && (
+         <video
+    muted
+    preload="metadata"
+    playsInline
+    style={{ width: '100%', borderRadius: '8px', objectFit: 'cover', pointerEvents: 'none' }}
+  >
+    <source src={post.video + '#t=0.1'} type="video/mp4" />
+    Seu navegador não suporta o elemento de vídeo.
+  </video>
+)}
+          </div>  
         ))}
       </div>
 
@@ -506,9 +519,19 @@ const cancelarLogout = () => {
       <div className="modal-overlay" onClick={fecharModalPost}>
         <div className="modal-post-container" onClick={e => e.stopPropagation()}>
           <div className="modal-post-imagem-container">
-            {modalPost.imagem && (
-              <img src={modalPost.imagem} alt="Imagem do post" />
-            )}
+    {modalPost.imagem && (
+    <img src={modalPost.imagem} alt="Imagem do post" />
+  )}
+
+  {modalPost.video && (
+    <video
+      controls
+      style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+    >
+      <source src={modalPost.video} type="video/mp4" />
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
+  )}
           </div>
           <div className="modal-post-conteudo">
             <div className="modal-post-header">
