@@ -98,7 +98,6 @@ const Kurz = () => {
   const [comentariosAtuais, setComentariosAtuais] = useState([]);
   const [comentarioTexto, setComentarioTexto] = useState('');
   const containerRef = useRef(null);
-  const [mostrarComentarios, setMostrarComentarios] = useState(false);
   const [comentariosDoPost, setComentariosDoPost] = useState([]);
   const [usuarioCurtidas, setUsuarioCurtidas] = useState([]);
 
@@ -223,12 +222,14 @@ const abrirComentarios = async (post) => {
   setComentarioTexto('');
 
   try {
+    // 1. Buscar todos os comentários do post
     const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
     const data = await res.json();
+    const comentarios = data.comentarios || [];
 
-    // Para cada comentário, busca os dados do autor
+    // 2. Buscar autor de cada comentário
     const comentariosComAutor = await Promise.all(
-      (data.comentarios || []).map(async (comentario) => {
+      comentarios.map(async (comentario) => {
         try {
           const autorRes = await fetch(
             `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
@@ -239,7 +240,6 @@ const abrirComentarios = async (post) => {
             ...comentario,
             autorNome: autor.nome_usuario || 'Usuário',
             autorImagem: autor.imagem || 'https://via.placeholder.com/40'
-            
           };
         } catch (error) {
           console.warn('Erro ao buscar autor do comentário', comentario.autorId, error);
@@ -252,13 +252,27 @@ const abrirComentarios = async (post) => {
       })
     );
 
+    // 3. Atualizar comentários no estado
     setComentariosAtuais(comentariosComAutor);
+
+    // 4. Buscar curtidas do usuário logado nesse post
+    const curtidasRes = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${post.id}`
+    );
+    const curtidasData = await curtidasRes.json();
+
+    // 5. Extrair apenas os IDs dos comentários curtidos pelo usuário
+    const curtidosPorUsuario = (curtidasData?.curtidas || [])
+      .filter((c) => c.usuarioId === usuario.id && c.tipo === 'comentario') // só comentários
+      .map((c) => c.postId); // postId aqui representa o ID do comentário
+
+    setUsuarioCurtidas(curtidosPorUsuario);
   } catch (e) {
     console.error('Erro ao carregar comentários:', e);
     setComentariosAtuais([]);
+    setUsuarioCurtidas([]);
   }
 };
-
 
   // Fecha modal de comentários limpando estados relacionados
   const fecharComentarios = () => {
@@ -516,7 +530,7 @@ const abrirComentarios = async (post) => {
             post={postSelecionado}
             comentarioTexto={comentarioTexto}
             setComentarioTexto={setComentarioTexto}
-            fechar={() => setMostrarComentarios(false)}
+            fechar={fecharComentarios}
             usuario={usuario} // deve conter ao menos { id, nome_usuario, imagem }
             usuarioCurtidas={usuarioCurtidas} // array com IDs dos comentários curtidos
             setComentarios={setComentariosDoPost}
