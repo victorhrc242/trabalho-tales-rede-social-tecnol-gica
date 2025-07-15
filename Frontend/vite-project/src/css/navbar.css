@@ -215,6 +215,13 @@
   cursor: pointer;
 }
 
+.button-confirme:hover{
+  background-color: #0f8200;
+}
+
+.button-cancel:hover{
+  background-color: #cf1a1a;
+}
 
 /* Wrapper principal */
 .navbar-container {

@@ -90,7 +90,7 @@ const Kurz = () => {
   // Estados para vídeos, curtidas, usuário, vídeo atual, controle do modal e comentários
   const [videos, setVideos] = useState([]);
   const [curtidas, setCurtidas] = useState({});
-    const [comentariosCount, setComentariosCount] = useState({});
+  const [comentariosCount, setComentariosCount] = useState({});
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [videoAtual, setVideoAtual] = useState(0);
   const [modalComentarios, setModalComentarios] = useState(false);
@@ -98,6 +98,9 @@ const Kurz = () => {
   const [comentariosAtuais, setComentariosAtuais] = useState([]);
   const [comentarioTexto, setComentarioTexto] = useState('');
   const containerRef = useRef(null);
+  const [mostrarComentarios, setMostrarComentarios] = useState(false);
+  const [comentariosDoPost, setComentariosDoPost] = useState([]);
+  const [usuarioCurtidas, setUsuarioCurtidas] = useState([]);
 
   // Estado para detectar se está em dispositivo mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -377,12 +380,9 @@ const abrirComentarios = async (post) => {
             ×
           </button>
           <h3>Comentários</h3>
-
           {/* comentario desktop */}
-
-          <div className="comentarios-lista">
+  <div className="comentarios-lista">
   {comentariosAtuais.length === 0 && <p>Nenhum comentário ainda.</p>}
-
   {comentariosAtuais.map((c) => (
     <div
       key={c.id || c._id || Math.random()}
@@ -399,8 +399,6 @@ const abrirComentarios = async (post) => {
     className="comentario-avatar"
   />
 </a>
-
-
       {/* NOME E CONTEÚDO DO COMENTÁRIO */}
       <div className="comentario-conteudo">
         <strong>{c.autor?.nome || c.autorNome || 'Usuário'}</strong>
@@ -516,12 +514,12 @@ const abrirComentarios = async (post) => {
         <ErrorBoundary>
           <Comentario
             post={postSelecionado}
-            comentarios={comentariosAtuais}
             comentarioTexto={comentarioTexto}
             setComentarioTexto={setComentarioTexto}
-            comentar={comentar}
-            fechar={fecharComentarios}
-            curtirPost={curtirPost}
+            fechar={() => setMostrarComentarios(false)}
+            usuario={usuario} // deve conter ao menos { id, nome_usuario, imagem }
+            usuarioCurtidas={usuarioCurtidas} // array com IDs dos comentários curtidos
+            setComentarios={setComentariosDoPost}
           />
         </ErrorBoundary>
       </div>

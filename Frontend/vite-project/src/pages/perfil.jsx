@@ -4,7 +4,7 @@ import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
-import { FaCog } from 'react-icons/fa';
+import { FaCog, FaPlay  } from 'react-icons/fa';
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
 const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
@@ -501,15 +501,34 @@ const cancelarLogout = () => {
             )}
 
             {post.video && (
-         <video
-    muted
-    preload="metadata"
-    playsInline
-    style={{ width: '100%', borderRadius: '8px', objectFit: 'cover', pointerEvents: 'none' }}
-  >
-    <source src={post.video + '#t=0.1'} type="video/mp4" />
-    Seu navegador não suporta o elemento de vídeo.
-  </video>
+           <div style={{ position: 'relative' }}>
+    <video
+      muted
+      preload="metadata"
+      playsInline
+      style={{
+        width: '100%',
+        borderRadius: '8px',
+        objectFit: 'cover',
+        pointerEvents: 'none'
+      }}
+    >
+      <source src={post.video + '#t=0.1'} type="video/mp4" />
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
+    <FaPlay
+      style={{
+        position: 'absolute',
+        top: '8px',
+        left: '8px',
+        color: 'white',
+        background: 'rgba(0, 0, 0, 0.6)',
+        borderRadius: '50%',
+        padding: '4px',
+        fontSize: '14px'
+      }}
+    />
+  </div>
 )}
           </div>  
         ))}

@@ -17,6 +17,7 @@ function Comentario({
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   // Estado que controla a altura do modal no mobile para drag resizing
   const [modalHeight, setModalHeight] = useState(window.innerHeight * 0.7);
+  
 
   // Refs para controlar posição inicial do drag no modal
   const startY = useRef(null);
@@ -24,6 +25,23 @@ function Comentario({
 
   // Estado local dos comentários (para atualizar curtidas UI em tempo real)
   const [comentariosState, setComentariosState] = useState(comentarios || []);
+
+    // Atualiza isMobile
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setModalHeight(null);
+      } else {
+        setModalHeight(window.innerHeight * 0.7);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Sincroniza o estado local sempre que o prop "comentarios" mudar
   useEffect(() => {
@@ -70,6 +88,105 @@ function Comentario({
       carregarAutores();
     }
   }, [comentariosState]);
+
+  // Carrega comentários + autores do post atual
+  useEffect(() => {
+    if (!post?.id) return;
+
+    const carregarComentariosDoPost = async () => {
+      try {
+        const res = await fetch(
+          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`
+        );
+        const data = await res.json();
+
+        const comentariosComAutor = await Promise.all(
+          (data.comentarios || []).map(async (comentario) => {
+            try {
+              const autorRes = await fetch(
+                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
+              );
+              const autor = await autorRes.json();
+
+              return {
+                ...comentario,
+                autorNome: autor.nome_usuario || 'Usuário',
+                autorImagem: autor.imagem || 'https://via.placeholder.com/40',
+              };
+            } catch {
+              return {
+                ...comentario,
+                autorNome: 'Usuário',
+                autorImagem: 'https://via.placeholder.com/40',
+              };
+            }
+          })
+        );
+
+        setComentariosState(comentariosComAutor);
+        setComentarios?.(comentariosComAutor);
+      } catch (e) {
+        console.error('Erro ao carregar comentários:', e);
+      }
+    };
+
+    carregarComentariosDoPost();
+  }, [post?.id]);
+
+  // Envia novo comentário
+  const enviarComentario = async () => {
+    if (!comentarioTexto.trim() || !post?.id) return;
+
+    try {
+      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postId: post.id,
+          autorId: usuario.id,
+          conteudo: comentarioTexto,
+        }),
+      });
+
+      setComentarioTexto('');
+
+      // Recarrega comentários
+      const res = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`
+      );
+      const data = await res.json();
+      setComentariosState(data.comentarios || []);
+      setComentarios?.(data.comentarios || []);
+    } catch (e) {
+      console.error('Erro ao enviar comentário:', e);
+    }
+  };
+
+    // SignalR
+  useEffect(() => {
+    const connection = new HubConnectionBuilder()
+      .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
+        transport: HttpTransportType.LongPolling,
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection.start().then(() => {
+      connection.on('ReceberCurtida', (postIdRecebido, usuarioId, foiCurtida) => {
+        setComentariosState(prev =>
+          prev.map(c => {
+            if (c.id === postIdRecebido) {
+              const count = c.curtidas || 0;
+              return { ...c, curtidas: foiCurtida ? count + 1 : Math.max(0, count - 1) };
+            }
+            return c;
+          })
+        );
+      });
+    }).catch(err => console.error('Erro ao conectar SignalR:', err));
+
+    return () => connection.stop();
+  }, []);
 
   // Detecta mudanças no tamanho da janela para ajustar UI mobile/desktop
   useEffect(() => {
@@ -123,6 +240,7 @@ function Comentario({
 
   // Função para curtir ou descurtir um comentário
   // Faz requisições para APIs apropriadas e atualiza UI localmente
+  // Curtida em comentário (opcional)
   const curtirPost = async (comentarioId) => {
     const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${comentarioId}`;
     const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
@@ -132,9 +250,9 @@ function Comentario({
       // Verifica se usuário já curtiu
       const res = await fetch(verificarUrl, { method: 'GET' });
       const data = await res.json();
-      const jaCurtiuAgora = data.curtidas?.some(c => c.usuarioId === usuario.id);
+      const jaCurtiu = data.curtidas?.some(c => c.usuarioId === usuario.id);
 
-      const endpoint = jaCurtiuAgora ? descurtirUrl : curtirUrl;
+      const endpoint = jaCurtiu ? descurtirUrl : curtirUrl;
 
       // Envia curtida ou descurtida para o servidor
       await fetch(endpoint, {
@@ -147,11 +265,8 @@ function Comentario({
       setComentariosState(prev =>
         prev.map(c => {
           if (c.id === comentarioId) {
-            const curtidasCount = c.curtidas || 0;
-            return {
-              ...c,
-              curtidas: jaCurtiuAgora ? curtidasCount - 1 : curtidasCount + 1,
-            };
+            const count = c.curtidas || 0;
+            return { ...c, curtidas: jaCurtiu ? count - 1 : count + 1 };
           }
           return c;
         })
@@ -220,9 +335,7 @@ function Comentario({
         {!isMobile && (
           <div className="imagem-container">
             {post.video ? (
-              <video
-                src={post.video}
-                className="imagem-post"
+              <video src={post.video} className="imagem-post"
                 controls
                 autoPlay
                 muted
