@@ -5,6 +5,7 @@ import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 
 import FeedItem from '../Components/Home/FeedItem';
 import Comentario from '../Components/Comentario';
+import Notificacoes from './Notificacao/Notificacoes ';
 import '../css/home.css';
 
 import { FaSearch, FaBell } from 'react-icons/fa';
@@ -584,6 +585,7 @@ function Home() {
           </ul>
         </div>
       </div>
+
     </div>
   );
 }

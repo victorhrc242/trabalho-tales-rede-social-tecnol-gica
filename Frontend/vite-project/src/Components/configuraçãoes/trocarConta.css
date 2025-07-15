@@ -1,22 +1,31 @@
-/* Container principal centralizado */
-.trocar-container {
-  display: flex;
-  justify-content: center;
-  padding: 30px;
-}
+/* configuraçãoes/trocarConta.css */
 
-/* Box central com fundo branco e sombra */
-.trocar-box {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 30px;
+/* Fundo do modal (overlay) com blur leve e fundo parcialmente transparente */
+.modal-overlay-trocar {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 600px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.438); 
+  backdrop-filter: blur(1px); /* Desfoque leve do fundo */
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  z-index: 1000; /* fica na frente de outros elementos */
 }
 
-/* Título principal */
+/* Container principal do modal */
+.modal-trocar-container {
+  background-color: #fff; 
+  padding: 40px; 
+  border-radius: 16px; 
+  width: 100%;
+  max-width: 500px; 
+  position: relative; 
+}
+
+/* Título do modal */
 .titulo-trocar {
   font-size: 24px;
   font-weight: 600;
@@ -25,108 +34,93 @@
   text-align: center;
 }
 
-/* Mensagem padrão se não houver contas */
-.mensagem-vazia {
-  text-align: center;
-  font-size: 16px;
-  color: #777;
-}
-
-/* Lista de usuários */
+/* Lista de contas salvas */
 .lista-usuarios {
-  list-style: none;
+  list-style: none; 
   padding: 0;
   margin: 0 0 30px 0;
 }
 
+/* Cada item da lista de usuário */
 .item-usuario {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 16px; 
   padding: 10px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-  cursor: pointer;
+  border-radius: 8px; 
+  transition: background-color 0.2s; /* transição suave ao passar mouse */
+  cursor: pointer; 
 }
 
 .item-usuario:hover {
-  background-color: #f5f5f5;
+  background-color: #f5f5f5; /* cor de fundo ao passar o mouse */
 }
 
+/* Foto do usuário (avatar) */
 .avatar-usuario {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid #ccc;
+  border-radius: 50%; 
+  object-fit: cover; /* a imagem preenche o container sem distorcer */
+  border: 1px solid #ccc; /* borda fina cinza */
 }
 
+/* Nome do usuário */
 .nome-usuario {
   font-weight: bold;
   font-size: 16px;
   color: #333;
 }
 
-/* Botões */
+/* Mensagem exibida quando não há contas salvas */
+.mensagem-vazia {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+}
+
+/* Container dos botões "Adicionar nova conta" e "Sair de todas as contas" */
 .acoes-conta {
   display: flex;
   gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* permite quebrar linha se necessário */
 }
 
+/* Estilo base para botões */
 .botao-conta {
   padding: 10px 20px;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 500;
   border: none;
-  cursor: pointer;
+  cursor: pointer; 
   transition: background-color 0.3s;
 }
 
+/* Botão de adicionar conta */
 .adicionar-conta {
-  background-color: #4363b9;
+  background-color: #4363b9; 
   color: white;
 }
 
 .adicionar-conta:hover {
-  background-color: #3452a1;
+  background-color: #1d42a0; 
 }
 
+/* Botão de sair de todas as contas */
 .sair-contas {
-  background-color: #ccc;
+  background-color: #ccc; 
   color: #333;
 }
 
 .sair-contas:hover {
-  background-color: #bbb;
+  background-color: #a1a1a1; 
 }
 
-.modal-overlay-trocar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* fundo escuro */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-trocar-container {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 500px;
-  position: relative;
-}
-
+/* Botão de fechar modal ("X") */
 .fechar-modal {
-  position: absolute;
+  position: absolute; 
   top: 10px;
   right: 15px;
   font-size: 22px;
@@ -135,12 +129,15 @@
   cursor: pointer;
 }
 
-/* Responsivo */
+/* Responsivo: modal no mobile sobe da parte de baixo */
 @media (max-width: 768px) {
+  
+  /* Ajusta alinhamento do overlay para o modal aparecer na parte inferior */
   .modal-overlay-trocar {
-    align-items: flex-end; /* Alinha o modal no final da tela (parte de baixo) */
+    align-items: flex-end;
   }
 
+  /* Ajusta container para ocupar toda largura na parte inferior */
   .modal-trocar-container {
     width: 100%;
     max-width: none;
@@ -162,7 +159,6 @@
   }
 
   .fechar-modal {
-    position: absolute;
     top: 12px;
     right: 16px;
     font-size: 24px;
@@ -177,7 +173,6 @@
   .avatar-usuario {
     width: 42px;
     height: 42px;
-    border-radius: 50%;
   }
 
   .nome-usuario {
@@ -215,6 +210,7 @@
     background-color: #ddd;
   }
 
+  /* Animação para o modal subir da parte de baixo */
   @keyframes slideUp {
     from {
       transform: translateY(100%);

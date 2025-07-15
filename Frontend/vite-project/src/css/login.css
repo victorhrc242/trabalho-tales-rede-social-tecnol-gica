@@ -64,7 +64,7 @@
 /* Ícone à direita para inputs */
 .input-icon-direita {
   position: absolute;
-  right: 40px;
+  right: 38px;
   top: 50%;
   transform: translateY(-85%);
   color: #0a66c2;

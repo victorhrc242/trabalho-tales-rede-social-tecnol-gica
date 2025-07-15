@@ -4,6 +4,7 @@ import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
+import TrocarConta from '../Components/configuraçãoes/TrocarConta.jsx';
 import { FaCog } from 'react-icons/fa';
 
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
@@ -41,6 +42,8 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
   const inputRef = useRef();
+  const [mostrarTrocarConta, setMostrarTrocarConta] = useState(false);
+
 
   // Verifica se o perfil visualizado é o próprio usuário logado
   const isPerfilProprio = usuarioLogadoId && userId && usuarioLogadoId.toString() === userId.toString();
@@ -566,12 +569,19 @@ const cancelarLogout = () => {
                     setModalOpcoes(false);
                     navigate('/configuracoes');
                   }}>Configurações</li>
-                  <li onClick={()=> navigate('/trocarConta')}>Trocar de Conta</li>
+                  <li onClick={() => {
+                  setModalOpcoes(false);
+                  setMostrarTrocarConta(true); // <- mostra o modal corretamente
+                }}>Trocar de Conta</li>
+
                 </ul>
                 <button className="fechar-modal" onClick={() => setModalOpcoes(false)}>x</button>
               </div>
             </div>
           )}
+          {mostrarTrocarConta && (
+          <TrocarConta fechar={() => setMostrarTrocarConta(false)} />
+        )}
   </div>
 )};
 export default Perfil;
