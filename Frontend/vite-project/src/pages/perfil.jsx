@@ -4,9 +4,7 @@ import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
-import TrocarConta from '../Components/configuraçãoes/TrocarConta.jsx';
-import { FaCog } from 'react-icons/fa';
-
+import { FaCog, FaPlay  } from 'react-icons/fa';
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
 const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
@@ -42,8 +40,6 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
   const inputRef = useRef();
-  const [mostrarTrocarConta, setMostrarTrocarConta] = useState(false);
-
 
   // Verifica se o perfil visualizado é o próprio usuário logado
   const isPerfilProprio = usuarioLogadoId && userId && usuarioLogadoId.toString() === userId.toString();
@@ -501,8 +497,40 @@ const cancelarLogout = () => {
                 alt="Imagem do post"
                 style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
               />
+
             )}
-          </div>
+
+            {post.video && (
+           <div style={{ position: 'relative' }}>
+    <video
+      muted
+      preload="metadata"
+      playsInline
+      style={{
+        width: '100%',
+        borderRadius: '8px',
+        objectFit: 'cover',
+        pointerEvents: 'none'
+      }}
+    >
+      <source src={post.video + '#t=0.1'} type="video/mp4" />
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
+    <FaPlay
+      style={{
+        position: 'absolute',
+        top: '8px',
+        left: '8px',
+        color: 'white',
+        background: 'rgba(0, 0, 0, 0.6)',
+        borderRadius: '50%',
+        padding: '4px',
+        fontSize: '14px'
+      }}
+    />
+  </div>
+)}
+          </div>  
         ))}
       </div>
 
@@ -510,9 +538,19 @@ const cancelarLogout = () => {
       <div className="modal-overlay" onClick={fecharModalPost}>
         <div className="modal-post-container" onClick={e => e.stopPropagation()}>
           <div className="modal-post-imagem-container">
-            {modalPost.imagem && (
-              <img src={modalPost.imagem} alt="Imagem do post" />
-            )}
+    {modalPost.imagem && (
+    <img src={modalPost.imagem} alt="Imagem do post" />
+  )}
+
+  {modalPost.video && (
+    <video
+      controls
+      style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+    >
+      <source src={modalPost.video} type="video/mp4" />
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
+  )}
           </div>
           <div className="modal-post-conteudo">
             <div className="modal-post-header">
@@ -569,19 +607,12 @@ const cancelarLogout = () => {
                     setModalOpcoes(false);
                     navigate('/configuracoes');
                   }}>Configurações</li>
-                  <li onClick={() => {
-                  setModalOpcoes(false);
-                  setMostrarTrocarConta(true); // <- mostra o modal corretamente
-                }}>Trocar de Conta</li>
-
+                  <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
                 </ul>
                 <button className="fechar-modal" onClick={() => setModalOpcoes(false)}>x</button>
               </div>
             </div>
           )}
-          {mostrarTrocarConta && (
-          <TrocarConta fechar={() => setMostrarTrocarConta(false)} />
-        )}
   </div>
 )};
 export default Perfil;
