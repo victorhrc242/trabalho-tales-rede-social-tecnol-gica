@@ -90,7 +90,7 @@ const Kurz = () => {
   // Estados para vídeos, curtidas, usuário, vídeo atual, controle do modal e comentários
   const [videos, setVideos] = useState([]);
   const [curtidas, setCurtidas] = useState({});
-    const [comentariosCount, setComentariosCount] = useState({});
+  const [comentariosCount, setComentariosCount] = useState({});
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [videoAtual, setVideoAtual] = useState(0);
   const [modalComentarios, setModalComentarios] = useState(false);
