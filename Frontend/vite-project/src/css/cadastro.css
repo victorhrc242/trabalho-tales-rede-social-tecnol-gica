@@ -223,7 +223,8 @@
   transform: translateY(-50%);
   font-size: 18px;
   color: #0a66c2;
-  pointer-events: none;
+  cursor: pointer;  /* torna clicável */
+  pointer-events: auto; /* garante que pode clicar */
 }
 
 /* estilo da escreita da dta de nascimento */
@@ -376,3 +377,5 @@
   90% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-10px); }
 }
+
+

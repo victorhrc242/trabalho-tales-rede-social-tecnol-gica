@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/login.css';
 import { Link, useNavigate } from 'react-router-dom';
-// icons
+// Importação dos ícones
 import { FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Login() {
@@ -9,10 +9,9 @@ function Login() {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
-  const [senhaEmFoco, setSenhaEmFoco] = useState(false);
   const navigate = useNavigate();
 
-  // Redireciona se já estiver logado
+  // Redireciona automaticamente para a Home se o token já existir (usuário já logado)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -20,6 +19,7 @@ function Login() {
     }
   }, [navigate]);
 
+  // Função de login
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -35,21 +35,28 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Login bem-sucedido:', data);
+  console.log('Login bem-sucedido:', data);
 
-        if (data.token) {
-          localStorage.setItem('token', data.token);
+  if (data.token) {
+    localStorage.setItem('token', data.token);
 
-          if (data.user) {
-            localStorage.setItem('usuario', JSON.stringify(data.user));
-          } else {
-            console.warn('Usuário não retornado pela API.');
-          }
+    if (data.user) {
+      localStorage.setItem('usuario', JSON.stringify(data.user));
 
-          navigate('/Home');
-        } else {
-          setErro('Token não retornado pelo servidor.');
-        }
+      //  Adiciona à lista de contas salvas
+      let usuariosRecentes = JSON.parse(localStorage.getItem('usuariosRecentes')) || [];
+      usuariosRecentes = usuariosRecentes.filter((u) => u.id !== data.user.id);
+      usuariosRecentes.unshift(data.user);
+      localStorage.setItem('usuariosRecentes', JSON.stringify(usuariosRecentes));
+    } else {
+      console.warn('Usuário não retornado pela API.');
+    }
+
+    navigate('/Home');
+  } else {
+    setErro('Token não retornado pelo servidor.');
+  }
+
       } else {
         setErro(data.message || 'Falha no login');
       }
@@ -72,8 +79,10 @@ function Login() {
       <div className="modal-login">
         <div className="formulario">
           <h2 className="titulo-login">Paradise</h2>
-          {/* formulario de login */}
+
+          {/* Formulário de login */}
           <form onSubmit={handleLogin}>
+            {/* Campo de e-mail com ícone */}
             <div className="input-wrapper">
               <input
                 type="email"
@@ -85,28 +94,27 @@ function Login() {
               <FaEnvelope className="input-icon-direita" />
             </div>
 
+            {/* Campo de senha com ícone de olho que alterna a visibilidade */}
             <div className="input-wrapper">
               <input
                 type={mostrarSenha ? 'text' : 'password'}
                 placeholder="Digite sua senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                onFocus={() => setSenhaEmFoco(true)}
-                onBlur={() => setSenhaEmFoco(false)}
                 required
               />
-              {!senhaEmFoco &&
-                (mostrarSenha ? (
-                  <FaEyeSlash
-                    className="input-icon-direita"
-                    onClick={() => setMostrarSenha(false)}
-                  />
-                ) : (
-                  <FaEye
-                    className="input-icon-direita"
-                    onClick={() => setMostrarSenha(true)}
-                  />
-                ))}
+              {/* Ícone de olho que aparece somente fora do foco */}
+              {mostrarSenha ? (
+                <FaEyeSlash
+                  className="input-icon-direita senha"
+                  onClick={() => setMostrarSenha(false)}
+                />
+              ) : (
+                <FaEye
+                  className="input-icon-direita senha"
+                  onClick={() => setMostrarSenha(true)}
+                />
+              )}
             </div>
 
             <br />
@@ -125,6 +133,7 @@ function Login() {
           <p>Não tem uma conta? <Link to="/cadastro">Cadastrar</Link></p>
         </div>
 
+        {/* Lado direito com imagem decorativa */}
         <div className="imagem-login"></div>
       </div>
     </div>

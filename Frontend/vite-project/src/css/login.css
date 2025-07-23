@@ -14,10 +14,10 @@
   background-color: #ffffff;
   border-radius: 12px;
   overflow: hidden;
-  /* Aumentado */
   width: 1000px;
   max-width: 95%;
   height: 500px;
+  flex-direction: row-reverse; /* Inverte os lados */
 }
 
 /* Lado esquerdo - formulário */
@@ -41,63 +41,47 @@
   margin-bottom: 15px;
 }
 
+/* Input */
+.formulario input {
+  background-color: #ffffff;
+  border: 2px solid #0a66c2;
+  padding: 10px;
+  color: #474747;
+  border-radius: 5px;
+  font-size: 15px;
+  margin-bottom: 15px;
+  width: 70%;
+  margin-left: 45px;
+}
 
 /* Foco no input */
 .input-wrapper input:focus {
   outline: none;
   border-color: #0a66c2;
+  color: #262626;
 }
 
-/* Ícone à direita dentro do input */
+/* Ícone à direita para inputs */
 .input-icon-direita {
   position: absolute;
-  right: 40px;/*altera para direita ou esqerda */
+  right: 38px;
   top: 50%;
-  transform: translateY(-85%);/*posiçao dos icons*/
+  transform: translateY(-85%);
   color: #0a66c2;
-  pointer-events: none;
   font-size: 18px;
+  pointer-events: none; /* ícones estáticos (como envelope) não são clicáveis */
 }
 
-/* Input com erro */
-.erro-input {
-  border-color: red !important;
-  padding: 0%;
+/* Ícone clicável apenas no campo de senha */
+.input-icon-direita.senha {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
-/* Título com fonte maior e diferente */
-.titulo-login {
-  color: #0a66c2;
-  font-size: 36px; /* maior */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* fonte diferente */
-  margin-bottom: 20px;
-  text-align: center;
-  padding: 7px;
-}
-
-/* Inputs */
-.formulario input {
-  background-color: #ffffff;
-  border: 2px solid #0a66c2;
-  padding: 10px;
-  color: #474747; /* Cor inicial do texto */
-  border-radius: 5px;
-  font-size: 15px;
-  margin-bottom: 15px;
-  width: 70%;
- margin-left: 45px;
-}
-
-/* Quando o usuário estiver digitando, a cor do texto muda */
-.formulario input:focus {
-  color: #262626; /* Nova cor do texto enquanto digita */
-  outline: none; /* Remove a borda de foco padrão */
-  border-color: #0a66c2; /* Mantém a borda azul do input */
-}
 
 /* Placeholder */
 .formulario input::placeholder {
-  color: #474747; /* Cor do texto do placeholder */
+  color: #474747;
 }
 
 /* Botão */
@@ -119,11 +103,22 @@
   background-color: #0a66c2;
 }
 
+/* Título com fonte maior e diferente */
+.titulo-login {
+  color: #0a66c2;
+  font-size: 36px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 7px;
+}
+
 /* Links abaixo do formulário */
 .container-login p {
   text-align: center;
   margin-top: 10px;
 }
+
 .container-login a {
   color: #0a66c2;
   text-decoration: none;
@@ -133,19 +128,15 @@
   text-decoration: underline;
 }
 
-
-/* Lado direito - imagem */
+/* Imagem do lado direito */
 .imagem-login {
   flex: 1;
   background-image: url('https://seo10digital.com.br/wp-content/uploads/2020/12/redes-sociais.jpg');
   background-size: cover;
   background-position: center;
 }
-.modal-login {
-  flex-direction: row-reverse; /* Inverte os lados */
-}
 
-
+/* Linha divisora "ou" */
 .linha-ou-container {
   display: flex;
   align-items: center;
@@ -164,28 +155,27 @@
   max-width: 150px;
 }
 
-/* Texto "ou" */
 .ou {
   color: rgb(3, 3, 3);
   font-weight: 500;
   white-space: nowrap;
 }
-.esq a{
+
+.esq a {
   color: #051e4b;
 }
 
-
-/* Responsividade */
+/* Responsivo */
 @media (max-width: 768px) {
   .modal-login {
-    flex-direction: column; /* empilha o formulário e a imagem */
+    flex-direction: column;
     height: auto;
     width: 90%;
   }
 
   .formulario {
     width: 100%;
-    border: 2px solid #0a66c2; /* <-- borda azul no mobile */
+    border: 2px solid #0a66c2;
     border-radius: 10px;
     padding: 20px;
     align-items: center;
@@ -214,20 +204,20 @@
   }
 
   .imagem-login {
-    display: none; /* oculta imagem em mobile */
+    display: none;
   }
 
-   .linha-esquerda,
+  .linha-esquerda,
   .linha-direita {
-    max-width: none; /* Remove limite de largura */
-  }
-  .input-icon-direita{
-    right: 10px;
+    max-width: none;
   }
 
+  .input-icon-direita {
+    right: 20px;
+  }
 }
 
-/* Modal de erro flutuante no canto superior direito */
+/* Modal de erro flutuante */
 .error-toast-login {
   position: fixed;
   top: 20px;
@@ -252,7 +242,7 @@
   cursor: pointer;
 }
 
-/* Animação de entrada */
+/* Animação do toast */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -263,3 +253,4 @@
     transform: translateY(0);
   }
 }
+

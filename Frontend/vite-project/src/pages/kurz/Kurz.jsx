@@ -90,6 +90,7 @@ const Kurz = () => {
   // Estados para vídeos, curtidas, usuário, vídeo atual, controle do modal e comentários
   const [videos, setVideos] = useState([]);
   const [curtidas, setCurtidas] = useState({});
+  const [comentariosCount, setComentariosCount] = useState({});
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [videoAtual, setVideoAtual] = useState(0);
   const [modalComentarios, setModalComentarios] = useState(false);
@@ -97,6 +98,8 @@ const Kurz = () => {
   const [comentariosAtuais, setComentariosAtuais] = useState([]);
   const [comentarioTexto, setComentarioTexto] = useState('');
   const containerRef = useRef(null);
+  const [comentariosDoPost, setComentariosDoPost] = useState([]);
+  const [usuarioCurtidas, setUsuarioCurtidas] = useState([]);
 
   // Estado para detectar se está em dispositivo mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -158,6 +161,12 @@ const Kurz = () => {
           likes[v.id] = v.curtidas || 0;
         });
         setCurtidas(likes);
+        const commentsCount = {};
+        videosComAutor.forEach((v) => {
+          commentsCount[v.id] = v.comentariosCount || 0;
+        });
+        setComentariosCount(commentsCount);
+
       } catch (e) {
         console.error(e);
       }
@@ -207,20 +216,63 @@ const Kurz = () => {
     }
   }, [videoAtual]);
 
-  // Função para abrir modal de comentários, buscando comentários na API
-  const abrirComentarios = async (post) => {
-    setPostSelecionado(post);
-    setModalComentarios(true);
-    setComentarioTexto('');
-    try {
-      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
-      const data = await res.json();
-      setComentariosAtuais(data.comentarios || []);
-    } catch (e) {
-      console.error('Erro ao carregar comentários:', e);
-      setComentariosAtuais([]);
-    }
-  };
+const abrirComentarios = async (post) => {
+  setPostSelecionado(post);
+  setModalComentarios(true);
+  setComentarioTexto('');
+
+  try {
+    // 1. Buscar todos os comentários do post
+    const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
+    const data = await res.json();
+    const comentarios = data.comentarios || [];
+
+    // 2. Buscar autor de cada comentário
+    const comentariosComAutor = await Promise.all(
+      comentarios.map(async (comentario) => {
+        try {
+          const autorRes = await fetch(
+            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
+          );
+          const autor = await autorRes.json();
+
+          return {
+            ...comentario,
+            autorNome: autor.nome_usuario || 'Usuário',
+            autorImagem: autor.imagem || 'https://via.placeholder.com/40'
+          };
+        } catch (error) {
+          console.warn('Erro ao buscar autor do comentário', comentario.autorId, error);
+          return {
+            ...comentario,
+            autorNome: 'Usuário',
+            autorImagem: 'https://via.placeholder.com/40'
+          };
+        }
+      })
+    );
+
+    // 3. Atualizar comentários no estado
+    setComentariosAtuais(comentariosComAutor);
+
+    // 4. Buscar curtidas do usuário logado nesse post
+    const curtidasRes = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${post.id}`
+    );
+    const curtidasData = await curtidasRes.json();
+
+    // 5. Extrair apenas os IDs dos comentários curtidos pelo usuário
+    const curtidosPorUsuario = (curtidasData?.curtidas || [])
+      .filter((c) => c.usuarioId === usuario.id && c.tipo === 'comentario') // só comentários
+      .map((c) => c.postId); // postId aqui representa o ID do comentário
+
+    setUsuarioCurtidas(curtidosPorUsuario);
+  } catch (e) {
+    console.error('Erro ao carregar comentários:', e);
+    setComentariosAtuais([]);
+    setUsuarioCurtidas([]);
+  }
+};
 
   // Fecha modal de comentários limpando estados relacionados
   const fecharComentarios = () => {
@@ -293,12 +345,14 @@ const Kurz = () => {
 
             <div className="video-overlay-info">
               <div className="video-author">
-                <img
-                  src={video.autorImagem || 'https://i.pravatar.cc/40'}
-                  alt={video.autorNome}
-                  className="video-author-avatar"
-                />
-                <span className="video-author-name">{video.autorNome}</span>
+          <a href={`/perfil/${video.autorId}`} className="video-author-link">
+  <img
+    src={video.autorImagem || 'https://i.pravatar.cc/40'}
+    alt={video.autorNome}
+    className="video-author-avatar"
+  />
+</a>
+<span className="video-author-name">{video.autorNome}</span>
               </div>
 
               <p className="video-caption-text">{video.conteudo || 'Sem legenda'}</p>
@@ -311,11 +365,11 @@ const Kurz = () => {
                   color={curtidas[video.id] > 0 ? 'red' : 'white'}
                   fill={curtidas[video.id] > 0 ? 'red' : 'none'}
                 />
-                <span>{curtidas[video.id]}</span>
+                
               </button>
               <button onClick={() => abrirComentarios(video)} aria-label="Comentários">
                 <MessageCircle size={28} color="white" />
-                <span>{video.comentarios?.length || 0}</span>
+                <span>{comentariosCount[video.id] || 0}</span>
               </button>
             </div>
           </div>
@@ -340,31 +394,33 @@ const Kurz = () => {
             ×
           </button>
           <h3>Comentários</h3>
-
-          <div className="comentarios-lista">
-            {comentariosAtuais.length === 0 && <p>Nenhum comentário ainda.</p>}
-
-            {comentariosAtuais.map((c) => (
-              <div
-                key={c.id || c._id || Math.random()}
-                className="comentario-item"
-              >
-                <img
-                  src={
-                    c.autorImagem ||
-                    'https://sigeventos.unifesspa.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'
-                  }
-                  alt={`Foto de ${c.autorNome || 'Usuário'}`}
-                  className="comentario-avatar"
-                />
-                <div className="comentario-conteudo">
-                  <strong>{c.autorNome || 'Usuário'}</strong>
-                  <p>{c.conteudo}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
+          {/* comentario desktop */}
+  <div className="comentarios-lista">
+  {comentariosAtuais.length === 0 && <p>Nenhum comentário ainda.</p>}
+  {comentariosAtuais.map((c) => (
+    <div
+      key={c.id || c._id || Math.random()}
+      className="comentario-item"
+    >
+      {/* IMAGEM DO AUTOR */}
+     <a href={`/perfil/${c.autorId}`} className="comentario-avatar-link">
+  <img
+    src={
+      c.autor?.imagem || c.autorImagem ||
+      'https://via.placeholder.com/40'
+    }
+    alt={`Foto de ${c.autor?.nome_usuario || c.autorNome || 'Usuário'}`}
+    className="comentario-avatar"
+  />
+</a>
+      {/* NOME E CONTEÚDO DO COMENTÁRIO */}
+      <div className="comentario-conteudo">
+        <strong>{c.autor?.nome || c.autorNome || 'Usuário'}</strong>
+        <p>{c.conteudo || ''}</p>
+      </div>
+    </div>
+  ))}
+</div>
           <div className="comentario-input">
             <input
               type="text"
@@ -472,12 +528,12 @@ const Kurz = () => {
         <ErrorBoundary>
           <Comentario
             post={postSelecionado}
-            comentarios={comentariosAtuais}
             comentarioTexto={comentarioTexto}
             setComentarioTexto={setComentarioTexto}
-            comentar={comentar}
             fechar={fecharComentarios}
-            curtirPost={curtirPost}
+            usuario={usuario} // deve conter ao menos { id, nome_usuario, imagem }
+            usuarioCurtidas={usuarioCurtidas} // array com IDs dos comentários curtidos
+            setComentarios={setComentariosDoPost}
           />
         </ErrorBoundary>
       </div>

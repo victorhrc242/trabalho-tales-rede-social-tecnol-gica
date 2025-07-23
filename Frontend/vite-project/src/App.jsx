@@ -14,6 +14,7 @@ import Notificacoes from './pages/Notificacao/Notificacoes ';
 import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
 import Kurz from './pages/kurz/Kurz';
 import DenunciasAdmin from './adm/DenunciasAdmin';
+import TrocarConta from './Components/configuraçãoes/TrocarConta';
 function AppWrapper() {
   const location = useLocation();
 
@@ -21,7 +22,7 @@ function AppWrapper() {
   const esconderAmbas = ["/", "/cadastro", "/recuperar"];
 
   // Rotas onde só a navbar superior deve ser escondida
-  const esconderSomenteNavbarTop = ["/mensagen", "/explore"];
+  const esconderSomenteNavbarTop = ["/mensagen", "/explore", "/perfil",  "/perfil/:id"];
 
   // Verifica se a tela está em modo mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
@@ -65,7 +66,9 @@ function AppWrapper() {
   //    - rota de mensagens (mobile ou desktop)
   const deveEsconderNavbarTop =
     esconderAmbas.includes(location.pathname) ||
-    esconderSomenteNavbarTop.includes(location.pathname);
+    esconderSomenteNavbarTop.some(path =>
+    location.pathname.startsWith(path.replace(':id', ''))
+    );
 
   return (
     <>
@@ -83,13 +86,14 @@ function AppWrapper() {
   <Route path="/cadastro" element={<Cadastro />} />
   <Route path="/recuperar" element={<RecuperarSenha />} />
   <Route path="/home" element={<Home />} />
-  <Route path="/perfil/:id" element={<Perfil />} />
+  <Route path="/perfil/:id" element={<Perfil deslogar={deslogar} />} />
   <Route path="/criar" element={<Criar />} />
   <Route path="/mensagen" element={<Msg />} />
   <Route path="/explore" element={<Explore />} />
   <Route path="/notificacoes" element={<Notificacoes />} />
   <Route path="/configuracoes" element={<Configuracoes />} />
   <Route path="/kurz" element={<Kurz />} /> 
+  <Route path="/trocarConta" element={<TrocarConta />} /> 
   <Route path="/adm-painel-de-denuncias2025/2026" element={<DenunciasAdmin/>}/>
 </Routes>
 

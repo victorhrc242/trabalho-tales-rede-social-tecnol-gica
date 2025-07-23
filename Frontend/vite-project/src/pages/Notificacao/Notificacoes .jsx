@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../Notificacao/notificacao.css";
 
 function Notificacoes() {
   const navigate = useNavigate();
+
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [notificacoes, setNotificacoes] = useState([]);
+  const [carregando, setCarregando] = useState(false);
+  const cacheRemetentes = useRef({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -13,14 +16,11 @@ function Notificacoes() {
       navigate('/');
       return;
     }
-
-    const usuarioString = localStorage.getItem('usuario');
-    if (usuarioString) {
+    const us = localStorage.getItem('usuario');
+    if (us) {
       try {
-        const usuarioObj = JSON.parse(usuarioString);
-        setUsuario(usuarioObj);
-      } catch (err) {
-        console.error('Erro ao analisar os dados do usuário:', err);
+        setUsuario(JSON.parse(us));
+      } catch {
         setUsuario({ nome: 'Desconhecido' });
       }
     }
@@ -33,62 +33,64 @@ function Notificacoes() {
   }, [usuario]);
 
   const fetchNotificacoes = async () => {
+    setCarregando(true);
     try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`);
-      const data = await response.json();
-
-      if (data.notificacoes) {
-        // Para cada notificação, buscar o remetente (se possível)
-        const notificacoesComRemetente = await Promise.all(
-          data.notificacoes.map(async (n) => {
-            const remetenteId = extrairIdDaMensagem(n.mensagem);
-            if (remetenteId) {
-              const remetente = await buscarUsuarioPorId(remetenteId);
-              return { ...n, remetente };
-            }
-            return { ...n };
-          })
-        );
-        setNotificacoes(notificacoesComRemetente);
+      const resp = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
+      );
+      const data = await resp.json();
+      if (!data.notificacoes) {
+        setNotificacoes([]);
+        setCarregando(false);
+        return;
       }
-    } catch (err) {
-      console.error('Erro ao buscar notificações:', err);
-    }
-  };
 
-  const extrairIdDaMensagem = (mensagem) => {
-    const match = mensagem.match(
-      /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
-    );
-    return match ? match[1] : null;
+      const lista = await Promise.all(
+        data.notificacoes.map(async (n) => {
+          const rid = n.usuarioRemetenteId;
+          if (!rid) return n;
+
+          if (!cacheRemetentes.current[rid]) {
+            cacheRemetentes.current[rid] = await buscarUsuarioPorId(rid);
+          }
+
+          return { ...n, remetente: cacheRemetentes.current[rid] };
+        })
+      );
+
+      setNotificacoes(lista);
+    } catch (err) {
+      console.error("Erro ao buscar notificações:", err);
+    } finally {
+      setCarregando(false);
+    }
   };
 
   const buscarUsuarioPorId = async (id) => {
     try {
-      const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Usuarios/${id}`);
-      if (resp.ok) {
-        return await resp.json();
+      const r = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${id}`
+      );
+      if (r.ok) {
+        return await r.json();
       }
     } catch (err) {
-      console.error("Erro ao buscar usuário:", err);
+      console.error("Erro ao buscar remetente por ID:", err);
     }
     return null;
   };
 
-  const seguirUsuario = async (idUsuario) => {
+  const seguirUsuario = async (idUs) => {
     try {
-      const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguir`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          usuario1: usuario.id,
-          usuario2: idUsuario,
-        }),
-      });
-
-      if (resposta.ok) {
-        fetchNotificacoes();
-      }
+      const r = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguir`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario1: usuario.id, usuario2: idUs }),
+        }
+      );
+      if (r.ok) fetchNotificacoes();
     } catch (err) {
       console.error("Erro ao seguir usuário:", err);
     }
@@ -97,28 +99,28 @@ function Notificacoes() {
   return (
     <div className="notificacoes-container">
       <h2>Notificações</h2>
-      {notificacoes.length === 0 && <p>Não há notificações</p>}
+
+      {carregando && <p>Carregando notificações...</p>}
+      {!carregando && notificacoes.length === 0 && <p>Não há notificações</p>}
 
       <ul>
-        {notificacoes.map((notificacao) => (
-          <li key={notificacao.id}>
+        {notificacoes.map(n => (
+          <li key={n.id}>
             <img
-              src={
-                notificacao.remetente?.imagem ||
-                "https://via.placeholder.com/40"
-              }
+              src={n.remetente?.imagem || "https://via.placeholder.com/40"}
               alt="Foto de perfil"
             />
             <div className="info-notificacao">
               <p>
-                <strong>{notificacao.remetente?.nome_usuario || ""}</strong>  {notificacao.mensagem}
+                <strong>{n.remetente?.nome_usuario || ""}</strong> {n.mensagem}
               </p>
-              <small>
-                {new Date(notificacao.dataEnvio).toLocaleString("pt-BR")}
-              </small>
+              <small>{new Date(n.dataEnvio).toLocaleString("pt-BR")}</small>
             </div>
-            {notificacao.remetente && (
-              <button className="btn-seguir" onClick={() => seguirUsuario(notificacao.remetente.id)}>
+            {n.remetente && (
+              <button
+                className="btn-seguir"
+                onClick={() => seguirUsuario(n.remetente.id)}
+              >
                 Seguir
               </button>
             )}

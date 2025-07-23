@@ -5,6 +5,7 @@ import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 
 import FeedItem from '../Components/Home/FeedItem';
 import Comentario from '../Components/Comentario';
+import Notificacoes from './Notificacao/Notificacoes ';
 import '../css/home.css';
 
 import { FaSearch, FaBell } from 'react-icons/fa';
@@ -17,6 +18,8 @@ function Home() {
   // Feed de posts
   const [posts, setPosts] = useState([]);
   const [erro, setErro] = useState('');
+  // Loader
+  const [carregandoMais, setCarregandoMais] = useState(true);
   // Modal de comentários e seus dados
   const [modalComentarios, setModalComentarios] = useState(false);
   const [comentarioTexto, setComentarioTexto] = useState('');
@@ -29,7 +32,7 @@ function Home() {
   const [notificacoes, setNotificacoes] = useState([]);
   // Resultados da busca por usuários
   const [resultadosBusca, setResultadosBusca] = useState([]);
-const [termoBusca, setTermoBusca] = useState('');
+  const [termoBusca, setTermoBusca] = useState('');
 
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
@@ -56,17 +59,7 @@ const [termoBusca, setTermoBusca] = useState('');
     }
   }, [navigate]);
 
-  // Carrega posts do cache localStorage para melhorar a experiência inicial
-  useEffect(() => {
-    const cache = localStorage.getItem('postsSalvos');
-    if (cache) {
-      try {
-        setPosts(JSON.parse(cache));
-      } catch (erro) {
-        console.error('Erro ao carregar posts do cache:', erro);
-      }
-    }
-  }, []);
+
 
   // Sempre que o usuário for definido, busca o feed e notificações atualizadas
   useEffect(() => {
@@ -76,53 +69,77 @@ const [termoBusca, setTermoBusca] = useState('');
     }
   }, [usuario.id]);
 
-  // Busca o feed de posts da API, adiciona dados do autor, e salva localmente
-  const fetchFeed = async () => {
-    try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed/${usuario.id}`);
-      const data = await response.json();
+ const fetchFeed = async () => {
+  try {
+    const response = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`
+    );
+    if (!response.ok) throw new Error('Erro na API');
 
-      if (response.ok) {
-        // Enriquecer posts com dados do autor
-        const postsComAutores = await Promise.all(
-          data.map(async post => {
-            try {
-              const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
-              const autor = await resp.json();
-              return {
-                ...post,
-                autorNome: autor.nome_usuario || 'Usuário',
-                autorImagem: autor.imagem || null,
-              };
-            } catch {
-              return { ...post, autorNome: 'Usuário', autorImagem: null };
-            }
-          })
-        );
-        setPosts(postsComAutores);
-        salvarPostsLocalmente(postsComAutores);
-      } else {
-        setErro(data.erro || 'Erro ao carregar o feed');
+    const data = await response.json();
+
+    // Busca nomes dos autores (mantém seu código)
+    const postsComAutores = await Promise.all(
+      data.map(async post => {
+        try {
+          const resp = await fetch(
+            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`
+          );
+          const autor = await resp.json();
+          return {
+            ...post,
+            autorNome: autor.nome_usuario || 'Usuário',
+            autorImagem: autor.imagem || null,
+          };
+        } catch {
+          return { ...post, autorNome: 'Usuário', autorImagem: null };
+        }
+      })
+    );
+
+    setPosts(postsComAutores);
+    salvarPostsLocalmente(postsComAutores);
+    setErro('');
+  } catch (error) {
+    console.error('Erro ao buscar feed, tentando cache local:', error);
+
+    // Tenta carregar do localStorage como fallback
+    const cache = localStorage.getItem('postsSalvos');
+    if (cache) {
+      try {
+        const dadosCache = JSON.parse(cache);
+        setPosts(dadosCache);
+        setErro('Carregando posts do cache local por problema na API.');
+      } catch (e) {
+        console.error('Erro ao carregar cache local:', e);
+        setErro('Erro ao carregar feed.');
       }
-    } catch {
-      setErro('Erro ao conectar com o servidor.');
+    } else {
+      setErro('Erro ao carregar feed e cache local vazio.');
     }
-  };
+  } finally {
+    setCarregandoMais(false);
+  }
+};
 
-  // Busca notificações 
+
+  // Busca notificações
   const fetchNotificacoes = async () => {
     try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`);
+      const response = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
+      );
       const data = await response.json();
 
       if (data.notificacoes) {
-        // Buscar dados do remetente para cada notificação
         const notificacoesComRemetente = await Promise.all(
-          data.notificacoes.map(async (n) => {
-            const remetenteId = n.mensagem.match(/([0-9a-f\-]{36})/)?.[1];
+          data.notificacoes.map(async n => {
+            const remetenteId = n.mensagem.match(/([0-9a-f\\-]{36})/)?.[1];
             if (remetenteId) {
               try {
-                const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Usuarios/${remetenteId}`);
+                const resp = await fetch(
+                  `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Usuarios/${remetenteId}`
+                );
                 const remetente = await resp.json();
                 return { ...n, remetente };
               } catch {
@@ -140,7 +157,7 @@ const [termoBusca, setTermoBusca] = useState('');
   };
 
   // Salva os primeiros 5 posts no localStorage para cache
-  const salvarPostsLocalmente = (postsParaSalvar) => {
+  const salvarPostsLocalmente = postsParaSalvar => {
     const dadosFiltrados = postsParaSalvar.slice(0, 5).map(post => ({
       id: post.id,
       conteudo: post.conteudo,
@@ -158,10 +175,12 @@ const [termoBusca, setTermoBusca] = useState('');
   };
 
   // Curtir ou descurtir um post
-  const curtirPost = async (postId) => {
+  const curtirPost = async postId => {
     const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${postId}`;
-    const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
-    const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
+    const curtirUrl =
+      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
+    const descurtirUrl =
+      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
 
     try {
       const res = await fetch(verificarUrl, { method: 'GET' });
@@ -180,20 +199,24 @@ const [termoBusca, setTermoBusca] = useState('');
   };
 
   // Abre modal de comentários e carrega comentários do post
-  const abrirComentarios = async (post) => {
+  const abrirComentarios = async post => {
     setPostSelecionado(post);
     setComentarioTexto('');
     setComentarios([]);
     setModalComentarios(true);
 
     try {
-      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
+      const res = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`
+      );
       const data = await res.json();
 
       const comentariosComNomes = await Promise.all(
         data.comentarios.map(async comentario => {
           try {
-            const r = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+            const r = await fetch(
+              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
+            );
             const u = await r.json();
             return { ...comentario, autorNome: u.nome || 'Usuário' };
           } catch {
@@ -219,97 +242,109 @@ const [termoBusca, setTermoBusca] = useState('');
     };
 
     try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(comentario),
-      });
+      await fetch(
+        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(comentario),
+        }
+      );
 
       setComentarioTexto('');
-      abrirComentarios(postSelecionado); // Recarrega comentários
-      fetchFeed(); // Atualiza feed para refletir nova interação
+      abrirComentarios(postSelecionado);
+      fetchFeed();
     } catch (err) {
       console.error('Erro ao comentar:', err);
     }
   };
 
-  // Busca usuários pelo termo digitado para a barra de busca lateral
- const buscarUsuarios = async (termo) => {
-  if (!termo.trim()) {
-    setResultadosBusca([]);
-    return;
-  }
-
-  try {
-    const responseUsuarios = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`);
-    const dataUsuarios = await responseUsuarios.json();
-
-    if (!Array.isArray(dataUsuarios)) return;
-
-    const resultadosFiltrados = dataUsuarios.filter(u =>
-      u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase()) && u.id !== usuario.id
-    );
-
-    // Buscar a lista de quem o usuário logado já segue
-    const resSeguidores = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`);
-    const dataSeguidores = await resSeguidores.json();
-    const idsSeguindo = dataSeguidores.seguindo?.map(s => s.usuario2) || [];
-
-    // Adicionar flag "jaSegue"
-    const resultadosComStatus = resultadosFiltrados.map(u => ({
-      ...u,
-      jaSegue: idsSeguindo.includes(u.id)
-    }));
-
-    setResultadosBusca(resultadosComStatus);
-  } catch (error) {
-    console.error('Erro ao buscar usuários:', error);
-    setResultadosBusca([]);
-  }
-};
-
-  // Seguir usuário a partir da notificação
-const seguirUsuarioRapido = async (idUsuario) => {
-  try {
-    const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ usuario1: usuario.id, usuario2: idUsuario }),
-    });
-
-    if (resposta.ok) {
-      // Atualiza a lista de busca para refletir que o usuário agora está seguindo
-      setResultadosBusca(prev =>
-        prev.map(u =>
-          u.id === idUsuario ? { ...u, jaSegue: true } : u
-        )
-      );
-    } else {
-      console.error('Erro ao seguir:', resposta.status);
+  // Busca usuários pelo termo digitado
+  const buscarUsuarios = async termo => {
+    if (!termo.trim()) {
+      setResultadosBusca([]);
+      return;
     }
-  } catch (err) {
-    console.error("Erro ao seguir usuário rapidamente:", err);
-  }
-};
 
-  // Navega para o perfil do usuário selecionado
-  const irParaPerfil = (id) => {
+    try {
+      const responseUsuarios = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`
+      );
+      const dataUsuarios = await responseUsuarios.json();
+
+      if (!Array.isArray(dataUsuarios)) return;
+
+      const resultadosFiltrados = dataUsuarios.filter(
+        u =>
+          u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase()) &&
+          u.id !== usuario.id
+      );
+
+      const resSeguidores = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`
+      );
+      const dataSeguidores = await resSeguidores.json();
+      const idsSeguindo = dataSeguidores.seguindo?.map(s => s.usuario2) || [];
+
+      const resultadosComStatus = resultadosFiltrados.map(u => ({
+        ...u,
+        jaSegue: idsSeguindo.includes(u.id),
+      }));
+
+      setResultadosBusca(resultadosComStatus);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      setResultadosBusca([]);
+    }
+  };
+
+  // Seguir usuário rapidamente
+  const seguirUsuarioRapido = async idUsuario => {
+    try {
+      const resposta = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario1: usuario.id, usuario2: idUsuario }),
+        }
+      );
+
+      if (resposta.ok) {
+        setResultadosBusca(prev =>
+          prev.map(u => (u.id === idUsuario ? { ...u, jaSegue: true } : u))
+        );
+      } else {
+        console.error('Erro ao seguir:', resposta.status);
+      }
+    } catch (err) {
+      console.error('Erro ao seguir usuário rapidamente:', err);
+    }
+  };
+
+  // Ir para o perfil
+  const irParaPerfil = id => {
     navigate(`/perfil/${id}`, { state: { userId: id } });
   };
 
-  // Conexão SignalR para receber novos posts em tempo real
+  // Conexão com SignalR - feed e curtidas
   useEffect(() => {
     const connection = new HubConnectionBuilder()
-      .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub', {
-        transport: HttpTransportType.LongPolling,
-      })
+      .withUrl(
+        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub',
+        {
+          transport: HttpTransportType.LongPolling,
+        }
+      )
       .withAutomaticReconnect()
       .build();
 
-    connection.start()
+    connection
+      .start()
       .then(() => {
-        connection.on('NovoPost', (novoPost) => {
+        connection.on('NovoPost', novoPost => {
           setPosts(prev => [novoPost, ...prev]);
+          setCarregandoMais(false); // parar loader quando novo post chega
         });
       })
       .catch(err => console.error('Erro ao conectar feedHub:', err));
@@ -317,42 +352,49 @@ const seguirUsuarioRapido = async (idUsuario) => {
     return () => connection.stop();
   }, []);
 
-  // Conexão SignalR para atualizações de curtidas em tempo real
   useEffect(() => {
     const curtidaConnection = new HubConnectionBuilder()
-      .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
-        transport: HttpTransportType.LongPolling,
-      })
+      .withUrl(
+        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub',
+        {
+          transport: HttpTransportType.LongPolling,
+        }
+      )
       .withAutomaticReconnect()
       .build();
 
-    curtidaConnection.start()
+    curtidaConnection
+      .start()
       .then(() => {
-        curtidaConnection.on('ReceberCurtida', (postId, usuarioId, foiCurtida) => {
-          setPosts(prev =>
-            prev.map(post => {
-              if (post.id === postId) {
-                const curtidasAtualizadas = foiCurtida
-                  ? (post.curtidas || 0) + 1
-                  : Math.max(0, (post.curtidas || 0) - 1);
-                return { ...post, curtidas: curtidasAtualizadas };
-              }
-              return post;
-            })
-          );
-        });
+        curtidaConnection.on(
+          'ReceberCurtida',
+          (postId, usuarioId, foiCurtida) => {
+            setPosts(prev =>
+              prev.map(post => {
+                if (post.id === postId) {
+                  const curtidasAtualizadas = foiCurtida
+                    ? (post.curtidas || 0) + 1
+                    : Math.max(0, (post.curtidas || 0) - 1);
+                  return { ...post, curtidas: curtidasAtualizadas };
+                }
+                return post;
+              })
+            );
+          }
+        );
       })
       .catch(err => console.error('Erro ao conectar curtidaHub:', err));
 
     return () => curtidaConnection.stop();
   }, []);
 
-  // IntersectionObserver para identificar vídeo ativo (visível > 50%)
+  // IntersectionObserver para vídeos
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        // Filtra vídeos que estão visíveis pelo menos 50%
-        const visiveis = entries.filter(entry => entry.isIntersecting && entry.intersectionRatio >= 0.5);
+      entries => {
+        const visiveis = entries.filter(
+          entry => entry.isIntersecting && entry.intersectionRatio >= 0.5
+        );
         if (visiveis.length === 0) return setVideoAtivoId(null);
         const postId = visiveis[0].target.getAttribute('data-postid');
         setVideoAtivoId(postId);
@@ -360,14 +402,12 @@ const seguirUsuarioRapido = async (idUsuario) => {
       { threshold: 0.5 }
     );
 
-    // Observa vídeos dos posts com vídeo
     posts.forEach(post => {
       if (post.video && videoRefs.current[post.id]) {
         observer.observe(videoRefs.current[post.id]);
       }
     });
 
-    // Cleanup ao desmontar ou posts mudarem
     return () => {
       posts.forEach(post => {
         if (post.video && videoRefs.current[post.id]) {
@@ -377,7 +417,7 @@ const seguirUsuarioRapido = async (idUsuario) => {
     };
   }, [posts]);
 
-  // Salva posts no localStorage a cada 10 segundos para cache
+  // Salva posts no cache local a cada 10s
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (posts.length > 0) salvarPostsLocalmente(posts);
@@ -385,13 +425,13 @@ const seguirUsuarioRapido = async (idUsuario) => {
     return () => clearInterval(intervalId);
   }, [posts]);
 
-
   return (
     <div className="pagina-container">
-
       {/* Feed principal */}
       <div className="home-container">
-        <hr /><br /><br />
+        <hr />
+        <br />
+        <br />
         {erro && <p style={{ color: 'red' }}>{erro}</p>}
         {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
 
@@ -410,6 +450,13 @@ const seguirUsuarioRapido = async (idUsuario) => {
           ))}
         </ul>
 
+        {/* Loader infinito até ter novos posts */}
+        {carregandoMais && (
+          <div className="loader-container">
+            <div className="spinner" />
+          </div>
+        )}
+
         {/* Modal de comentários */}
         {modalComentarios && postSelecionado && (
           <Comentario
@@ -424,84 +471,124 @@ const seguirUsuarioRapido = async (idUsuario) => {
         )}
       </div>
 
-      {/* Lateral direita: Busca + Notificações */}
+      {/* Lateral: busca + notificações */}
       <div className="lateral-direita">
-        {/* Campo de busca de usuários */}
         <div className="campo-busca">
           <FaSearch className="icone-busca" />
-       <input
-  placeholder="Buscar usuários..."
-  className="barra-pesquisa-usuarios"
-  value={termoBusca}
-  onChange={e => {
-    const valor = e.target.value;
-    setTermoBusca(valor);
-    buscarUsuarios(valor); // chama a busca toda vez que o texto mudar
-  }}
-/>
+          <input
+            placeholder="Buscar usuários..."
+            className="barra-pesquisa-usuarios"
+            value={termoBusca}
+            onChange={e => {
+              const valor = e.target.value;
+              setTermoBusca(valor);
 
-          {/* Resultados da busca */}
+              if (valor.trim() === '') {
+                setResultadosBusca([]);
+              } else {
+                buscarUsuarios(valor);
+              }
+            }}
+          />
+
           {resultadosBusca.length > 0 && (
-          <ul className="resultados-busca">
-  {resultadosBusca.map((usuarioPesquisado, index) => (
-    <li key={index} className="usuario-pesquisado">
-      <img
-        src={usuarioPesquisado.imagem || 'https://via.placeholder.com/40'}
-        alt="avatar"
-        className="avatar-busca"
-        onClick={() => irParaPerfil(usuarioPesquisado.id)}
-        style={{ cursor: 'pointer' }}
-      />
-      <div className="info-usuario">
-        <span onClick={() => irParaPerfil(usuarioPesquisado.id)} style={{ cursor: 'pointer' }}>
-          {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
-        </span>
-
-        {!usuarioPesquisado.jaSegue && (
-          <button
-            className="botao-seguir"
-            onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
-          >
-            Seguir
-          </button>
-        )}
-
-        {usuarioPesquisado.jaSegue && (
-          <span className="seguindo-label">Seguindo</span>
-        )}
-      </div>
-    </li>
-  ))}
-</ul>
-
+            <ul className="resultados-busca">
+              {resultadosBusca.map(usuarioPesquisado => (
+                <li
+                  key={usuarioPesquisado.id}
+                  className="usuario-pesquisado"
+                >
+                  <img
+                    src={
+                      usuarioPesquisado.imagem ||
+                      'https://via.placeholder.com/40'
+                    }
+                    alt="avatar"
+                    className="avatar-busca"
+                    onClick={() => irParaPerfil(usuarioPesquisado.id)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <div className="info-usuario">
+                    <span
+                      onClick={() =>
+                        irParaPerfil(usuarioPesquisado.id)
+                      }
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {usuarioPesquisado.nome_usuario ||
+                        usuarioPesquisado.nome}
+                    </span>
+                    <div className="acao-usuario">
+                      {usuarioPesquisado.jaSegue ? (
+                        <button
+                          className="botao-seguir seguindo"
+                          disabled
+                        >
+                          Seguindo
+                        </button>
+                      ) : (
+                        <button
+                          className="botao-seguir"
+                          onClick={() =>
+                            seguirUsuarioRapido(usuarioPesquisado.id)
+                          }
+                        >
+                          Seguir
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
 
         {/* Notificações */}
-      <div className="notificacoes-box">
-        <h4 ><FaBell /> Notificações</h4>
-        <ul>
-          {notificacoes.length === 0 ? (
-            <li>Não há notificações</li>
-          ) : (
-            notificacoes.map((notificacao) => (
-              <li key={notificacao.id} className="notificacao-item">
-          <img
-            src={notificacao.remetente?.imagem || "https://via.placeholder.com/40"}
-            alt="Foto de perfil"
-            className="avatar-busca"
-            onClick={() => irParaPerfil(notificacao.remetente?.id)}
-            style={{ cursor: 'pointer' }}
-          />
-          <div className="info-notificacao" onClick={() => irParaPerfil(notificacao.remetente?.id)} style={{ cursor: 'pointer' }}>
-            <p><strong>{notificacao.remetente?.nome_usuario}</strong> {notificacao.mensagem}</p>
-          </div>
-        </li>
-
-            ))
-          )}
-        </ul>
-      </div>
+        <div className="notificacoes-box">
+          <h4>
+            <FaBell /> Notificações
+          </h4>
+          <ul>
+            {notificacoes.length === 0 ? (
+              <li>Não há notificações</li>
+            ) : (
+              notificacoes.map(notificacao => (
+                <li
+                  key={notificacao.id}
+                  className="notificacao-item"
+                >
+                  <img
+                    src={
+                      notificacao.remetente?.imagem ||
+                      'https://via.placeholder.com/40'
+                    }
+                    alt="Foto de perfil"
+                    className="avatar-busca"
+                    onClick={() =>
+                      irParaPerfil(notificacao.remetente?.id)
+                    }
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <div
+                    className="info-notificacao"
+                    onClick={() =>
+                      irParaPerfil(notificacao.remetente?.id)
+                    }
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <p>
+                      <strong>
+                        {notificacao.remetente?.nome_usuario}
+                      </strong>{' '}
+                      {notificacao.mensagem}
+                    </p>
+                  </div>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
       </div>
 
     </div>

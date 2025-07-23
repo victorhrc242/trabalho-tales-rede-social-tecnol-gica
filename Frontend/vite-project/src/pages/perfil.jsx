@@ -2,11 +2,16 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
-
+import { FaCog, FaPlay  } from 'react-icons/fa';
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
+const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
 
-const Perfil = ({ usuarioLogado }) => {
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const Perfil = ({ usuarioLogado, deslogar }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id: idDaUrl } = useParams();
@@ -22,6 +27,8 @@ const Perfil = ({ usuarioLogado }) => {
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
   const [loading, setLoading] = useState(true);
+  const [mostrarConfirmarLogout, setMostrarConfirmarLogout] = useState(false);
+  const [modalOpcoes, setModalOpcoes] = useState(false);
   const [modalPost, setModalPost] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [novoComentario, setNovoComentario] = useState('');
@@ -66,9 +73,9 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
           `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
         );
         setUsuario(userData);
-        setNome(userData.nome_usuario || '');
+        setNome(userData.nome || '');
         setBiografia(userData.biografia || '');
-        setImagem(userData.FotoPerfil || '');
+        setImagem(userData.imagem || '');
 
         // Carregar posts do usuário
         const { data: postsData } = await axios.get(
@@ -123,13 +130,34 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     carregarDados();
   }, [userId, navigate, usuarioLogadoId]);
 
+  const uploadImagem = async (file) => {
+  const fileName = `${Date.now()}_${file.name}`;
+  const { data, error } = await supabase.storage
+    .from('imagens-usuarios')
+    .upload(`perfil/${fileName}`, file);
+
+  if (error) {
+    console.error('Erro ao fazer upload:', error);
+    throw error;
+  }
+
+  const urlPublica = `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/${fileName}`;
+  return urlPublica;
+};
+
   const editarPerfil = async () => {
     try {
       const payload = {};
 
-      if (nome !== usuario.nome_usuario) payload.nome_usuario = nome;
-      if (biografia !== usuario.biografia) payload.biografia = biografia;
-      if (imagem !== usuario.FotoPerfil) payload.imagem = imagem;
+      if (nome !== usuario.nome) payload.nome = nome;
+if (biografia !== usuario.biografia) payload.biografia = biografia;
+if (imagemArquivo) {
+  const novaUrlImagem = await uploadImagem(imagemArquivo);
+  payload.imagem = novaUrlImagem;
+  setImagem(novaUrlImagem);
+} else if (imagem !== usuario.imagem) {
+  payload.imagem = imagem;
+}
 
       if (Object.keys(payload).length === 0) {
         alert('Não há dados para atualizar.');
@@ -141,10 +169,12 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
         payload
       );
 
-      setUsuario(response.data[0]);
+      setUsuario(response.data[0] || response.data);
       setIsEditing(false);
+      setShowEditarModalMobile(false);
     } catch (err) {
       console.error('Erro ao editar perfil:', err);
+      alert('Erro ao editar perfil. Verifique os dados e tente novamente.');  
     }
   };
 
@@ -215,6 +245,14 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     }
   };
 
+const confirmarLogout = () => {
+  deslogar();       // <- chama a função passada via props, que deve limpar o estado global
+  navigate('/');    // <- redireciona para a página de login (ou onde a rota "/" leve)
+};
+const cancelarLogout = () => {
+  setMostrarConfirmarLogout(false); // apenas fecha o modal
+};
+
   const excluirComentario = async (comentarioId) => {
     try {
       await axios.delete(
@@ -231,6 +269,11 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
  return (
   <div className="perfil-container">
 <div className="perfil-header">
+  {isPerfilProprio && (
+  <div className="configuracao-mobile">
+    <FaCog onClick={() => setModalOpcoes(true)} />
+  </div>
+)}
   <div className="foto-perfil-bloco">
     <div className="foto-perfil">
       <img
@@ -247,6 +290,9 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     {/* VERSÃO MOBILE */}
     <div className="nome-e-editar nome-e-editar-mobile">
       <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
+      {usuario.biografia && (
+    <p className='bio-mobile'>{usuario.biografia}</p>
+  )} 
       {isPerfilProprio && !isEditing && (
         <button
           className="btn-editar-perfil"
@@ -262,7 +308,19 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   <div className="perfil-info-desktop">
     <div className="topo-nome-botao">
       <h1 className="nome-desktop">{usuario.nome_usuario}</h1>
-      {isPerfilProprio && !isEditing && (
+      
+    </div>
+    <div className="infor-pessoais-desktop">
+      <div className='infor-seguidores-desktop'>
+      <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
+      <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+      </div>
+      {usuario.biografia && (
+    <p className="biografia">{usuario.biografia}</p>
+  )} 
+    </div>
+
+    {isPerfilProprio && !isEditing && (
         <button
           className="btn-editar-perfil"
           onClick={() => setIsEditing(true)}
@@ -270,11 +328,7 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
           Editar Perfil
         </button>
       )}
-    </div>
-    <div className="infor-pessoais-desktop">
-      <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
-      <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
-    </div>
+
   </div>
 
   <div className="perfil-info">
@@ -285,34 +339,72 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
       </div>
     )}
 
-        {isPerfilProprio ?  (
-          <>
-     {/* Editar */}
-    {!isEditing ? null : (
-              <div className="editar-formulario">
-                <h3>Nome</h3>
-                <input
-                  type="text"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  placeholder="Nome"
-                />
-                <textarea
-                  value={biografia}
-                  onChange={(e) => setBiografia(e.target.value)}
-                  placeholder="Biografia"
-                />
-                <input
-                  type="text"
-                  value={imagem}
-                  onChange={(e) => setImagem(e.target.value)}
-                  placeholder="Imagem URL"
-                />
-                <button onClick={editarPerfil}>Salvar</button>
-                <button onClick={() => setIsEditing(false)}>Cancelar</button>
-              </div>
-            )}
-          </>
+        {isPerfilProprio ? (
+  <>
+    {/* MODAL DE EDIÇÃO - DESKTOP */}
+    {isEditing && (
+      <div className="modal-overlay" onClick={() => setIsEditing(false)}>
+        <div className="modal-editar-desktop" onClick={(e) => e.stopPropagation()}>
+          <div className="editar-header">
+            <h2>Editar Perfil</h2>
+            <button className="btn-fechar" onClick={() => setIsEditing(false)}>×</button>
+          </div>
+          <div className="editar-conteudo">
+             <div className="editar-foto-container-desktop">
+  <div className="foto-wrapper">
+    <label className="editar-foto-label">
+      <img
+        src={usuario.imagem || 'https://via.placeholder.com/150'}
+        alt={`Foto de perfil de ${usuario.nome_usuario}`}
+        className="foto-perfil-preview"
+      />
+      <input
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files[0];
+          if (file && file.type.startsWith('image/')) {
+            setImagemArquivo(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setImagem(reader.result);
+            reader.readAsDataURL(file);
+          }
+        }}
+      />
+    </label>
+  </div>
+  <div className="botao-wrapper">
+    <button
+      className="editar-botoes"
+      onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
+    >
+      Alterar foto de perfil
+    </button>
+  </div>
+</div>
+            <label>Nome</label>
+            <input
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Nome"
+            />
+            <label>Biografia</label>
+            <textarea
+              value={biografia}
+              onChange={(e) => setBiografia(e.target.value)}
+              placeholder="Biografia"
+            />
+            <div className="editar-botoes">
+              <button onClick={editarPerfil}>Salvar</button>
+              <button className='cancelar' onClick={() => setIsEditing(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
         ) : (
           <div className="botoes-perfil">
             {estaSeguindo ? (
@@ -405,8 +497,40 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
                 alt="Imagem do post"
                 style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
               />
+
             )}
-          </div>
+
+            {post.video && (
+           <div style={{ position: 'relative' }}>
+    <video
+      muted
+      preload="metadata"
+      playsInline
+      style={{
+        width: '100%',
+        borderRadius: '8px',
+        objectFit: 'cover',
+        pointerEvents: 'none'
+      }}
+    >
+      <source src={post.video + '#t=0.1'} type="video/mp4" />
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
+    <FaPlay
+      style={{
+        position: 'absolute',
+        top: '8px',
+        left: '8px',
+        color: 'white',
+        background: 'rgba(0, 0, 0, 0.6)',
+        borderRadius: '50%',
+        padding: '4px',
+        fontSize: '14px'
+      }}
+    />
+  </div>
+)}
+          </div>  
         ))}
       </div>
 
@@ -414,9 +538,19 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
       <div className="modal-overlay" onClick={fecharModalPost}>
         <div className="modal-post-container" onClick={e => e.stopPropagation()}>
           <div className="modal-post-imagem-container">
-            {modalPost.imagem && (
-              <img src={modalPost.imagem} alt="Imagem do post" />
-            )}
+    {modalPost.imagem && (
+    <img src={modalPost.imagem} alt="Imagem do post" />
+  )}
+
+  {modalPost.video && (
+    <video
+      controls
+      style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+    >
+      <source src={modalPost.video} type="video/mp4" />
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
+  )}
           </div>
           <div className="modal-post-conteudo">
             <div className="modal-post-header">
@@ -448,6 +582,37 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
         </div>
       </div>
     )}
+
+{mostrarConfirmarLogout && (
+  <div className="modal-logout-overlay" onClick={cancelarLogout}>
+    <div className="modal-logout-content" onClick={(e) => e.stopPropagation()}>
+      <p className="modal-logout-text">Tem certeza que deseja sair?</p>
+      <div className="modal-logout-buttons">
+        <button className="btn-confirmar" onClick={confirmarLogout}>Sair</button>
+        <button className="btn-cancelar" onClick={cancelarLogout}>Cancelar</button>
+      </div>
+    </div>
+  </div>
+)}
+    
+                {modalOpcoes && (
+            <div className="modal">
+              <div className="modal-conteudo">
+                <ul>
+                  <li onClick={() => {
+                  setModalOpcoes(false);
+                  setMostrarConfirmarLogout(true);
+                }}>Sair</li>
+                  <li onClick={() => {
+                    setModalOpcoes(false);
+                    navigate('/configuracoes');
+                  }}>Configurações</li>
+                  <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
+                </ul>
+                <button className="fechar-modal" onClick={() => setModalOpcoes(false)}>x</button>
+              </div>
+            </div>
+          )}
   </div>
 )};
 export default Perfil;

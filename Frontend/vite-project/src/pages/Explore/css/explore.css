@@ -12,40 +12,38 @@ body, html {
   min-height: 100vh;
 }
 
+/* Grade de posts */
 .explore-grid {
-  column-count: 3;
-  column-gap: 10px;
+  column-count: 3;              /* 3 colunas no desktop */
+  column-gap: 6px;              /* Espaçamento reduzido entre colunas */
 }
+
+/* Responsividade */
 @media (max-width: 800px) {
   .explore-grid {
-    column-count: 2;
+    column-count: 2;            /* 2 colunas para tablets */
   }
 }
+
 @media (max-width: 500px) {
   .explore-grid {
-    column-count: 1;
+    column-count: 1;            /* 1 coluna no celular */
   }
 }
-.explore-grid {
-  column-count: 3;
-  column-gap: 10px;
-}
 
+/* Itens da grade */
 .grid-item {
   break-inside: avoid;
-  margin-bottom: 10px;
+  margin-bottom: 6px;           /* Espaço reduzido entre imagens/vídeos */
   display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;         /* Tamanho padrão para todos os itens */
+  overflow: hidden;
 }
 
+/* Estilo comum para imagens e vídeos */
 .grid-item img,
 .grid-item.video video {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.grid-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -58,14 +56,6 @@ body, html {
   aspect-ratio: 9 / 16;
 }
 
-.grid-item.video video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border-radius: 6px;
-}
-
 /* Hover */
 .grid-item:hover {
   transform: scale(1.01);
@@ -76,6 +66,7 @@ body, html {
   opacity: 1;
 }
 
+/* Sobreposição de texto (não utilizada ainda, mas preparada) */
 .overlay {
   position: absolute;
   bottom: 0;
@@ -88,7 +79,7 @@ body, html {
   transition: opacity 0.3s ease;
 }
 
-/* Responsividade */
+/* Responsividade adicional para mobile */
 @media (max-width: 600px) {
   .explore-page {
     margin-left: 0;
@@ -106,12 +97,13 @@ body, html {
   }
 }
 
-
+/* Cabeçalho (ainda não usado, mas incluído) */
 .explore-header {
   margin-bottom: 20px;
   padding: 0 10px;
 }
 
+/* Barra de pesquisa */
 .barra-pesquisa {
   width: 100%;
   padding: 10px 15px;
@@ -133,5 +125,3 @@ body, html {
     display: block; /* ou inline-block */
   }
 }
-
-
