@@ -59,17 +59,7 @@ function Home() {
     }
   }, [navigate]);
 
-  // Carrega posts do cache localStorage para melhorar a experiência inicial
-  useEffect(() => {
-    const cache = localStorage.getItem('postsSalvos');
-    if (cache) {
-      try {
-        setPosts(JSON.parse(cache));
-      } catch (erro) {
-        console.error('Erro ao carregar posts do cache:', erro);
-      }
-    }
-  }, []);
+
 
   // Sempre que o usuário for definido, busca o feed e notificações atualizadas
   useEffect(() => {
@@ -79,44 +69,59 @@ function Home() {
     }
   }, [usuario.id]);
 
-  // Busca o feed de posts da API, adiciona dados do autor, e salva localmente
-  const fetchFeed = async () => {
-    try {
-      const response = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed/${usuario.id}`
-      );
-      const data = await response.json();
+ const fetchFeed = async () => {
+  try {
+    const response = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`
+    );
+    if (!response.ok) throw new Error('Erro na API');
 
-      if (response.ok) {
-        const postsComAutores = await Promise.all(
-          data.map(async post => {
-            try {
-              const resp = await fetch(
-                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`
-              );
-              const autor = await resp.json();
-              return {
-                ...post,
-                autorNome: autor.nome_usuario || 'Usuário',
-                autorImagem: autor.imagem || null,
-              };
-            } catch {
-              return { ...post, autorNome: 'Usuário', autorImagem: null };
-            }
-          })
-        );
-        setPosts(postsComAutores);
-        salvarPostsLocalmente(postsComAutores);
-        setCarregandoMais(false); // Parar loader quando posts chegam
-      } else {
-        setErro(data.erro || 'Erro ao carregar o feed');
-        setCarregandoMais(false);
+    const data = await response.json();
+
+    // Busca nomes dos autores (mantém seu código)
+    const postsComAutores = await Promise.all(
+      data.map(async post => {
+        try {
+          const resp = await fetch(
+            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`
+          );
+          const autor = await resp.json();
+          return {
+            ...post,
+            autorNome: autor.nome_usuario || 'Usuário',
+            autorImagem: autor.imagem || null,
+          };
+        } catch {
+          return { ...post, autorNome: 'Usuário', autorImagem: null };
+        }
+      })
+    );
+
+    setPosts(postsComAutores);
+    salvarPostsLocalmente(postsComAutores);
+    setErro('');
+  } catch (error) {
+    console.error('Erro ao buscar feed, tentando cache local:', error);
+
+    // Tenta carregar do localStorage como fallback
+    const cache = localStorage.getItem('postsSalvos');
+    if (cache) {
+      try {
+        const dadosCache = JSON.parse(cache);
+        setPosts(dadosCache);
+        setErro('Carregando posts do cache local por problema na API.');
+      } catch (e) {
+        console.error('Erro ao carregar cache local:', e);
+        setErro('Erro ao carregar feed.');
       }
-    } catch {
-      setErro('Erro ao conectar com o servidor.');
-      setCarregandoMais(false);
+    } else {
+      setErro('Erro ao carregar feed e cache local vazio.');
     }
-  };
+  } finally {
+    setCarregandoMais(false);
+  }
+};
+
 
   // Busca notificações
   const fetchNotificacoes = async () => {
