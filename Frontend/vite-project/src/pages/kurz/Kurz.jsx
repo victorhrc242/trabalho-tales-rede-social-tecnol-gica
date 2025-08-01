@@ -129,7 +129,7 @@ const carregarVideos = async (paginaAtual) => {
   console.log(`Carregando página ${paginaAtual}...`);
 
   try {
-    const resposta = await fetch(`https://localhost:7051/api/Feed/videos?page=${paginaAtual}&pageSize=${POR_PAGINA}`);
+    const resposta = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/videos?page=${paginaAtual}&pageSize=${POR_PAGINA}`);
     const data = await resposta.json();
 
     if (!Array.isArray(data.videos)) {

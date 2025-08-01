@@ -88,7 +88,7 @@ function Home() {
     setCarregandoMais(true);
     try {
       const response = await fetch(
-        `https://localhost:7051/api/Feed/feed-dinamico-algoritimo-home/${usuario.id}?page=${pagina}&pageSize=10`
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-dinamico-algoritimo-home/${usuario.id}?page=${pagina}&pageSize=10`
       );
       if (!response.ok) throw new Error('Erro na API');
 
@@ -223,7 +223,7 @@ setNotificacoes(notificacoesComRemetente);
 
 async function curtirPost(postId) {
   try {
-    const verificarUrl = `https://localhost:7051/api/Curtida/usuario-curtiu?postId=${postId}&usuarioId=${usuario.id}`;
+    const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${postId}&usuarioId=${usuario.id}`;
     const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
     const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
 
@@ -352,7 +352,7 @@ async function curtirPost(postId) {
   try {
     // Chama seu endpoint de busca por nome, passando o termo
     const response = await fetch(
-      `https://localhost:7051/api/auth/buscar-por-nome/${encodeURIComponent(termo)}`
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${encodeURIComponent(termo)}`
     );
     if (!response.ok) throw new Error('Erro na busca');
 

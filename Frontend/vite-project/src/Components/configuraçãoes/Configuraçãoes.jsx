@@ -12,7 +12,7 @@ const [mensagemSeguranca, setMensagemSeguranca] = useState('');
   useEffect(() => {
     // Quando a aba "Conta" for ativada, busca os dados do usuário
     if (abaAtiva === 'notificacoes' && usuarioId) {
-      fetch(`http://localhost:5124/api/auth/usuario/${usuarioId}`, {
+      fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuarioId}`, {
         headers: {
           accept: '*/*',
         },
@@ -89,7 +89,7 @@ const [mensagemSeguranca, setMensagemSeguranca] = useState('');
   checked={!usuario.publica} // Agora: marcada = privada
   onChange={async () => {
     try {
-      const response = await fetch(`https://localhost:7051/api/auth/alterar-status/${usuario.id}`, {
+      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/alterar-status/${usuario.id}`, {
         method: 'PUT',
         headers: {
           accept: '*/*',
@@ -160,7 +160,7 @@ const [mensagemSeguranca, setMensagemSeguranca] = useState('');
         }
 
         try {
-          const response = await fetch(`https://localhost:7051/api/auth/trocar-senha-logado/${usuario.id}`, {
+          const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/trocar-senha-logado/${usuario.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
