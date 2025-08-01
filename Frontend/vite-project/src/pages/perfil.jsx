@@ -33,9 +33,14 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const [comentarios, setComentarios] = useState([]);
   const [novoComentario, setNovoComentario] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [mostrarModalSeguidores, setMostrarModalSeguidores] = useState(false);
+  const [abaSeguidoresAtiva, setAbaSeguidoresAtiva] = useState('seguidores');
+  const [listaSeguidores, setListaSeguidores] = useState([]);
+  const [listaSeguindo, setListaSeguindo] = useState([]);
   const [estaSeguindo, setEstaSeguindo] = useState(false);
+  const [hoveringSeguindo, setHoveringSeguindo] = useState(false);
   const [imagemArquivo, setImagemArquivo] = useState(null);
-const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
+  const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   const [nome, setNome] = useState('');
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
@@ -59,6 +64,38 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
       alert('Erro ao seguir usuário. Tente novamente.');
     }
   };
+
+  const deseguirUsuario = async () => {
+  try {
+    await axios.delete(
+      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/deseguir',
+      {
+         data: {
+      usuario1: usuarioLogadoId,
+      usuario2: userId
+      }
+    }
+    );
+    setEstaSeguindo(false); // Atualiza estado para refletir que não está mais seguindo
+  } catch (err) {
+    console.error('Erro ao deixar de seguir usuário:', err);
+    alert('Erro ao deixar de seguir. Tente novamente.');
+  }
+};
+
+const carregarSeguidoresESeguindo = async () => {
+  try {
+    const resSeguidores = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${usuarioLogadoId}`);
+    const seguidoresData = await resSeguidores.json();
+    setListaSeguidores(seguidoresData);
+
+    const resSeguindo = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuarioLogadoId}`);
+    const seguindoData = await resSeguindo.json();
+    setListaSeguindo(seguindoData);
+  } catch (error) {
+    console.error('Erro ao carregar seguidores/seguindo:', error);
+  }
+};
 
 useEffect(() => {
   if (!userId) {
@@ -346,9 +383,15 @@ const cancelarLogout = () => {
     </div>
     <div className="infor-pessoais-desktop">
       <div className='infor-seguidores-desktop'>
-      <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
-      <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
-      </div>
+      <p><strong><button className="botao-link" onClick={() => {
+            setMostrarModalSeguidores(true);
+            carregarSeguidoresESeguindo();
+          }}>Seguidores:
+        </button>
+      </strong> {seguidoresInfo.seguidores}
+    </p>
+    <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+  </div>
       {usuario.biografia && (
     <p className="biografia">{usuario.biografia}</p>
   )} 
@@ -442,7 +485,15 @@ const cancelarLogout = () => {
         ) : (
           <div className="botoes-perfil">
             {estaSeguindo ? (
-              <button disabled>Seguindo</button>
+              <button
+                onMouseEnter={() => setHoveringSeguindo(true)}
+                onMouseLeave={() => setHoveringSeguindo(false)}
+                onClick={() => {
+                if (hoveringSeguindo) deseguirUsuario();
+              }}
+              >
+                {hoveringSeguindo ? 'Deixar de seguir' : 'Seguindo'}
+              </button>
             ) : (
               <button onClick={seguirUsuario}>Seguir</button>
             )}
@@ -624,6 +675,57 @@ const cancelarLogout = () => {
       <div className="modal-logout-buttons">
         <button className="btn-confirmar" onClick={confirmarLogout}>Sair</button>
         <button className="btn-cancelar" onClick={cancelarLogout}>Cancelar</button>
+      </div>
+    </div>
+  </div>
+)}
+
+{mostrarModalSeguidores && (
+  <div className="modal-overlay">
+    <div className="modal-box">
+      <div className="modal-header">
+        <button
+          className={abaSeguidoresAtiva === 'seguidores' ? 'ativo' : ''}
+          onClick={() => setAbaSeguidoresAtiva('seguidores')}
+        >
+          Seguidores
+        </button>
+        <button
+          className={abaSeguidoresAtiva === 'seguindo' ? 'ativo' : ''}
+          onClick={() => setAbaSeguidoresAtiva('seguindo')}
+        >
+          Seguindo
+        </button>
+        <button
+          className="fechar-modal"
+          onClick={() => setMostrarModalSeguidores(false)}
+        >
+          X
+        </button>
+      </div>
+
+      <div className="modal-conteudo">
+        {abaSeguidoresAtiva === 'seguidores' ? (
+          listaSeguidores.length > 0 ? (
+            listaSeguidores.map((user, i) => (
+              <div key={i} className="usuario-item">
+                <p>{user.nome}</p>
+              </div>
+            ))
+          ) : (
+            <p>Nenhum seguidor encontrado.</p>
+          )
+        ) : (
+          listaSeguindo.length > 0 ? (
+            listaSeguindo.map((user, i) => (
+              <div key={i} className="usuario-item">
+                <p>{user.nome}</p>
+              </div>
+            ))
+          ) : (
+            <p>Você não está seguindo ninguém.</p>
+          )
+        )}
       </div>
     </div>
   </div>
