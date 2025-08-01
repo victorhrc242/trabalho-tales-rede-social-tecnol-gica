@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
 import { FaCog, FaPlay  } from 'react-icons/fa';
+import TrocarConta from '../Components/configuraçãoes/TrocarConta.jsx';
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
 const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
@@ -40,6 +41,8 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
   const [biografia, setBiografia] = useState('');
   const [imagem, setImagem] = useState('');
   const inputRef = useRef();
+  const [mostrarTrocarConta, setMostrarTrocarConta] = useState(false);
+
 
   // Verifica se o perfil visualizado é o próprio usuário logado
   const isPerfilProprio = usuarioLogadoId && userId && usuarioLogadoId.toString() === userId.toString();
@@ -641,12 +644,19 @@ const cancelarLogout = () => {
                     setModalOpcoes(false);
                     navigate('/configuracoes');
                   }}>Configurações</li>
-                  <li onClick={() => alert('Troca de conta em breve')}>Trocar de Conta</li>
+                  <li onClick={() => {
+                    setModalOpcoes(false);
+                    setMostrarTrocarConta(true);
+                  }}>Trocar de Conta</li>
                 </ul>
                 <button className="fechar-modal" onClick={() => setModalOpcoes(false)}>x</button>
               </div>
             </div>
           )}
+          {mostrarTrocarConta && (
+  <TrocarConta fechar={() => setMostrarTrocarConta(false)} />
+)}
+
   </div>
 )};
 export default Perfil;

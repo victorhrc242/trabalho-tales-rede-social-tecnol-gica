@@ -254,3 +254,21 @@
   }
 }
 
+.botao-voltar-login {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .botao-voltar-login {
+    top: 15px;
+    left: 15px;
+  }
+}
+
