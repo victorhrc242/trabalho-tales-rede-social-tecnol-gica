@@ -1,0 +1,76 @@
+.story-wrapper {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.story-container {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* Suporte para iOS */
+}
+
+.story-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.story-container::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 10px;
+}
+
+.story-container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.story-item {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.story-item:hover {
+  transform: scale(1.05);
+}
+
+.story-item.nao-visto {
+  border: 3px solid #007bff; /* azul para story novo */
+}
+
+.story-item.visto {
+  border: 3px solid #ccc; /* cinza para story já visto */
+}
+
+.story-imagem {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Estilo para empty */
+.story-empty {
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+  color: #666;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .story-container {
+    gap: 12px;
+  }
+
+  .story-item {
+    width: 50px;
+    height: 50px;
+  }
+}

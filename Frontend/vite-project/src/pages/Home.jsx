@@ -8,6 +8,7 @@ import Comentario from '../Components/Comentario';
 import Notificacoes from './Notificacao/Notificacoes ';
 import '../css/home.css';
 import useRegistrarVisualizacoes from '../Components/Home/useRegistrarVisualizacoes';
+import Story from '../Components/Home/Story.jsx';
 import { FaSearch, FaBell } from 'react-icons/fa';
 
 function Home() {
@@ -45,6 +46,15 @@ const [loadingFeed, setLoadingFeed] = useState(true);
       videoRefs.current[postId] = node;
     }
   }, []);
+  const stories = [
+  { imagem: 'https://via.placeholder.com/150', visto: false },
+  { imagem: 'https://via.placeholder.com/150', visto: true },
+  { imagem: 'https://via.placeholder.com/150', visto: false },
+  { imagem: 'https://via.placeholder.com/150', visto: false },
+  { imagem: 'https://via.placeholder.com/150', visto: false },
+  { imagem: 'https://via.placeholder.com/150', visto: false },
+  { imagem: 'https://via.placeholder.com/150', visto: false },
+];
 
   useRegistrarVisualizacoes(posts, usuario);
 
@@ -523,6 +533,7 @@ async function curtirPost(postId) {
     <div className="pagina-container">
       {/* Feed principal */}
       <div className="home-container">
+            <Story stories={stories} />
         <hr />
         <br />
         <br />
