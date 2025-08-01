@@ -578,38 +578,40 @@ async function curtirPost(postId) {
             }}
           />
 
-          {resultadosBusca.length > 0 && (
-            <ul className="resultados-busca">
-              {resultadosBusca.map(usuarioPesquisado => (
-                <li key={usuarioPesquisado.id} className="usuario-pesquisado">
-                  <img
-                    src={
-                      usuarioPesquisado.imagem ||
-                      'https://via.placeholder.com/40'
-                    }
-                    alt="avatar"
-                    className="avatar-busca"
+          {/* Buscar */}
+          {termoBusca.trim() !== '' && resultadosBusca.length > 0 && (
+          <ul className="resultados-busca">
+            {resultadosBusca.map(usuarioPesquisado => (
+              <li key={usuarioPesquisado.id} className="usuario-pesquisado">
+                <img
+                  src={
+                    usuarioPesquisado.imagem ||
+                    'https://via.placeholder.com/40'
+                  }
+                  alt="avatar"
+                  className="avatar-busca"
+                  onClick={() => irParaPerfil(usuarioPesquisado.id)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <div className="info-usuario">
+                  <span
                     onClick={() => irParaPerfil(usuarioPesquisado.id)}
                     style={{ cursor: 'pointer' }}
-                  />
-                  <div className="info-usuario">
-                    <span
-                      onClick={() => irParaPerfil(usuarioPesquisado.id)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
-                    </span>
-                    <button
-                      onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
-                      disabled={usuarioPesquisado.jaSegue}
-                    >
-                      {usuarioPesquisado.jaSegue ? 'Seguindo' : 'Seguir'}
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                  >
+                    {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
+                  </span>
+                  <button
+                    onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
+                    disabled={usuarioPesquisado.jaSegue}
+                  >
+                    {usuarioPesquisado.jaSegue ? 'Seguindo' : 'Seguir'}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
         </div>
 
           {/* Notificações */}

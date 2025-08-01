@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import '../css/login.css';
 import { Link, useNavigate } from 'react-router-dom';
 // Importação dos ícones
-import { FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEnvelope, FaEye, FaEyeSlash  } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi'; // Ícone de seta para voltar
+
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -11,13 +14,14 @@ function Login() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
 
-  // Redireciona automaticamente para a Home se o token já existir (usuário já logado)
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      navigate('/Home');
-    }
-  }, [navigate]);
+const location = useLocation();
+const [veioDeAdicionarConta, setVeioDeAdicionarConta] = useState(false);
+
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  setVeioDeAdicionarConta(params.get('adicionarConta') === 'true');
+}, [location.search]);
+
 
   // Função de login
   const handleLogin = async (e) => {
@@ -75,6 +79,18 @@ function Login() {
           <button onClick={() => setErro('')}>×</button>
         </div>
       )}
+
+   {/* Seta para voltar visível somente se veio de "Adicionar Conta" */}
+      {veioDeAdicionarConta && (
+        <button
+          onClick={() => navigate(-1)}
+          className="botao-voltar-login"
+          aria-label="Voltar"
+        >
+          <FiArrowLeft size={24} />
+        </button>
+      )}
+
 
       <div className="modal-login">
         <div className="formulario">
