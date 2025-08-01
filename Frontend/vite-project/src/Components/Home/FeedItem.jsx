@@ -6,7 +6,9 @@ function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, a
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [mostrarTiposDenuncia, setMostrarTiposDenuncia] = useState(false);
   const opcoesRef = useRef(null);
-
+  const [foiCurtido, setFoiCurtido] = useState(false);
+  const [totalCurtidas, setTotalCurtidas] = useState(post.curtidas || 0);
+const [curtindo, setCurtindo] = useState(false);
   const denunciarPost = async (descricao) => {
     try {
       await fetch('https://localhost:7051/api/denuncias/adicionar_denuncia', {
@@ -26,6 +28,35 @@ function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, a
       alert('Erro ao enviar denúncia.');
     }
   };
+
+  useEffect(() => {
+    async function checkCurtida() {
+      const res = await fetch(`https://localhost:7051/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`);
+      const data = await res.json();
+      setFoiCurtido(data.curtiu);
+    }
+    checkCurtida();
+  }, [post.id, usuario.id]);
+
+async function handleCurtir() {
+  if (curtindo) return;
+  setCurtindo(true);
+
+  setFoiCurtido(prev => !prev);
+  setTotalCurtidas(prev => (foiCurtido ? prev - 1 : prev + 1));
+
+  const resultado = await curtirPost(post.id);
+
+  if (!resultado?.sucesso) {
+    setFoiCurtido(prev => !prev);
+    setTotalCurtidas(prev => (foiCurtido ? prev + 1 : prev - 1));
+  }
+
+  setCurtindo(false);
+}
+
+
+
 
   useEffect(() => {
     const handleClickFora = (e) => {
@@ -106,32 +137,55 @@ function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, a
         </div>
       </div>
 
-      {/* Conteúdo do post */}
-      {post.imagem && <img src={post.imagem} alt="Imagem" className="imagem-post-feed" />}
-      {post.video && (
-        <div data-postid={post.id} ref={node => registerVideoRef(post.id, node)}>
-          <VideoPlayer videoUrl={post.video} isActive={videoAtivoId === String(post.id)} />
+      <article
+        data-postid={post.id}
+        style={{ marginBottom: '20px' }}
+        className="post-item"
+      >
+        {/* Conteúdo do post */}
+        {post.imagem && (
+          <img src={post.imagem} alt="Imagem" className="imagem-post-feed" />
+        )}
+
+        {post.video && (
+          <div ref={(node) => registerVideoRef(post.id, node)}>
+            <VideoPlayer
+              videoUrl={post.video}
+              isActive={videoAtivoId === String(post.id)}
+            />
+          </div>
+        )}
+
+        {/* Botões curtir/comentar */}
+        <div className="botoes-post">
+  <button className="botao-acao" onClick={handleCurtir}>
+  <Heart
+    size={20}
+    color={foiCurtido ? 'red' : 'black'}
+    fill={foiCurtido ? 'red' : 'none'}
+  />
+  {usuario?.id === post.autorId && (
+    <span> ({totalCurtidas})</span>
+  )}
+</button>
+
+
+
+          <button className="botao-acao" onClick={() => abrirComentarios(post)}>
+            <MessageCircle size={20} /> ({post.comentarios})
+          </button>
         </div>
-      )}
 
-      {/* Botões curtir/comentar */}
-      <div className="botoes-post">
-        <button className="botao-acao" onClick={() => curtirPost(post.id)}>
-          <Heart size={20} color={post.curtidas > 0 ? 'red' : 'black'} fill={post.curtidas > 0 ? 'red' : 'none'} />
-          {usuario?.id === post.autorId && post.curtidas !== undefined && ` (${post.curtidas})`}
-        </button>
-        <button className="botao-acao" onClick={() => abrirComentarios(post)}>
-          <MessageCircle size={20} /> ({post.comentarios})
-        </button>
-      </div>
+        {/* Texto do post */}
+        <div className="post-description">
+          <p>
+            {post.conteudo} {post.tags?.map((tag) => `#${tag.trim()}`).join(' ')}
+          </p>
+          <p>{new Date(post.dataPostagem).toLocaleString()}</p>
+        </div>
 
-      {/* Texto do post */}
-      <div className="post-description">
-        <p>{post.conteudo} {post.tags?.map(tag => `#${tag.trim()}`).join(' ')}</p>
-        <p>{new Date(post.dataPostagem).toLocaleString()}</p>
-      </div>
-
-      <hr />
+        <hr />
+      </article>
     </li>
   );
 }

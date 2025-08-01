@@ -378,4 +378,56 @@
   100% { opacity: 0; transform: translateY(-10px); }
 }
 
+/* Estilo dos links para termos e políticas */
+.text-blue-600 {
+  color: #2563eb; /* Azul */
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.text-blue-600:hover {
+  color: #1e40af; /* Azul mais escuro no hover */
+}
+
+/* Modal Overlay (fundo escuro) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Conteúdo do modal */
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Botão de fechar modal */
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #6182dd; /* azul escuro */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-content button:hover {
+  background-color: #7f9af1; /* azul mais escuro no hover */
+}
 

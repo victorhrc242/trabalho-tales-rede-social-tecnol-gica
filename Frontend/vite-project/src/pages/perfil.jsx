@@ -60,75 +60,109 @@ const [showEditarModalMobile, setShowEditarModalMobile] = useState(false);
     }
   };
 
-  useEffect(() => {
-    if (!userId) {
-      navigate('/');
-      return;
-    }
+useEffect(() => {
+  if (!userId) {
+    navigate('/');
+    return;
+  }
 
-    const carregarDados = async () => {
-      try {
-        // Carregar dados do usuário do perfil visualizado
-        const { data: userData } = await axios.get(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
-        );
+  const cacheKey = `perfil_${userId}`;
+  const perfilCache = localStorage.getItem(cacheKey);
+  const agora = Date.now();
+
+  // 1. Primeiro: Tenta carregar do cache
+  if (perfilCache) {
+    const { data } = JSON.parse(perfilCache);
+
+    setUsuario(data.usuario);
+    setNome(data.usuario.nome || '');
+    setBiografia(data.usuario.biografia || '');
+    setImagem(data.usuario.imagem || '');
+    setPosts(data.posts);
+    setSeguidoresInfo(data.seguidoresInfo);
+    setLoading(false); // Mostra algo de imediato
+  }
+
+  // 2. Depois: Busca dados atualizados em segundo plano
+  const carregarDados = async () => {
+    try {
+      const { data: userData } = await axios.get(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
+      );
+      const { data: postsData } = await axios.get(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/posts/usuario/${userId}`
+      );
+      const seguidoresRes = await axios.get(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`
+      );
+      const seguindoRes = await axios.get(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`
+      );
+
+      const infoSeguidores = {
+        seguidores: seguidoresRes.data?.seguidores?.length || 0,
+        seguindo: seguindoRes.data?.seguindo?.length || 0,
+      };
+
+      const novosDados = {
+        usuario: userData,
+        posts: postsData,
+        seguidoresInfo: infoSeguidores,
+      };
+
+      // Compara com o cache
+      const cacheAntigo = perfilCache ? JSON.parse(perfilCache).data : null;
+      const dadosAlteraram = JSON.stringify(novosDados) !== JSON.stringify(cacheAntigo);
+
+      if (dadosAlteraram) {
         setUsuario(userData);
         setNome(userData.nome || '');
         setBiografia(userData.biografia || '');
         setImagem(userData.imagem || '');
-
-        // Carregar posts do usuário
-        const { data: postsData } = await axios.get(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/posts/usuario/${userId}`
-        );
         setPosts(postsData);
+        setSeguidoresInfo(infoSeguidores);
 
-        // Carregar seguidores e seguindo
-        const seguidoresRes = await axios.get(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`
-        );
-        const seguindoRes = await axios.get(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`
-        );
-        setSeguidoresInfo({
-          seguidores: seguidoresRes.data?.seguidores?.length || 0,
-          seguindo: seguindoRes.data?.seguindo?.length || 0,
-        });
-
-        // Verificar se o usuário logado está seguindo o perfil visualizado
-        if (userId && usuarioLogadoId && userId !== usuarioLogadoId) {
-          try {
-            const { data } = await axios.get(
-              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue?usuario1=${usuarioLogadoId}&usuario2=${userId}`
-            );
-
-            setEstaSeguindo(data.estaSeguindo);
-
-            // Se não estiver seguindo, seguir automaticamente (se quiser esse comportamento)
-            if (!data.estaSeguindo) {
-              await axios.post(
-                'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente',
-                {
-                  usuario1: usuarioLogadoId,
-                  usuario2: userId,
-                }
-              );
-              setEstaSeguindo(true);
-              console.log('Usuário começou a seguir automaticamente.');
-            }
-          } catch (err) {
-            console.error('Erro ao verificar ou seguir o usuário automaticamente:', err);
-          }
-        }
-      } catch (err) {
-        console.error('Erro ao carregar dados do perfil:', err);
-      } finally {
-        setLoading(false);
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data: novosDados,
+          timestamp: agora,
+        }));
       }
-    };
 
-    carregarDados();
-  }, [userId, navigate, usuarioLogadoId]);
+      // Verifica se está seguindo
+      if (userId && usuarioLogadoId && userId !== usuarioLogadoId) {
+        try {
+          const { data } = await axios.get(
+            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue?usuario1=${usuarioLogadoId}&usuario2=${userId}`
+          );
+
+          setEstaSeguindo(data.estaSeguindo);
+
+          if (!data.estaSeguindo) {
+            await axios.post(
+              'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente',
+              {
+                usuario1: usuarioLogadoId,
+                usuario2: userId,
+              }
+            );
+            setEstaSeguindo(true);
+            console.log('Usuário começou a seguir automaticamente.');
+          }
+        } catch (err) {
+          console.error('Erro ao verificar ou seguir o usuário automaticamente:', err);
+        }
+      }
+
+    } catch (err) {
+      console.error('Erro ao buscar dados atualizados do perfil:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  carregarDados();
+}, [userId, navigate, usuarioLogadoId]);
+
 
   const uploadImagem = async (file) => {
   const fileName = `${Date.now()}_${file.name}`;

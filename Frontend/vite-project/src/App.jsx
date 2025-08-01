@@ -15,9 +15,11 @@ import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
 import Kurz from './pages/kurz/Kurz';
 import DenunciasAdmin from './adm/DenunciasAdmin';
 import TrocarConta from './Components/configuraçãoes/TrocarConta';
+import SplashScreen from './Components/SplashScreen';
 function AppWrapper() {
   const location = useLocation();
-
+  // Estado que controla se está carregando a tela splash
+  const [loading, setLoading] = useState(true);
   // Rotas onde nenhuma navbar deve aparecer
   const esconderAmbas = ["/", "/cadastro", "/recuperar"];
 
@@ -69,7 +71,18 @@ function AppWrapper() {
     esconderSomenteNavbarTop.some(path =>
     location.pathname.startsWith(path.replace(':id', ''))
     );
+ // Quando o componente montar, aguarde 2-3 segundos e desabilite o loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500); // 2.5 segundos, pode ajustar
 
+    return () => clearTimeout(timer);
+  }, []);
+    // Se estiver carregando, mostra a splash
+  if (loading) {
+    return <SplashScreen />;
+  }
   return (
     <>
        {usuario && (

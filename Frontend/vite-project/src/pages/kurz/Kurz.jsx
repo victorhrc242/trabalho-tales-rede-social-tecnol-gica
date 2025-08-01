@@ -3,26 +3,19 @@ import { Heart, MessageCircle } from 'lucide-react';
 import './kurz_css.css';
 import Comentario from '../../Components/Comentario';
 
-// Error Boundary para capturar erros no componente Comentario
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
   }
-
   static getDerivedStateFromError(error) {
-    // Atualiza o estado para renderizar fallback UI
     return { hasError: true, error };
   }
-
   componentDidCatch(error, errorInfo) {
-    // Você pode enviar o erro para um serviço de logging aqui
     console.error('Erro no Comentario:', error, errorInfo);
   }
-
   render() {
     if (this.state.hasError) {
-      // UI de fallback em caso de erro
       return (
         <div style={{ padding: 20, color: 'red' }}>
           <h2>Erro ao carregar os comentários.</h2>
@@ -37,7 +30,6 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// Componente para reprodução de vídeo com controle de mute e play
 function VideoPlayer({ videoUrl, isActive }) {
   const videoRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -52,7 +44,6 @@ function VideoPlayer({ videoUrl, isActive }) {
     }
   }, [isActive]);
 
-  // Alterna mute/desmute ao clicar no vídeo (botão mute)
   const toggleMute = (e) => {
     e.stopPropagation();
     if (videoRef.current) {
@@ -61,7 +52,6 @@ function VideoPlayer({ videoUrl, isActive }) {
     }
   };
 
-  // Alterna play/pause ao clicar no vídeo
   const handleVideoClick = () => {
     if (!videoRef.current) return;
     if (videoRef.current.paused) {
@@ -87,7 +77,6 @@ function VideoPlayer({ videoUrl, isActive }) {
 }
 
 const Kurz = () => {
-  // Estados para vídeos, curtidas, usuário, vídeo atual, controle do modal e comentários
   const [videos, setVideos] = useState([]);
   const [curtidas, setCurtidas] = useState({});
   const [comentariosCount, setComentariosCount] = useState({});
@@ -98,13 +87,16 @@ const Kurz = () => {
   const [comentariosAtuais, setComentariosAtuais] = useState([]);
   const [comentarioTexto, setComentarioTexto] = useState('');
   const containerRef = useRef(null);
-  const [comentariosDoPost, setComentariosDoPost] = useState([]);
   const [usuarioCurtidas, setUsuarioCurtidas] = useState([]);
-
-  // Estado para detectar se está em dispositivo mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Atualiza isMobile ao redimensionar a tela
+  // Paginação
+  const [pagina, setPagina] = useState(1);
+  const POR_PAGINA = 10;
+  const [carregando, setCarregando] = useState(false);
+  const [temMais, setTemMais] = useState(true);
+
+  // Ajusta isMobile ao redimensionar
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth <= 768);
@@ -113,7 +105,14 @@ const Kurz = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Carrega dados do usuário do localStorage na inicialização
+  // Incrementa página se estiver perto do fim da lista
+  useEffect(() => {
+    if (videoAtual >= videos.length - 2 && temMais && !carregando) {
+      setPagina((prev) => prev + 1);
+    }
+  }, [videoAtual, videos.length, temMais, carregando]);
+
+  // Pega usuário do localStorage
   useEffect(() => {
     const usuarioString = localStorage.getItem('usuario');
     if (usuarioString) {
@@ -125,56 +124,109 @@ const Kurz = () => {
     }
   }, []);
 
-  // Busca vídeos e dados do autor na API
-  useEffect(() => {
-    async function fetchVideos() {
-      try {
-        const res = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/videos');
-        const data = await res.json();
+const carregarVideos = async (paginaAtual) => {
+  setCarregando(true);
+  console.log(`Carregando página ${paginaAtual}...`);
 
-        // Para cada vídeo, buscar o autor para pegar nome e imagem
-        const videosComAutor = await Promise.all(
-          data.map(async (video) => {
-            try {
-              const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${video.autorId}`);
-              const autor = await resp.json();
-              return {
-                ...video,
-                autorNome: autor.nome_usuario || 'Usuário',
-                autorImagem: autor.imagem || 'https://i.pravatar.cc/40',
-              };
-            } catch {
-              return {
-                ...video,
-                autorNome: 'Usuário',
-                autorImagem: 'https://i.pravatar.cc/40',
-              };
-            }
-          })
-        );
+  try {
+    const resposta = await fetch(`https://localhost:7051/api/Feed/videos?page=${paginaAtual}&pageSize=${POR_PAGINA}`);
+    const data = await resposta.json();
 
-        setVideos(videosComAutor);
-
-        // Inicializa curtidas para cada vídeo
-        const likes = {};
-        videosComAutor.forEach((v) => {
-          likes[v.id] = v.curtidas || 0;
-        });
-        setCurtidas(likes);
-        const commentsCount = {};
-        videosComAutor.forEach((v) => {
-          commentsCount[v.id] = v.comentariosCount || 0;
-        });
-        setComentariosCount(commentsCount);
-
-      } catch (e) {
-        console.error(e);
-      }
+    if (!Array.isArray(data.videos)) {
+      console.error('Esperado um array em data.videos, mas recebeu:', data.videos);
+      setTemMais(false);
+      return;
     }
-    fetchVideos();
-  }, []);
 
-  // Controle de navegação entre vídeos com teclado e roda do mouse
+    // Se a página retornou 0 vídeos, chegamos ao fim
+    if (data.videos.length === 0) {
+      console.log(`Página ${paginaAtual} sem vídeos. Encerrando paginação.`);
+      setTemMais(false);
+      return;
+    }
+
+    // Enriquecer vídeos com nome/imagem do autor
+    const videosComAutor = await Promise.all(
+      data.videos.map(async (video) => {
+        try {
+          const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${video.autorId}`);
+          const autor = await resp.json();
+          return {
+            ...video,
+            autorNome: autor.nome_usuario || 'Usuário',
+            autorImagem: autor.imagem || 'https://i.pravatar.cc/40',
+          };
+        } catch {
+          return {
+            ...video,
+            autorNome: 'Usuário',
+            autorImagem: 'https://i.pravatar.cc/40',
+          };
+        }
+      })
+    );
+
+    // Acumula vídeos únicos
+    setVideos(prev => {
+      const combined = [...prev, ...videosComAutor];
+      const unique = combined.filter(
+        (v, idx, self) => idx === self.findIndex(item => item.id === v.id)
+      );
+      return unique;
+    });
+
+   
+
+
+    // 👇 Esses dois estavam fora antes, agora estão dentro corretamente:
+    setCurtidas((prev) => {
+      const novo = { ...prev };
+      videosComAutor.forEach((v) => {
+        if (novo[v.id] === undefined) novo[v.id] = v.curtidas || 0;
+      });
+      return novo;
+    });
+
+    setComentariosCount((prev) => {
+      const novo = { ...prev };
+      videosComAutor.forEach((v) => {
+        if (novo[v.id] === undefined) novo[v.id] = v.comentariosCount || 0;
+      });
+      return novo;
+    });
+
+  } catch (erro) {
+    console.error('Erro ao carregar vídeos:', erro);
+  } finally {
+    setCarregando(false); // <- Aqui estava o erro antes: faltava ponto e vírgula antes do `finally`
+  }
+};
+
+  // Carregar primeira página ou páginas seguintes
+useEffect(() => {
+  if (temMais && !carregando) {
+    carregarVideos(pagina);
+    setPagina(prev => prev + 1);
+  }
+}, [temMais, carregando]);
+
+  // Scroll infinito para carregar mais vídeos
+  useEffect(() => {
+    const handleScroll = () => {
+      if (carregando || !temMais) return;
+
+      const scrollPos = window.innerHeight + window.scrollY;
+      const limite = document.documentElement.offsetHeight - 300;
+
+      if (scrollPos >= limite) {
+        setPagina((prev) => prev + 1);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [carregando, temMais]);
+
+  // Navegação por teclado e roda do mouse para trocar vídeo
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowDown') {
@@ -216,65 +268,64 @@ const Kurz = () => {
     }
   }, [videoAtual]);
 
-const abrirComentarios = async (post) => {
-  setPostSelecionado(post);
-  setModalComentarios(true);
-  setComentarioTexto('');
+  // Abrir modal de comentários e carregar dados
+  const abrirComentarios = async (post) => {
+    setPostSelecionado(post);
+    setModalComentarios(true);
+    setComentarioTexto('');
 
-  try {
-    // 1. Buscar todos os comentários do post
-    const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
-    const data = await res.json();
-    const comentarios = data.comentarios || [];
+    try {
+      const res = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`
+      );
+      const data = await res.json();
+      const comentarios = data.comentarios || [];
 
-    // 2. Buscar autor de cada comentário
-    const comentariosComAutor = await Promise.all(
-      comentarios.map(async (comentario) => {
-        try {
-          const autorRes = await fetch(
-            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
-          );
-          const autor = await autorRes.json();
+      const comentariosComAutor = await Promise.all(
+        comentarios.map(async (comentario) => {
+          try {
+            const autorRes = await fetch(
+              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
+            );
+            const autor = await autorRes.json();
 
-          return {
-            ...comentario,
-            autorNome: autor.nome_usuario || 'Usuário',
-            autorImagem: autor.imagem || 'https://via.placeholder.com/40'
-          };
-        } catch (error) {
-          console.warn('Erro ao buscar autor do comentário', comentario.autorId, error);
-          return {
-            ...comentario,
-            autorNome: 'Usuário',
-            autorImagem: 'https://via.placeholder.com/40'
-          };
-        }
-      })
-    );
+            return {
+              ...comentario,
+              autorNome: autor.nome_usuario || 'Usuário',
+              autorImagem: autor.imagem || 'https://via.placeholder.com/40',
+            };
+          } catch (error) {
+            console.warn('Erro ao buscar autor do comentário', comentario.autorId, error);
+            return {
+              ...comentario,
+              autorNome: 'Usuário',
+              autorImagem: 'https://via.placeholder.com/40',
+            };
+          }
+        })
+      );
 
-    // 3. Atualizar comentários no estado
-    setComentariosAtuais(comentariosComAutor);
+      setComentariosAtuais(comentariosComAutor);
 
-    // 4. Buscar curtidas do usuário logado nesse post
-    const curtidasRes = await fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${post.id}`
-    );
-    const curtidasData = await curtidasRes.json();
+      // Buscar curtidas do usuário logado nesse post
+      const curtidasRes = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${post.id}`
+      );
+      const curtidasData = await curtidasRes.json();
 
-    // 5. Extrair apenas os IDs dos comentários curtidos pelo usuário
-    const curtidosPorUsuario = (curtidasData?.curtidas || [])
-      .filter((c) => c.usuarioId === usuario.id && c.tipo === 'comentario') // só comentários
-      .map((c) => c.postId); // postId aqui representa o ID do comentário
+      // IDs dos comentários curtidos pelo usuário
+      const curtidosPorUsuario = (curtidasData?.curtidas || [])
+        .filter((c) => c.usuarioId === usuario.id && c.tipo === 'comentario')
+        .map((c) => c.postId);
 
-    setUsuarioCurtidas(curtidosPorUsuario);
-  } catch (e) {
-    console.error('Erro ao carregar comentários:', e);
-    setComentariosAtuais([]);
-    setUsuarioCurtidas([]);
-  }
-};
+      setUsuarioCurtidas(curtidosPorUsuario);
+    } catch (e) {
+      console.error('Erro ao carregar comentários:', e);
+      setComentariosAtuais([]);
+      setUsuarioCurtidas([]);
+    }
+  };
 
-  // Fecha modal de comentários limpando estados relacionados
   const fecharComentarios = () => {
     setModalComentarios(false);
     setPostSelecionado(null);
@@ -282,7 +333,6 @@ const abrirComentarios = async (post) => {
     setComentarioTexto('');
   };
 
-  // Função para curtir/descurtir um post, atualizando estado e backend
   const curtirPost = async (postId) => {
     const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${postId}`;
     const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
@@ -309,7 +359,6 @@ const abrirComentarios = async (post) => {
     }
   };
 
-  // Função para enviar comentário e atualizar lista
   const comentar = async () => {
     if (!comentarioTexto.trim() || !postSelecionado) return;
 
@@ -325,7 +374,11 @@ const abrirComentarios = async (post) => {
       });
 
       setComentarioTexto('');
-      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${postSelecionado.id}`);
+
+      // Atualiza comentários após enviar
+      const res = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${postSelecionado.id}`
+      );
       const data = await res.json();
       setComentariosAtuais(data.comentarios || []);
     } catch (e) {
@@ -333,26 +386,26 @@ const abrirComentarios = async (post) => {
     }
   };
 
-  if (!videos.length) return <div className="kurz-loading">Carregando vídeos...</div>;
+  if (!videos.length && !carregando)
+    return <div className="kurz-loading">Nenhum vídeo disponível.</div>;
 
   return (
     <>
-      {/* Lista de vídeos */}
       <div className="kurz-feed" ref={containerRef}>
         {videos.map((video, index) => (
-          <div className="kurz-card" key={video.id}>
+          <div className="kurz-card" key={`${video.id}-${index}`}>
             <VideoPlayer videoUrl={video.video} isActive={videoAtual === index} />
 
             <div className="video-overlay-info">
               <div className="video-author">
-          <a href={`/perfil/${video.autorId}`} className="video-author-link">
-  <img
-    src={video.autorImagem || 'https://i.pravatar.cc/40'}
-    alt={video.autorNome}
-    className="video-author-avatar"
-  />
-</a>
-<span className="video-author-name">{video.autorNome}</span>
+                <a href={`/perfil/${video.autorId}`} className="video-author-link">
+                  <img
+                    src={video.autorImagem || 'https://i.pravatar.cc/40'}
+                    alt={video.autorNome}
+                    className="video-author-avatar"
+                  />
+                </a>
+                <span className="video-author-name">{video.autorNome}</span>
               </div>
 
               <p className="video-caption-text">{video.conteudo || 'Sem legenda'}</p>
@@ -365,7 +418,6 @@ const abrirComentarios = async (post) => {
                   color={curtidas[video.id] > 0 ? 'red' : 'white'}
                   fill={curtidas[video.id] > 0 ? 'red' : 'none'}
                 />
-                
               </button>
               <button onClick={() => abrirComentarios(video)} aria-label="Comentários">
                 <MessageCircle size={28} color="white" />
@@ -374,172 +426,156 @@ const abrirComentarios = async (post) => {
             </div>
           </div>
         ))}
+        {carregando && (
+          <div style={{ textAlign: 'center', padding: 10, color: '#fff' }}>
+            Carregando mais vídeos...
+          </div>
+        )}
+        {!temMais && (
+          <div style={{ textAlign: 'center', padding: 10, color: '#888' }}>
+            Você chegou ao fim dos vídeos.
+          </div>
+        )}
       </div>
-
-      {/* Modal de comentários */}
 
       {modalComentarios && postSelecionado && (
-  <>
-    {!isMobile ? (
-      // Modal lateral personalizado para desktop
-      <div
-        className="modal-lateral-direito-container"
-        onClick={fecharComentarios}
-      >
-        <div
-          className="modal-lateral-direito-conteudo"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button className="fechar-modal-btn" onClick={fecharComentarios}>
-            ×
-          </button>
-          <h3>Comentários</h3>
-          {/* comentario desktop */}
-  <div className="comentarios-lista">
-  {comentariosAtuais.length === 0 && <p>Nenhum comentário ainda.</p>}
-  {comentariosAtuais.map((c) => (
-    <div
-      key={c.id || c._id || Math.random()}
-      className="comentario-item"
-    >
-      {/* IMAGEM DO AUTOR */}
-     <a href={`/perfil/${c.autorId}`} className="comentario-avatar-link">
-  <img
-    src={
-      c.autor?.imagem || c.autorImagem ||
-      'https://via.placeholder.com/40'
-    }
-    alt={`Foto de ${c.autor?.nome_usuario || c.autorNome || 'Usuário'}`}
-    className="comentario-avatar"
-  />
-</a>
-      {/* NOME E CONTEÚDO DO COMENTÁRIO */}
-      <div className="comentario-conteudo">
-        <strong>{c.autor?.nome || c.autorNome || 'Usuário'}</strong>
-        <p>{c.conteudo || ''}</p>
-      </div>
-    </div>
-  ))}
-</div>
-          <div className="comentario-input">
-            <input
-              type="text"
-              value={comentarioTexto}
-              onChange={(e) => setComentarioTexto(e.target.value)}
-              placeholder="Escreva um comentário..."
-            />
-            <button onClick={comentar}>Enviar</button>
-          </div>
-        </div>
+        <>
+          {!isMobile ? (
+            <div className="modal-lateral-direito-container" onClick={fecharComentarios}>
+              <div className="modal-lateral-direito-conteudo" onClick={(e) => e.stopPropagation()}>
+                <button className="fechar-modal-btn" onClick={fecharComentarios}>
+                  ×
+                </button>
+                <h3>Comentários</h3>
+                <div className="comentarios-lista">
+                  {comentariosAtuais.length === 0 && <p>Nenhum comentário ainda.</p>}
+                  {comentariosAtuais.map((c) => (
+                    <div key={c.id || c._id || Math.random()} className="comentario-item">
+                      <a href={`/perfil/${c.autorId}`} className="comentario-avatar-link">
+                        <img
+                          src={
+                            c.autor?.imagem || c.autorImagem || 'https://via.placeholder.com/40'
+                          }
+                          alt={`Foto de ${c.autor?.nome_usuario || c.autorNome || 'Usuário'}`}
+                          className="comentario-avatar"
+                        />
+                      </a>
+                      <div className="comentario-conteudo">
+                        <strong>{c.autor?.nome || c.autorNome || 'Usuário'}</strong>
+                        <p>{c.conteudo || ''}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="comentario-input">
+                  <input
+                    type="text"
+                    value={comentarioTexto}
+                    onChange={(e) => setComentarioTexto(e.target.value)}
+                    placeholder="Escreva um comentário..."
+                  />
+                  <button onClick={comentar}>Enviar</button>
+                </div>
+              </div>
 
-        <style>{`
-          .modal-lateral-direito-container {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            display: flex;
-            justify-content: flex-end;
-            z-index: 9999;
-            background: rgba(0,0,0,0.4);
-          }
-
-          .modal-lateral-direito-conteudo {
-            background: #fff;
-            width: 450px;
-            height: 96vh;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: -3px 0 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-            border-radius: 8px 0 0 8px;
-          }
-
-          .fechar-modal-btn {
-            font-size: 2rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            align-self: flex-end;
-            margin-bottom: 10px;
-          }
-
-          .comentarios-lista {
-            flex: 1;
-            overflow-y: auto;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE 10+ */
-          }
-          .comentarios-lista::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
-          }
-
-          .comentario-item {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-          }
-
-          .comentario-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-          }
-
-          .comentario-conteudo p {
-            margin: 4px 0 0 0;
-            font-size: 14px;
-            color: #333;
-          }
-
-          .comentario-input {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-          }
-
-          .comentario-input input {
-            flex: 1;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-          }
-
-          .comentario-input button {
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-          }
-        `}</style>
-      </div>
-    ) : (
-      // Modal padrão para mobile (seu componente Comentario dentro do ErrorBoundary)
-      <div className={`modal-comentarios ${isMobile ? 'modal-mobile' : ''}`}>
-        <ErrorBoundary>
-          <Comentario
-            post={postSelecionado}
-            comentarioTexto={comentarioTexto}
-            setComentarioTexto={setComentarioTexto}
-            fechar={fecharComentarios}
-            usuario={usuario} // deve conter ao menos { id, nome_usuario, imagem }
-            usuarioCurtidas={usuarioCurtidas} // array com IDs dos comentários curtidos
-            setComentarios={setComentariosDoPost}
-          />
-        </ErrorBoundary>
-      </div>
-    )}
-  </>
-)}
+              <style>{`
+                .modal-lateral-direito-container {
+                  position: fixed;
+                  top: 0;
+                  right: 0;
+                  bottom: 0;
+                  left: 0;
+                  display: flex;
+                  justify-content: flex-end;
+                  z-index: 9999;
+                  background: rgba(0,0,0,0.4);
+                }
+                .modal-lateral-direito-conteudo {
+                  background: #fff;
+                  width: 450px;
+                  height: 96vh;
+                  padding: 16px;
+                  display: flex;
+                  flex-direction: column;
+                  box-shadow: -3px 0 10px rgba(0,0,0,0.1);
+                  overflow: hidden;
+                  border-radius: 8px 0 0 8px;
+                }
+                .fechar-modal-btn {
+                  font-size: 2rem;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  align-self: flex-end;
+                  margin-bottom: 10px;
+                }
+                .comentarios-lista {
+                  flex: 1;
+                  overflow-y: auto;
+                  scrollbar-width: none;
+                  -ms-overflow-style: none;
+                }
+                .comentarios-lista::-webkit-scrollbar {
+                  display: none;
+                }
+                .comentario-item {
+                  display: flex;
+                  gap: 10px;
+                  margin-bottom: 12px;
+                  border-bottom: 1px solid #eee;
+                  padding-bottom: 8px;
+                }
+                .comentario-avatar {
+                  width: 36px;
+                  height: 36px;
+                  border-radius: 50%;
+                  object-fit: cover;
+                }
+                .comentario-conteudo p {
+                  margin: 4px 0 0 0;
+                  font-size: 14px;
+                  color: #333;
+                }
+                .comentario-input {
+                  display: flex;
+                  gap: 8px;
+                  margin-top: 12px;
+                }
+                .comentario-input input {
+                  flex: 1;
+                  padding: 8px;
+                  border-radius: 4px;
+                  border: 1px solid #ccc;
+                  font-size: 14px;
+                }
+                .comentario-input button {
+                  padding: 8px 12px;
+                  background-color: #007bff;
+                  color: white;
+                  font-weight: bold;
+                  border: none;
+                  border-radius: 20px;
+                  cursor: pointer;
+                }
+              `}</style>
+            </div>
+          ) : (
+            <div className={`modal-comentarios ${isMobile ? 'modal-mobile' : ''}`}>
+              <ErrorBoundary>
+                <Comentario
+                  post={postSelecionado}
+                  comentarioTexto={comentarioTexto}
+                  setComentarioTexto={setComentarioTexto}
+                  fechar={fecharComentarios}
+                  usuario={usuario}
+                  usuarioCurtidas={usuarioCurtidas}
+                  setComentarios={setComentariosAtuais}
+                />
+              </ErrorBoundary>
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 };

@@ -5,6 +5,9 @@ const Configuracoes = ({ usuarioLogado }) => {
   const [abaAtiva, setAbaAtiva] = useState('notificacoes');
   const [usuario, setUsuario] = useState(() => JSON.parse(localStorage.getItem('usuario'))); // Estado inicial vem do localStorage
   const usuarioId  = usuario?.id;
+const [senhaAtual, setSenhaAtual] = useState('');
+const [novaSenha, setNovaSenha] = useState('');
+const [mensagemSeguranca, setMensagemSeguranca] = useState('');
 
   useEffect(() => {
     // Quando a aba "Conta" for ativada, busca os dados do usuário
@@ -32,13 +35,6 @@ const Configuracoes = ({ usuarioLogado }) => {
   return (
     <div className="config-container">
       <header className="config-header">
-        <button
-          className="btn-voltar"
-          onClick={() => alert('Voltar para home (implemente como quiser)')}
-          aria-label="Voltar para Home"
-        >
-          ←
-        </button>
         <h2>Configurações</h2>
       </header>
 
@@ -75,31 +71,135 @@ const Configuracoes = ({ usuarioLogado }) => {
                 <div>
                   <p><strong>Nome:</strong> {usuario.nome}</p>
                   <p><strong>Email:</strong> {usuario.email}</p>
-                  <p><strong>Biografia:</strong> {usuario.biografia}</p>
-                  <p><strong>Data de Aniversário:</strong> {new Date(usuario.dataaniversario + 'T00:00:00Z').toLocaleDateString('pt-BR')}</p>
-                </div>
+              </div>
               ) : (
                 <p>Carregando dados do usuário...</p>
               )}
             </div>
           )}
 
-          {abaAtiva === 'privacidade' && (
-            <div>
-              <h3>Configurações de Privacidade</h3>
-              <p>Aqui você pode configurar sua privacidade.</p>
-            </div>
-          )}
+{abaAtiva === 'privacidade' && (
+  <div>
+    <h3>Configurações de Privacidade</h3>
+    {usuario ? (
+      <div>
+<p className='text-priv'>Conta privada <label className="switch">
+       <input
+  type="checkbox"
+  checked={!usuario.publica} // Agora: marcada = privada
+  onChange={async () => {
+    try {
+      const response = await fetch(`https://localhost:7051/api/auth/alterar-status/${usuario.id}`, {
+        method: 'PUT',
+        headers: {
+          accept: '*/*',
+        },
+      });
 
-          {abaAtiva === 'seguranca' && (
-            <div>
-              <h3>Configurações de Segurança</h3>
-              <p>Aqui você pode alterar sua senha e outras configurações de segurança.</p>
-            </div>
-          )}
+      if (!response.ok) throw new Error('Erro ao alterar status da conta');
+
+      const data = await response.json();
+      setUsuario((prev) => ({
+        ...prev,
+        publica: data.usuario.publica,
+      }));
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao atualizar status de privacidade.');
+    }
+  }}
+/>
+          <span className="slider round"></span>
+        </label>
+        </p>
+      </div>
+    ) : (
+      <p>Carregando dados do usuário...</p>
+      
+    )}
+   <p className="descricao-privacidade">
+  Quando sua conta está <strong>privada</strong>, apenas pessoas que você aprovar poderão ver suas publicações, comentários e perfil completo. 
+  Se estiver <strong>pública</strong>, qualquer pessoa poderá visualizar seu conteúdo, mesmo sem seguir você.
+</p>
+
+  </div>
+  
+)}
+
+         {abaAtiva === 'seguranca' && (
+  <div>
+    <h3>Configurações de Segurança</h3>
+    <p>Altere sua senha atual aqui:</p>
+
+    <div className="form-group">
+      <label>Senha Atual</label>
+      <input
+        type="password"
+        value={senhaAtual}
+        onChange={(e) => setSenhaAtual(e.target.value)}
+        placeholder="Digite sua senha atual"
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Nova Senha</label>
+      <input
+        type="password"
+        value={novaSenha}
+        onChange={(e) => setNovaSenha(e.target.value)}
+        placeholder="Digite sua nova senha"
+      />
+    </div>
+
+    <button
+      onClick={async () => {
+        setMensagemSeguranca('');
+        if (!senhaAtual || !novaSenha) {
+          setMensagemSeguranca('Preencha todos os campos.');
+          return;
+        }
+
+        try {
+          const response = await fetch(`https://localhost:7051/api/auth/trocar-senha-logado/${usuario.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              accept: '*/*',
+            },
+            body: JSON.stringify({
+              senhaAtual,
+              novaSenha
+            }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            setMensagemSeguranca('✅ ' + result.message);
+            setSenhaAtual('');
+            setNovaSenha('');
+          } else {
+            setMensagemSeguranca('❌ ' + (result.erro || 'Erro ao trocar a senha.'));
+          }
+        } catch (error) {
+          console.error(error);
+          setMensagemSeguranca('❌ Erro de conexão com o servidor.');
+        }
+      }}
+    >
+      Trocar Senha
+    </button>
+
+    {mensagemSeguranca && (
+      <p style={{ marginTop: '10px', color: mensagemSeguranca.startsWith}}>
+        {mensagemSeguranca}
+      </p>
+    )}
+  </div>
+)}
         </main>
       </div>
-    </div>
+    </div>  
   );
 };
 

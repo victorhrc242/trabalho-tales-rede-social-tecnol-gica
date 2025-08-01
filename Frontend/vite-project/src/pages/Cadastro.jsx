@@ -4,6 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 import '../css/cadastro.css';
 // importaçao dos icons
 import { FaUser, FaEnvelope, FaUserCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import TermosDeUso from '../Components/TermosDeUso';
+import PoliticaDePrivacidade from '../Components/PoliticaDePrivacidade';
+import PoliticaDeCookies from '../Components/PoliticaDeCookies';
 
 // Supabase config
 const supabase = createClient(
@@ -23,6 +26,38 @@ const Cadastro = () => {
   const [dataAniversario, setDataAniversario] = useState('');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
+const estilos = {
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '10px',
+    maxWidth: '600px',
+    maxHeight: '80vh',
+    overflowY: 'auto',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+  },
+  botaoFechar: {
+    marginTop: '20px',
+    padding: '10px 20px',
+    backgroundColor: '#1d4ed8', // azul escuro
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer'
+  }
+};
 
   // Estados para exibir ou esconder a senha
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -40,6 +75,9 @@ const Cadastro = () => {
 
   // Estado que controla a exibição do modal
   const [showModalSucesso, setShowModalSucesso] = useState(false);  
+const [showTermos, setShowTermos] = useState(false);
+const [showPrivacidade, setShowPrivacidade] = useState(false);
+const [showCookies, setShowCookies] = useState(false);
 
   // Escuta resize para atualizar isResponsive
   useEffect(() => {
@@ -191,6 +229,7 @@ const Cadastro = () => {
   }
 
   return (
+    
     <footer>
       <div className="signup-container" style={{ position: 'relative' }}>
         {/* Modal de erros*/}
@@ -343,13 +382,46 @@ const Cadastro = () => {
                   />
                 </div>
 
-                <p>
-                  As pessoas que usam nosso serviço podem ter carregado suas informações de contato no
-                  Instagram. <a href="#">Saiba mais</a>. Ao se cadastrar, você concorda com nossos{' '}
-                  <a href="#">Termos</a>, <a href="#">Política de Privacidade</a> e{' '}
-                  <a href="#">Política de Cookies</a>.
-                </p>
+              <p>
+  As pessoas que usam nosso serviço podem ter carregado suas informações de contato no Paradise. Ao se cadastrar, você concorda com nossos{' '}
+  <a
+    href="#"
+    onClick={(e) => {
+      e.preventDefault();
+      setShowTermos(true);
+    }}
+    className="text-blue-600 underline"
+  >
+    Termos
+  </a>{' '}
+  e com a nossa{' '}
+  <a
+    href="#"
+    onClick={(e) => {
+      e.preventDefault();
+      setShowPrivacidade(true);
+    }}
+    className="text-blue-600 underline"
+  >
+    Política de Privacidade
+  </a>{' '}
+  e{' '}
+  <a
+    href="#"
+    onClick={(e) => {
+      e.preventDefault();
+      setShowCookies(true);
+    }}
+    className="text-blue-600 underline"
+  >
+    Política de Cookies
+  </a>.
+</p>
 
+                   {/* Modais */}
+                  <TermosDeUso isOpen={showTermos} onClose={() => setShowTermos(false)} />
+                  <PoliticaDePrivacidade isOpen={showPrivacidade} onClose={() => setShowPrivacidade(false)} />
+                  <PoliticaDeCookies isOpen={showCookies} onClose={() => setShowCookies(false)} />
                 <button type="submit" className="signup-button">
                   Cadastrar
                 </button>

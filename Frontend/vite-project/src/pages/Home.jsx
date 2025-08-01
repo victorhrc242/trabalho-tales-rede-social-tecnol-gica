@@ -7,19 +7,19 @@ import FeedItem from '../Components/Home/FeedItem';
 import Comentario from '../Components/Comentario';
 import Notificacoes from './Notificacao/Notificacoes ';
 import '../css/home.css';
-
+import useRegistrarVisualizacoes from '../Components/Home/useRegistrarVisualizacoes';
 import { FaSearch, FaBell } from 'react-icons/fa';
-import { MdMargin } from 'react-icons/md';
 
 function Home() {
   const navigate = useNavigate();
+
   // Estado do usuário logado
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   // Feed de posts
   const [posts, setPosts] = useState([]);
   const [erro, setErro] = useState('');
   // Loader
-  const [carregandoMais, setCarregandoMais] = useState(true);
+  const [carregandoMais, setCarregandoMais] = useState(false);
   // Modal de comentários e seus dados
   const [modalComentarios, setModalComentarios] = useState(false);
   const [comentarioTexto, setComentarioTexto] = useState('');
@@ -33,6 +33,9 @@ function Home() {
   // Resultados da busca por usuários
   const [resultadosBusca, setResultadosBusca] = useState([]);
   const [termoBusca, setTermoBusca] = useState('');
+  // Paginação e controle fim do feed
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [fimDoFeed, setFimDoFeed] = useState(false);
 
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
@@ -40,6 +43,8 @@ function Home() {
       videoRefs.current[postId] = node;
     }
   }, []);
+
+  useRegistrarVisualizacoes(posts, usuario);
 
   // Verifica token e carrega dados do usuário ao montar o componente
   useEffect(() => {
@@ -59,105 +64,147 @@ function Home() {
     }
   }, [navigate]);
 
-
-
-  // Sempre que o usuário for definido, busca o feed e notificações atualizadas
+  // Quando usuario.id mudar, reset feed e busca primeira página
   useEffect(() => {
     if (usuario.id) {
-      fetchFeed();
+      setPaginaAtual(1);
+      setFimDoFeed(false);
+      fetchFeed(1);
       fetchNotificacoes();
     }
   }, [usuario.id]);
 
- const fetchFeed = async () => {
-  try {
-    const response = await fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-completo/${usuario.id}`
-    );
-    if (!response.ok) throw new Error('Erro na API');
-
-    const data = await response.json();
-
-    // Busca nomes dos autores (mantém seu código)
-    const postsComAutores = await Promise.all(
-      data.map(async post => {
-        try {
-          const resp = await fetch(
-            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`
-          );
-          const autor = await resp.json();
-          return {
-            ...post,
-            autorNome: autor.nome_usuario || 'Usuário',
-            autorImagem: autor.imagem || null,
-          };
-        } catch {
-          return { ...post, autorNome: 'Usuário', autorImagem: null };
-        }
-      })
-    );
-
-    setPosts(postsComAutores);
-    salvarPostsLocalmente(postsComAutores);
-    setErro('');
-  } catch (error) {
-    console.error('Erro ao buscar feed, tentando cache local:', error);
-
-    // Tenta carregar do localStorage como fallback
-    const cache = localStorage.getItem('postsSalvos');
-    if (cache) {
-      try {
-        const dadosCache = JSON.parse(cache);
-        setPosts(dadosCache);
-        setErro('Carregando posts do cache local por problema na API.');
-      } catch (e) {
-        console.error('Erro ao carregar cache local:', e);
-        setErro('Erro ao carregar feed.');
-      }
-    } else {
-      setErro('Erro ao carregar feed e cache local vazio.');
+  // Quando paginaAtual aumentar (exceto para 1 que já foi buscado), busca página seguinte
+  useEffect(() => {
+    if (paginaAtual > 1 && !carregandoMais && !fimDoFeed) {
+      fetchFeed(paginaAtual);
     }
-  } finally {
-    setCarregandoMais(false);
-  }
-};
+  }, [paginaAtual]);
 
+  // Função para buscar feed
+  async function fetchFeed(pagina = 1) {
+    if (fimDoFeed) return;
 
-  // Busca notificações
-  const fetchNotificacoes = async () => {
+    setCarregandoMais(true);
     try {
       const response = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
+        `https://localhost:7051/api/Feed/feed-dinamico-algoritimo-home/${usuario.id}?page=${pagina}&pageSize=10`
       );
+      if (!response.ok) throw new Error('Erro na API');
+
       const data = await response.json();
 
-      if (data.notificacoes) {
-        const notificacoesComRemetente = await Promise.all(
-          data.notificacoes.map(async n => {
-            const remetenteId = n.mensagem.match(/([0-9a-f\\-]{36})/)?.[1];
-            if (remetenteId) {
-              try {
-                const resp = await fetch(
-                  `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Usuarios/${remetenteId}`
-                );
-                const remetente = await resp.json();
-                return { ...n, remetente };
-              } catch {
-                return { ...n };
-              }
+      if (data.length === 0) {
+        setFimDoFeed(true);
+      } else {
+        // Buscar nomes dos autores
+        const postsComAutores = await Promise.all(
+          data.map(async post => {
+            try {
+              const resp = await fetch(
+                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`
+              );
+              const autor = await resp.json();
+              return {
+                ...post,
+                autorNome: autor.nome_usuario || 'Usuário',
+                autorImagem: autor.imagem || null,
+              };
+            } catch {
+              return { ...post, autorNome: 'Usuário', autorImagem: null };
             }
-            return { ...n };
           })
         );
-        setNotificacoes(notificacoesComRemetente);
-      }
-    } catch (err) {
-      console.error('Erro ao buscar notificações:', err);
-    }
-  };
 
-  // Salva os primeiros 5 posts no localStorage para cache
-  const salvarPostsLocalmente = postsParaSalvar => {
+        if (pagina === 1) {
+          setPosts(postsComAutores);
+        } else {
+          setPosts(prev => [...prev, ...postsComAutores]);
+        }
+      }
+      setErro('');
+    } catch (error) {
+      console.error('Erro ao buscar feed, tentando cache local:', error);
+      setErro('Erro ao carregar feed.');
+    } finally {
+      setCarregandoMais(false);
+    }
+  }
+
+  // Scroll infinito: aumenta paginaAtual quando chegar perto do fim da página
+  useEffect(() => {
+    const onScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 500 &&
+        !carregandoMais &&
+        !fimDoFeed
+      ) {
+        setPaginaAtual(prev => prev + 1);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [carregandoMais, fimDoFeed]);
+
+  // Busca notificações
+  async function fetchNotificacoes() {
+  try {
+    const response = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
+    );
+    const data = await response.json();
+
+    if (data.notificacoes) {
+    const notificacoesComRemetente = await Promise.all(
+  data.notificacoes.map(async n => {
+    const remetenteId = n.usuarioRemetenteId;
+    if (remetenteId) {
+      try {
+        const resp = await fetch(
+          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${remetenteId}`
+        );
+        const remetenteData = await resp.json();
+        const remetente = {
+          id: remetenteData.id || remetenteData.usuario_id || remetenteData.userId,
+          nome: remetenteData.nome || remetenteData.nome_usuario,
+          nome_usuario: remetenteData.nome_usuario,
+          imagem: remetenteData.imagem || null
+        };
+
+        const nomeRemetente = remetente.nome || 'Desconhecido';
+        const imagemRemetente =
+          remetente.imagem ||
+          'https://ui-avatars.com/api/?name=Desconhecido';
+
+        return {
+          ...n,
+          remetente,
+          nomeRemetente,
+          imagemRemetente,
+        };
+
+      } catch {
+        return { ...n };
+      }
+    }
+    return { ...n };
+  })
+);
+setNotificacoes(notificacoesComRemetente);
+
+    }
+    
+  } catch (err) {
+    console.error('Erro ao buscar notificações:', err);
+  }
+  
+}
+
+
+  // Salva primeiros 5 posts no localStorage como cache
+  function salvarPostsLocalmente(postsParaSalvar) {
     const dadosFiltrados = postsParaSalvar.slice(0, 5).map(post => ({
       id: post.id,
       conteudo: post.conteudo,
@@ -172,34 +219,70 @@ function Home() {
       autorId: post.autorId,
     }));
     localStorage.setItem('postsSalvos', JSON.stringify(dadosFiltrados));
-  };
+  }
 
-  // Curtir ou descurtir um post
-  const curtirPost = async postId => {
-    const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${postId}`;
-    const curtirUrl =
-      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
-    const descurtirUrl =
-      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
+async function curtirPost(postId) {
+  try {
+    const verificarUrl = `https://localhost:7051/api/Curtida/usuario-curtiu?postId=${postId}&usuarioId=${usuario.id}`;
+    const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
+    const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
 
-    try {
-      const res = await fetch(verificarUrl, { method: 'GET' });
-      const data = await res.json();
-      const jaCurtiu = data.curtidas?.some(c => c.usuarioId === usuario.id);
-
-      const endpoint = jaCurtiu ? descurtirUrl : curtirUrl;
-      await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, usuarioId: usuario.id }),
-      });
-    } catch (err) {
-      console.error('Erro ao curtir/descurtir:', err);
+    console.log('Verificando se já curtiu:', verificarUrl);
+    const resVerifica = await fetch(verificarUrl);
+    if (!resVerifica.ok) {
+      console.error('Erro ao verificar curtida');
+      return { sucesso: false };
     }
-  };
+    const dataVerifica = await resVerifica.json();
+    console.log('Resposta verificação curtida:', dataVerifica);
 
-  // Abre modal de comentários e carrega comentários do post
-  const abrirComentarios = async post => {
+    const jaCurtiu = dataVerifica.curtiu;
+
+    const endpoint = jaCurtiu ? descurtirUrl : curtirUrl;
+    console.log('Enviando para endpoint:', endpoint);
+
+    const resPost = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ postId, usuarioId: usuario.id }),
+    });
+
+    if (!resPost.ok) {
+      console.error('Erro no POST de curtir/descurtir');
+      return { sucesso: false };
+    }
+
+    const dataPost = await resPost.json();
+    console.log('Resposta do backend após curtir/descurtir:', dataPost);
+
+    const curtiuAgora = !jaCurtiu;
+
+    // Atualiza o estado com curtidasTotais do backend
+    setPosts(postsAntigos =>
+      postsAntigos.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            foiCurtido: curtiuAgora,
+            curtidas: dataPost.curtidasTotais,
+            qtdCurtidas: dataPost.curtidasTotais,
+          };
+        }
+        return post;
+      })
+    );
+
+    return { sucesso: true };
+  } catch (error) {
+    console.error('Erro ao curtir/descurtir:', error);
+    return { sucesso: false };
+  }
+}
+
+
+
+  // Abrir modal de comentários e carregar comentários do post
+  async function abrirComentarios(post) {
     setPostSelecionado(post);
     setComentarioTexto('');
     setComentarios([]);
@@ -229,10 +312,10 @@ function Home() {
     } catch (err) {
       console.error('Erro ao carregar comentários:', err);
     }
-  };
+  }
 
-  // Envia um novo comentário e atualiza feed e modal
-  const comentar = async () => {
+  // Enviar comentário e atualizar modal e feed
+  async function comentar() {
     if (!comentarioTexto.trim()) return;
 
     const comentario = {
@@ -252,54 +335,59 @@ function Home() {
       );
 
       setComentarioTexto('');
-      abrirComentarios(postSelecionado);
-      fetchFeed();
+      abrirComentarios(postSelecionado); // Recarrega comentários
+      fetchFeed(1); // Atualiza feed (opcional, dependendo do seu backend)
     } catch (err) {
       console.error('Erro ao comentar:', err);
     }
-  };
+  }
 
-  // Busca usuários pelo termo digitado
-  const buscarUsuarios = async termo => {
-    if (!termo.trim()) {
+  // Buscar usuários pelo termo digitado
+ async function buscarUsuarios(termo) {
+  if (!termo.trim()) {
+    setResultadosBusca([]);
+    return;
+  }
+
+  try {
+    // Chama seu endpoint de busca por nome, passando o termo
+    const response = await fetch(
+      `https://localhost:7051/api/auth/buscar-por-nome/${encodeURIComponent(termo)}`
+    );
+    if (!response.ok) throw new Error('Erro na busca');
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
       setResultadosBusca([]);
       return;
     }
 
-    try {
-      const responseUsuarios = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario`
-      );
-      const dataUsuarios = await responseUsuarios.json();
+    // Se quiser, filtrar quem não é o usuário atual (igual seu código anterior)
+    const resultadosFiltrados = data.filter(u => u.id !== usuario.id);
 
-      if (!Array.isArray(dataUsuarios)) return;
+    // Se quiser, trazer info de seguidores para mostrar status "Seguindo"
+    const resSeguidores = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`
+    );
+    const dataSeguidores = await resSeguidores.json();
+    const idsSeguindo = dataSeguidores.seguindo?.map(s => s.usuario2) || [];
 
-      const resultadosFiltrados = dataUsuarios.filter(
-        u =>
-          u.nome_usuario?.toLowerCase().startsWith(termo.toLowerCase()) &&
-          u.id !== usuario.id
-      );
+    const resultadosComStatus = resultadosFiltrados.map(u => ({
+      ...u,
+      jaSegue: idsSeguindo.includes(u.id),
+    }));
 
-      const resSeguidores = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`
-      );
-      const dataSeguidores = await resSeguidores.json();
-      const idsSeguindo = dataSeguidores.seguindo?.map(s => s.usuario2) || [];
+    setResultadosBusca(resultadosComStatus);
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    setResultadosBusca([]);
+  }
+}
 
-      const resultadosComStatus = resultadosFiltrados.map(u => ({
-        ...u,
-        jaSegue: idsSeguindo.includes(u.id),
-      }));
-
-      setResultadosBusca(resultadosComStatus);
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-      setResultadosBusca([]);
-    }
-  };
 
   // Seguir usuário rapidamente
-  const seguirUsuarioRapido = async idUsuario => {
+  async function seguirUsuarioRapido(idUsuario) {
     try {
       const resposta = await fetch(
         `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente`,
@@ -320,21 +408,19 @@ function Home() {
     } catch (err) {
       console.error('Erro ao seguir usuário rapidamente:', err);
     }
-  };
+  }
 
-  // Ir para o perfil
-  const irParaPerfil = id => {
+  // Navegar para perfil
+  function irParaPerfil(id) {
     navigate(`/perfil/${id}`, { state: { userId: id } });
-  };
+  }
 
-  // Conexão com SignalR - feed e curtidas
+  // Conexão SignalR para feed de posts
   useEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl(
         'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub',
-        {
-          transport: HttpTransportType.LongPolling,
-        }
+        { transport: HttpTransportType.LongPolling }
       )
       .withAutomaticReconnect()
       .build();
@@ -344,7 +430,7 @@ function Home() {
       .then(() => {
         connection.on('NovoPost', novoPost => {
           setPosts(prev => [novoPost, ...prev]);
-          setCarregandoMais(false); // parar loader quando novo post chega
+          setCarregandoMais(false);
         });
       })
       .catch(err => console.error('Erro ao conectar feedHub:', err));
@@ -352,13 +438,12 @@ function Home() {
     return () => connection.stop();
   }, []);
 
+  // Conexão SignalR para curtidas
   useEffect(() => {
     const curtidaConnection = new HubConnectionBuilder()
       .withUrl(
         'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub',
-        {
-          transport: HttpTransportType.LongPolling,
-        }
+        { transport: HttpTransportType.LongPolling }
       )
       .withAutomaticReconnect()
       .build();
@@ -388,14 +473,17 @@ function Home() {
     return () => curtidaConnection.stop();
   }, []);
 
-  // IntersectionObserver para vídeos
+  // IntersectionObserver para controlar vídeo ativo (autoplay)
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
         const visiveis = entries.filter(
           entry => entry.isIntersecting && entry.intersectionRatio >= 0.5
         );
-        if (visiveis.length === 0) return setVideoAtivoId(null);
+        if (visiveis.length === 0) {
+          setVideoAtivoId(null);
+          return;
+        }
         const postId = visiveis[0].target.getAttribute('data-postid');
         setVideoAtivoId(postId);
       },
@@ -417,11 +505,12 @@ function Home() {
     };
   }, [posts]);
 
-  // Salva posts no cache local a cada 10s
+  // Salvar posts no localStorage a cada 10s para cache
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (posts.length > 0) salvarPostsLocalmente(posts);
     }, 10000);
+
     return () => clearInterval(intervalId);
   }, [posts]);
 
@@ -450,7 +539,6 @@ function Home() {
           ))}
         </ul>
 
-        {/* Loader infinito até ter novos posts */}
         {carregandoMais && (
           <div className="loader-container">
             <div className="spinner" />
@@ -471,7 +559,7 @@ function Home() {
         )}
       </div>
 
-      {/* Lateral: busca + notificações */}
+      {/* Lateral direita: busca e notificações */}
       <div className="lateral-direita">
         <div className="campo-busca">
           <FaSearch className="icone-busca" />
@@ -482,7 +570,6 @@ function Home() {
             onChange={e => {
               const valor = e.target.value;
               setTermoBusca(valor);
-
               if (valor.trim() === '') {
                 setResultadosBusca([]);
               } else {
@@ -494,10 +581,7 @@ function Home() {
           {resultadosBusca.length > 0 && (
             <ul className="resultados-busca">
               {resultadosBusca.map(usuarioPesquisado => (
-                <li
-                  key={usuarioPesquisado.id}
-                  className="usuario-pesquisado"
-                >
+                <li key={usuarioPesquisado.id} className="usuario-pesquisado">
                   <img
                     src={
                       usuarioPesquisado.imagem ||
@@ -510,33 +594,17 @@ function Home() {
                   />
                   <div className="info-usuario">
                     <span
-                      onClick={() =>
-                        irParaPerfil(usuarioPesquisado.id)
-                      }
+                      onClick={() => irParaPerfil(usuarioPesquisado.id)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {usuarioPesquisado.nome_usuario ||
-                        usuarioPesquisado.nome}
+                      {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
                     </span>
-                    <div className="acao-usuario">
-                      {usuarioPesquisado.jaSegue ? (
-                        <button
-                          className="botao-seguir seguindo"
-                          disabled
-                        >
-                          Seguindo
-                        </button>
-                      ) : (
-                        <button
-                          className="botao-seguir"
-                          onClick={() =>
-                            seguirUsuarioRapido(usuarioPesquisado.id)
-                          }
-                        >
-                          Seguir
-                        </button>
-                      )}
-                    </div>
+                    <button
+                      onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
+                      disabled={usuarioPesquisado.jaSegue}
+                    >
+                      {usuarioPesquisado.jaSegue ? 'Seguindo' : 'Seguir'}
+                    </button>
                   </div>
                 </li>
               ))}
@@ -544,53 +612,46 @@ function Home() {
           )}
         </div>
 
-        {/* Notificações */}
+          {/* Notificações */}
         <div className="notificacoes-box">
           <h4>
             <FaBell /> Notificações
           </h4>
-          <ul>
-            {notificacoes.length === 0 ? (
-              <li>Não há notificações</li>
-            ) : (
-              notificacoes.map(notificacao => (
-                <li
-                  key={notificacao.id}
-                  className="notificacao-item"
-                >
-                  <img
-                    src={
-                      notificacao.remetente?.imagem ||
-                      'https://via.placeholder.com/40'
-                    }
-                    alt="Foto de perfil"
-                    className="avatar-busca"
-                    onClick={() =>
-                      irParaPerfil(notificacao.remetente?.id)
-                    }
-                    style={{ cursor: 'pointer' }}
-                  />
-                  <div
-                    className="info-notificacao"
-                    onClick={() =>
-                      irParaPerfil(notificacao.remetente?.id)
-                    }
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <p>
-                      <strong>
-                        {notificacao.remetente?.nome_usuario}
-                      </strong>{' '}
-                      {notificacao.mensagem}
-                    </p>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
+       <ul>
+  {notificacoes.length === 0 ? (
+    <li>Não há notificações</li>
+  ) : (
+    notificacoes.map(notificacao => {
+      const remetente = notificacao.remetente || {};
+      return (
+        <li key={notificacao.id} className="notificacao-item">
+          <img
+            src={remetente?.imagem || 'https://via.placeholder.com/40'}
+            alt="Foto de perfil"
+            className="avatar-busca"
+            onClick={() => remetente.id && irParaPerfil(remetente.id)}
+            style={{ cursor: 'pointer' }}
+          />
+          <div
+            className="info-notificacao"
+            onClick={() => remetente.id && irParaPerfil(remetente.id)}
+            style={{ cursor: 'pointer' }}
+          >
+            <p>
+              <strong>
+                {remetente.nome_usuario || remetente.nome || 'Alguém'}
+              </strong>{' '}
+              {notificacao.mensagem}
+            </p>
+          </div>
+        </li>
+      );
+    })
+  )}
+</ul>
+
         </div>
       </div>
-
     </div>
   );
 }
