@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../Notificacao/notificacao.css";
+import {FaBell } from 'react-icons/fa';
 
 function Notificacoes() {
   const navigate = useNavigate();
@@ -98,7 +99,7 @@ function Notificacoes() {
 
   return (
     <div className="notificacoes-container">
-      <h2>Notificações</h2>
+      <h2> <FaBell /> Notificações</h2>
 
       {carregando && <p>Carregando notificações...</p>}
       {!carregando && notificacoes.length === 0 && <p>Não há notificações</p>}
