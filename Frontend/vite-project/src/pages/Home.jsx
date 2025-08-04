@@ -37,6 +37,8 @@ function Home() {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [fimDoFeed, setFimDoFeed] = useState(false);
 
+const [loadingFeed, setLoadingFeed] = useState(true);
+
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
     if (node) {
@@ -69,6 +71,7 @@ function Home() {
     if (usuario.id) {
       setPaginaAtual(1);
       setFimDoFeed(false);
+
       fetchFeed(1);
       fetchNotificacoes();
     }
@@ -81,55 +84,58 @@ function Home() {
     }
   }, [paginaAtual]);
 
-  // Função para buscar feed
-  async function fetchFeed(pagina = 1) {
-    if (fimDoFeed) return;
+  // Função para buscar feed com controle de carregamento do feed
+async function fetchFeed(pagina = 1) {
+  if (fimDoFeed) return;
 
-    setCarregandoMais(true);
-    try {
-      const response = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-dinamico-algoritimo-home/${usuario.id}?page=${pagina}&pageSize=10`
+  setCarregandoMais(true);
+  if (pagina === 1) setLoadingFeed(true);
+
+  try {
+    const response = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed-dinamico-algoritimo-home/${usuario.id}?page=${pagina}&pageSize=10`
+    );
+    if (!response.ok) throw new Error('Erro na API');
+
+    const data = await response.json();
+
+    if (data.length === 0) {
+      setFimDoFeed(true);
+    } else {
+      const postsComAutores = await Promise.all(
+        data.map(async post => {
+          try {
+            const resp = await fetch(
+              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`
+            );
+            const autor = await resp.json();
+            return {
+              ...post,
+              autorNome: autor.nome_usuario || 'Usuário',
+              autorImagem: autor.imagem || null,
+            };
+          } catch {
+            return { ...post, autorNome: 'Usuário', autorImagem: null };
+          }
+        })
       );
-      if (!response.ok) throw new Error('Erro na API');
 
-      const data = await response.json();
-
-      if (data.length === 0) {
-        setFimDoFeed(true);
+      if (pagina === 1) {
+        setPosts(postsComAutores);
       } else {
-        // Buscar nomes dos autores
-        const postsComAutores = await Promise.all(
-          data.map(async post => {
-            try {
-              const resp = await fetch(
-                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`
-              );
-              const autor = await resp.json();
-              return {
-                ...post,
-                autorNome: autor.nome_usuario || 'Usuário',
-                autorImagem: autor.imagem || null,
-              };
-            } catch {
-              return { ...post, autorNome: 'Usuário', autorImagem: null };
-            }
-          })
-        );
-
-        if (pagina === 1) {
-          setPosts(postsComAutores);
-        } else {
-          setPosts(prev => [...prev, ...postsComAutores]);
-        }
+        setPosts(prev => [...prev, ...postsComAutores]);
       }
-      setErro('');
-    } catch (error) {
-      console.error('Erro ao buscar feed, tentando cache local:', error);
-      setErro('Erro ao carregar feed.');
-    } finally {
-      setCarregandoMais(false);
     }
+
+    setErro('');
+  } catch (error) {
+    console.error('Erro ao buscar feed:', error);
+    setErro('Erro ao carregar feed.');
+  } finally {
+    setCarregandoMais(false);
+    if (pagina === 1) setLoadingFeed(false);
   }
+}
 
   // Scroll infinito: aumenta paginaAtual quando chegar perto do fim da página
   useEffect(() => {
@@ -285,7 +291,6 @@ async function curtirPost(postId) {
   async function abrirComentarios(post) {
     setPostSelecionado(post);
     setComentarioTexto('');
-    setComentarios([]);
     setModalComentarios(true);
 
     try {
@@ -522,22 +527,29 @@ async function curtirPost(postId) {
         <br />
         <br />
         {erro && <p style={{ color: 'red' }}>{erro}</p>}
-        {posts.length === 0 && !erro && <p>Nenhum post encontrado.</p>}
+{loadingFeed ? (
+  <p></p>
+) : posts.length === 0 ? (
+  <p>Nenhum post encontrado.</p>
+) : (
+  <ul>
+    {posts.map(post => (
+      <FeedItem
+        key={post.id}
+        post={post}
+        usuario={usuario}
+        videoAtivoId={videoAtivoId}
+        curtirPost={curtirPost}
+        abrirComentarios={abrirComentarios}
+        irParaPerfil={irParaPerfil}
+        registerVideoRef={registerVideoRef}
+      />
+    ))}
+  </ul>
+)}
 
-        <ul>
-          {posts.map(post => (
-            <FeedItem
-              key={post.id}
-              post={post}
-              usuario={usuario}
-              videoAtivoId={videoAtivoId}
-              curtirPost={curtirPost}
-              abrirComentarios={abrirComentarios}
-              irParaPerfil={irParaPerfil}
-              registerVideoRef={registerVideoRef}
-            />
-          ))}
-        </ul>
+
+
 
         {carregandoMais && (
           <div className="loader-container">
@@ -578,38 +590,40 @@ async function curtirPost(postId) {
             }}
           />
 
-          {resultadosBusca.length > 0 && (
-            <ul className="resultados-busca">
-              {resultadosBusca.map(usuarioPesquisado => (
-                <li key={usuarioPesquisado.id} className="usuario-pesquisado">
-                  <img
-                    src={
-                      usuarioPesquisado.imagem ||
-                      'https://via.placeholder.com/40'
-                    }
-                    alt="avatar"
-                    className="avatar-busca"
+          {/* Buscar */}
+          {termoBusca.trim() !== '' && resultadosBusca.length > 0 && (
+          <ul className="resultados-busca">
+            {resultadosBusca.map(usuarioPesquisado => (
+              <li key={usuarioPesquisado.id} className="usuario-pesquisado">
+                <img
+                  src={
+                    usuarioPesquisado.imagem ||
+                    'https://via.placeholder.com/40'
+                  }
+                  alt="avatar"
+                  className="avatar-busca"
+                  onClick={() => irParaPerfil(usuarioPesquisado.id)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <div className="info-usuario">
+                  <span
                     onClick={() => irParaPerfil(usuarioPesquisado.id)}
                     style={{ cursor: 'pointer' }}
-                  />
-                  <div className="info-usuario">
-                    <span
-                      onClick={() => irParaPerfil(usuarioPesquisado.id)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
-                    </span>
-                    <button
-                      onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
-                      disabled={usuarioPesquisado.jaSegue}
-                    >
-                      {usuarioPesquisado.jaSegue ? 'Seguindo' : 'Seguir'}
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                  >
+                    {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
+                  </span>
+                  <button
+                    onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
+                    disabled={usuarioPesquisado.jaSegue}
+                  >
+                    {usuarioPesquisado.jaSegue ? 'Seguindo' : 'Seguir'}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
         </div>
 
           {/* Notificações */}

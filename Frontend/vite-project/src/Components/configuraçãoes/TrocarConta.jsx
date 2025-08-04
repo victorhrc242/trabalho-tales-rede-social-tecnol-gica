@@ -27,9 +27,10 @@ function TrocarConta({ fechar }) {
 
   // Redireciona para a página de login
   const irLogin = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
-    window.location.href = '/';
+     window.location.href = '/?adicionarConta=true'; // Redireciona com parâmetro
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('usuario');
+    // window.location.href = '/';
   };
 
   // Remove todas as contas e retorna ao login
