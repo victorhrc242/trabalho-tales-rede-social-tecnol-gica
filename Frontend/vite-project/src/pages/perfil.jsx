@@ -92,23 +92,23 @@ const carregarSeguidoresESeguindo = async () => {
     const seguindoIds = resSeguindo.data.map((item) => item.userId);
 
     // Função para buscar os dados completos do usuário (nome e foto de perfil)
-    const buscarDadosUsuario = async (id) => {
+    const buscarDadosUsuario = async (userId) => {
       const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`);
       return {
         nome: res.data.nome,
-        fotoPerfil: res.data.fotoPerfil,  // Supondo que 'fotoPerfil' seja o campo da imagem
+        imagem: res.data.imagem,  // Supondo que 'fotoPerfil' seja o campo da imagem
         id: res.data.id
       };
     };
 
     // Buscando dados dos seguidores
     const dadosSeguidores = await Promise.all(
-      seguidoresIds.map((id) => buscarDadosUsuario(id))
+      seguidoresIds.map((userId) => buscarDadosUsuario(userId))
     );
 
     // Buscando dados de quem o usuário está seguindo
     const dadosSeguindo = await Promise.all(
-      seguindoIds.map((id) => buscarDadosUsuario(id))
+      seguindoIds.map((userId) => buscarDadosUsuario(userId))
     );
 
     // Atualizando os estados com os dados completos (nome, foto)
