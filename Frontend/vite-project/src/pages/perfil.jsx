@@ -55,7 +55,7 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const seguirUsuario = async () => {
     try {
       await axios.post(
-        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente',
+        "https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente",
         {
           usuario1: usuarioLogadoId,
           usuario2: userId,
@@ -70,14 +70,8 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
 
   const deseguirUsuario = async () => {
   try {
-    await axios.delete(
-      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/deseguir',
-      {
-         data: {
-      usuario1: usuarioLogadoId,
-      usuario2: userId
-      }
-    }
+    const { data } = await axios.delete(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/deseguir?usuario1=${userId}&usuario2=${usuarioLogadoId}`
     );
     setEstaSeguindo(false); // Atualiza estado para refletir que não está mais seguindo
   } catch (err) {
@@ -88,15 +82,44 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
 
 const carregarSeguidoresESeguindo = async () => {
   try {
-    const resSeguidores = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${usuarioLogadoId}`);
-    const seguidoresData = await resSeguidores.json();
-    setListaSeguidores(seguidoresData);
+    // Fazendo as requisições para obter seguidores e seguindo
+    const [resSeguidores, resSeguindo] = await Promise.all([
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${usuarioLogadoId}`),
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuarioLogadoId}`)
+    ]);
 
-    const resSeguindo = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuarioLogadoId}`);
-    const seguindoData = await resSeguindo.json();
-    setListaSeguindo(seguindoData);
+    const seguidoresIds = resSeguidores.data.map((item) => item.userId);
+    const seguindoIds = resSeguindo.data.map((item) => item.userId);
+
+    // Função para buscar os dados completos do usuário (nome e foto de perfil)
+    const buscarDadosUsuario = async (id) => {
+      const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`);
+      return {
+        nome: res.data.nome,
+        fotoPerfil: res.data.fotoPerfil,  // Supondo que 'fotoPerfil' seja o campo da imagem
+        id: res.data.id
+      };
+    };
+
+    // Buscando dados dos seguidores
+    const dadosSeguidores = await Promise.all(
+      seguidoresIds.map((id) => buscarDadosUsuario(id))
+    );
+
+    // Buscando dados de quem o usuário está seguindo
+    const dadosSeguindo = await Promise.all(
+      seguindoIds.map((id) => buscarDadosUsuario(id))
+    );
+
+    // Atualizando os estados com os dados completos (nome, foto)
+    setListaSeguidores(dadosSeguidores);
+    setListaSeguindo(dadosSeguindo);
+
+    // Agora podemos passar esses dados para o Modal
+    setModalSeguidoresData(dadosSeguidores);  // Aqui você vai passar os dados para o modal, ajustando conforme sua lógica
+
   } catch (error) {
-    console.error('Erro ao carregar seguidores/seguindo:', error);
+    console.error("Erro ao carregar seguidores/seguindo:", error);
   }
 };
 
@@ -712,7 +735,12 @@ const cancelarLogout = () => {
           listaSeguidores.length > 0 ? (
             listaSeguidores.map((user, i) => (
               <div key={i} className="usuario-item">
-                <p>{user.nome}</p>
+                <img
+                  src={user.imagemPerfil || '/img/placeholder.png'}
+                  alt={`Foto de ${user.nome}`}
+                  className="foto-perfil-seguidores"
+                />
+                <p className="nome-usuario-seguidores">{user.nome}</p>
               </div>
             ))
           ) : (
@@ -722,7 +750,12 @@ const cancelarLogout = () => {
           listaSeguindo.length > 0 ? (
             listaSeguindo.map((user, i) => (
               <div key={i} className="usuario-item">
-                <p>{user.nome}</p>
+                <img
+                  src={user.imagemPerfil || '/img/placeholder.png'}
+                  alt={`Foto de ${user.nome}`}
+                  className="foto-perfil-seguidores"
+                />
+                <p className="nome-usuario-seguidores">{user.nome}</p>
               </div>
             ))
           ) : (
