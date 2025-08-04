@@ -155,6 +155,7 @@ const carregarVideos = async (paginaAtual) => {
             ...video,
             autorNome: autor.nome_usuario || 'Usuário',
             autorImagem: autor.imagem || 'https://i.pravatar.cc/40',
+             comentarios: video.comentarios ?? 50,
           };
         } catch {
           return {
@@ -187,13 +188,14 @@ const carregarVideos = async (paginaAtual) => {
       return novo;
     });
 
-    setComentariosCount((prev) => {
-      const novo = { ...prev };
-      videosComAutor.forEach((v) => {
-        if (novo[v.id] === undefined) novo[v.id] = v.comentariosCount || 0;
-      });
-      return novo;
-    });
+setComentariosCount((prev) => {
+  const novo = { ...prev };
+  videosComAutor.forEach((v) => {
+    if (novo[v.id] === undefined) novo[v.id] = v.comentarios || 0;
+  });
+  return novo;
+});
+
 
   } catch (erro) {
     console.error('Erro ao carregar vídeos:', erro);
@@ -576,6 +578,11 @@ useEffect(() => {
           )}
         </>
       )}
+      <div className="video-navigation-buttons">
+  <button onClick={() => setVideoAtual((prev) => Math.max(prev - 1, 0))}>⭡</button>
+  <button onClick={() => setVideoAtual((prev) => Math.min(prev + 1, videos.length - 1))}>⭣</button>
+</div>
+
     </>
   );
 };

@@ -7,11 +7,19 @@ function useRegistrarVisualizacoes(posts, usuario) {
 
   // Função fora do useEffect
   const registrarVisualizacao = async (postId) => {
+        console.log(`Visualização registrada para o post ${postId}`);
+        console.log(`Usuário: ${usuario.id}`);
     try {
       await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/post/${postId}/visualizacao?usuarioId=${usuario.id}&tempoEmSegundos=2`,
-        { method: 'POST' }
-      );
+  `https://localhost:7051/api/Feed/post/${postId}/visualizacao?usuarioId=${usuario.id}&tempoEmSegundos=2`,
+  {
+    method: 'POST',
+    credentials: 'include'  // 👈 ESSENCIAL com AllowCredentials
+  }
+);
+
+      console.log(`✅ Visualização registrada para o post ${postId}`);
+      console.log(`Usuário: ${usuario.id}`);
     } catch (err) {
       console.error('❌ Erro ao registrar visualização:', err);
     }
