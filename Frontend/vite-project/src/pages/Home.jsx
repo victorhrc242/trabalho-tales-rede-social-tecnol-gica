@@ -46,15 +46,7 @@ const [loadingFeed, setLoadingFeed] = useState(true);
       videoRefs.current[postId] = node;
     }
   }, []);
-  const stories = [
-  { imagem: 'https://via.placeholder.com/150', visto: false },
-  { imagem: 'https://via.placeholder.com/150', visto: true },
-  { imagem: 'https://via.placeholder.com/150', visto: false },
-  { imagem: 'https://via.placeholder.com/150', visto: false },
-  { imagem: 'https://via.placeholder.com/150', visto: false },
-  { imagem: 'https://via.placeholder.com/150', visto: false },
-  { imagem: 'https://via.placeholder.com/150', visto: false },
-];
+
 
   useRegistrarVisualizacoes(posts, usuario);
 
@@ -533,7 +525,7 @@ async function curtirPost(postId) {
     <div className="pagina-container">
       {/* Feed principal */}
       <div className="home-container">
-            <Story stories={stories} />
+            <Story  />
         <hr />
         <br />
         <br />

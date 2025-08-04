@@ -8,7 +8,7 @@
   gap: 15px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; /* Suporte para iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 .story-container::-webkit-scrollbar {
@@ -20,57 +20,348 @@
   border-radius: 10px;
 }
 
-.story-container::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
 .story-item {
-  width: 60px;
-  height: 60px;
+  position: relative;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   padding: 3px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  cursor: pointer;
+  border: 3px solid transparent;
   transition: transform 0.2s ease;
+  text-align: center;
 }
 
-.story-item:hover {
-  transform: scale(1.05);
-}
 
 .story-item.nao-visto {
-  border: 3px solid #007bff; /* azul para story novo */
+  border-color: #007bff;
 }
 
 .story-item.visto {
-  border: 3px solid #ccc; /* cinza para story já visto */
+  border-color: #ccc;
 }
+
 
 .story-imagem {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
+  user-select: none;
+  pointer-events: none;
 }
 
-/* Estilo para empty */
 .story-empty {
   text-align: center;
   padding: 20px;
   font-size: 16px;
   color: #666;
 }
+.story-bolota-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.story-nome {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70px;
+  user-select: none;
+}
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .story-container {
-    gap: 12px;
-  }
 
-  .story-item {
-    width: 50px;
-    height: 50px;
+/* Modal Overlay - fundo preto sólido, ocupa a tela toda, sem scroll */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000; /* fundo preto sólido */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden; /* evita scroll */
+}
+
+/* Conteúdo do modal - centralizado e tamanho máximo */
+.modal-content {
+  position: relative;
+  max-width: 420px;
+  width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;  /* Sem scroll interno */
+  background: transparent; /* Remove fundo branco */
+  padding: 0; /* Remove padding */
+  margin: 0;  /* Remove margin */
+  box-shadow: none; /* Remove sombras se houver */
+}
+
+/* Imagem/vídeo do story - ocupa o máximo possível dentro do modal */
+.modal-story {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 12px;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  background: transparent; /* Certifica fundo transparente */
+  display: block; /* Remove inline gap */
+}
+.modal-content * {
+  background: transparent !important;
+}
+/* Barra de progresso no topo */
+.modal-progress {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  height: 4px;
+  display: flex;
+  gap: 4px;
+  z-index: 20;
+}
+
+/* Cada barra individual (1 por story do usuário) */
+.modal-progress-bar {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Barra preenchida animada */
+.modal-progress-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background-color: white;
+  transition: width linear;
+  will-change: width;
+}
+
+/* Botões invisíveis para navegar clicando na lateral */
+.modal-navegacao {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 15;
+}
+
+.modal-navegacao button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.modal-navegacao button:hover {
+  opacity: 0.15;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+/* Botão fechar */
+.fechar {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  color: white;
+  font-size: 28px;
+  border: none;
+  cursor: pointer;
+  z-index: 25;
+  user-select: none;
+}
+/* Overlay do modal: fundo escuro */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.9); /* fundo escuro full screen */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 420px;       /* limita a largura do conteúdo */
+  width: 90vw;            /* mas responsivo */
+  max-height: 90vh;       /* limita altura para caber na tela */
+  background: transparent; /* fundo transparente, sem branco */
+  padding: 0;
+  margin: 0;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.modal-story {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 15px;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  background: transparent;
+  display: block;
+}
+
+
+/* Zonas invisíveis para clique nas laterais */
+.nav-zona {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.nav-zona.esquerda {
+  left: 0;
+}
+
+.nav-zona.direita {
+  right: 0;
+}
+
+/* Container geral das barras */
+.progress-bar-container {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  height: 4px;
+  display: flex;
+  gap: 6px;
+  z-index: 30;
+}
+
+/* Cada segmento da barra */
+.progress-segment {
+  flex-grow: 1;
+  background-color: rgba(255,255,255,0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  height: 4px; /* Garantir altura */
+}
+
+/* Barra preenchida estática para stories já vistos */
+.progress-segment.preenchido {
+  background-color: white;
+}
+
+/* Barra com animação para o story atual */
+.progress-segment.animando::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  animation-name: preencher;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-duration: 4s;
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 1;
+}
+
+/* Animação que preenche a barra da esquerda para a direita */
+@keyframes preencher {
+  to {
+    transform: scaleX(1);
   }
+}
+.modal-header-usuario {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  right: 15px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 30;
+}
+
+.modal-usuario-imagem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  user-select: none;
+}
+
+.modal-usuario-nome {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.btn-criar-story-pequeno {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  line-height: 1;
+  transition: background-color 0.3s ease;
+}
+
+.btn-criar-story-pequeno:hover {
+  background-color: #0056b3;
 }
