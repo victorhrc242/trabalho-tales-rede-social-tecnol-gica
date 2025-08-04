@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart, MessageCircle,Share2 } from 'lucide-react';
 import './kurz_css.css';
 import Comentario from '../../Components/Comentario';
 
@@ -29,6 +29,9 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+
+// ESTILIZAÇÃO DO BOTÃO MUTE E TAMANHO DO VIDEO TAMBEM 
 
 function VideoPlayer({ videoUrl, isActive }) {
   const videoRef = useRef(null);
@@ -62,19 +65,87 @@ function VideoPlayer({ videoUrl, isActive }) {
   };
 
   return (
-    <div className="video-wrapper" onClick={toggleMute}>
+    <div
+      style={{
+        position: 'relative',
+        display: 'block',
+        width: '100%',
+        maxWidth: '500px',
+        margin: '0 auto',
+      }}
+    >
       <video
         ref={videoRef}
         src={videoUrl}
         muted={isMuted}
         loop
         playsInline
-        className="video"
+        className="video-responsive"
         onClick={handleVideoClick}
-      />
+        style={{
+          width: '110%',
+          height: 'auto',
+          maxHeight: '650px',
+          aspectRatio: '9 / 16',
+          objectFit: 'cover',
+          borderRadius: '12px',
+          display: 'block',
+          margin: '0 auto',
+          cursor: 'pointer',
+          backgroundColor: 'black',
+          marginLeft: '-42px',
+        }}
+      >
+        Seu navegador não suporta vídeos.
+      </video>
+      <button
+        onClick={toggleMute}
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          right: 10,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          border: 'none',
+          borderRadius: '50%',
+          width: 30,
+          height: 30,
+          cursor: 'pointer',
+          fontSize: 16,
+          lineHeight: '30px',
+          textAlign: 'center',
+          padding: 0,
+        }}
+        aria-label={isMuted ? 'Desmutar vídeo' : 'Mutar vídeo'}
+      >
+        {isMuted ? '🔇' : '🔊'}
+      </button>
+
+      <style>{`
+        /* Força todos os vídeos com classe video-responsive a ficarem no mesmo tamanho 9:16 */
+        .video-responsive {
+          aspect-ratio: 9 / 16 !important;
+          object-fit: cover !important;
+          max-height: 650px !important;
+          width: 110% !important;
+          margin-left: -42px !important;
+          border-radius: 12px !important;
+        }
+
+        @media (max-width: 768px) {
+          .video-responsive {
+            width: 100% !important;
+            max-height: none !important;
+            aspect-ratio: 9 / 16 !important;
+            margin-left: 0 !important;
+            border-radius: 8px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
+
 
 const Kurz = () => {
   const [videos, setVideos] = useState([]);
@@ -180,6 +251,7 @@ const carregarVideos = async (paginaAtual) => {
 
 
     // 👇 Esses dois estavam fora antes, agora estão dentro corretamente:
+  
     setCurtidas((prev) => {
       const novo = { ...prev };
       videosComAutor.forEach((v) => {
@@ -205,6 +277,7 @@ setComentariosCount((prev) => {
 };
 
   // Carregar primeira página ou páginas seguintes
+
 useEffect(() => {
   if (temMais && !carregando) {
     carregarVideos(pagina);
@@ -213,6 +286,7 @@ useEffect(() => {
 }, [temMais, carregando]);
 
   // Scroll infinito para carregar mais vídeos
+
   useEffect(() => {
     const handleScroll = () => {
       if (carregando || !temMais) return;
@@ -229,6 +303,7 @@ useEffect(() => {
   }, [carregando, temMais]);
 
   // Navegação por teclado e roda do mouse para trocar vídeo
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowDown') {
@@ -260,6 +335,7 @@ useEffect(() => {
   }, [videos]);
 
   // Scroll suave para o vídeo atual
+
   useEffect(() => {
     const container = containerRef.current;
     if (container) {
@@ -271,6 +347,7 @@ useEffect(() => {
   }, [videoAtual]);
 
   // Abrir modal de comentários e carregar dados
+
   const abrirComentarios = async (post) => {
     setPostSelecionado(post);
     setModalComentarios(true);
@@ -335,6 +412,8 @@ useEffect(() => {
     setComentarioTexto('');
   };
 
+  // CURTIR VIDEO 
+
   const curtirPost = async (postId) => {
     const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${postId}`;
     const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
@@ -360,6 +439,9 @@ useEffect(() => {
       console.error('Erro ao curtir/descurtir:', err);
     }
   };
+
+
+  // COMENTAR VIDEO 
 
   const comentar = async () => {
     if (!comentarioTexto.trim() || !postSelecionado) return;
@@ -388,11 +470,60 @@ useEffect(() => {
     }
   };
 
+
+  // COMPARTILHAR VIDEO 
+
+  const compartilharVideo = async (video) => {
+  const nomeUsuario = prompt('Digite o nome de usuário para compartilhar este vídeo:');
+
+  if (!nomeUsuario) return;
+
+  try {
+    // Buscar usuário destino pelo nome
+    const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${nomeUsuario}`);
+    const usuarios = await res.json();
+
+    if (!Array.isArray(usuarios) || usuarios.length === 0) {
+      alert('Usuário não encontrado.');
+      return;
+    }
+
+    const destinatario = usuarios[0];
+
+    // Enviar a mensagem com o vídeo compartilhado
+    const enviar = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/enviar-com-post', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        accept: '*/*',
+      },
+      body: JSON.stringify({
+        idRemetente: usuario.id,
+        idDestinatario: destinatario.id,
+        conteudo: `Veja este vídeo!`, // ou deixe string vazia
+        postCompartilhadoId: video.id,
+      }),
+    });
+
+    if (enviar.ok) {
+      alert('Vídeo compartilhado com sucesso!');
+    } else {
+      alert('Erro ao compartilhar. Tente novamente.');
+    }
+  } catch (error) {
+    console.error('Erro ao compartilhar vídeo:', error);
+    alert('Erro ao compartilhar vídeo.');
+  }
+};
+
+ 
+
   if (!videos.length && !carregando)
     return <div className="kurz-loading">Nenhum vídeo disponível.</div>;
 
   return (
     <>
+     <div className="kurz-page">
       <div className="kurz-feed" ref={containerRef}>
         {videos.map((video, index) => (
           <div className="kurz-card" key={`${video.id}-${index}`}>
@@ -425,6 +556,13 @@ useEffect(() => {
                 <MessageCircle size={28} color="white" />
                 <span>{comentariosCount[video.id] || 0}</span>
               </button>
+             <button
+  onClick={() => compartilharVideo(video)}
+  aria-label="Compartilhar"
+>
+  <Share2 size={28} color="white" />
+</button>
+ 
             </div>
           </div>
         ))}
@@ -582,7 +720,7 @@ useEffect(() => {
   <button onClick={() => setVideoAtual((prev) => Math.max(prev - 1, 0))}>⭡</button>
   <button onClick={() => setVideoAtual((prev) => Math.min(prev + 1, videos.length - 1))}>⭣</button>
 </div>
-
+ </div>
     </>
   );
 };
