@@ -1,111 +1,113 @@
+// components/Story.jsx
 import React, { useEffect, useState } from "react";
-import "../../css/story.css";
-import StoryModal from "./StoryModal.jsx";
+import "../../css/story.css"; 
+import StoryModal from "./StoryModal.jsx"; 
+import CriarStoryModal from "./CriarStoryModal.jsx";
 
+// Função que agrupa os stories por ID do usuário
 function agruparPorUsuario(stories) {
   const grupos = {};
   stories.forEach((story) => {
     if (!grupos[story.usuarioId]) grupos[story.usuarioId] = [];
     grupos[story.usuarioId].push(story);
   });
+  // Retorna um array de objetos com `usuarioId` e lista de `stories`
   return Object.entries(grupos).map(([usuarioId, stories]) => ({ usuarioId, stories }));
 }
 
 function Story() {
-  const [stories, setStories] = useState([]);
-  const [usuarios, setUsuarios] = useState({});
-  const [usuarioLogado, setUsuarioLogado] = useState(null);
-  const [carregando, setCarregando] = useState(true);
+  // Estados principais
+  const [stories, setStories] = useState([]);               // Stories agrupados por usuário
+  const [usuarios, setUsuarios] = useState({});             // Mapa de informações dos usuários
+  const [usuarioLogado, setUsuarioLogado] = useState(null); // Info do usuário logado
+  const [carregando, setCarregando] = useState(true);       // Flag de carregamento
+
+  // Estados do modal de visualização
   const [modalAberto, setModalAberto] = useState(false);
   const [storyAtual, setStoryAtual] = useState(null);
   const [indiceStory, setIndiceStory] = useState(0);
 
-  useEffect(() => {
-    async function carregarDados() {
-      setCarregando(true);
+  // Estado para criação de novo story
+  const [abrirCriar, setAbrirCriar] = useState(false);
 
-      try {
-        // Pega o ID do usuário do localStorage
-        const usuarioArmazenado = JSON.parse(localStorage.getItem("usuario"));
-        if (!usuarioArmazenado?.id) {
-          console.error("Usuário não encontrado no localStorage");
-          setCarregando(false);
-          return;
-        }
-        const usuarioId = usuarioArmazenado.id;
+  // Abre o CriarStoryModal
+  const criarNovoStory = () => setAbrirCriar(true);
 
-        // Tenta pegar dados do usuário logado do localStorage (imagem em cache)
-        let imagemCache = localStorage.getItem(`imagemUsuario_${usuarioId}`);
+  // Callback chamado quando um story é criado com sucesso
+  const handleNovoStory = () => {
+    carregarStories(); // recarrega lista após criação
+  };
 
-        let dadosUsuario;
+  // Função para buscar e agrupar stories
+  const carregarStories = async () => {
+    setCarregando(true);
+    try {
+      // Busca todos os stories da API
+      const resStories = await fetch("https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/todos");
+      if (!resStories.ok) throw new Error("Erro ao buscar stories");
+      const dataStories = await resStories.json();
 
-        if (imagemCache) {
-          // Se tem imagem no cache, cria um objeto básico para o usuário logado
-          dadosUsuario = { ...usuarioArmazenado, imagem: imagemCache };
-        } else {
-          // Busca os dados completos do usuário logado
-          const resUsuario = await fetch(`https://localhost:7051/api/auth/usuario/${usuarioId}`);
-          if (!resUsuario.ok) throw new Error("Erro ao buscar dados do usuário logado");
-          dadosUsuario = await resUsuario.json();
+      // Agrupa por usuário
+      const agrupados = agruparPorUsuario(dataStories);
 
-          // Salva a imagem no cache localStorage
-          if (dadosUsuario.imagem) {
-            localStorage.setItem(`imagemUsuario_${usuarioId}`, dadosUsuario.imagem);
+      // Monta mapa de usuários
+      const usuariosMap = {};
+      await Promise.all(
+        agrupados.map(async (grupo) => {
+          if (!usuariosMap[grupo.usuarioId]) {
+            const resU = await fetch(
+              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${grupo.usuarioId}`
+            );
+            usuariosMap[grupo.usuarioId] = await resU.json();
           }
-        }
+        })
+      );
 
-        setUsuarioLogado(dadosUsuario);
-
-        // Busca todos os stories
-        const resStories = await fetch("https://localhost:7051/api/Stories/todos");
-        if (!resStories.ok) throw new Error("Erro ao buscar stories");
-        const dataStories = await resStories.json();
-
-        // Agrupa stories por usuário
-        const agrupados = agruparPorUsuario(dataStories);
-
-        // Monta o mapa de usuários (incluindo o usuário logado)
-        const usuariosMap = {};
-        await Promise.all(
-          agrupados.map(async (grupo) => {
-            if (grupo.usuarioId === usuarioId) {
-              usuariosMap[grupo.usuarioId] = dadosUsuario;
-            } else if (!usuariosMap[grupo.usuarioId]) {
-              const resOutroUsuario = await fetch(`https://localhost:7051/api/auth/usuario/${grupo.usuarioId}`);
-              const usuarioDados = await resOutroUsuario.json();
-              usuariosMap[grupo.usuarioId] = usuarioDados;
-            }
-          })
-        );
-
-        setStories(agrupados);
-        setUsuarios(usuariosMap);
-      } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-      } finally {
-        setCarregando(false);
-      }
+      setStories(agrupados);
+      setUsuarios(usuariosMap);
+    } catch (err) {
+      console.error("Erro ao carregar stories:", err);
+    } finally {
+      setCarregando(false);
     }
+  };
 
-    carregarDados();
+  // useEffect inicial para buscar usuário logado e stories
+  useEffect(() => {
+    (async () => {
+      // Busca dados do usuário logado
+      const usuarioArmazenado = JSON.parse(localStorage.getItem("usuario"));
+      if (!usuarioArmazenado?.id) {
+        console.error("Usuário não encontrado no localStorage");
+        setCarregando(false);
+        return;
+      }
+      const resU = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuarioArmazenado.id}`
+      );
+      const dadosU = await resU.json();
+      setUsuarioLogado(dadosU);
+
+      // Depois, carrega os stories
+      await carregarStories();
+    })();
   }, []);
 
+  // Abre o modal de visualização
   const abrirModal = (grupo) => {
     setStoryAtual(grupo);
     setIndiceStory(0);
     setModalAberto(true);
   };
 
+  // Fecha o modal de visualização
   const fecharModal = () => {
     setModalAberto(false);
     setStoryAtual(null);
     setIndiceStory(0);
   };
 
-  const criarNovoStory = () => {
-    alert("Abrir modal ou página para criar novo story");
-  };
-
+  // IDs e busca do próprio usuário
   const usuarioLogadoId = usuarioLogado?.id;
   const grupoUsuarioLogado = stories.find(
     (g) => String(g.usuarioId) === String(usuarioLogadoId)
@@ -114,34 +116,27 @@ function Story() {
   return (
     <div className="story-wrapper">
       {carregando ? (
-        <div className="story-empty">
-          <p>Carregando stories...</p>
-        </div>
+        // Loading state
+        <div className="story-empty"><p>Carregando stories...</p></div>
       ) : (
         <div className="story-container">
-          {/* Bolota para criar novo story sempre visível */}
+          {/* Bolinha para criar novo story */}
           {usuarioLogado && (
             <div className="story-item criar-story-wrapper">
               <div
                 className="story-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  criarNovoStory();
-                }}
+                onClick={(e) => { e.stopPropagation(); criarNovoStory(); }}
                 title="Criar novo story"
                 style={{ position: "relative" }}
               >
                 <img
-                  src={usuarioLogado.imagem || "/caminho/para/imagem-padrao.png"}
+                  src={usuarioLogado.imagem}
                   alt="Criar novo story"
                   className="story-imagem story-criar"
                 />
                 <button
                   className="btn-criar-story-pequeno"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    criarNovoStory();
-                  }}
+                  onClick={(e) => { e.stopPropagation(); criarNovoStory(); }}
                   title="Criar novo story"
                 >
                   +
@@ -151,7 +146,7 @@ function Story() {
             </div>
           )}
 
-          {/* Bolota do próprio usuário com stories */}
+          {/* Bolota do próprio usuário com seus stories */}
           {grupoUsuarioLogado && usuarioLogado && (
             <div
               className="story-item"
@@ -167,13 +162,13 @@ function Story() {
             </div>
           )}
 
-          {/* Bolotas dos outros usuários */}
-          {stories.map((grupo, index) => {
+          {/* Stories dos outros usuários */}
+          {stories.map((grupo, idx) => {
             if (String(grupo.usuarioId) === String(usuarioLogadoId)) return null;
             const usuario = usuarios[grupo.usuarioId];
             return (
               <div
-                key={index}
+                key={idx}
                 className="story-item"
                 onClick={() => abrirModal(grupo)}
                 title={usuario?.nome_usuario || "Usuário"}
@@ -190,6 +185,7 @@ function Story() {
         </div>
       )}
 
+      {/* Modal de visualização */}
       {modalAberto && storyAtual && (
         <StoryModal
           grupo={storyAtual}
@@ -197,6 +193,16 @@ function Story() {
           setIndiceStory={setIndiceStory}
           fechar={fecharModal}
           usuarios={usuarios}
+          usuarioLogadoId={usuarioLogadoId}
+        />
+      )}
+
+      {/* Modal de criação de novo story */}
+      {abrirCriar && usuarioLogadoId && (
+        <CriarStoryModal
+          fechar={() => setAbrirCriar(false)}
+          usuarioLogadoId={usuarioLogadoId}
+          onStoryCriado={handleNovoStory}
         />
       )}
     </div>

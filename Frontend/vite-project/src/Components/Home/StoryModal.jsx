@@ -2,9 +2,34 @@
 import React, { useEffect, useRef } from "react";
 import "../../css/story.css";
 
-function StoryModal({ grupo, indiceStory, setIndiceStory, fechar, usuarios }) {
+function StoryModal({
+  grupo,
+  indiceStory,
+  setIndiceStory,
+  fechar,
+  usuarios,
+  usuarioLogadoId,        // ← receba o prop
+}) {
   const timeoutRef = useRef(null);
 
+  // story atual
+  const story = grupo.stories[indiceStory];
+  const usuario = usuarios[grupo.usuarioId];
+
+  // registra a visualização assim que este story entra em foco
+  useEffect(() => {
+    if (!story?.id || !usuarioLogadoId) return;
+
+    // ajusta quantos segundos você quer informar
+    const tempoEmSegundos = 2;
+
+    fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/story/${story.id}/visualizacao?usuarioId=${usuarioLogadoId}&tempoEmSegundos=${tempoEmSegundos}`,
+      { method: "POST" }
+    ).catch((err) => console.error("Erro ao registrar visualização:", err));
+  }, [story, usuarioLogadoId]);
+
+  // função que avança ao próximo ou fecha
   const proximo = () => {
     if (indiceStory < grupo.stories.length - 1) {
       setIndiceStory(indiceStory + 1);
@@ -14,28 +39,37 @@ function StoryModal({ grupo, indiceStory, setIndiceStory, fechar, usuarios }) {
   };
 
   const anterior = () => {
-    if (indiceStory > 0) {
-      setIndiceStory(indiceStory - 1);
-    }
+    if (indiceStory > 0) setIndiceStory(indiceStory - 1);
   };
 
+  // avanço automático
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      proximo();
-    }, 4000);
-
+    timeoutRef.current = setTimeout(proximo, 4000);
     return () => clearTimeout(timeoutRef.current);
   }, [indiceStory]);
 
-  const story = grupo.stories[indiceStory];
-  const usuario = usuarios[grupo.usuarioId];
-
   return (
-    <div className="modal-overlay" onClick={fechar}>
+    <div className="modal-overlay" onClick={proximo}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        {/* Barra de progresso */}
+        <div className="progress-bar-container acima-header">
+          {grupo.stories.map((_, idx) => (
+            <div
+              key={idx}
+              className={`progress-segment ${
+                idx < indiceStory
+                  ? "preenchido"
+                  : idx === indiceStory
+                  ? "animando"
+                  : ""
+              }`}
+              style={idx === indiceStory ? { animationDuration: "4s" } : {}}
+            />
+          ))}
+        </div>
 
-        {/* Header do usuário */}
-        <div className="modal-header-usuario">
+        {/* Cabeçalho */}
+        <div className="modal-header-usuario abaixo-barra">
           <img
             src={usuario?.imagem}
             alt={usuario?.nome_usuario || "Usuário"}
@@ -47,31 +81,18 @@ function StoryModal({ grupo, indiceStory, setIndiceStory, fechar, usuarios }) {
           </span>
         </div>
 
-        {/* Barra de progresso */}
-        <div className="progress-bar-container">
-          {grupo.stories.map((_, idx) => (
-            <div
-              key={idx}
-              className={`progress-segment ${
-                idx < indiceStory ? "preenchido" : idx === indiceStory ? "animando" : ""
-              }`}
-              style={idx === indiceStory ? { animationDuration: "4s" } : {}}
-            />
-          ))}
-        </div>
-
-        {/* Imagem ou vídeo */}
+        {/* Conteúdo */}
         {story.tipo === "imagem" ? (
           <img
             src={story.conteudoUrl}
             alt="Story"
-            className="modal-story"
+            className="modal-story fixo"
             draggable={false}
           />
         ) : (
           <video
             src={story.conteudoUrl}
-            className="modal-story"
+            className="modal-story fixo"
             autoPlay
             muted
             playsInline
@@ -79,7 +100,7 @@ function StoryModal({ grupo, indiceStory, setIndiceStory, fechar, usuarios }) {
           />
         )}
 
-        {/* Navegação */}
+        {/* Navegação manual */}
         <div className="nav-zona esquerda" onClick={anterior} />
         <div className="nav-zona direita" onClick={proximo} />
       </div>
