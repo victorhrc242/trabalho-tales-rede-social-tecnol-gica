@@ -169,6 +169,60 @@ useEffect(() => {
 
   return () => clearTimeout(delayDebounceFn);
 }, [tags]);
+const handleCriarStory = async () => {
+  if (enviando) return;
+  if (!imagemArquivo && !videoArquivo) {
+    setErro('Adicione uma imagem ou vídeo.');
+    return;
+  }
+
+  setEnviando(true);
+  setMostrarMiniModal(true);
+
+  try {
+    let conteudoUrl = '';
+    let tipo = '';
+
+    if (imagemArquivo) {
+      conteudoUrl = await uploadImagem(imagemArquivo);
+      tipo = 'imagem';
+    } else if (videoArquivo) {
+      conteudoUrl = await uploadVideo(videoArquivo);
+      tipo = 'video';
+    }
+
+    const storyPayload = {
+      usuarioId: usuarioLogado.id,
+      conteudoUrl,
+      tipo,
+    };
+
+    const response = await fetch('https://localhost:7051/api/Stories/criar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(storyPayload),
+    });
+
+    if (!response.ok) {
+      const erroResp = await response.json();
+      setErro(erroResp.erro || 'Erro ao criar story');
+      return;
+    }
+
+    setImagemArquivo(null);
+    setVideoArquivo(null);
+    setImagem('');
+    setVideoUrl('');
+    setErro('');
+    setTimeout(() => setMostrarMiniModal(false), 3000);
+  } catch (error) {
+    console.error(error);
+    setErro('Erro ao criar story');
+    setMostrarMiniModal(false);
+  } finally {
+    setEnviando(false);
+  }
+};
 
 
   return (
@@ -298,6 +352,13 @@ useEffect(() => {
                     <button className='button-confirme' type="submit" disabled={enviando}>
                       {enviando ? 'Postando...' : 'Publicar'}
                     </button>
+                    <button
+  onClick={handleCriarStory}
+  className="botao-confirmar"
+>
+  Publicar como Story
+</button>
+
                     <button
                     className='button-cancel'
                     type="button"
