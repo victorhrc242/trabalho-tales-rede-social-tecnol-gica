@@ -771,12 +771,15 @@ const cancelarLogout = () => {
           Array.isArray(listaSeguidores) && listaSeguidores.length > 0 ? (
             listaSeguidores.map((user, i) => (
               <div key={i} className="usuario-item">
-                <img
-                  src={user.imagem || '/img/placeholder.png'}
-                  alt={`Foto de ${user.nome_usuario}`}
-                  className="foto-perfil-seguidores"
-                />
-                <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+                <Link className='botao-link' to={`/perfil/${user.id}`} onClick={() => setMostrarModalSeguidores(false)}
+                 style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit' }}>
+                  <img
+                    src={user.imagem || '/img/placeholder.png'}
+                    alt={`Foto de ${user.nome_usuario}`}
+                    className="foto-perfil-seguidores"
+                  />
+                  <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+                </Link>
               </div>
             ))
           ) : (
@@ -786,12 +789,15 @@ const cancelarLogout = () => {
           Array.isArray(listaSeguindo) && listaSeguindo.length > 0 ? (
             listaSeguindo.map((user, i) => (
               <div key={i} className="usuario-item">
-                <img
-                  src={user.imagem || '/img/placeholder.png'}
-                  alt={`Foto de ${user.nome_usuario}`}
-                  className="foto-perfil-seguidores"
-                />
-                <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+                <Link className='botao-link' to={`/perfil/${user.id}`} onClick={() => setMostrarModalSeguidores(false)}
+                 style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit' }}>
+                  <img
+                    src={user.imagem || '/img/placeholder.png'}
+                    alt={`Foto de ${user.nome_usuario}`}
+                    className="foto-perfil-seguidores"
+                  />
+                  <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+                </Link>
               </div>
             ))
           ) : (
