@@ -434,6 +434,7 @@ const cancelarLogout = () => {
       <div className='infor-seguidores-desktop'>
       <p><strong><button className="botao-link" onClick={() => {
             carregarSeguidoresESeguindo();
+            setAbaSeguidoresAtiva('seguidores');
             setMostrarModalSeguidores(true);
           }}>Seguidores:
         </button>
