@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, MessageCircle, MoreVertical,Share2 } from 'lucide-react';
 import VideoPlayer from './VideoPlayer';
-import './modal.css'
+import './modal.css';
 function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, abrirComentarios, irParaPerfil }) {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [mostrarTiposDenuncia, setMostrarTiposDenuncia] = useState(false);
@@ -35,13 +35,13 @@ const [curtindo, setCurtindo] = useState(false);
 useEffect(() => {
   const buscarUsuariosSeguindo = async () => {
     try {
-      const res = await fetch(`http://localhost:5124/api/Amizades/seguindo/${usuario.id}`);
+      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`);
       const data = await res.json();
 
       if (data.sucesso && Array.isArray(data.seguindo)) {
         const usuariosDetalhados = await Promise.all(
           data.seguindo.map(async ({ usuario2 }) => {
-            const resUser = await fetch(`http://localhost:5124/api/auth/usuario/${usuario2}`);
+            const resUser = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuario2}`);
             const userData = await resUser.json();
             return {
               id: usuario2,
@@ -75,6 +75,23 @@ useEffect(() => {
   alert("Usuário não autenticado.");
   return;
 }
+
+
+const [toast, setToast] = useState(null);
+function Toast({ mensagem, tipo = 'sucesso', onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000); // desaparece após 3s
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className={`toast ${tipo}`} onClick={onClose}>
+      {mensagem}
+    </div>
+  );
+}
+
+
 const enviarMensagem = async () => {
   const corpo = {
   idRemetente: usuario.id,
@@ -85,7 +102,7 @@ const enviarMensagem = async () => {
 
 
   try {
-    const response = await fetch("http://localhost:5124/api/Mensagens/enviar-com-post", {
+    const response = await fetch("https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/enviar-com-post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -95,15 +112,17 @@ const enviarMensagem = async () => {
 
     const data = await response.json();
     if (data.sucesso) {
-      alert("Mensagem enviada!");
-      setModalAberto(false);
-      setMensagem("");
-      setDestinatarioId("");
-    } else {
-      alert("Erro: " + data.mensagem);
-    }
+  setToast({ mensagem: "Enviada com sucesso!", tipo: "sucesso" });
+  setModalAberto(false);
+  setMensagem("");
+  setDestinatarioId("");
+} else {
+  setToast({ mensagem: "Erro: " + data.mensagem, tipo: "erro" });
+}
+
   } catch (erro) {
-    alert("Erro ao enviar: " + erro.message);
+  setToast({ mensagem: "Erro ao enviar: " + erro.message, tipo: "erro" });
+
   }
 };
 
@@ -138,6 +157,7 @@ async function handleCurtir() {
     return () => document.removeEventListener('mousedown', handleClickFora);
   }, []);
 
+  
   return (
     <li style={{ marginBottom: '20px' }}>
       <div className="autor-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -152,6 +172,18 @@ async function handleCurtir() {
             {post.autorNome}
           </span>
         </div>
+
+
+        {/* menssagem de alerta  */}
+
+        {toast && (
+  <Toast
+    mensagem={toast.mensagem}
+    tipo={toast.tipo}
+    onClose={() => setToast(null)}
+  />
+)}
+
 
         {/* Botão e menu de opções */}
         <div style={{ position: 'relative' }} ref={opcoesRef}>
@@ -227,16 +259,16 @@ async function handleCurtir() {
 
         {/* Botões curtir/comentar */}
         <div className="botoes-post">
-  <button className="botao-acao" onClick={handleCurtir}>
-  <Heart
-    size={20}
-    color={foiCurtido ? 'red' : 'black'}
-    fill={foiCurtido ? 'red' : 'none'}
-  />
-  {usuario?.id === post.autorId && (
-    <span> ({totalCurtidas})</span>
-  )}
-</button>
+          <button className="botao-acao" onClick={handleCurtir}>
+           <Heart
+           size={20}
+           color={foiCurtido ? 'red' : 'black'}
+           fill={foiCurtido ? 'red' : 'none'}
+          />
+           {usuario?.id === post.autorId && (
+          <span> ({totalCurtidas})</span>
+          )}
+         </button>
 
 
 
@@ -245,53 +277,89 @@ async function handleCurtir() {
           </button>
 
           <button onClick={() => setModalAberto(true)} className="botao-enviar-dm">
-  <Share2 size={20} />
-</button>
+             <Share2 size={20} />
+          </button>
 
         </div>
+
+        {/* EXIBE USUARIOS PARA O COMPARTILHAMENTO DO CODIGO  */}
+
+
 {modalAberto && (
-  <div className="modal-overlay" onClick={() => setModalAberto(false)}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <h3>Enviar post por mensagem</h3>
+  <div className="modal-overlay-story" onClick={() => setModalAberto(false)}>
+    <div className="modal-content-story" onClick={(e) => e.stopPropagation()}>
+      <h3>Compartilhar</h3>
 
-      <p>Selecione um destinatário:</p>
-     <ul style={{ maxHeight: 150, overflowY: 'auto', padding: 0 }}>
-  {seguindo.map((usuario) => (
-    <li
-      key={usuario.id}
-      onClick={() => setDestinatarioId(usuario.id)}
-      style={{
-        cursor: 'pointer',
-        padding: '5px 10px',
-        backgroundColor: destinatarioId === usuario.id ? '#ddd' : '#f5f5f5',
-        marginBottom: 5,
-        borderRadius: 5,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10
-      }}
-    >
-      <img src={usuario.imagem} alt="avatar" style={{ width: 30, height: 30, borderRadius: '50%' }} />
-      <span>{usuario.nome}</span>
-    </li>
-  ))}
-</ul>
+      {/* LISTA DE USUÁRIOS HORIZONTAL */}
+      <ul className="lista-usuarios-horizontal">
+        {seguindo.map((usuario) => (
+          <li
+            key={usuario.id}
+            onClick={() => setDestinatarioId(usuario.id)}
+            style={{
+              backgroundColor: destinatarioId === usuario.id ? '#ddd' : undefined,
+            }}
+          >
+            <img src={usuario.imagem} alt="avatar" />
+            <span style={{ fontSize: 12 }}>{usuario.nome}</span>
+          </li>
+        ))}
+      </ul>
 
+      {/* DESTINATÁRIO ESCOLHIDO */}
+      {destinatarioId && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+          marginBottom: 10,
+          backgroundColor: '#f0f0f0',
+          padding: '8px 12px',
+          borderRadius: '8px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img
+              src={seguindo.find(u => u.id === destinatarioId)?.imagem}
+              alt="Selecionado"
+              style={{ width: 40, height: 40, borderRadius: '50%' }}
+            />
+            <strong>{seguindo.find(u => u.id === destinatarioId)?.nome}</strong>
+          </div>
+          <button
+            onClick={() => setDestinatarioId("")}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontSize: 18,
+              cursor: 'pointer',
+              color: '#888',
+              fontWeight: 'bold'
+            }}
+            title="Cancelar destinatário"
+          >
+            ✖
+          </button>
+        </div>
+      )}
 
+      {/* CAMPO DE MENSAGEM E BOTÃO ENVIAR */}
       {destinatarioId && (
         <>
           <textarea
-            placeholder="Escreva uma mensagem (opcional)"
+            className="textarea-mensagem"
+            placeholder="Escreva uma mensagem..."
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             style={{ width: '100%', marginBottom: 10 }}
           />
-          <button onClick={enviarMensagem}>Enviar</button>
+          <button className="botao-enviar-dm-story" onClick={enviarMensagem}>Enviar</button>
         </>
       )}
     </div>
   </div>
 )}
+
         {/* Texto do post */}
         <div className="post-description">
           <p>
@@ -303,6 +371,9 @@ async function handleCurtir() {
         <hr />
       </article>
     </li>
+
+
+
   );
 }
 

@@ -48,26 +48,27 @@ function VideoPlayer({ videoUrl, isActive, className }) {
         playsInline
         className={className}
         onClick={handleVideoClick}
-        style={{
-          width: '120%', // Agora ocupa 120% do container para dar zoom
-          height: '600px',
+
+        // quero que voce faça com que o whidth do video fique 100% porem continue centralizado na tela como etsa agora, pois toda vez ele so arreda para o lado e não diminui de tamanho sem contar que o obotão de mute sair de dentro do video como estava anteriormente
+      style={{
+          width: '100%',              // Responsivo
+          height: 'auto',             // Mantém a proporção
+          aspectRatio: '9 / 16',      // Portrait ratio comum para vídeos verticais
           objectFit: 'cover',
           borderRadius: '12px',
           display: 'block',
-          margin: '0 auto',
           cursor: 'pointer',
           backgroundColor: 'black',
-          marginLeft:'-42px'
         }}
       >
         Seu navegador não suporta vídeos.
       </video>
       <button
         onClick={toggleMute}
-        style={{
+       style={{
           position: 'absolute',
           bottom: 10,
-          right: -25,
+          right: 10, // Corrigido: botão dentro do vídeo
           backgroundColor: 'rgba(0,0,0,0.5)',
           color: 'white',
           border: 'none',
