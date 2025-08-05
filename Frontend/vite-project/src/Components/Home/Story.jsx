@@ -120,45 +120,38 @@ function Story() {
         <div className="story-empty"><p>Carregando stories...</p></div>
       ) : (
         <div className="story-container">
-          {/* Bolinha para criar novo story */}
+          {/* Bolinha unificada do usuário logado para criar ou ver stories */}
           {usuarioLogado && (
-            <div className="story-item criar-story-wrapper">
-              <div
-                className="story-item"
-                onClick={(e) => { e.stopPropagation(); criarNovoStory(); }}
-                title="Criar novo story"
-                style={{ position: "relative" }}
-              >
-                <img
-                  src={usuarioLogado.imagem}
-                  alt="Criar novo story"
-                  className="story-imagem story-criar"
-                />
-                <button
-                  className="btn-criar-story-pequeno"
-                  onClick={(e) => { e.stopPropagation(); criarNovoStory(); }}
-                  title="Criar novo story"
-                >
-                  +
-                </button>
-              </div>
-              <small className="story-nome">Criar</small>
-            </div>
-          )}
-
-          {/* Bolota do próprio usuário com seus stories */}
-          {grupoUsuarioLogado && usuarioLogado && (
             <div
               className="story-item"
-              onClick={() => abrirModal(grupoUsuarioLogado)}
+              onClick={() => {
+                // Se tiver stories, abre o modal. Se não, abre o modal de criação.
+                if (grupoUsuarioLogado) {
+                  abrirModal(grupoUsuarioLogado);
+                } else {
+                  criarNovoStory();
+                }
+              }}
               title={usuarioLogado.nome_usuario || "Seu story"}
+              style={{ position: "relative" }} // importante para posicionar o botão +
             >
               <img
                 src={usuarioLogado.imagem}
                 alt={usuarioLogado.nome_usuario || "Seu story"}
                 className="story-imagem"
               />
-              <small className="story-nome">Seu story</small>
+              {/* Botão de criar sempre visível */}
+              <button
+                className="btn-criar-story-pequeno"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  criarNovoStory();
+                }}
+                title="Criar novo story"
+              >
+                +
+              </button>
+              <small className="story-nome">{grupoUsuarioLogado ? "Seu story" : "Criar"}</small>
             </div>
           )}
 
