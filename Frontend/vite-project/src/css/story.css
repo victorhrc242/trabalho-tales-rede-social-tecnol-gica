@@ -80,7 +80,7 @@
   user-select: none;
 }
 
-/*--------------------------- Modal de story ---------------------------*/
+/*------------------------------------------------------ Modal de story -------------------------------------------------*/
 
 /* Modal Overlay - fundo preto sólido, ocupa a tela toda, sem scroll */
 .modal-overlay {
@@ -430,9 +430,27 @@
   object-fit: contain;
 }
 
+/* Botão de fechar no canto superior direito da tela */
+.btn-fechar-story {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.btn-fechar-story:hover {
+  color: #ff4d4d;
+}
 
 
-/* ---------------------------Criar novo story--------------------------- */
+/* ------------------------------------------------Criar novo story------------------------------------------ */
 .create-story-overlay {
   position: fixed;
   top: 0;
@@ -592,4 +610,3 @@
 }
    
 /* ------------------------------------------------------------------------------ */
-
