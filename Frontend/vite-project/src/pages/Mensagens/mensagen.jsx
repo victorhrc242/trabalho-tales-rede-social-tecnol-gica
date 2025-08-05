@@ -20,7 +20,7 @@ const Mensagens = () => {
   const [usuariosSeguidos, setUsuariosSeguidos] = useState([]);
   const [naoLidas, setNaoLidas] = useState({}); // Contador de mensagens não lidas por usuário
   const [modalAberto, setModalAberto] = useState(false); // Estado para controle do modal (menu do chat)
-
+const [previewsPosts, setPreviewsPosts] = useState({});
   // Recupera o usuário logado do localStorage
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
@@ -144,6 +144,36 @@ useEffect(() => {
     setSeguindoFiltrado(filtrados);
   }
 }, [busca, seguindo, usuariosSeguidos]);
+ 
+// Busca informações de um post específico por ID
+const buscarPostPorId = async (postId) => {
+  try {
+    const res = await axios.get(`${API_URL}/api/Feed/feed-porID/${postId}`);
+    return res.data.dados || res.data;
+  } catch (err) {
+    console.error('Erro ao buscar post:', err);
+    return null;
+  }
+};
+// carrega as pré-visualizações dos posts associados às mensagens
+useEffect(() => {
+  const carregarPreviews = async () => {
+    const mensagensComPostId = historicoMensagens.filter(msg => msg.postid && !previewsPosts[msg.postid]);
+
+    const novasPreviews = {};
+
+    for (const msg of mensagensComPostId) {
+      const post = await buscarPostPorId(msg.postid);
+      if (post) {
+        novasPreviews[msg.postid] = post;
+      }
+    }
+
+    setPreviewsPosts(prev => ({ ...prev, ...novasPreviews }));
+  };
+
+  carregarPreviews();
+}, [historicoMensagens]);
   // Conecta ao SignalR e escuta eventos em tempo real
   useEffect(() => {
     if (!usuarioLogadoId) return;
@@ -526,6 +556,38 @@ const marcarMensagemComoLida = async (mensagemId) => {
                 key={index}
                   className={`message ${isRemetente ? 'sent' : 'received'}`}
                 >
+               {/* Preview de post */}
+{msg.postid && previewsPosts[msg.postid] && (
+  <div className="ig-preview">
+    {/* Imagem ou vídeo */}
+    {previewsPosts[msg.postid].video ? (
+      <div className="ig-video-wrapper">
+        <video
+          src={previewsPosts[msg.postid].video}
+          className="ig-preview-video"
+          muted
+          preload="metadata"
+        />
+        {/* Ícone de play removido */}
+      </div>
+    ) : previewsPosts[msg.postid].imagem ? (
+      <img
+        src={previewsPosts[msg.postid].imagem}
+        alt="Imagem do post"
+        className="ig-preview-img"
+      />
+    ) : null}
+
+    {/* Conteúdo textual */}
+    <div className="ig-caption">
+      <strong>{previewsPosts[msg.postid].titulo || ""}</strong>
+      <p>{previewsPosts[msg.postid].descricao?.slice(0, 100) || ""}</p>
+    </div>
+  </div>
+)}
+
+                {/* Exibe a mensagem */}
+
                  <div className="message-content">
                   <p>{msg.conteudo}</p>
                   {/* Ícones de status de leitura: dois risquinhos */}

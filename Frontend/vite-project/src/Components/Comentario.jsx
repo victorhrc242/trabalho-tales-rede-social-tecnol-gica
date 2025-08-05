@@ -1,112 +1,129 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
+import { Heart, Share2 } from 'lucide-react';
 import '../css/comentario.css';
 
-function Comentario({
-  post,
-  comentarios,
-  comentarioTexto,
-  setComentarioTexto,
-  comentar,
-  fechar,
-  usuarioCurtidas,
-  usuario,  // ID e dados do usuário logado, usado para curtidas
-  setComentarios // para atualizar comentários após curtir/descurtir
-}) {
+function Comentario({ post, usuario, fechar }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [modalHeight, setModalHeight] = useState(window.innerHeight * 0.7);
+  const [comentarios, setComentarios] = useState([]);
+  const [comentarioTexto, setComentarioTexto] = useState('');
+  const [usuarioCurtidas, setUsuarioCurtidas] = useState([]);
 
   const startY = useRef(null);
   const startHeight = useRef(null);
 
-  const [comentariosState, setComentariosState] = useState(comentarios || []);
-
-  // Detecta resize para ajustar layout mobile/desktop e modal height
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      if (!mobile) {
-        setModalHeight(null);
-      } else {
-        setModalHeight(window.innerHeight * 0.7);
-      }
+      setModalHeight(mobile ? window.innerHeight * 0.7 : null);
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+useEffect(() => {
+  if (post) {
+    document.body.classList.add('modal-aberto');
+  }
 
-  // Atualiza comentariosState com dados dos autores ao receber a prop comentarios
+  return () => {
+    document.body.classList.remove('modal-aberto');
+  };
+}, [post]);
+
   useEffect(() => {
-    if (!comentarios || comentarios.length === 0) {
-      setComentariosState([]);
-      return;
-    }
+    if (!post?.id) return;
 
-    async function carregarComentariosComAutores() {
+    async function carregarComentarios() {
       try {
+        const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
+        const data = await res.json();
+
         const comentariosComAutores = await Promise.all(
-          comentarios.map(async (comentario) => {
+          (data.comentarios || []).map(async (comentario) => {
             try {
-              const res = await fetch(
-                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
-              );
-              const autor = await res.json();
-              return {
-                ...comentario,
-                autorNome: autor.nome_usuario || 'Usuário',
-                autorImagem: autor.imagem || 'https://via.placeholder.com/40',
-              };
+              const r = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+              const u = await r.json();
+              return { ...comentario, autorNome: u.nome || 'Usuário', autorImagem: u.imagem || 'https://via.placeholder.com/40' };
             } catch {
-              return {
-                ...comentario,
-                autorNome: 'Usuário',
-                autorImagem: 'https://via.placeholder.com/40',
-              };
+              return { ...comentario, autorNome: 'Usuário', autorImagem: 'https://via.placeholder.com/40' };
             }
           })
         );
-        setComentariosState(comentariosComAutores);
+        setComentarios(comentariosComAutores);
+
+        const resCurtidas = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu-comentarios?postId=${post.id}&usuarioId=${usuario.id}`);
+        const dadosCurtidas = await resCurtidas.json();
+        setUsuarioCurtidas(dadosCurtidas.curtidas || []);
       } catch (err) {
-        console.error('Erro ao carregar comentários com autores:', err);
+        console.error('Erro ao carregar comentários:', err);
       }
     }
 
-    carregarComentariosComAutores();
-  }, [comentarios]);
+    carregarComentarios();
+  }, [post, usuario]);
 
-  // Envia novo comentário
-  const enviarComentario = async () => {
-    if (!comentarioTexto.trim() || !post?.id) return;
+  const comentar = async () => {
+    if (!comentarioTexto.trim()) return;
 
     try {
       await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          postId: post.id,
-          autorId: usuario.id,
-          conteudo: comentarioTexto,
-        }),
+        body: JSON.stringify({ postId: post.id, autorId: usuario.id, conteudo: comentarioTexto }),
       });
-
       setComentarioTexto('');
-
-      // Recarrega comentários
-      const res = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`
-      );
+      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
       const data = await res.json();
-      setComentariosState(data.comentarios || []);
-      setComentarios?.(data.comentarios || []);
+      const comentariosComAutores = await Promise.all(
+        (data.comentarios || []).map(async (comentario) => {
+          try {
+            const r = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+            const u = await r.json();
+            return { ...comentario, autorNome: u.nome || 'Usuário', autorImagem: u.imagem || 'https://via.placeholder.com/40' };
+          } catch {
+            return { ...comentario, autorNome: 'Usuário', autorImagem: 'https://via.placeholder.com/40' };
+          }
+        })
+      );
+      setComentarios(comentariosComAutores);
     } catch (e) {
       console.error('Erro ao enviar comentário:', e);
     }
   };
 
-  // SignalR para atualizações em tempo real das curtidas nos comentários
+  const curtirComentario = async (comentarioId) => {
+    try {
+      const jaCurtiu = usuarioCurtidas.includes(comentarioId);
+      const endpoint = jaCurtiu
+        ? 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir'
+        : 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
+
+      await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: comentarioId, usuarioId: usuario.id }),
+      });
+
+      setComentarios(prev =>
+        prev.map(c => {
+          if (c.id === comentarioId) {
+            const count = c.curtidas || 0;
+            return { ...c, curtidas: jaCurtiu ? count - 1 : count + 1 };
+          }
+          return c;
+        })
+      );
+
+      setUsuarioCurtidas(prev => jaCurtiu ? prev.filter(id => id !== comentarioId) : [...prev, comentarioId]);
+    } catch (err) {
+      console.error('Erro ao curtir/descurtir comentário:', err);
+    }
+  };
+
   useEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
@@ -117,10 +134,10 @@ function Comentario({
 
     connection.start()
       .then(() => {
-        connection.on('ReceberCurtida', (postIdRecebido, usuarioId, foiCurtida) => {
-          setComentariosState(prevComentarios =>
-            prevComentarios.map(c => {
-              if (c.id === postIdRecebido) {
+        connection.on('ReceberCurtida', (comentarioId, usuarioId, foiCurtida) => {
+          setComentarios(prev =>
+            prev.map(c => {
+              if (c.id === comentarioId) {
                 const curtidasAtualizadas = foiCurtida
                   ? (c.curtidas || 0) + 1
                   : Math.max(0, (c.curtidas || 0) - 1);
@@ -129,50 +146,19 @@ function Comentario({
               return c;
             })
           );
+          if (usuarioId === usuario.id) {
+            setUsuarioCurtidas(prev => foiCurtida
+              ? [...prev, comentarioId]
+              : prev.filter(id => id !== comentarioId)
+            );
+          }
         });
       })
-      .catch(err => console.error('Erro ao conectar curtidaHub:', err));
+      .catch(err => console.error('Erro ao conectar ao SignalR:', err));
 
     return () => connection.stop();
-  }, []);
+  }, [usuario]);
 
-  // Curtir ou descurtir comentário
-  const curtirPost = async (comentarioId) => {
-    const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/post/${comentarioId}`;
-    const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
-    const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
-
-    try {
-      // Verifica se usuário já curtiu
-      const res = await fetch(verificarUrl, { method: 'GET' });
-      const data = await res.json();
-      const jaCurtiu = data.curtidas?.some(c => c.usuarioId === usuario.id);
-
-      const endpoint = jaCurtiu ? descurtirUrl : curtirUrl;
-
-      // Envia curtida ou descurtida para o servidor
-      await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId: comentarioId, usuarioId: usuario.id }),
-      });
-
-      // Atualiza curtidas localmente para feedback imediato
-      setComentariosState(prev =>
-        prev.map(c => {
-          if (c.id === comentarioId) {
-            const count = c.curtidas || 0;
-            return { ...c, curtidas: jaCurtiu ? count - 1 : count + 1 };
-          }
-          return c;
-        })
-      );
-    } catch (err) {
-      console.error('Erro ao curtir/descurtir:', err);
-    }
-  };
-
-  // Drag para redimensionar modal no mobile
   const onDragStart = (e) => {
     startY.current = e.touches ? e.touches[0].clientY : e.clientY;
     startHeight.current = modalHeight;
@@ -185,13 +171,8 @@ function Comentario({
   const onDragMove = (e) => {
     if (startY.current === null) return;
     const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-    let diff = startY.current - currentY;
-    let newHeight = startHeight.current + diff;
-
-    const minHeight = window.innerHeight * 0.5;
-    const maxHeight = window.innerHeight;
-    newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
-
+    const diff = startY.current - currentY;
+    const newHeight = Math.max(window.innerHeight * 0.5, Math.min(window.innerHeight, startHeight.current + diff));
     setModalHeight(newHeight);
   };
 
@@ -204,132 +185,191 @@ function Comentario({
     document.removeEventListener('mouseup', onDragEnd);
   };
 
+  const curtirPost = async () => {
+  try {
+    // Verifica se usuário já curtiu o post
+    const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`;
+    const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
+    const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
+
+    const resVerifica = await fetch(verificarUrl);
+    if (!resVerifica.ok) {
+      console.error('Erro ao verificar curtida do post');
+      return;
+    }
+    const dataVerifica = await resVerifica.json();
+    const jaCurtiu = dataVerifica.curtiu;
+
+    // Decide se vai curtir ou descurtir
+    const endpoint = jaCurtiu ? descurtirUrl : curtirUrl;
+
+    // Envia requisição para curtir ou descurtir
+    const resPost = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ postId: post.id, usuarioId: usuario.id }),
+    });
+
+    if (!resPost.ok) {
+      console.error('Erro ao curtir/descurtir post');
+      return;
+    }
+
+    const dataPost = await resPost.json();
+    const curtiuAgora = !jaCurtiu;
+
+    // Atualiza o estado local do post no modal (para mostrar a contagem atualizada)
+    // Se o post aqui for só uma prop, você pode precisar de callback para atualizar no feed principal
+    // Mas aqui vamos atualizar localmente:
+
+    post.curtidas = dataPost.curtidasTotais;
+    post.foiCurtido = curtiuAgora;
+
+    // Força re-render (se post for estado, use setState)
+    // Como post é prop, pode usar state local para isso:
+    setPostSelecionado({ ...post });
+
+  } catch (err) {
+    console.error('Erro ao curtir/descurtir post:', err);
+  }
+};
+useEffect(() => {
+  const connection = new HubConnectionBuilder()
+    .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
+      transport: HttpTransportType.LongPolling,
+    })
+    .withAutomaticReconnect()
+    .build();
+
+  connection.start()
+    .then(() => {
+      connection.on('ReceberCurtida', (postId, usuarioId, foiCurtida) => {
+        if (post.id === postId) {
+          // Atualiza a curtida local do post modal
+          const curtidasAtualizadas = foiCurtida
+            ? (post.curtidas || 0) + 1
+            : Math.max(0, (post.curtidas || 0) - 1);
+
+          setPostSelecionado(prev => ({
+            ...prev,
+            curtidas: curtidasAtualizadas,
+            foiCurtido: usuarioId === usuario.id ? foiCurtida : prev.foiCurtido,
+          }));
+        }
+      });
+    })
+    .catch(err => console.error('Erro ao conectar ao SignalR:', err));
+
+  return () => connection.stop();
+}, [post, usuario]);
+
+
+  const compartilharPost = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    alert('Link do post copiado para a área de transferência!');
+  };
+useEffect(() => {
+  const bloquearScroll = (e) => {
+    e.preventDefault();
+  };
+
+  if (post) {
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('touchmove', bloquearScroll, { passive: false });
+    document.addEventListener('wheel', bloquearScroll, { passive: false });
+  }
+
+  return () => {
+    document.body.style.overflow = '';
+    document.removeEventListener('touchmove', bloquearScroll);
+    document.removeEventListener('wheel', bloquearScroll);
+  };
+}, [post]);
+
+  if (!post) return null;
+
   return (
-    <>
-      <div
-        className={`comentarios-modal ${isMobile ? 'mobile' : ''}`}
-        style={isMobile && modalHeight ? { height: modalHeight } : {}}
-      >
-        {isMobile && (
-          <div
-            className="drag-handle"
-            onTouchStart={onDragStart}
-            onMouseDown={onDragStart}
-            style={{
-              width: '40px',
-              height: '6px',
-              backgroundColor: '#ccc',
-              borderRadius: '3px',
-              margin: '8px auto',
-              cursor: 'grab',
-            }}
-          />
-        )}
+    
+    <div
+      className={`comentarios-modal ${isMobile ? 'mobile' : ''}`}
+      style={isMobile && modalHeight ? { height: modalHeight } : {}}
+    >
+      {isMobile && (
+        <div className="drag-handle" onTouchStart={onDragStart} onMouseDown={onDragStart} />
+      )}
 
-        {!isMobile && (
-          <div className="imagem-container">
-            {post.video ? (
-              <video src={post.video} className="imagem-post"
-                controls
-                autoPlay
-                muted
-                loop
-              />
-            ) : (
-              <img src={post.imagem} alt="Imagem do post" className="imagem-post" />
-            )}
+      {!isMobile && (
+        <div className="imagem-container">
+          {post.video ? (
+            <video src={post.video} className="imagem-post" controls autoPlay muted loop />
+          ) : (
+            <img src={post.imagem} alt="Imagem do post" className="imagem-post" />
+          )}
+        </div>
+      )}
+
+      <div className="comentarios-container">
+        <div className="comentarios-header">
+          <div className="autor-info">
+            <img src={post.autorImagem || 'https://via.placeholder.com/40'} alt={`Foto de ${post.autorNome}`} className="autor-imagem" />
+            <strong>{post.autorNome}</strong>
           </div>
-        )}
+          <button className="fechar-modals" onClick={fechar}>x</button>
+        </div>
 
-        <div className="comentarios-container">
-          <div className="comentarios-header">
-            <div className="autor-info">
-              <img
-                src={post.autorImagem || 'https://via.placeholder.com/40'}
-                alt={`Foto de perfil de ${post.autorNome}`}
-                className="autor-imagem"
-              />
-              <strong>{post.autorNome}</strong>
+        <div className="post-conteudo">
+          <p>{post.conteudo}</p>
+          {post.tags?.length > 0 && (
+            <p className="post-tags">
+              {post.tags.map((tag, idx) => (
+                <span key={idx}>#{tag.trim()} </span>
+              ))}
+            </p>
+          )}
+        </div>
+        <div className="comentarios-lista">
+          {comentarios.filter(Boolean).map((comentario) => (
+            <div key={comentario.id} className="comentario-item">
+              <a href={`/perfil/${comentario.autorId}`} target="_blank" rel="noopener noreferrer">
+                <img src={comentario.autorImagem} alt={`Foto de ${comentario.autorNome}`} className="comentario-avatar" />
+              </a>
+              <div className="comentario-conteudo">
+                <span className="comentario-autor">{comentario.autorNome}</span>
+                <span className="comentario-texto">{comentario.conteudo}</span>
+              </div>
             </div>
-            <button className="fechar-modal" onClick={fechar}>
-              x
-            </button>
-          </div>
+          ))}
+        </div>
+        {/* Botões de ação do POST */}
+ <div className="post-acoes">
+<button onClick={curtirPost} title="Curtir">
+  <Heart
+    size={20}
+    stroke={post.foiCurtido ? "red" : "black"}
+    strokeWidth={2}
+    fill={post.foiCurtido ? "red" : "none"}
+  />
+  <span>{post.curtidas || 0}</span>
+</button>
 
-          <div className="post-conteudo">
-            <p>{post.conteudo}</p>
-            {post.tags?.length > 0 && (
-              <p style={{ color: '#555' }}>
-                {post.tags.map((tag, idx) => (
-                  <span key={idx} style={{ marginRight: '5px' }}>
-                    #{tag.trim()}
-                  </span>
-                ))}
-              </p>
-            )}
-          </div>
+  <button onClick={compartilharPost} title="Compartilhar">
+    <Share2 size={20} stroke="black" strokeWidth={2} />
+  </button>
+</div>
 
-          <div className="comentarios-lista">
-            {comentariosState?.filter(Boolean).map((comentario, index) => {
-              const comentarioJaCurtiu = usuarioCurtidas?.includes(comentario.id);
-
-              return (
-                <div key={comentario.id || index} className="comentario-item">
-                  <a href={`/perfil/${comentario.autorId}`} className="comentario-avatar-link">
-                    <img
-                      src={
-                        comentario.autor?.imagem || comentario.autorImagem || 'https://via.placeholder.com/40'
-                      }
-                      alt={`Foto de ${comentario.autor?.nome_usuario || comentario.autorNome || 'Usuário'}`}
-                      className="comentario-avatar"
-                    />
-                  </a>
-
-                  <div className="comentario-conteudo">
-                    <div className="comentario-header">
-                      <span className="comentario-autor">{comentario.autorNome}</span>
-                    </div>
-                    <span className="comentario-texto">{comentario.conteudo}</span>
-
-                    <div className="botao-acao">
-                      <button
-                        className={`botao-acao ${comentarioJaCurtiu ? 'curtido' : ''}`}
-                        onClick={() => curtirPost(comentario.id)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill={comentarioJaCurtiu ? 'red' : 'none'}
-                          stroke={comentarioJaCurtiu ? 'red' : 'black'}
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20.84 4.61c-1.54-1.34-3.76-1.34-5.3 0L12 7.17l-3.54-2.56c-1.54-1.34-3.76-1.34-5.3 0-1.78 1.54-1.78 4.04 0 5.58L12 21.35l8.84-11.16c1.78-1.54 1.78-4.04 0-5.58z" />
-                        </svg>
-                        <span style={{ marginLeft: '6px' }}>{comentario.curtidas || 0}</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="comentarios-form">
-            <input
-              type="text"
-              placeholder="Adicione um comentário..."
-              value={comentarioTexto}
-              onChange={(e) => setComentarioTexto(e.target.value)}
-            />
-            <button onClick={comentar}>Enviar</button>
-          </div>
+        <div className="comentarios-form">
+          <input
+            type="text"
+            placeholder="Adicione um comentário..."
+            value={comentarioTexto}
+            onChange={(e) => setComentarioTexto(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && comentar()}
+          />
+          <button onClick={comentar}>Enviar</button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -23,8 +23,6 @@ function Home() {
   const [carregandoMais, setCarregandoMais] = useState(false);
   // Modal de comentários e seus dados
   const [modalComentarios, setModalComentarios] = useState(false);
-  const [comentarioTexto, setComentarioTexto] = useState('');
-  const [comentarios, setComentarios] = useState([]);
   const [postSelecionado, setPostSelecionado] = useState(null);
   // Controle de vídeo ativo no feed para autoplay/pausar
   const [videoAtivoId, setVideoAtivoId] = useState(null);
@@ -67,7 +65,9 @@ const [loadingFeed, setLoadingFeed] = useState(true);
       }
     }
   }, [navigate]);
-
+function abrirComentarios(post) {
+  setPostSelecionado(post);
+}
   // Quando usuario.id mudar, reset feed e busca primeira página
   useEffect(() => {
     if (usuario.id) {
@@ -286,69 +286,6 @@ async function curtirPost(postId) {
     return { sucesso: false };
   }
 }
-
-
-
-  // Abrir modal de comentários e carregar comentários do post
-  async function abrirComentarios(post) {
-    setPostSelecionado(post);
-    setComentarioTexto('');
-    setModalComentarios(true);
-
-    try {
-      const res = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`
-      );
-      const data = await res.json();
-
-      const comentariosComNomes = await Promise.all(
-        data.comentarios.map(async comentario => {
-          try {
-            const r = await fetch(
-              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`
-            );
-            const u = await r.json();
-            return { ...comentario, autorNome: u.nome || 'Usuário' };
-          } catch {
-            return { ...comentario, autorNome: 'Usuário' };
-          }
-        })
-      );
-
-      setComentarios(comentariosComNomes);
-    } catch (err) {
-      console.error('Erro ao carregar comentários:', err);
-    }
-  }
-
-  // Enviar comentário e atualizar modal e feed
-  async function comentar() {
-    if (!comentarioTexto.trim()) return;
-
-    const comentario = {
-      postId: postSelecionado.id,
-      autorId: usuario.id,
-      conteudo: comentarioTexto,
-    };
-
-    try {
-      await fetch(
-        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentar',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(comentario),
-        }
-      );
-
-      setComentarioTexto('');
-      abrirComentarios(postSelecionado); // Recarrega comentários
-      fetchFeed(1); // Atualiza feed (opcional, dependendo do seu backend)
-    } catch (err) {
-      console.error('Erro ao comentar:', err);
-    }
-  }
-
   // Buscar usuários pelo termo digitado
  async function buscarUsuarios(termo) {
   if (!termo.trim()) {
@@ -537,16 +474,15 @@ async function curtirPost(postId) {
 ) : (
   <ul>
     {posts.map(post => (
-      <FeedItem
-        key={post.id}
-        post={post}
-        usuario={usuario}
-        videoAtivoId={videoAtivoId}
-        curtirPost={curtirPost}
-        abrirComentarios={abrirComentarios}
-        irParaPerfil={irParaPerfil}
-        registerVideoRef={registerVideoRef}
-      />
+     <FeedItem
+  post={post}
+  usuario={usuario}
+  videoAtivoId={videoAtivoId}
+  registerVideoRef={registerVideoRef}
+  curtirPost={curtirPost}
+  abrirComentarios={abrirComentarios} // ✅ Aqui
+  irParaPerfil={irParaPerfil}
+/>
     ))}
   </ul>
 )}
@@ -561,17 +497,14 @@ async function curtirPost(postId) {
         )}
 
         {/* Modal de comentários */}
-        {modalComentarios && postSelecionado && (
-          <Comentario
-            post={postSelecionado}
-            comentarios={comentarios}
-            comentarioTexto={comentarioTexto}
-            setComentarioTexto={setComentarioTexto}
-            comentar={comentar}
-            fechar={() => setModalComentarios(false)}
-            usuario={usuario}
-          />
-        )}
+     {postSelecionado && (
+  <Comentario
+    post={postSelecionado}
+    usuario={usuario}
+    fechar={() => setPostSelecionado(null)}
+  />
+)}
+
       </div>
 
       {/* Lateral direita: busca e notificações */}
