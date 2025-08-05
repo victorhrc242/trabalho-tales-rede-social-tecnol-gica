@@ -640,3 +640,78 @@ textarea {
  
 }
 
+.ig-preview {
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 300px;
+  font-family: sans-serif;
+  color: #fff;
+  margin-top: 8px;
+  border: 1px solid #333;
+}
+
+.ig-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #2a2a2a;
+}
+
+.ig-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.ig-username {
+  font-weight: 600;
+  font-size: 0.85rem;
+  flex: 1;
+}
+
+.ig-verificado {
+  font-size: 0.8rem;
+  color: #00bfff;
+}
+
+/* Imagem */
+.ig-preview-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Vídeo */
+.ig-video-wrapper {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background-color: #000;
+}
+
+.ig-preview-video {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.ig-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+}
+
+.ig-caption {
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  color: #ccc;
+}
+

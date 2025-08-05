@@ -12,6 +12,10 @@
   align-items: center;
   gap: 10px;
 }
+.comentarios-container {
+  overflow-y: auto; /* já tem no seu CSS */
+  -webkit-overflow-scrolling: touch; /* para scroll suave no iOS */
+}
 
 .autor-imagem {
   width: 32px;
@@ -161,10 +165,10 @@
   background-color: #0056b3;
 }
 
-.fechar-modal {
+.fechar-modals {
   font-size: 28px;
-  background: transparent;
   border: none;
+  background: transparent;
   cursor: pointer;
   position: absolute;
   top: 10px;
@@ -212,9 +216,6 @@
 .botoes-post-comentario .botao-acao svg {
   margin-right: 6px;
 }
-
-
-
 
 /* === MOBILE === */
 @media (max-width: 768px) {
@@ -308,4 +309,25 @@
       transform: translateY(0%);
     }
   }
+}
+.post-acoes {
+  display: flex;
+  gap: 12px;
+  margin: -10px 0;
+}
+body.modal-aberto {
+  overflow: hidden;
+}
+
+.post-acoes button {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.post-acoes button:hover {
+  background: transparent;
 }
