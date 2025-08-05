@@ -38,6 +38,7 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const [abaSeguidoresAtiva, setAbaSeguidoresAtiva] = useState('seguidores');
   const [listaSeguidores, setListaSeguidores] = useState([]);
   const [listaSeguindo, setListaSeguindo] = useState([]);
+  const [modalSeguidoresData, setModalSeguidoresData] = useState([]);
   const [estaSeguindo, setEstaSeguindo] = useState(false);
   const [hoveringSeguindo, setHoveringSeguindo] = useState(false);
   const [imagemArquivo, setImagemArquivo] = useState(null);
@@ -55,7 +56,7 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const seguirUsuario = async () => {
     try {
       await axios.post(
-        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente',
+        "https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente",
         {
           usuario1: usuarioLogadoId,
           usuario2: userId,
@@ -70,14 +71,8 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
 
   const deseguirUsuario = async () => {
   try {
-    await axios.delete(
-      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/deseguir',
-      {
-         data: {
-      usuario1: usuarioLogadoId,
-      usuario2: userId
-      }
-    }
+    const { data } = await axios.delete(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/deseguir?usuario1=${userId}&usuario2=${usuarioLogadoId}`
     );
     setEstaSeguindo(false); // Atualiza estado para refletir que não está mais seguindo
   } catch (err) {
@@ -88,15 +83,66 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
 
 const carregarSeguidoresESeguindo = async () => {
   try {
-    const resSeguidores = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${usuarioLogadoId}`);
-    const seguidoresData = await resSeguidores.json();
-    setListaSeguidores(seguidoresData);
+    // 1. Fazendo as requisições para obter os arrays de seguidores e seguindo
+    const [resSeguidores, resSeguindo] = await Promise.all([
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`),
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`)
+    ]);
 
-    const resSeguindo = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuarioLogadoId}`);
-    const seguindoData = await resSeguindo.json();
-    setListaSeguindo(seguindoData);
+    console.log("📦 resSeguidores.data:", resSeguidores.data);
+    console.log("📦 resSeguindo.data:", resSeguindo.data);
+
+    const seguidoresArray = Array.isArray(resSeguidores.data)
+      ? resSeguidores.data
+      : resSeguidores.data.seguidores || resSeguidores.data.usuarios || [];
+
+    const seguindoArray = Array.isArray(resSeguindo.data)
+      ? resSeguindo.data
+      : resSeguindo.data.seguindo || resSeguindo.data.usuarios || [];
+
+    console.log("📌 seguidoresArray:", seguidoresArray);
+    console.log("📌 seguindoArray:", seguindoArray);
+
+    // 2. Extrair IDs válidos
+    const seguidoresIds = seguidoresArray
+      .map((item) => item.usuario1)
+      .filter((id) => id !== undefined && id !== null);
+
+    const seguindoIds = seguindoArray
+      .map((item) => item.usuario2)
+      .filter((id) => id !== undefined && id !== null);
+
+    // 3. Função para buscar os dados completos do usuário (nome e imagem)
+    const buscarDadosUsuario = async (id) => {
+      try {
+        const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${id}`);
+        return {
+          nome_usuario: res.data.nome_usuario,
+          imagem: res.data.imagem,
+          id: res.data.id
+        };
+      } catch (err) {
+        console.warn(`❌ Erro ao buscar dados do usuário ${id}:`, err);
+        return null;
+      }
+    };
+
+    // 4. Buscar dados de todos os seguidores e seguidos individualmente
+    const dadosSeguidores = (await Promise.all(
+      seguidoresIds.map((id) => buscarDadosUsuario(id))
+    )).filter(Boolean); // Remove valores nulos
+
+    const dadosSeguindo = (await Promise.all(
+      seguindoIds.map((id) => buscarDadosUsuario(id))
+    )).filter(Boolean);
+
+    // 5. Atualizando os estados
+    setListaSeguidores(dadosSeguidores);
+    setListaSeguindo(dadosSeguindo);
+    setModalSeguidoresData(dadosSeguidores);
+
   } catch (error) {
-    console.error('Erro ao carregar seguidores/seguindo:', error);
+    console.error("❌ Erro ao carregar seguidores/seguindo:", error);
   }
 };
 
@@ -387,13 +433,19 @@ const cancelarLogout = () => {
     <div className="infor-pessoais-desktop">
       <div className='infor-seguidores-desktop'>
       <p><strong><button className="botao-link" onClick={() => {
-            setMostrarModalSeguidores(true);
             carregarSeguidoresESeguindo();
+            setAbaSeguidoresAtiva('seguidores');
+            setMostrarModalSeguidores(true);
           }}>Seguidores:
         </button>
       </strong> {seguidoresInfo.seguidores}
     </p>
-    <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+    <p><strong><button className="botao-link" onClick={() => {
+            carregarSeguidoresESeguindo();
+            setAbaSeguidoresAtiva('seguindo');
+            setMostrarModalSeguidores(true);
+          }}>Seguindo:
+        </button></strong> {seguidoresInfo.seguindo}</p>
   </div>
       {usuario.biografia && (
     <p className="biografia">{usuario.biografia}</p>
@@ -684,8 +736,15 @@ const cancelarLogout = () => {
 )}
 
 {mostrarModalSeguidores && (
-  <div className="modal-overlay">
-    <div className="modal-box">
+  <div
+    className="modal-overlay"
+    onClick={(e) => {
+      if (e.target.classList.contains('modal-overlay')) {
+        setMostrarModalSeguidores(false);
+      }
+    }}
+  >
+    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
       <div className="modal-header">
         <button
           className={abaSeguidoresAtiva === 'seguidores' ? 'ativo' : ''}
@@ -709,20 +768,36 @@ const cancelarLogout = () => {
 
       <div className="modal-conteudo">
         {abaSeguidoresAtiva === 'seguidores' ? (
-          listaSeguidores.length > 0 ? (
+          Array.isArray(listaSeguidores) && listaSeguidores.length > 0 ? (
             listaSeguidores.map((user, i) => (
               <div key={i} className="usuario-item">
-                <p>{user.nome}</p>
+                <Link className='botao-link' to={`/perfil/${user.id}`} onClick={() => setMostrarModalSeguidores(false)}
+                 style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit' }}>
+                  <img
+                    src={user.imagem || '/img/placeholder.png'}
+                    alt={`Foto de ${user.nome_usuario}`}
+                    className="foto-perfil-seguidores"
+                  />
+                  <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+                </Link>
               </div>
             ))
           ) : (
             <p>Nenhum seguidor encontrado.</p>
           )
         ) : (
-          listaSeguindo.length > 0 ? (
+          Array.isArray(listaSeguindo) && listaSeguindo.length > 0 ? (
             listaSeguindo.map((user, i) => (
               <div key={i} className="usuario-item">
-                <p>{user.nome}</p>
+                <Link className='botao-link' to={`/perfil/${user.id}`} onClick={() => setMostrarModalSeguidores(false)}
+                 style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit' }}>
+                  <img
+                    src={user.imagem || '/img/placeholder.png'}
+                    alt={`Foto de ${user.nome_usuario}`}
+                    className="foto-perfil-seguidores"
+                  />
+                  <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+                </Link>
               </div>
             ))
           ) : (
