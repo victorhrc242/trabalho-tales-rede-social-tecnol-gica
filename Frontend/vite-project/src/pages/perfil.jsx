@@ -105,11 +105,11 @@ const carregarSeguidoresESeguindo = async () => {
 
     // 2. Extrair IDs válidos
     const seguidoresIds = seguidoresArray
-      .map((item) => item.userId)
+      .map((item) => item.usuario1)
       .filter((id) => id !== undefined && id !== null);
 
     const seguindoIds = seguindoArray
-      .map((item) => item.userId)
+      .map((item) => item.usuario2)
       .filter((id) => id !== undefined && id !== null);
 
     // 3. Função para buscar os dados completos do usuário (nome e imagem)
@@ -736,8 +736,15 @@ const cancelarLogout = () => {
 )}
 
 {mostrarModalSeguidores && (
-  <div className="modal-overlay">
-    <div className="modal-box">
+  <div
+    className="modal-overlay"
+    onClick={(e) => {
+      if (e.target.classList.contains('modal-overlay')) {
+        setMostrarModalSeguidores(false);
+      }
+    }}
+  >
+    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
       <div className="modal-header">
         <button
           className={abaSeguidoresAtiva === 'seguidores' ? 'ativo' : ''}
