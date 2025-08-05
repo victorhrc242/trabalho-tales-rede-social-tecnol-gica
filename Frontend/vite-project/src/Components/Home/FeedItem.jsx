@@ -77,6 +77,21 @@ useEffect(() => {
 }
 
 
+const [toast, setToast] = useState(null);
+function Toast({ mensagem, tipo = 'sucesso', onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000); // desaparece após 3s
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className={`toast ${tipo}`} onClick={onClose}>
+      {mensagem}
+    </div>
+  );
+}
+
+
 const enviarMensagem = async () => {
   const corpo = {
   idRemetente: usuario.id,
@@ -97,15 +112,17 @@ const enviarMensagem = async () => {
 
     const data = await response.json();
     if (data.sucesso) {
-      alert("Mensagem enviada!");
-      setModalAberto(false);
-      setMensagem("");
-      setDestinatarioId("");
-    } else {
-      alert("Erro: " + data.mensagem);
-    }
+  setToast({ mensagem: "Enviada com sucesso!", tipo: "sucesso" });
+  setModalAberto(false);
+  setMensagem("");
+  setDestinatarioId("");
+} else {
+  setToast({ mensagem: "Erro: " + data.mensagem, tipo: "erro" });
+}
+
   } catch (erro) {
-    alert("Erro ao enviar: " + erro.message);
+  setToast({ mensagem: "Erro ao enviar: " + erro.message, tipo: "erro" });
+
   }
 };
 
@@ -155,6 +172,18 @@ async function handleCurtir() {
             {post.autorNome}
           </span>
         </div>
+
+
+        {/* menssagem de alerta  */}
+
+        {toast && (
+  <Toast
+    mensagem={toast.mensagem}
+    tipo={toast.tipo}
+    onClose={() => setToast(null)}
+  />
+)}
+
 
         {/* Botão e menu de opções */}
         <div style={{ position: 'relative' }} ref={opcoesRef}>
@@ -318,7 +347,8 @@ async function handleCurtir() {
       {destinatarioId && (
         <>
           <textarea
-            placeholder="Escreva uma mensagem (opcional)"
+            className="textarea-mensagem"
+            placeholder="Escreva uma mensagem..."
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             style={{ width: '100%', marginBottom: 10 }}
