@@ -38,6 +38,7 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const [abaSeguidoresAtiva, setAbaSeguidoresAtiva] = useState('seguidores');
   const [listaSeguidores, setListaSeguidores] = useState([]);
   const [listaSeguindo, setListaSeguindo] = useState([]);
+  const [modalSeguidoresData, setModalSeguidoresData] = useState([]);
   const [estaSeguindo, setEstaSeguindo] = useState(false);
   const [hoveringSeguindo, setHoveringSeguindo] = useState(false);
   const [imagemArquivo, setImagemArquivo] = useState(null);
@@ -82,44 +83,66 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
 
 const carregarSeguidoresESeguindo = async () => {
   try {
-    // Fazendo as requisições para obter seguidores e seguindo
+    // 1. Fazendo as requisições para obter os arrays de seguidores e seguindo
     const [resSeguidores, resSeguindo] = await Promise.all([
-      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${usuarioLogadoId}`),
-      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuarioLogadoId}`)
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`),
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`)
     ]);
 
-    const seguidoresIds = resSeguidores.data.map((item) => item.userId);
-    const seguindoIds = resSeguindo.data.map((item) => item.userId);
+    console.log("📦 resSeguidores.data:", resSeguidores.data);
+    console.log("📦 resSeguindo.data:", resSeguindo.data);
 
-    // Função para buscar os dados completos do usuário (nome e foto de perfil)
-    const buscarDadosUsuario = async (userId) => {
-      const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`);
-      return {
-        nome: res.data.nome,
-        imagem: res.data.imagem,  // Supondo que 'fotoPerfil' seja o campo da imagem
-        id: res.data.id
-      };
+    const seguidoresArray = Array.isArray(resSeguidores.data)
+      ? resSeguidores.data
+      : resSeguidores.data.seguidores || resSeguidores.data.usuarios || [];
+
+    const seguindoArray = Array.isArray(resSeguindo.data)
+      ? resSeguindo.data
+      : resSeguindo.data.seguindo || resSeguindo.data.usuarios || [];
+
+    console.log("📌 seguidoresArray:", seguidoresArray);
+    console.log("📌 seguindoArray:", seguindoArray);
+
+    // 2. Extrair IDs válidos
+    const seguidoresIds = seguidoresArray
+      .map((item) => item.userId)
+      .filter((id) => id !== undefined && id !== null);
+
+    const seguindoIds = seguindoArray
+      .map((item) => item.userId)
+      .filter((id) => id !== undefined && id !== null);
+
+    // 3. Função para buscar os dados completos do usuário (nome e imagem)
+    const buscarDadosUsuario = async (id) => {
+      try {
+        const res = await axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${id}`);
+        return {
+          nome_usuario: res.data.nome_usuario,
+          imagem: res.data.imagem,
+          id: res.data.id
+        };
+      } catch (err) {
+        console.warn(`❌ Erro ao buscar dados do usuário ${id}:`, err);
+        return null;
+      }
     };
 
-    // Buscando dados dos seguidores
-    const dadosSeguidores = await Promise.all(
-      seguidoresIds.map((userId) => buscarDadosUsuario(userId))
-    );
+    // 4. Buscar dados de todos os seguidores e seguidos individualmente
+    const dadosSeguidores = (await Promise.all(
+      seguidoresIds.map((id) => buscarDadosUsuario(id))
+    )).filter(Boolean); // Remove valores nulos
 
-    // Buscando dados de quem o usuário está seguindo
-    const dadosSeguindo = await Promise.all(
-      seguindoIds.map((userId) => buscarDadosUsuario(userId))
-    );
+    const dadosSeguindo = (await Promise.all(
+      seguindoIds.map((id) => buscarDadosUsuario(id))
+    )).filter(Boolean);
 
-    // Atualizando os estados com os dados completos (nome, foto)
+    // 5. Atualizando os estados
     setListaSeguidores(dadosSeguidores);
     setListaSeguindo(dadosSeguindo);
-
-    // Agora podemos passar esses dados para o Modal
-    setModalSeguidoresData(dadosSeguidores);  // Aqui você vai passar os dados para o modal, ajustando conforme sua lógica
+    setModalSeguidoresData(dadosSeguidores);
 
   } catch (error) {
-    console.error("Erro ao carregar seguidores/seguindo:", error);
+    console.error("❌ Erro ao carregar seguidores/seguindo:", error);
   }
 };
 
@@ -410,13 +433,18 @@ const cancelarLogout = () => {
     <div className="infor-pessoais-desktop">
       <div className='infor-seguidores-desktop'>
       <p><strong><button className="botao-link" onClick={() => {
-            setMostrarModalSeguidores(true);
             carregarSeguidoresESeguindo();
+            setMostrarModalSeguidores(true);
           }}>Seguidores:
         </button>
       </strong> {seguidoresInfo.seguidores}
     </p>
-    <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+    <p><strong><button className="botao-link" onClick={() => {
+            carregarSeguidoresESeguindo();
+            setAbaSeguidoresAtiva('seguindo');
+            setMostrarModalSeguidores(true);
+          }}>Seguindo:
+        </button></strong> {seguidoresInfo.seguindo}</p>
   </div>
       {usuario.biografia && (
     <p className="biografia">{usuario.biografia}</p>
@@ -732,30 +760,30 @@ const cancelarLogout = () => {
 
       <div className="modal-conteudo">
         {abaSeguidoresAtiva === 'seguidores' ? (
-          listaSeguidores.length > 0 ? (
+          Array.isArray(listaSeguidores) && listaSeguidores.length > 0 ? (
             listaSeguidores.map((user, i) => (
               <div key={i} className="usuario-item">
                 <img
-                  src={user.imagemPerfil || '/img/placeholder.png'}
-                  alt={`Foto de ${user.nome}`}
+                  src={user.imagem || '/img/placeholder.png'}
+                  alt={`Foto de ${user.nome_usuario}`}
                   className="foto-perfil-seguidores"
                 />
-                <p className="nome-usuario-seguidores">{user.nome}</p>
+                <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
               </div>
             ))
           ) : (
             <p>Nenhum seguidor encontrado.</p>
           )
         ) : (
-          listaSeguindo.length > 0 ? (
+          Array.isArray(listaSeguindo) && listaSeguindo.length > 0 ? (
             listaSeguindo.map((user, i) => (
               <div key={i} className="usuario-item">
                 <img
-                  src={user.imagemPerfil || '/img/placeholder.png'}
-                  alt={`Foto de ${user.nome}`}
+                  src={user.imagem || '/img/placeholder.png'}
+                  alt={`Foto de ${user.nome_usuario}`}
                   className="foto-perfil-seguidores"
                 />
-                <p className="nome-usuario-seguidores">{user.nome}</p>
+                <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
               </div>
             ))
           ) : (
