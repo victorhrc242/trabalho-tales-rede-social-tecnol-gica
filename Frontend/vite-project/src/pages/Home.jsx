@@ -504,7 +504,6 @@ async function curtirPost(postId) {
     fechar={() => setPostSelecionado(null)}
   />
 )}
-
       </div>
 
       {/* Lateral direita: busca e notificações */}

@@ -1,3 +1,46 @@
+.grid-item img,
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Se quiser que corte (padrão) */
+  /* object-fit: contain; */ /* Se quiser que mostre tudo, sem corte */
+  border-radius: 8px;
+}
+.video-wrapper {
+  position: relative;
+}
+
+.video-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: white;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 4px;
+  border-radius: 50%;
+}
+
+/* Destaque para vídeos grandes */
+.grid-item.destaque {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+@media (max-width: 768px) {
+  .grid-item.destaque {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .video-icon {
+    top: 5px;
+    right: 5px;
+    font-size: 12px;
+  }
+}
+
+
 /* Garante que o conteúdo respeite o espaço da navbar lateral */
 body, html {
   margin: 0;

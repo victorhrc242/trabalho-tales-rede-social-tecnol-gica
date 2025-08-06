@@ -1,416 +1,210 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../Explore/css/explore.css';
 import Comentario from '../../Components/Comentario.jsx';
+import '../Explore/css/explore.css';
+import { FaVideo } from 'react-icons/fa';
 
 function Explore({ usuarioLogado }) {
   const navigate = useNavigate();
-const usuario = JSON.parse(localStorage.getItem('usuario'));
-const usuarioPrincipalId = usuario?.id;
-  const POSTS_BATCH_SIZE = 6;
+  const usuarioId = usuarioLogado?.id;
+  const videoRefs = useRef({});
+  const API = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api';
 
-  const [allPosts, setAllPosts] = useState([]);
-  const [displayedPosts, setDisplayedPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [erro, setErro] = useState(null);
-
   const [buscaTexto, setBuscaTexto] = useState('');
   const [resultadosUsuarios, setResultadosUsuarios] = useState([]);
-  const [erroBuscaUsuarios, setErroBuscaUsuarios] = useState(null);
+  const [seguindoUsuario, setSeguindoUsuario] = useState({});
   const [buscandoUsuarios, setBuscandoUsuarios] = useState(false);
-
+  const [erroBuscaUsuarios, setErroBuscaUsuarios] = useState(null);
   const [postSelecionado, setPostSelecionado] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [comentarioTexto, setComentarioTexto] = useState('');
 
-  const videoRefs = useRef({});
-  const [videoAtivoId, setVideoAtivoId] = useState(null);
+  const irParaPerfil = (nome) => navigate(`/perfil/${nome}`);
 
-  // Aqui: estado para quem você já segue
-  // Inicialize como um objeto: { usuarioId: true }
-const [seguindoUsuario, setSeguindoUsuario] = useState({});
-
-
-  const LS_POSTS_KEY = 'explore_posts_cache';
-
-  const addAuthorData = async posts => {
-    return Promise.all(
-      posts.map(async post => {
-        try {
-          const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${post.autorId}`);
-          const data = await res.json();
-          return {
-            ...post,
-            autorNome: data.nome_usuario || 'Usuário',
-            autorImagem: data.imagem || null,
-          };
-        } catch {
-          return {
-            ...post,
-            autorNome: 'Usuário',
-            autorImagem: null,
-          };
-        }
-      })
-    );
+  const fetchJson = async (url) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Erro');
+    return res.json();
   };
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const cached = localStorage.getItem(LS_POSTS_KEY);
-        if (cached) {
-          setDisplayedPosts(JSON.parse(cached));
-        }
-      } catch {
-        localStorage.removeItem(LS_POSTS_KEY);
-      }
-
-      try {
-        const resp = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/feed');
-        const data = await resp.json();
-
-        if (!resp.ok) throw new Error(data.erro || 'Erro ao carregar feed');
-
-        const postsComAutores = await addAuthorData(data);
-        setAllPosts(postsComAutores);
-
-        setDisplayedPosts(prev =>
-          prev.length === 0 ? postsComAutores.slice(0, POSTS_BATCH_SIZE) : prev
-        );
-      } catch (e) {
-        console.error(e);
-        setErro(e.message);
-      }
-    };
-
-    fetchPosts();
-
-    // Opcional: buscar quem você já segue ao montar o componente,
-    // para isso, você precisaria de uma API que retorne os ids seguidos.
-    // Exemplo simples:
-    // fetch('API_PARA_LISTAR_SEGUIDOS')
-    //   .then(res => res.json())
-    //   .then(data => setSeguindoUsuario(data.reduce((acc, u) => ({ ...acc, [u.id]: true }), {})))
-    //   .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (displayedPosts.length) {
-      localStorage.setItem(LS_POSTS_KEY, JSON.stringify(displayedPosts));
+  const fetchAutorData = async (id) => {
+    try {
+      const data = await fetchJson(`${API}/auth/usuario/${id}`);
+      return { nome: data.nome_usuario || 'Usuário', imagem: data.imagem || null };
+    } catch {
+      return { nome: 'Usuário', imagem: null };
     }
-  }, [displayedPosts]);
-
-  const loadMorePosts = () => {
-    setDisplayedPosts(prev => {
-      const nextBatch = allPosts.slice(prev.length, prev.length + POSTS_BATCH_SIZE);
-      const merged = [...prev, ...nextBatch];
-
-      const uniquePosts = Array.from(new Map(merged.map(p => [p.id, p])).values());
-
-      return uniquePosts;
-    });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.innerHeight + window.scrollY;
-      const nearBottom = document.documentElement.offsetHeight - 300;
-      if (scrollPosition >= nearBottom) {
-        loadMorePosts();
-      }
-    };
+  const enrichWithAutor = async (items) => {
+    return Promise.all(items.map(async (item) => {
+      const autor = await fetchAutorData(item.autorId);
+      return { ...item, autorNome: autor.nome, autorImagem: autor.imagem };
+    }));
+  };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [allPosts]);
+  const fetchPosts = async () => {
+    try {
+      const data = await fetchJson(`${API}/Feed/feed`);
+      const enriched = await enrichWithAutor(data);
+      // Marcar aleatoriamente até 3 posts como destaque
+      const indicesAleatorios = enriched
+        .map((_, i) => i)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3);
 
-  useEffect(() => {
-    const ids = displayedPosts.map(p => p.id);
-    const duplicados = ids.filter((id, i) => ids.indexOf(id) !== i);
-    if (duplicados.length > 0) {
-      console.warn('⚠️ IDs duplicados detectados:', duplicados);
+      const finalPosts = enriched.map((post, i) => ({
+        ...post,
+        destaque: indicesAleatorios.includes(i),
+      }));
+      setPosts(finalPosts);
+    } catch (e) {
+      setErro(e.message);
     }
-  }, [displayedPosts]);
+  };
 
-  const abrirComentarios = async post => {
-  setPostSelecionado(post);
-  try {
-    const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
-    const data = await resp.json();
-
-    if (resp.ok && Array.isArray(data)) {
-      // Para cada comentário, buscar os dados do autor
-      const comentariosComAutor = await Promise.all(
-        data.map(async comentario => {
-          try {
-            const resAutor = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
-            const autorData = await resAutor.json();
-
-            return {
-              ...comentario,
-              autorNome: autorData.nome_usuario || 'Usuário',
-              autorImagem: autorData.imagem || null,
-            };
-          } catch {
-            return {
-              ...comentario,
-              autorNome: 'Usuário',
-              autorImagem: null,
-            };
-          }
-        })
-      );
-
-      setComentarios(comentariosComAutor);
-    } else {
+  const abrirComentarios = async (post) => {
+    setPostSelecionado(post);
+    try {
+      const data = await fetchJson(`${API}/Comentario/comentarios/${post.id}`);
+      const enriched = await enrichWithAutor(data);
+      setComentarios(enriched);
+    } catch {
       setComentarios([]);
     }
-  } catch {
-    setComentarios([]);
-  }
-};
-
+  };
 
   const comentar = async () => {
     if (!comentarioTexto.trim()) return;
-
     try {
-      const resp = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/comentarios/${postSelecionado.id}`, {
+      const res = await fetch(`${API}/Feed/comentarios/${postSelecionado.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conteudo: comentarioTexto }),
       });
-      const novo = await resp.json();
-      if (resp.ok) {
-        setComentarios(prev => [...prev, novo]);
+
+      if (res.ok) {
+        const novo = await res.json();
+        const autor = await fetchAutorData(novo.autorId);
+        setComentarios(prev => [...prev, { ...novo, autorNome: autor.nome, autorImagem: autor.imagem }]);
         setComentarioTexto('');
       }
-    } catch (e) {
-      console.error(e);
-    }
+    } catch {}
   };
 
-  const fecharComentarios = () => {
-    setPostSelecionado(null);
-    setComentarios([]);
-    setComentarioTexto('');
-  };
-
-  const registerVideoRef = (id, node) => {
-    if (node) videoRefs.current[id] = node;
-  };
-
-  useEffect(() => {
-    if (!displayedPosts.length) return;
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          const video = entry.target;
-          const id = video.dataset.postid;
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            video.play().catch(() => {});
-            setVideoAtivoId(id);
-          } else {
-            video.pause();
-            if (id === videoAtivoId) setVideoAtivoId(null);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    displayedPosts.forEach(post => {
-      if (post.video && videoRefs.current[post.id]) {
-        observer.observe(videoRefs.current[post.id]);
-      }
-    });
-
-    return () => {
-      displayedPosts.forEach(post => {
-        if (post.video && videoRefs.current[post.id]) {
-          observer.unobserve(videoRefs.current[post.id]);
-        }
-      });
-    };
-  }, [displayedPosts, videoAtivoId]);
-
- const buscarUsuarios = async texto => {
-  if (!texto.trim()) {
-    setResultadosUsuarios([]);
-    setErroBuscaUsuarios(null);
-    setSeguindoUsuario({});
-    return;
-  }
-
-  setBuscandoUsuarios(true);
-  setErroBuscaUsuarios(null);
-
-  try {
-    const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
-    const data = await response.json();
-
-  if (response.ok && Array.isArray(data)) {
-  setResultadosUsuarios(data);
-
-  // Opcional: buscar se segue cada um
-  for (const usuario of data) {
-    const seguirResp = await fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue?usuario1=${usuarioPrincipalId}&usuario2=${usuario.id}`
-    );
-    const seguirData = await seguirResp.json();
-
-    setSeguindoUsuario(prev => ({
-      ...prev,
-      [usuario.id]: seguirResp.ok && seguirData.estaSeguindo,
-    }));
-  }
-}
- else {
+  const buscarUsuarios = async (texto) => {
+    if (!texto.trim()) {
       setResultadosUsuarios([]);
-      setErroBuscaUsuarios('Usuário não encontrado.');
-      setSeguindoUsuario({});
+      setErroBuscaUsuarios(null);
+      return;
     }
-  } catch {
-    setErroBuscaUsuarios('Erro na comunicação com o servidor.');
-    setResultadosUsuarios([]);
-    setSeguindoUsuario({});
-  } finally {
-    setBuscandoUsuarios(false);
-  }
-};
 
+    setBuscandoUsuarios(true);
+    try {
+      const data = await fetchJson(`${API}/auth/buscar-por-nome/${encodeURIComponent(texto)}`);
+      setResultadosUsuarios(data);
+
+      const status = {};
+      await Promise.all(data.map(async (user) => {
+        try {
+          const followData = await fetchJson(`${API}/Amizades/segue?usuario1=${usuarioId}&usuario2=${user.id}`);
+          status[user.id] = followData.estaSeguindo;
+        } catch {
+          status[user.id] = false;
+        }
+      }));
+
+      setSeguindoUsuario(status);
+    } catch {
+      setErroBuscaUsuarios('Erro ao buscar usuários.');
+      setResultadosUsuarios([]);
+    } finally {
+      setBuscandoUsuarios(false);
+    }
+  };
+
+  const seguirUsuario = async (id) => {
+    try {
+      const res = await fetch(`${API}/Amizades/solicitar-e-aceitar-automaticamente`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario1: usuarioId, usuario2: id }),
+      });
+      if (res.ok) setSeguindoUsuario(prev => ({ ...prev, [id]: true }));
+    } catch {}
+  };
 
   useEffect(() => {
-    const delay = setTimeout(() => {
-      buscarUsuarios(buscaTexto);
-    }, 400);
-
+    const delay = setTimeout(() => buscarUsuarios(buscaTexto), 400);
     return () => clearTimeout(delay);
   }, [buscaTexto]);
 
-  const irParaPerfil = nomeUsuario => {
-    navigate(`/perfil/${nomeUsuario}`);
-  };
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
- const seguirUsuario = async usuarioIdParaSeguir => {
-  try {
-    const resp = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        usuario1: usuarioPrincipalId,
-        usuario2: usuarioIdParaSeguir,
-      }),
-    });
-
-    if (resp.ok) {
-      setSeguindoUsuario(prev => ({
-        ...prev,
-        [usuarioIdParaSeguir]: true,
-      }));
-    } else {
-      console.error('Erro ao seguir usuário');
-    }
-  } catch (error) {
-    console.error('Erro na requisição:', error);
-  }
-};
+  const handleVideoMouseEnter = (id) => videoRefs.current[id]?.play().catch(() => {});
+  const handleVideoMouseLeave = (id) => videoRefs.current[id]?.pause();
 
   return (
     <div className="explore-page">
-      <div style={{ marginBottom: '20px' }}>
-       <input
+      <input
         className="barra-pesquisa"
-       type="text"  //esta impedindo de arredondar as bordas
+        type="text"
         placeholder="Buscar usuários pelo nome..."
         value={buscaTexto}
         onChange={e => setBuscaTexto(e.target.value)}
-        style={{borderRadius: '15px'}}
       />
 
-        {buscandoUsuarios && <p></p>}
-        {erroBuscaUsuarios && <p style={{ color: 'red' }}>{erroBuscaUsuarios}</p>}
+      {erroBuscaUsuarios && <p className="erro">{erroBuscaUsuarios}</p>}
 
-        {resultadosUsuarios.length > 0 && (
-          <ul
-            style={{
-              listStyle: 'none',
-              padding: 0,
-              marginTop: '8px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-            }}
-          >
-            {resultadosUsuarios.map(user => (
-              <li
-                key={user.id}
-                style={{
-                  padding: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  borderBottom: '1px solid #eee',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div
-                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-                  onClick={() => irParaPerfil(user.nome_usuario)}
-                >
-                  <img
-                    src={user.imagem || 'https://via.placeholder.com/40'}
-                    alt={user.nome_usuario}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                  <span>{user.nome_usuario}</span>
-                </div>
+      {resultadosUsuarios.length > 0 && (
+        <ul className="usuarios-resultado">
+          {resultadosUsuarios.map(user => (
+            <li key={user.id}>
+              <div onClick={() => irParaPerfil(user.nome_usuario)}>
+                <img src={user.imagem || 'https://via.placeholder.com/40'} alt={user.nome_usuario} />
+                <span>{user.nome_usuario}</span>
+              </div>
+              {!seguindoUsuario[user.id] ? (
+                <button onClick={() => seguirUsuario(user.id)}>Seguir</button>
+              ) : (
+                <span>Seguindo</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
 
-               {!seguindoUsuario[user.id] ? (
-  <button onClick={() => seguirUsuario(user.id)}>Seguir</button>
-) : (
-  <span>Seguindo</span>
-)}
-
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && <p className="erro">{erro}</p>}
 
       <div className="explore-grid">
-        {displayedPosts.map((post, index) => {
-          const isVideo = Boolean(post.video);
-          return (
-            <div
-              key={`${post.id}-${index}`} // Fallback para garantir unicidade mesmo que algum id se repita
-              className={`grid-item ${isVideo ? 'video' : ''}`}
-              onClick={() => abrirComentarios(post)}
-              style={{ cursor: 'pointer' }}
-            >
-              {isVideo ? (
+        {posts.map(post => (
+          <div
+            key={post.id}
+            className={`grid-item ${post.video ? 'video' : ''} ${post.destaque ? 'destaque' : ''}`}
+            onClick={() => abrirComentarios(post)}
+          >
+            {post.video ? (
+              <div className="video-wrapper">
                 <video
                   src={post.video}
                   muted
                   loop
                   playsInline
-                  data-postid={post.id}
-                  ref={node => registerVideoRef(post.id, node)}
-                  style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                  ref={node => (videoRefs.current[post.id] = node)}
+                  onMouseEnter={() => handleVideoMouseEnter(post.id)}
+                  onMouseLeave={() => handleVideoMouseLeave(post.id)}
                 />
-              ) : (
-                <img
-                  src={post.imagem}
-                  alt={`Post de ${post.autorNome}`}
-                  style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
-                />
-              )}
-            </div>
-          );
-        })}
+                <span className="video-icon"><FaVideo /></span>
+              </div>
+            ) : (
+              <img src={post.imagem} alt={`Post de ${post.autorNome}`} className="post-img" />
+            )}
+          </div>
+        ))}
       </div>
 
       {postSelecionado && (
@@ -420,7 +214,11 @@ const [seguindoUsuario, setSeguindoUsuario] = useState({});
           comentarioTexto={comentarioTexto}
           setComentarioTexto={setComentarioTexto}
           comentar={comentar}
-          fechar={fecharComentarios}
+          fechar={() => {
+            setPostSelecionado(null);
+            setComentarios([]);
+            setComentarioTexto('');
+          }}
         />
       )}
     </div>
