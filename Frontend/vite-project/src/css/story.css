@@ -82,125 +82,6 @@
 
 /*------------------------------------------------------ Modal de story -------------------------------------------------*/
 
-/* Modal Overlay - fundo preto sólido, ocupa a tela toda, sem scroll */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #000; /* fundo preto sólido */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  overflow: hidden; /* evita scroll */
-}
-
-/* Conteúdo do modal - centralizado e tamanho máximo */
-.modal-content {
-  position: relative;
-  max-width: 420px;
-  width: 90vw;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;  /* Sem scroll interno */
-  background: transparent; /* Remove fundo branco */
-  padding: 0; /* Remove padding */
-  margin: 0;  /* Remove margin */
-  box-shadow: none; /* Remove sombras se houver */
-}
-
-/* Imagem/vídeo do story - ocupa o máximo possível dentro do modal */
-.modal-story {
-  max-width: 100%;
-  max-height: 80vh;
-  border-radius: 12px;
-  object-fit: contain;
-  user-select: none;
-  pointer-events: none;
-  background: transparent; /* Certifica fundo transparente */
-  display: block; /* Remove inline gap */
-}
-.modal-content * {
-  background: transparent !important;
-}
-/* Barra de progresso no topo */
-.modal-progress {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  right: 15px;
-  height: 4px;
-  display: flex;
-  gap: 4px;
-  z-index: 20;
-}
-
-/* Cada barra individual (1 por story do usuário) */
-.modal-progress-bar {
-  flex: 1;
-  background-color: rgba(255, 255, 255, 0.25);
-  border-radius: 2px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Barra preenchida animada */
-.modal-progress-bar-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%;
-  background-color: white;
-  transition: width linear;
-  will-change: width;
-}
-
-/* Botões invisíveis para navegar clicando na lateral */
-.modal-navegacao {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  z-index: 15;
-}
-
-.modal-navegacao button {
-  flex: 1;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.modal-navegacao button:hover {
-  opacity: 0.15;
-  background-color: #fff;
-  border-radius: 12px;
-}
-
-/* Botão fechar */
-.fechar {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: transparent;
-  color: white;
-  font-size: 28px;
-  border: none;
-  cursor: pointer;
-  z-index: 25;
-  user-select: none;
-}
 /* Overlay do modal: fundo escuro */
 .modal-overlay {
   position: fixed;
@@ -208,7 +89,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.9); /* fundo escuro full screen */
+  background-color: rgba(0, 0, 0, 0.945); /* fundo escuro full screen */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -216,12 +97,12 @@
   overflow: hidden;
 }
 
+/* Conteúdo do modal */
 .modal-content {
+  background-color: rgba(0, 0, 0, 0.8);
   position: relative;
-  max-width: 420px;       /* limita a largura do conteúdo */
-  width: 90vw;            /* mas responsivo */
-  max-height: 90vh;       /* limita altura para caber na tela */
-  background: transparent; /* fundo transparente, sem branco */
+  width: 420px;   /* largura fixa */
+  height: 640px;  /* altura fixa */
   padding: 0;
   margin: 0;
   border-radius: 15px;
@@ -229,8 +110,26 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  transition: background-color 0.5s ease;
 }
 
+/* Zonas invisíveis para clique nas laterais */
+.nav-zona {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  cursor: pointer;
+  z-index: 10;
+}
+.nav-zona.esquerda {
+  left: 0;
+}
+.nav-zona.direita {
+  right: 0;
+}
+
+/* Imagem/vídeo do story */
 .modal-story {
   max-width: 100%;
   max-height: 100%;
@@ -242,80 +141,50 @@
   display: block;
 }
 
-
-/* Zonas invisíveis para clique nas laterais */
-.nav-zona {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 50%;
-  cursor: pointer;
-  z-index: 10;
+/* Tamanho fixo para imagem/vídeo */
+.modal-story.fixo {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  background: transparent;
+  display: block;
 }
 
-.nav-zona.esquerda {
-  left: 0;
-}
-
-.nav-zona.direita {
-  right: 0;
-}
-
-/* Container geral das barras */
-.progress-bar-container {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  height: 4px;
-  display: flex;
-  gap: 6px;
-  z-index: 30;
-}
-
-/* Cada segmento da barra */
-.progress-segment {
-  flex-grow: 1;
-  background-color: rgba(255,255,255,0.3);
-  border-radius: 3px;
-  overflow: hidden;
-  position: relative;
-  height: 4px; /* Garantir altura */
-}
-
-/* Barra preenchida estática para stories já vistos */
-.progress-segment.preenchido {
-  background-color: white;
-}
-
-/* Barra com animação para o story atual */
-.progress-segment.animando::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+/* Estilo para vídeo também */
+.modal-story.fixo.video {
+  max-width: 360px;
+  max-height: 640px;
   width: 100%;
-  background-color: white;
-  animation-name: preencher;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-  animation-duration: 4s;
-  transform-origin: left;
-  transform: scaleX(0);
-  z-index: 1;
+  height: auto;
+  object-fit: contain;
 }
 
-/* Animação que preenche a barra da esquerda para a direita */
-@keyframes preencher {
-  to {
-    transform: scaleX(1);
+/* Responsividade no mobile */
+@media (max-width: 600px) {
+  .modal-story.fixo {
+    max-width: none;
+    max-height: none;
+    width: 100vw;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0;
+  }
+  .modal-content {
+    width: 100vw;
+    height: 100vh;
   }
 }
+
+/* Header do usuário */
 .modal-header-usuario {
   position: absolute;
-  top: 10px;
-  left: 15px;
+  top: 18px;
+  left: 35px;
   right: 15px;
   height: 40px;
   display: flex;
@@ -342,6 +211,26 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Botão de fechar */
+.btn-fechar-story {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+.btn-fechar-story:hover {
+  color: #ff4d4d;
+}
+
+/* Botão de criar story pequeno */
 .btn-criar-story-pequeno {
   position: absolute;
   bottom: 2px;
@@ -363,15 +252,14 @@
   line-height: 1;
   transition: background-color 0.3s ease;
 }
-
 .btn-criar-story-pequeno:hover {
   background-color: #0056b3;
 }
 
-/* Move progress-bar para cima do header */
-.progress-bar-container.acima-header {
+/* Container da barra de progresso */
+.progress-bar-container {
   position: absolute;
-  top: 10px;   /* mais próximo do topo */
+  top: 12px;
   left: 12px;
   right: 12px;
   height: 4px;
@@ -380,73 +268,85 @@
   z-index: 40;
 }
 
-/* Ajusta header para ficar abaixo da barra */
-.modal-header-usuario.abaixo-barra {
+/* Cada segmento da barra */
+.progress-segment {
+  flex-grow: 1;
+  height: 4px;
+  border-radius: 3px;
+  background-color: rgba(202, 202, 202, 0.459); /* canal da barra visível */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Story atual com animação branca */
+.progress-segment.animando::after {
+  content: "";
   position: absolute;
-  top: 18px;   /* abaixo da barra de progresso */
-  left: 35px;
-  right: 15px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 30;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background-color: white;
+  animation: preencherLargura 4s linear forwards;
+  z-index: 2;
 }
 
-/* Define tamanho fixo para imagem/vídeo */
-.modal-story.fixo {
-  max-width: 360px;     /* não ultrapassa 360px de largura */
-  max-height: 640px;    /* não ultrapassa 640px de altura */
-  width: 100%;          /* ocupa 100% do container, respeitando max-width */
-  height: auto;         /* altura automática conforme proporção */
-  object-fit: contain;  /* coloca todo o conteúdo dentro do envelope, sem cortar */
-  border-radius: 12px;
-  user-select: none;
-  pointer-events: none;
-}
-
-/*  No mobile, ocupa toda a tela mas preserva proporção */
-@media (max-width: 600px) {
-  .modal-story.fixo {
-    max-width: none;
-    max-height: none;
-    width: 100vw;       /* ocupa toda a largura da viewport */
-    height: auto;       /* mantém aspecto */
-    object-fit: contain;
-    border-radius: 0;
-  }
-  .modal-content {
-    width: 100vw;
-    height: 100vh;
-  }
-}
-
-/* Vídeos recebem o mesmo estilo */
-.modal-story.fixo.video {
-  max-width: 360px;
-  max-height: 640px;
+/* Stories já vistos */
+.progress-segment.preenchido::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
   width: 100%;
-  height: auto;
-  object-fit: contain;
+  background-color: white;
+  z-index: 1;
 }
 
-/* Botão de fechar no canto superior direito da tela */
-.btn-fechar-story {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 10000;
-  background: transparent;
-  color: white;
+/* Animação que preenche a barra */
+@keyframes preencherLargura {
+  to {
+    width: 100%;
+  }
+}
+
+/* text area */
+/* Container para a interação (textarea ) */
+.story-interacao {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex; /* Adicionei o display flex para o alinhamento */
+  align-items: center; /* Alinha os itens verticalmente no centro */
+  padding: 8px 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  z-index: 50;
+}
+
+/* Estilização datextarea */
+.input-resposta-story {
+  width: 96%;
   border: none;
-  font-size: 32px;
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.2s ease;
+  border-radius: 18px;
+  padding: 3px 10px; /* Reduzindo o padding para deixá-la mais fina */
+  height: 36px; /* Adicionando uma altura fixa para um controle mais preciso */
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.623);
+  color: #333;
+  outline: none;
+  resize: none;
+  max-height: 80px; /* Mantendo a altura máxima, caso seja necessário, mas a altura fixa já a define */
 }
 
-.btn-fechar-story:hover {
-  color: #ff4d4d;
+@media (max-width: 600px) {
+  .story-interacao {
+    padding: 8px 16px;
+  }
+  .input-resposta-story {
+    font-size: 16px;
+    padding: 5px ;
+  }
 }
 
 
@@ -609,4 +509,5 @@
   background-color: #4caf50; /* verde */
 }
    
-/* ------------------------------------------------------------------------------ */
+/* -------------------------------------testes----------------------------------------- */
+
