@@ -2,8 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
-import { FaPaperPlane, FaSearch, FaArrowLeft, FaUser, FaPaintBrush, FaBellSlash, FaTrash   } from 'react-icons/fa';
+import { FaPaperPlane, FaSearch, FaArrowLeft, FaUser, FaPaintBrush, FaBellSlash, FaTrash, FaVideo } from 'react-icons/fa';
+
 import Comentario from '../../Components/Comentario';
+
+
+
+
 // Define que o axios deve enviar cookies (importante para autenticação com sessões)
 axios.defaults.withCredentials = true;
 
@@ -318,7 +323,7 @@ useEffect(() => {
 
   // Voltar para home
   const voltarParaHome = () => {
-    window.location.href = '/';
+    window.location.href = '/home';
   };
 
   // Voltar para a lista de usuários
@@ -559,28 +564,51 @@ const marcarMensagemComoLida = async (mensagemId) => {
                 >
                {/* Preview de post */}
 {msg.postid && previewsPosts[msg.postid] && (
-   <div
-        className="ig-preview"
-        onClick={() => setPostSelecionado(previewsPosts[msg.postid])}
-      >
-    {/* Imagem ou vídeo */}
-    {previewsPosts[msg.postid].video ? (
-      <div className="ig-video-wrapper">
-        <video
-          src={previewsPosts[msg.postid].video}
-          className="ig-preview-video"
-          muted
-          preload="metadata"
-        />
-        {/* Ícone de play removido */}
-      </div>
-    ) : previewsPosts[msg.postid].imagem ? (
+  <div
+    className="ig-preview"
+    onClick={() => setPostSelecionado(previewsPosts[msg.postid])}
+  >
+    {/* Header com usuário genérico */}
+    <div className="ig-header">
       <img
-        src={previewsPosts[msg.postid].imagem}
-        alt="Imagem do post"
-        className="ig-preview-img"
+        src="https://pm1.aminoapps.com/7660/570fad39a152eb801851e9a2b4ca662b7efb72f3r1-720-689v2_hq.jpg" // avatar genérico
+        alt="usuario_preview"
+        className="ig-avatar"
       />
-    ) : null}
+      <span className="ig-username">usuario_preview</span>
+    </div>
+
+    {/* Imagem ou vídeo */}
+ {previewsPosts[msg.postid].video ? (
+  <div className="ig-video-wrapper" style={{ position: "relative" }}>
+    <video
+      src={previewsPosts[msg.postid].video}
+      className="ig-preview-video"
+      muted
+      preload="metadata"
+    />
+    {/* Ícone de vídeo sobreposto */}
+    <FaVideo
+      style={{
+        position: "absolute",
+        top: "8px",
+        right: "8px",
+        color: "#fff",
+        fontSize: "20px",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        borderRadius: "50%",
+        padding: "4px",
+      }}
+    />
+  </div>
+) : previewsPosts[msg.postid].imagem ? (
+  <img
+    src={previewsPosts[msg.postid].imagem}
+    alt="Imagem do post"
+    className="ig-preview-img"
+  />
+) : null}
+
 
     {/* Conteúdo textual */}
     <div className="ig-caption">
@@ -589,6 +617,8 @@ const marcarMensagemComoLida = async (mensagemId) => {
     </div>
   </div>
 )}
+
+
 {postSelecionado && (
   <Comentario
     post={postSelecionado}
