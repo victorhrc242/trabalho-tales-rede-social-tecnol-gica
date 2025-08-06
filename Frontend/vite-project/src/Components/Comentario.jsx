@@ -10,6 +10,10 @@ function Comentario({ post, usuario, fechar }) {
   const [comentarioTexto, setComentarioTexto] = useState('');
   const [usuarioCurtidas, setUsuarioCurtidas] = useState([]);
 
+  // Curtida otimista estados locais para post
+  const [curtido, setCurtido] = useState(false);
+  const [curtidasCount, setCurtidasCount] = useState(0);
+
   const startY = useRef(null);
   const startHeight = useRef(null);
 
@@ -24,16 +28,17 @@ function Comentario({ post, usuario, fechar }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-useEffect(() => {
-  if (post) {
-    document.body.classList.add('modal-aberto');
-  }
 
-  return () => {
-    document.body.classList.remove('modal-aberto');
-  };
-}, [post]);
+  useEffect(() => {
+    if (post) {
+      document.body.classList.add('modal-aberto');
+    }
+    return () => {
+      document.body.classList.remove('modal-aberto');
+    };
+  }, [post]);
 
+  // Carregar comentários e curtidas dos comentários
   useEffect(() => {
     if (!post?.id) return;
 
@@ -66,6 +71,28 @@ useEffect(() => {
     carregarComentarios();
   }, [post, usuario]);
 
+  // Verificar curtida do post assim que abrir modal e definir estado local para curtida otimista
+  useEffect(() => {
+    if (!post) return;
+
+    // Inicializa curtidas a partir do post
+    setCurtido(post.foiCurtido || false);
+    setCurtidasCount(post.curtidas || 0);
+
+    const verificarCurtida = async () => {
+      try {
+        const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`;
+        const res = await fetch(verificarUrl);
+        const data = await res.json();
+        setCurtido(data.curtiu);
+      } catch (err) {
+        console.error('Erro ao verificar curtida:', err);
+      }
+    };
+
+    verificarCurtida();
+  }, [post, usuario]);
+
   const comentar = async () => {
     if (!comentarioTexto.trim()) return;
 
@@ -76,8 +103,11 @@ useEffect(() => {
         body: JSON.stringify({ postId: post.id, autorId: usuario.id, conteudo: comentarioTexto }),
       });
       setComentarioTexto('');
+
+      // Recarrega comentários após enviar
       const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
       const data = await res.json();
+
       const comentariosComAutores = await Promise.all(
         (data.comentarios || []).map(async (comentario) => {
           try {
@@ -95,6 +125,36 @@ useEffect(() => {
     }
   };
 
+  // Curtida otimista no post
+  const curtirPost = async () => {
+    const novoEstadoCurtido = !curtido;
+    const novaContagem = curtidasCount + (novoEstadoCurtido ? 1 : -1);
+
+    // Atualiza otimisticamente
+    setCurtido(novoEstadoCurtido);
+    setCurtidasCount(novaContagem);
+
+    try {
+      const endpoint = novoEstadoCurtido
+        ? 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir'
+        : 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: post.id, usuarioId: usuario.id }),
+      });
+
+      if (!res.ok) throw new Error('Erro na requisição de curtida');
+    } catch (err) {
+      console.error('Erro ao curtir/descurtir post:', err);
+      // Reverte estado em caso de erro
+      setCurtido(!novoEstadoCurtido);
+      setCurtidasCount(curtidasCount);
+    }
+  };
+
+  // Curtir/descurtir comentário
   const curtirComentario = async (comentarioId) => {
     try {
       const jaCurtiu = usuarioCurtidas.includes(comentarioId);
@@ -124,6 +184,7 @@ useEffect(() => {
     }
   };
 
+  // SignalR para curtidas de comentários
   useEffect(() => {
     const connection = new HubConnectionBuilder()
       .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
@@ -159,6 +220,38 @@ useEffect(() => {
     return () => connection.stop();
   }, [usuario]);
 
+  // SignalR para curtidas do post modal (atualiza curtidas locais)
+  useEffect(() => {
+    if (!post) return;
+
+    const connection = new HubConnectionBuilder()
+      .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
+        transport: HttpTransportType.LongPolling,
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection.start()
+      .then(() => {
+        connection.on('ReceberCurtida', (postId, usuarioId, foiCurtida) => {
+          if (post.id === postId) {
+            const curtidasAtualizadas = foiCurtida
+              ? curtidasCount + 1
+              : Math.max(0, curtidasCount - 1);
+
+            setCurtidasCount(curtidasAtualizadas);
+
+            if (usuarioId === usuario.id) {
+              setCurtido(foiCurtida);
+            }
+          }
+        });
+      })
+      .catch(err => console.error('Erro ao conectar ao SignalR:', err));
+
+    return () => connection.stop();
+  }, [post, usuario, curtidasCount]);
+
   const onDragStart = (e) => {
     startY.current = e.touches ? e.touches[0].clientY : e.clientY;
     startHeight.current = modalHeight;
@@ -185,112 +278,38 @@ useEffect(() => {
     document.removeEventListener('mouseup', onDragEnd);
   };
 
-  const curtirPost = async () => {
-  try {
-    // Verifica se usuário já curtiu o post
-    const verificarUrl = `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`;
-    const curtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/curtir';
-    const descurtirUrl = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/descurtir';
-
-    const resVerifica = await fetch(verificarUrl);
-    if (!resVerifica.ok) {
-      console.error('Erro ao verificar curtida do post');
-      return;
-    }
-    const dataVerifica = await resVerifica.json();
-    const jaCurtiu = dataVerifica.curtiu;
-
-    // Decide se vai curtir ou descurtir
-    const endpoint = jaCurtiu ? descurtirUrl : curtirUrl;
-
-    // Envia requisição para curtir ou descurtir
-    const resPost = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ postId: post.id, usuarioId: usuario.id }),
-    });
-
-    if (!resPost.ok) {
-      console.error('Erro ao curtir/descurtir post');
-      return;
-    }
-
-    const dataPost = await resPost.json();
-    const curtiuAgora = !jaCurtiu;
-
-    // Atualiza o estado local do post no modal (para mostrar a contagem atualizada)
-    // Se o post aqui for só uma prop, você pode precisar de callback para atualizar no feed principal
-    // Mas aqui vamos atualizar localmente:
-
-    post.curtidas = dataPost.curtidasTotais;
-    post.foiCurtido = curtiuAgora;
-
-    // Força re-render (se post for estado, use setState)
-    // Como post é prop, pode usar state local para isso:
-    setPostSelecionado({ ...post });
-
-  } catch (err) {
-    console.error('Erro ao curtir/descurtir post:', err);
-  }
-};
-useEffect(() => {
-  const connection = new HubConnectionBuilder()
-    .withUrl('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/curtidaHub', {
-      transport: HttpTransportType.LongPolling,
-    })
-    .withAutomaticReconnect()
-    .build();
-
-  connection.start()
-    .then(() => {
-      connection.on('ReceberCurtida', (postId, usuarioId, foiCurtida) => {
-        if (post.id === postId) {
-          // Atualiza a curtida local do post modal
-          const curtidasAtualizadas = foiCurtida
-            ? (post.curtidas || 0) + 1
-            : Math.max(0, (post.curtidas || 0) - 1);
-
-          setPostSelecionado(prev => ({
-            ...prev,
-            curtidas: curtidasAtualizadas,
-            foiCurtido: usuarioId === usuario.id ? foiCurtida : prev.foiCurtido,
-          }));
-        }
-      });
-    })
-    .catch(err => console.error('Erro ao conectar ao SignalR:', err));
-
-  return () => connection.stop();
-}, [post, usuario]);
-
-
   const compartilharPost = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
     alert('Link do post copiado para a área de transferência!');
   };
-useEffect(() => {
-  const bloquearScroll = (e) => {
-    e.preventDefault();
+  const handleFechar = () => {
+    setCurtido(false);
+    setCurtidasCount(0);
+    setComentarios([]);
+    setComentarioTexto('');
+    setUsuarioCurtidas([]);
+    if (typeof fechar === 'function') {
+      fechar();
+    }
   };
-
+ useEffect(() => {
   if (post) {
     document.body.style.overflow = 'hidden';
-    document.addEventListener('touchmove', bloquearScroll, { passive: false });
-    document.addEventListener('wheel', bloquearScroll, { passive: false });
+    document.documentElement.style.overflow = 'hidden'; // <== ADICIONE ISTO
   }
 
   return () => {
     document.body.style.overflow = '';
-    document.removeEventListener('touchmove', bloquearScroll);
-    document.removeEventListener('wheel', bloquearScroll);
+    document.documentElement.style.overflow = ''; // <== E ISTO
   };
 }, [post]);
+
+
 
   if (!post) return null;
 
   return (
-    
     <div
       className={`comentarios-modal ${isMobile ? 'mobile' : ''}`}
       style={isMobile && modalHeight ? { height: modalHeight } : {}}
@@ -315,7 +334,8 @@ useEffect(() => {
             <img src={post.autorImagem || 'https://via.placeholder.com/40'} alt={`Foto de ${post.autorNome}`} className="autor-imagem" />
             <strong>{post.autorNome}</strong>
           </div>
-          <button className="fechar-modals" onClick={fechar}>x</button>
+          <button className="fechar-modals" onClick={handleFechar}>x</button>
+
         </div>
 
         <div className="post-conteudo">
@@ -328,6 +348,9 @@ useEffect(() => {
             </p>
           )}
         </div>
+
+        
+
         <div className="comentarios-lista">
           {comentarios.filter(Boolean).map((comentario) => (
             <div key={comentario.id} className="comentario-item">
@@ -341,23 +364,21 @@ useEffect(() => {
             </div>
           ))}
         </div>
-        {/* Botões de ação do POST */}
- <div className="post-acoes">
-<button onClick={curtirPost} title="Curtir">
-  <Heart
-    size={20}
-    stroke={post.foiCurtido ? "red" : "black"}
-    strokeWidth={2}
-    fill={post.foiCurtido ? "red" : "none"}
-  />
-  <span>{post.curtidas || 0}</span>
-</button>
+<div className="post-acoes">
+          <button onClick={curtirPost} title="Curtir">
+            <Heart
+              size={20}
+              stroke={curtido ? "red" : "black"}
+              strokeWidth={2}
+              fill={curtido ? "red" : "none"}
+            />
+            <span>{curtidasCount}</span>
+          </button>
 
-  <button onClick={compartilharPost} title="Compartilhar">
-    <Share2 size={20} stroke="black" strokeWidth={2} />
-  </button>
-</div>
-
+          <button onClick={compartilharPost} title="Compartilhar">
+            <Share2 size={20} stroke="black" strokeWidth={2} />
+          </button>
+        </div>
         <div className="comentarios-form">
           <input
             type="text"

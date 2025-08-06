@@ -245,7 +245,8 @@
 
   .comentarios-container {
     flex: 1;
-    overflow-y: auto;
+   overflow-y: auto;
+  max-height: 100%; /* ou modalHeight, se for no inline */
     padding: 1rem;
     padding-bottom: 80px;
   }
@@ -312,15 +313,14 @@
 }
 .post-acoes {
   display: flex;
-  gap: 12px;
-  margin: -10px 0;
+  margin: 0px 0;
 }
 body.modal-aberto {
   overflow: hidden;
 }
 
 .post-acoes button {
-  padding: 6px 12px;
+  padding: 3px 12px;
   border: none;
   background: transparent;
   cursor: pointer;

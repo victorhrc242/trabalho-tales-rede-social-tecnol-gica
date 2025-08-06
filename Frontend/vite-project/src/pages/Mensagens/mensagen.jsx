@@ -3,7 +3,7 @@ import axios from 'axios';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
 import { FaPaperPlane, FaSearch, FaArrowLeft, FaUser, FaPaintBrush, FaBellSlash, FaTrash   } from 'react-icons/fa';
-
+import Comentario from '../../Components/Comentario';
 // Define que o axios deve enviar cookies (importante para autenticação com sessões)
 axios.defaults.withCredentials = true;
 
@@ -24,6 +24,7 @@ const [previewsPosts, setPreviewsPosts] = useState({});
   // Recupera o usuário logado do localStorage
   const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
   const usuarioLogadoId = usuarioLocal?.id;
+const [postSelecionado, setPostSelecionado] = useState(null);
 
   // Ações no Menu 
 const [silenciado, setSilenciado] = useState(false);
@@ -558,7 +559,10 @@ const marcarMensagemComoLida = async (mensagemId) => {
                 >
                {/* Preview de post */}
 {msg.postid && previewsPosts[msg.postid] && (
-  <div className="ig-preview">
+   <div
+        className="ig-preview"
+        onClick={() => setPostSelecionado(previewsPosts[msg.postid])}
+      >
     {/* Imagem ou vídeo */}
     {previewsPosts[msg.postid].video ? (
       <div className="ig-video-wrapper">
@@ -585,7 +589,13 @@ const marcarMensagemComoLida = async (mensagemId) => {
     </div>
   </div>
 )}
-
+{postSelecionado && (
+  <Comentario
+    post={postSelecionado}
+    usuario={usuarioLogado}
+    fechar={() => setPostSelecionado(null)}
+  />
+)}
                 {/* Exibe a mensagem */}
 
                  <div className="message-content">
@@ -685,6 +695,7 @@ const marcarMensagemComoLida = async (mensagemId) => {
           <p className="selecionar-usuario-msg">Selecione um usuário para iniciar o chat.</p>
         )}
       </div>
+      
     </div>
   );
 };
