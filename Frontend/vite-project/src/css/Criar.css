@@ -40,6 +40,10 @@
   z-index: 1001;
 }
 
+.modal-CriarPost::-webkit-scrollbar {
+  display: none;
+}
+
 .form-criar-post {
   display: flex;
   flex-direction: column;
@@ -54,15 +58,34 @@
   textarea {
   min-height: 100px;
   padding: 10px;
-  resize: vertical;
-  border-radius: 5px;
+  resize: none;
+  border-radius: 30px;
   border: 1px solid #ccc;
   }
+
+  textarea:focus {
+  outline: none; /* remove a borda padrão do navegador */
+  border-color: rgb(0, 119, 255); /* borda azul ao focar */
+}
+
+input[type="text"],
+input[type="file"] {
+  padding: 10px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="file"]:focus {
+  outline: none;
+  border-color: rgb(0, 119, 255); /* borda azul ao focar */
+}
   
   input[type="text"],
   input[type="file"] {
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 30px;
   border: 1px solid #ccc;
   }
   
