@@ -35,8 +35,12 @@ function Home() {
   // Paginação e controle fim do feed
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [fimDoFeed, setFimDoFeed] = useState(false);
+  //Solicitações
+  const [solicitacoes, setSolicitacoes] = useState([]);
+
 
 const [loadingFeed, setLoadingFeed] = useState(true);
+
 
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
@@ -157,59 +161,59 @@ async function fetchFeed(pagina = 1) {
   }, [carregandoMais, fimDoFeed]);
 
   // Busca notificações
-  async function fetchNotificacoes() {
-  try {
-    const response = await fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
-    );
-    const data = await response.json();
+    async function fetchNotificacoes() {
+    try {
+      const response = await fetch(
+        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
+      );
+      const data = await response.json();
 
-    if (data.notificacoes) {
-    const notificacoesComRemetente = await Promise.all(
-  data.notificacoes.map(async n => {
-    const remetenteId = n.usuarioRemetenteId;
-    if (remetenteId) {
-      try {
-        const resp = await fetch(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${remetenteId}`
-        );
-        const remetenteData = await resp.json();
-        const remetente = {
-          id: remetenteData.id || remetenteData.usuario_id || remetenteData.userId,
-          nome: remetenteData.nome || remetenteData.nome_usuario,
-          nome_usuario: remetenteData.nome_usuario,
-          imagem: remetenteData.imagem || null
-        };
+      if (data.notificacoes) {
+      const notificacoesComRemetente = await Promise.all(
+    data.notificacoes.map(async n => {
+      const remetenteId = n.usuarioRemetenteId;
+      if (remetenteId) {
+        try {
+          const resp = await fetch(
+            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${remetenteId}`
+          );
+          const remetenteData = await resp.json();
+          const remetente = {
+            id: remetenteData.id || remetenteData.usuario_id || remetenteData.userId,
+            nome: remetenteData.nome || remetenteData.nome_usuario,
+            nome_usuario: remetenteData.nome_usuario,
+            imagem: remetenteData.imagem || null
+          };
 
-        const nomeRemetente = remetente.nome || 'Desconhecido';
-        const imagemRemetente =
-          remetente.imagem ||
-          'https://ui-avatars.com/api/?name=Desconhecido';
+          const nomeRemetente = remetente.nome || 'Desconhecido';
+          const imagemRemetente =
+            remetente.imagem ||
+            'https://ui-avatars.com/api/?name=Desconhecido';
 
-        return {
-          ...n,
-          remetente,
-          nomeRemetente,
-          imagemRemetente,
-        };
+          return {
+            ...n,
+            remetente,
+            nomeRemetente,
+            imagemRemetente,
+          };
 
-      } catch {
-        return { ...n };
+        } catch {
+          return { ...n };
+        }
       }
-    }
-    return { ...n };
-  })
-);
-setNotificacoes(notificacoesComRemetente);
+      return { ...n };
+    })
+  );
+  setNotificacoes(notificacoesComRemetente);
 
+      }
+      
+    } catch (err) {
+      console.error('Erro ao buscar notificações:', err);
     }
     
-  } catch (err) {
-    console.error('Erro ao buscar notificações:', err);
   }
-  
-}
-
+  //Fim notificações
 
   // Salva primeiros 5 posts no localStorage como cache
   function salvarPostsLocalmente(postsParaSalvar) {
@@ -458,6 +462,75 @@ async function curtirPost(postId) {
     return () => clearInterval(intervalId);
   }, [posts]);
 
+  // solicitações  /trocar para componentes 
+  async function fetchSolicitacoes() {
+  try {
+    const response = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitacoes-recebidas/${usuario.id}`
+    );
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      const solicitacoesComRemetente = await Promise.all(
+        data.map(async s => {
+          try {
+            const resp = await fetch(
+              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${s.usuario1}`
+            );
+            const remetente = await resp.json();
+
+            return {
+              id: s.id,
+              usuarioId: s.usuario1,
+              nome: remetente.nome || remetente.nome_usuario,
+              nome_usuario: remetente.nome_usuario,
+              imagem: remetente.imagem || 'https://via.placeholder.com/40',
+            };
+          } catch {
+            return {
+              id: s.id,
+              usuarioId: s.usuario1,
+              nome: 'Desconhecido',
+              imagem: 'https://via.placeholder.com/40',
+            };
+          }
+        })
+      );
+
+      setSolicitacoes(solicitacoesComRemetente);
+    }
+  } catch (err) {
+    console.error('Erro ao buscar solicitações:', err);
+  }
+}
+async function aceitarSolicitacao(idSolicitacao) {
+  try {
+    const res = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/aceitar/${idSolicitacao}`,
+      { method: 'POST' }
+    );
+    if (res.ok) {
+      setSolicitacoes(prev => prev.filter(s => s.id !== idSolicitacao));
+    }
+  } catch (err) {
+    console.error('Erro ao aceitar solicitação:', err);
+  }
+}
+
+async function recusarSolicitacao(idSolicitacao) {
+  try {
+    const res = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/recusar/${idSolicitacao}`,
+      { method: 'DELETE' }
+    );
+    if (res.ok) {
+      setSolicitacoes(prev => prev.filter(s => s.id !== idSolicitacao));
+    }
+  } catch (err) {
+    console.error('Erro ao recusar solicitação:', err);
+  }
+}
+
   return (
     <div className="pagina-container">
       {/* Feed principal */}
@@ -467,30 +540,27 @@ async function curtirPost(postId) {
         <br />
         <br />
         {erro && <p style={{ color: 'red' }}>{erro}</p>}
-{loadingFeed ? (
-  <p></p>
-) : posts.length === 0 ? (
-  <p>Nenhum post encontrado.</p>
-) : (
-  <ul>
-    {posts.map(post => (
-     <FeedItem
-  post={post}
-  usuario={usuario}
-  videoAtivoId={videoAtivoId}
-  registerVideoRef={registerVideoRef}
-  curtirPost={curtirPost}
-  abrirComentarios={abrirComentarios} // ✅ Aqui
-  irParaPerfil={irParaPerfil}
-/>
-    ))}
-  </ul>
-)}
-
-
-
-
-        {carregandoMais && (
+        {loadingFeed ? (
+          <p></p>
+        ) : posts.length === 0 ? (
+          <p>Nenhum post encontrado.</p>
+        ) : (
+          <ul>
+            {posts.map(post => (
+            <FeedItem
+          post={post}
+          usuario={usuario}
+          videoAtivoId={videoAtivoId}
+          registerVideoRef={registerVideoRef}
+          curtirPost={curtirPost}
+          abrirComentarios={abrirComentarios} // ✅ Aqui
+          irParaPerfil={irParaPerfil}
+        />
+            ))}
+          </ul>
+        )}
+        {/* modal carregando */}
+      {carregandoMais && (
           <div className="loader-container">
             <div className="spinner" />
           </div>
@@ -498,12 +568,12 @@ async function curtirPost(postId) {
 
         {/* Modal de comentários */}
      {postSelecionado && (
-  <Comentario
-    post={postSelecionado}
-    usuario={usuario}
-    fechar={() => setPostSelecionado(null)}
-  />
-)}
+        <Comentario
+          post={postSelecionado}
+          usuario={usuario}
+          fechar={() => setPostSelecionado(null)}
+        />
+      )}
       </div>
 
       {/* Lateral direita: busca e notificações */}
@@ -558,48 +628,80 @@ async function curtirPost(postId) {
             ))}
           </ul>
         )}
-
         </div>
+
+        {/* Solicitaçoes */}
+       <div className="solicitacao-box">
+  <h4>Solicitações</h4>
+  <ul className="lista-solicitacoes">
+    {solicitacoes.length === 0 ? (
+      <li>Não há solicitações</li>
+    ) : (
+      solicitacoes.map(s => (
+        <li key={s.id} className="solicitacao-item">
+          <img
+            src={s.imagem}
+            alt="avatar"
+            className="avatar-busca"
+            onClick={() => irParaPerfil(s.usuarioId)}
+          />
+          <div className="info-notificacao">
+            <p>
+              <strong onClick={() => irParaPerfil(s.usuarioId)} style={{ cursor: 'pointer' }}>
+                {s.nome_usuario || s.nome}
+              </strong>{' '}
+              quer te seguir.
+            </p>
+            <div className="botoes-solicitacao">
+              <button onClick={() => aceitarSolicitacao(s.id)}>Aceitar</button>
+              <button onClick={() => recusarSolicitacao(s.id)}>Recusar</button>
+            </div>
+          </div>
+        </li>
+      ))
+    )}
+  </ul>
+</div>
 
           {/* Notificações */}
         <div className="notificacoes-box">
           <h4>
             <FaBell /> Notificações
           </h4>
-       <ul>
-  {notificacoes.length === 0 ? (
-    <li>Não há notificações</li>
-  ) : (
-    notificacoes.map(notificacao => {
-      const remetente = notificacao.remetente || {};
-      return (
-        <li key={notificacao.id} className="notificacao-item">
-          <img
-            src={remetente?.imagem || 'https://via.placeholder.com/40'}
-            alt="Foto de perfil"
-            className="avatar-busca"
-            onClick={() => remetente.id && irParaPerfil(remetente.id)}
-            style={{ cursor: 'pointer' }}
-          />
-          <div
-            className="info-notificacao"
-            onClick={() => remetente.id && irParaPerfil(remetente.id)}
-            style={{ cursor: 'pointer' }}
-          >
-            <p>
-              <strong>
-                {remetente.nome_usuario || remetente.nome || 'Alguém'}
-              </strong>{' '}
-              {notificacao.mensagem}
-            </p>
-          </div>
-        </li>
-      );
-    })
-  )}
-</ul>
-
+              <ul>
+          {notificacoes.length === 0 ? (
+            <li>Não há notificações</li>
+          ) : (
+            notificacoes.map(notificacao => {
+              const remetente = notificacao.remetente || {};
+              return (
+                <li key={notificacao.id} className="notificacao-item">
+                  <img
+                    src={remetente?.imagem || 'https://via.placeholder.com/40'}
+                    alt="Foto de perfil"
+                    className="avatar-busca"
+                    onClick={() => remetente.id && irParaPerfil(remetente.id)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <div
+                    className="info-notificacao"
+                    onClick={() => remetente.id && irParaPerfil(remetente.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <p>
+                      <strong>
+                        {remetente.nome_usuario || remetente.nome || 'Alguém'}
+                      </strong>{' '}
+                      {notificacao.mensagem}
+                    </p>
+                  </div>
+                </li>
+              );
+            })
+          )}
+        </ul>
         </div>
+        
       </div>
     </div>
   );

@@ -200,7 +200,7 @@ li {
   }
 }
 
-/* Container com o buscar e o notificação */
+/*-------------------------------------------- Container com o buscar e o notificação --------------------------------------------   */
 .pagina-container {
   display: flex;
   justify-content: center;
@@ -224,7 +224,6 @@ li {
 .campo-busca {
   position: relative;
   width: 100%;
-  /* altura igual a do input */
   height: 36px;
   margin-bottom: 10px;
 }
@@ -454,6 +453,7 @@ li {
   cursor: default;
 }
 
+
 /* Loader ao final do feed */
 .loader-container {
   display: flex;
@@ -475,3 +475,57 @@ li {
   to { transform: rotate(360deg); }
 }
 
+/* ---------------------------------------------- Solicitações ----------------------------------------------------- */
+.solicitacao-box h4{
+   margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  padding: 5px;
+  font-weight: 600;
+  font-size: 20px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centraliza horizontalmente */
+  gap: 6px;
+}
+.lista-solicitacoes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.solicitacao-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.botoes-solicitacao {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.botoes-solicitacao button {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.botoes-solicitacao button:first-child {
+  background-color: #4363b9;
+  color: white;
+}
+
+.botoes-solicitacao button:last-child {
+  background-color: #eee;
+  color: #333;
+}
