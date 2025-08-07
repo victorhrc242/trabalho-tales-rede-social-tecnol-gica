@@ -146,6 +146,12 @@ const carregarSeguidoresESeguindo = async () => {
   }
 };
 
+const fecharModalSeguidores = () => {
+  setMostrarModalSeguidores(false);
+  setListaSeguidores([]);
+  setListaSeguindo([]);
+};
+
 useEffect(() => {
   if (!userId) {
     navigate('/');
@@ -466,8 +472,18 @@ const cancelarLogout = () => {
   <div className="perfil-info">
     {!isEditing && (
       <div className="infor-pessoais">
-        <p><strong>Seguidores:</strong> {seguidoresInfo.seguidores}</p>
-        <p><strong>Seguindo:</strong> {seguidoresInfo.seguindo}</p>
+        <p><strong><button className="botao-link" onClick={() => {
+            carregarSeguidoresESeguindo();
+            setAbaSeguidoresAtiva('seguindo');
+            setMostrarModalSeguidores(true);
+          }}>Seguidores:
+        </button></strong> {seguidoresInfo.seguidores}</p>
+        <p><strong><button className="botao-link" onClick={() => {
+            carregarSeguidoresESeguindo();
+            setAbaSeguidoresAtiva('seguindo');
+            setMostrarModalSeguidores(true);
+          }}>Seguindo:
+        </button></strong> {seguidoresInfo.seguindo}</p>
       </div>
     )}
 
@@ -475,67 +491,68 @@ const cancelarLogout = () => {
   <>
     {/* MODAL DE EDIÇÃO - DESKTOP */}
     {isEditing && (
-      <div className="modal-overlay" onClick={() => setIsEditing(false)}>
-        <div className="modal-editar-desktop" onClick={(e) => e.stopPropagation()}>
-          <div className="editar-header">
-            <h2>Editar Perfil</h2>
-            <button className="btn-fechar" onClick={() => setIsEditing(false)}>×</button>
+  <div className="modal-overlay" onClick={() => setIsEditing(false)}>
+    <div className="modal-editar-desktop" onClick={(e) => e.stopPropagation()}>
+      <div className="editar-header">
+        <h2>Editar Perfil</h2>
+        <button className="btn-fechar" onClick={() => setIsEditing(false)}>×</button>
+      </div>
+      <div className="editar-conteudo">
+        <div className="editar-foto-container-desktop">
+          <div className="foto-wrapper">
+            <label className="editar-foto-label">
+              <img
+                src={imagem || usuario.imagem || 'https://via.placeholder.com/150'}
+                alt={`Foto de perfil de ${usuario.nome_usuario}`}
+                className="foto-perfil-preview"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file && file.type.startsWith('image/')) {
+                    setImagemArquivo(file);
+                    const reader = new FileReader();
+                    reader.onloadend = () => setImagem(reader.result); // mostra a prévia
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </label>
           </div>
-          <div className="editar-conteudo">
-             <div className="editar-foto-container-desktop">
-  <div className="foto-wrapper">
-    <label className="editar-foto-label">
-      <img
-        src={usuario.imagem || 'https://via.placeholder.com/150'}
-        alt={`Foto de perfil de ${usuario.nome_usuario}`}
-        className="foto-perfil-preview"
-      />
-      <input
-        type="file"
-        accept="image/*"
-        style={{ display: 'none' }}
-        onChange={(e) => {
-          const file = e.target.files[0];
-          if (file && file.type.startsWith('image/')) {
-            setImagemArquivo(file);
-            const reader = new FileReader();
-            reader.onloadend = () => setImagem(reader.result);
-            reader.readAsDataURL(file);
-          }
-        }}
-      />
-    </label>
-  </div>
-  <div className="botao-wrapper">
-    <button
-      className="editar-botoes"
-      onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
-    >
-      Alterar foto de perfil
-    </button>
-  </div>
-</div>
-            <label>Nome</label>
-            <input
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              placeholder="Nome"
-            />
-            <label>Biografia</label>
-            <textarea
-              value={biografia}
-              onChange={(e) => setBiografia(e.target.value)}
-              placeholder="Biografia"
-            />
-            <div className="editar-botoes">
-              <button onClick={editarPerfil}>Salvar</button>
-              <button className='cancelar' onClick={() => setIsEditing(false)}>Cancelar</button>
-            </div>
+          <div className="botao-wrapper">
+            <button
+              className="editar-botoes"
+              onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
+            >
+              Alterar foto de perfil
+            </button>
           </div>
         </div>
+
+        <label>Nome</label>
+        <input
+          type="text"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          placeholder="Nome"
+        />
+        <label>Biografia</label>
+        <textarea
+          value={biografia}
+          onChange={(e) => setBiografia(e.target.value)}
+          placeholder="Biografia"
+        />
+        <div className="editar-botoes">
+          <button className='btn-confirmar-edi' onClick={editarPerfil}>Salvar</button>
+          <button className='btn-cancelar-edi' onClick={() => setIsEditing(false)}>Cancelar</button>
+        </div>
       </div>
-    )}
+    </div>
+  </div>
+)}
   </>
         ) : (
           <div className="botoes-perfil">
@@ -559,7 +576,8 @@ const cancelarLogout = () => {
         )}
       </div>
     </div>
-    
+
+{/* modal editar mobile */} 
 {showEditarModalMobile && (
   <div className="modal-editar-mobile">
     <div className="editar-topo">
@@ -570,15 +588,18 @@ const cancelarLogout = () => {
     <div className="editar-foto-container">
       <label className="editar-foto-label">
         <img
-        src={usuario.imagem || 'https://via.placeholder.com/150'}
-        alt={`Foto de perfil de ${usuario.nome_usuario}`}
-        style={{
-          width: '100%',
-          height: '100px',
-          borderRadius: '50%',
-          objectFit: 'cover'
-        }}
-      />
+          src={imagem || usuario.imagem || 'https://via.placeholder.com/150'}
+          alt={`Foto de perfil de ${usuario.nome_usuario}`}
+          style={{
+            width: '100px',
+            height: '100px',
+            borderRadius: '50%',
+            objectFit: 'cover',
+            display: 'block',
+            margin: '0 auto',
+            border: '2px solid #ccc'
+          }}
+        />
         <input
           type="file"
           accept="image/*"
@@ -588,7 +609,7 @@ const cancelarLogout = () => {
             if (file && file.type.startsWith('image/')) {
               setImagemArquivo(file);
               const reader = new FileReader();
-              reader.onloadend = () => setImagem(reader.result); // preview + enviar depois
+              reader.onloadend = () => setImagem(reader.result); // mostra a prévia
               reader.readAsDataURL(file);
             }
           }}
@@ -617,12 +638,17 @@ const cancelarLogout = () => {
         placeholder="Biografia"
       />
     </div>
+
     <div className="editar-botoes">
-      <button className='btn-confirmar' onClick={editarPerfil}>Salvar</button>
-      <button className='btn-cancelar' onClick={() => setShowEditarModalMobile(false)}>Cancelar</button>
+      <button className='btn-confirmar-edi' onClick={editarPerfil}>Salvar</button>
+      <button className='btn-cancelar-edi' onClick={() => setShowEditarModalMobile(false)}>Cancelar</button>
     </div>
   </div>
 )}
+{/*Fim modal editar mobile */}
+
+
+{/* post perfil*/}
       <div className="explore-grid">
         {posts.map((post) => (
           <div
@@ -736,14 +762,7 @@ const cancelarLogout = () => {
 )}
 
 {mostrarModalSeguidores && (
-  <div
-    className="modal-overlay"
-    onClick={(e) => {
-      if (e.target.classList.contains('modal-overlay')) {
-        setMostrarModalSeguidores(false);
-      }
-    }}
-  >
+  <div className="modal-overlay" onClick={fecharModalSeguidores}>
     <div className="modal-box" onClick={(e) => e.stopPropagation()}>
       <div className="modal-header">
         <button
@@ -760,19 +779,29 @@ const cancelarLogout = () => {
         </button>
         <button
           className="fechar-modal"
-          onClick={() => setMostrarModalSeguidores(false)}
+          onClick={fecharModalSeguidores}
         >
           X
         </button>
       </div>
 
-      <div className="modal-conteudo">
+      <div className="modal-seguir-conteudo">
         {abaSeguidoresAtiva === 'seguidores' ? (
           Array.isArray(listaSeguidores) && listaSeguidores.length > 0 ? (
             listaSeguidores.map((user, i) => (
               <div key={i} className="usuario-item">
-                <Link className='botao-link' to={`/perfil/${user.id}`} onClick={() => setMostrarModalSeguidores(false)}
-                 style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit' }}>
+                <Link
+                  className="botao-link"
+                  to={`/perfil/${user.id}`}
+                  onClick={fecharModalSeguidores}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                  }}
+                >
                   <img
                     src={user.imagem || '/img/placeholder.png'}
                     alt={`Foto de ${user.nome_usuario}`}
@@ -785,24 +814,32 @@ const cancelarLogout = () => {
           ) : (
             <p>Nenhum seguidor encontrado.</p>
           )
+        ) : Array.isArray(listaSeguindo) && listaSeguindo.length > 0 ? (
+          listaSeguindo.map((user, i) => (
+            <div key={i} className="usuario-item">
+              <Link
+                className="botao-link"
+                to={`/perfil/${user.id}`}
+                onClick={fecharModalSeguidores}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                }}
+              >
+                <img
+                  src={user.imagem || '/img/placeholder.png'}
+                  alt={`Foto de ${user.nome_usuario}`}
+                  className="foto-perfil-seguidores"
+                />
+                <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+              </Link>
+            </div>
+          ))
         ) : (
-          Array.isArray(listaSeguindo) && listaSeguindo.length > 0 ? (
-            listaSeguindo.map((user, i) => (
-              <div key={i} className="usuario-item">
-                <Link className='botao-link' to={`/perfil/${user.id}`} onClick={() => setMostrarModalSeguidores(false)}
-                 style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit' }}>
-                  <img
-                    src={user.imagem || '/img/placeholder.png'}
-                    alt={`Foto de ${user.nome_usuario}`}
-                    className="foto-perfil-seguidores"
-                  />
-                  <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
-                </Link>
-              </div>
-            ))
-          ) : (
-            <p>Você não está seguindo ninguém.</p>
-          )
+          <p>Você não está seguindo ninguém.</p>
         )}
       </div>
     </div>

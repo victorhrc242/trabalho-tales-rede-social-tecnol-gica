@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import CriarStoryModal from './Home/CriarStoryModal';
 import '../css/Criar.css';
 
 // Conecção com Banco
@@ -13,6 +14,7 @@ function Criar({ usuarioLogado, onClose }) {
   // Estados de controle
   const [imagemArquivo, setImagemArquivo] = useState(null);
   const [imagem, setImagem] = useState('');
+  const [criarStoryModal, setCriarStoryModal] = useState(false);
   const [videoArquivo, setVideoArquivo] = useState(null);
   const [videoUrl, setVideoUrl] = useState('');
   const [conteudo, setConteudo] = useState('');
@@ -239,66 +241,87 @@ const handleCriarStory = async () => {
 
               {/* Etapa 1: Upload */}
               {etapa === 1 && (
-                <>
-                  {!imagemArquivo && !videoArquivo && (
-                    <label
-                      className="area-upload"
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const file = e.dataTransfer.files[0];
-                        if (file.type.startsWith('image/')) {
-                          setImagemArquivo(file);
-                        } else if (file.type.startsWith('video/')) {
-                          setVideoArquivo(file);
-                        }
-                      }}
-                    >
-                      <p>Arraste uma imagem ou vídeo aqui<br />ou clique para selecionar</p>
-                      <input
-                        type="file"
-                        accept="image/*,video/*"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (file.type.startsWith('image/')) {
-                            setImagemArquivo(file);
-                          } else if (file.type.startsWith('video/')) {
-                            setVideoArquivo(file);
-                          }
-                        }}
-                      />
-                    </label>
-                  )}
+  <>
+    {/* Botão Criar Story antes da área de upload */}
+    <button
+      type="button"
+      className="btn-criar-story"
+      onClick={() => {
+        setmodalAberto(false);
+        setCriarStoryModal(true);
+      }}
+      style={{ marginBottom: '15px' }} // espaço entre o botão e a área upload
+    >
+      Criar Story
+    </button>
 
-                  {imagem && (
-                    <div className="preview-imagem2">
-                      <img src={imagem} alt="Pré-visualização" className="imagem-preview" />
-                    </div>
-                  )}
+    {!imagemArquivo && !videoArquivo && (
+      <label
+        className="area-upload"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const file = e.dataTransfer.files[0];
+          if (file.type.startsWith('image/')) {
+            setImagemArquivo(file);
+          } else if (file.type.startsWith('video/')) {
+            setVideoArquivo(file);
+          }
+        }}
+      >
+        <p>Arraste uma imagem ou vídeo aqui<br />ou clique para selecionar</p>
+        <input
+          type="file"
+          accept="image/*,video/*"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file.type.startsWith('image/')) {
+              setImagemArquivo(file);
+            } else if (file.type.startsWith('video/')) {
+              setVideoArquivo(file);
+            }
+          }}
+        />
+      </label>
+    )}
 
-                  {videoUrl && (
-                    <div className="preview-video">
-                      <video controls src={videoUrl} style={{ maxWidth: '100%', borderRadius: '10px' }} />
-                    </div>
-                  )}
+    {imagem && (
+      <div className="preview-imagem2">
+        <img src={imagem} alt="Pré-visualização" className="imagem-preview" />
+      </div>
+    )}
 
-                  {(imagemArquivo || videoArquivo) && (
-                    <div className="botoes-etapa1">
-                      <button
-                        type="button"
-                        className='trocar'
-                        onClick={() => {
-                          setImagemArquivo(null);
-                          setVideoArquivo(null);
-                          setImagem('');
-                          setVideoUrl('');
-                        }}
-                      >Trocar mídia</button>
-                      <button type="button" className='proxima' onClick={() => setEtapa(2)}>Próximo</button>
-                    </div>
-                  )}
-                </>
-              )}
+    {videoUrl && (
+      <div className="preview-video">
+        <video controls src={videoUrl} style={{ maxWidth: '100%', borderRadius: '10px' }} />
+      </div>
+    )}
+
+    {(imagemArquivo || videoArquivo) && (
+      <div className="botoes-etapa1">
+        <button
+          type="button"
+          className='trocar'
+          onClick={() => {
+            setImagemArquivo(null);
+            setVideoArquivo(null);
+            setImagem('');
+            setVideoUrl('');
+          }}
+        >
+          Trocar mídia
+        </button>
+        <button
+          type="button"
+          className='proxima'
+          onClick={() => setEtapa(2)}
+        >
+          Próximo
+        </button>
+      </div>
+    )}
+  </>
+)}
 
               {/* Etapa 2: Conteúdo */}
               {etapa === 2 && (
