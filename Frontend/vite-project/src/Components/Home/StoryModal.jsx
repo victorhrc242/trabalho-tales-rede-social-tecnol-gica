@@ -3,107 +3,176 @@ import { FastAverageColor } from "fast-average-color";
 import "../../css/story.css";
 
 function StoryModal({
-  grupo,          
-  indiceStory,      
-  setIndiceStory,    
-  fechar,           
-  usuarios,          
-  usuarioLogadoId,   
+  grupo,
+  indiceStory,
+  setIndiceStory,
+  fechar,
+  usuarios,
+  usuarioLogadoId,
+  grupos,
+  irParaProximoGrupo,
 }) {
-  const timeoutRef = useRef(null); // Referência para o timeout do avanço automático do story
 
-  const [bgColor, setBgColor] = useState("rgba(0, 0, 0, 0.8)"); // Cor de fundo dinâmica do modal
-  const [resposta, setResposta] = useState(""); // Estado para controlar o texto da resposta do usuário
-
-  // Story atual a ser exibido, com base no índice selecionado
+  const timeoutRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const tempoRestanteRef = useRef(4000);
+  const videoRef = useRef(null);
+  const [bgColor, setBgColor] = useState("rgba(0, 0, 0, 0.8)");
+  const [resposta, setResposta] = useState("");
+  const [estaDigitando, setEstaDigitando] = useState(false);
   const story = grupo.stories[indiceStory];
-
-  // Dados do usuário dono do story
   const usuario = usuarios[grupo.usuarioId];
 
-
-  // Hook para extrair a cor dominante da imagem do story usando FastAverageColor
+  // Cor de fundo baseada na imagem
   useEffect(() => {
     if (!story) return;
 
-    // Cor de Fundo para vídeos
     if (story.tipo !== "imagem") {
       setBgColor("rgba(0,0,0,0.8)");
       return;
     }
 
     const fac = new FastAverageColor();
-
-    // Busca a cor dominante da imagem async e atualiza o estado da cor de fundo
     fac
       .getColorAsync(story.conteudoUrl)
-      .then((color) => {
-        setBgColor(color.rgba);
-      })
-      .catch(() => {
-        // Cor padrão se tiver erro
-        setBgColor("rgba(0,0,0,0.8)");
-      });
+      .then((color) => setBgColor(color.rgba))
+      .catch(() => setBgColor("rgba(0,0,0,0.8)"));
 
     return () => fac.destroy();
   }, [story]);
 
-  // Registra a visualização do story e manda para api
+  // Registrar visualização
   useEffect(() => {
     if (!story?.id || !usuarioLogadoId) return;
 
-    const tempoEmSegundos = 2; // Tempo que o usuário visualizou o story
-
-    // Chamada POST para registrar a visualização no backend
     fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/story/${story.id}/visualizacao?usuarioId=${usuarioLogadoId}&tempoEmSegundos=${tempoEmSegundos}`,
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/story/${story.id}/visualizacao?usuarioId=${usuarioLogadoId}&tempoEmSegundos=2`,
       { method: "POST" }
     ).catch((err) => console.error("Erro ao registrar visualização:", err));
   }, [story, usuarioLogadoId]);
 
-  // Função para avançar para o próximo story
-  const proximo = () => {
-    if (indiceStory < grupo.stories.length - 1) {
-      setIndiceStory(indiceStory + 1);
+  // Avança pro próximo story
+ const proximo = () => {
+  if (estaDigitando) return;
+  clearTimeout(timeoutRef.current);
+
+  if (indiceStory < grupo.stories.length - 1) {
+    setIndiceStory(indiceStory + 1);
+  } else {
+    // Estamos no último story do grupo
+    const indiceAtualDoGrupo = grupos.findIndex((g) => g.usuarioId === grupo.usuarioId);
+    const proximoGrupo = grupos[indiceAtualDoGrupo + 1];
+
+    if (proximoGrupo) {
+      irParaProximoGrupo(proximoGrupo);
     } else {
-      fechar(); 
+      fechar(); // se não houver próximo grupo, fecha
     }
-  };
+  }
+};
 
-  // Função para voltar para o story anterior
+
+
+  // Volta ao anterior
   const anterior = () => {
-    if (indiceStory > 0) setIndiceStory(indiceStory - 1);
-  };
+  clearTimeout(timeoutRef.current);
 
-  // Avança automaticamente para o próximo story a cada 4 segundos
+  if (indiceStory > 0) {
+    setIndiceStory(indiceStory - 1);
+  } else {
+    // Estamos no primeiro story do grupo atual
+    const indiceAtualDoGrupo = grupos.findIndex((g) => g.usuarioId === grupo.usuarioId);
+    const grupoAnterior = grupos[indiceAtualDoGrupo - 1];
+
+    if (grupoAnterior) {
+      irParaProximoGrupo(grupoAnterior);
+      setIndiceStory(grupoAnterior.stories.length - 1); // último story do grupo anterior
+    } else {
+      // Não tem grupo anterior, talvez fechar ou não fazer nada
+      // fechar(); // opcional
+    }
+  }
+};
+
+
+  // Lógica de avanço automático controlado
   useEffect(() => {
-    timeoutRef.current = setTimeout(proximo, 4000);
+    clearTimeout(timeoutRef.current);
+    startTimeRef.current = Date.now();
+    tempoRestanteRef.current = 4000;
 
-  
+    if (!estaDigitando) {
+      timeoutRef.current = setTimeout(proximo, tempoRestanteRef.current);
+    }
+
     return () => clearTimeout(timeoutRef.current);
   }, [indiceStory]);
 
-  // Atualiza o estado resposta conforme o usuário digita na textarea
-  const handleRespostaChange = (e) => setResposta(e.target.value);
+  // Ao focar no campo, pausa o avanço
+  const handleFocus = () => {
+  setEstaDigitando(true);
+  clearTimeout(timeoutRef.current);
 
-  // Envia a resposta quando usuário confirma (Enter)
-  const enviarResposta = () => {
-    if (!resposta.trim()) return; // Ignora respostas vazias
+  const decorrido = Date.now() - startTimeRef.current;
+  tempoRestanteRef.current = Math.max(4000 - decorrido, 500);
 
-    // Aqui você pode enviar a resposta para a API do backend
-    console.log("Resposta enviada:", resposta);
+  // ⏸️ Pausa o vídeo se estiver presente
+  if (videoRef.current && !videoRef.current.paused) {
+    videoRef.current.pause();
+  }
+};
 
-    setResposta(""); // Limpa o campo após enviar
+  // Ao desfocar, retoma com o tempo restante
+  const handleBlur = () => {
+  setEstaDigitando(false);
+  startTimeRef.current = Date.now();
+  clearTimeout(timeoutRef.current);
+
+  timeoutRef.current = setTimeout(proximo, tempoRestanteRef.current);
+
+  // ▶️ Continua o vídeo se estiver presente
+  if (videoRef.current && videoRef.current.paused) {
+    videoRef.current.play().catch((err) => {
+      // erro ao tentar reproduzir (ex: autoplay bloqueado)
+      console.warn("Não foi possível continuar o vídeo:", err);
+    });
+  }
+};
+
+  // Enviar resposta
+  const enviarResposta = async () => {
+    if (!resposta.trim()) return;
+    clearTimeout(timeoutRef.current);
+
+    const payload = {
+      idRemetente: usuarioLogadoId,
+      idDestinatario: grupo.usuarioId,
+      conteudo: resposta,
+      storyId: story.id,
+    };
+
+    try {
+      const res = await fetch(
+        "https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/enviar-com-story",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) throw new Error("Erro ao enviar mensagem");
+
+      setResposta("");
+    } catch (error) {
+      console.error("Erro ao enviar resposta:", error);
+      alert("Erro ao enviar resposta do story.");
+    }
   };
 
   return (
     <>
-      {/* Botão para fechar o modal */}
-      <button
-        className="btn-fechar-story"
-        onClick={fechar}
-        aria-label="Fechar modal"
-      >
+      <button className="btn-fechar-story" onClick={fechar} aria-label="Fechar modal">
         &times;
       </button>
 
@@ -113,23 +182,24 @@ function StoryModal({
           onClick={(e) => e.stopPropagation()}
           style={{ backgroundColor: bgColor, transition: "background-color 0.5s" }}
         >
-          {/* Barra de progresso dos stories */}
+          {/* Barra de progresso */}
           <div className="progress-bar-container acima-header">
             {grupo.stories.map((_, idx) => (
               <div
-                key={idx}
-                className={`progress-segment ${
-                  idx < indiceStory
-                    ? "preenchido" 
-                    : idx === indiceStory
-                    ? "animando"   
-                    : ""
-                }`}
-              />
+  key={idx}
+  className={`progress-segment ${
+    idx < indiceStory
+      ? "preenchido"
+      : idx === indiceStory
+      ? `animando ${estaDigitando ? "pausado" : ""}`
+      : ""
+  }`}
+/>
+
             ))}
           </div>
 
-          {/* Header com imagem e nome do usuário dono do story */}
+          {/* Cabeçalho com usuário */}
           <div className="modal-header-usuario abaixo-barra">
             <img
               src={usuario?.imagem}
@@ -142,7 +212,7 @@ function StoryModal({
             </span>
           </div>
 
-          {/* Exibe imagem ou vídeo conforme o tipo do story */}
+          {/* Conteúdo do story */}
           {story.tipo === "imagem" ? (
             <img
               src={story.conteudoUrl}
@@ -152,22 +222,26 @@ function StoryModal({
             />
           ) : (
             <video
-              src={story.conteudoUrl}
-              className="modal-story fixo"
-              autoPlay
-              muted
-              playsInline
-              onEnded={proximo} // Avança automático ao terminar vídeo
-            />
+  ref={videoRef}
+  src={story.conteudoUrl}
+  className="modal-story fixo"
+  autoPlay
+  muted
+  playsInline
+  onEnded={proximo}
+/>
+
           )}
 
-          {/* Área de interação: textarea para o usuário enviar resposta */}
+          {/* Interação do usuário */}
           <div className="story-interacao">
             <textarea
               className="input-resposta-story"
               placeholder="Enviar uma mensagem..."
               value={resposta}
-              onChange={handleRespostaChange}
+              onChange={(e) => setResposta(e.target.value)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -177,7 +251,7 @@ function StoryModal({
             />
           </div>
 
-          {/* Áreas invisíveis para navegação ao clicar nas laterais */}
+          {/* Navegação por clique lateral */}
           <div className="nav-zona esquerda" onClick={anterior} />
           <div className="nav-zona direita" onClick={proximo} />
         </div>

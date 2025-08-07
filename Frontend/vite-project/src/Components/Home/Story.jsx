@@ -39,38 +39,40 @@ function Story() {
   };
 
   // Função para buscar e agrupar stories
-  const carregarStories = async () => {
-    setCarregando(true);
-    try {
-      // Busca todos os stories da API
-      const resStories = await fetch("https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/todos");
-      if (!resStories.ok) throw new Error("Erro ao buscar stories");
-      const dataStories = await resStories.json();
+const carregarStories = async () => {
+  setCarregando(true);
+  try {
+    // 🔁 Novo endpoint: Stories dos usuários seguidos
+    const usuarioId = usuarioLogado?.id || JSON.parse(localStorage.getItem("usuario"))?.id;
+    const resStories = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/feed-usuarioseguindos/${usuarioId}/stories`
+    );
+    if (!resStories.ok) throw new Error("Erro ao buscar stories");
+    const dataStories = await resStories.json();
 
-      // Agrupa por usuário
-      const agrupados = agruparPorUsuario(dataStories);
+    const agrupados = agruparPorUsuario(dataStories);
 
-      // Monta mapa de usuários
-      const usuariosMap = {};
-      await Promise.all(
-        agrupados.map(async (grupo) => {
-          if (!usuariosMap[grupo.usuarioId]) {
-            const resU = await fetch(
-              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${grupo.usuarioId}`
-            );
-            usuariosMap[grupo.usuarioId] = await resU.json();
-          }
-        })
-      );
+    const usuariosMap = {};
+    await Promise.all(
+      agrupados.map(async (grupo) => {
+        if (!usuariosMap[grupo.usuarioId]) {
+          const resU = await fetch(
+            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${grupo.usuarioId}`
+          );
+          usuariosMap[grupo.usuarioId] = await resU.json();
+        }
+      })
+    );
 
-      setStories(agrupados);
-      setUsuarios(usuariosMap);
-    } catch (err) {
-      console.error("Erro ao carregar stories:", err);
-    } finally {
-      setCarregando(false);
-    }
-  };
+    setStories(agrupados);
+    setUsuarios(usuariosMap);
+  } catch (err) {
+    console.error("Erro ao carregar stories:", err);
+  } finally {
+    setCarregando(false);
+  }
+};
+
 
   // useEffect inicial para buscar usuário logado e stories
   useEffect(() => {
@@ -181,13 +183,19 @@ function Story() {
       {/* Modal de visualização */}
       {modalAberto && storyAtual && (
         <StoryModal
-          grupo={storyAtual}
-          indiceStory={indiceStory}
-          setIndiceStory={setIndiceStory}
-          fechar={fecharModal}
-          usuarios={usuarios}
-          usuarioLogadoId={usuarioLogadoId}
-        />
+  grupo={storyAtual}
+  indiceStory={indiceStory}
+  setIndiceStory={setIndiceStory}
+  fechar={fecharModal}
+  usuarios={usuarios}
+  usuarioLogadoId={usuarioLogadoId}
+  grupos={stories} // novo
+  irParaProximoGrupo={(proximoGrupo) => {
+    setStoryAtual(proximoGrupo);
+    setIndiceStory(0);
+  }} // novo
+/>
+
       )}
 
       {/* Modal de criação de novo story */}
