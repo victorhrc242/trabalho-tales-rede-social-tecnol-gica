@@ -1,86 +1,151 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, MessageCircle, MoreVertical, Share2 } from 'lucide-react';
+import { Heart, MessageCircle, MoreVertical,Share2 } from 'lucide-react';
 import VideoPlayer from './VideoPlayer';
 import './modal.css';
-
-function FeedItem({ 
-  post, 
-  usuario, 
-  videoAtivoId, 
-  registerVideoRef, 
-  irParaPerfil,
-  onAbrirComentarios,
-  onCurtirPost 
-}) {
-  // Estados do componente
+function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, abrirComentarios, irParaPerfil }) {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [mostrarTiposDenuncia, setMostrarTiposDenuncia] = useState(false);
+  const opcoesRef = useRef(null);
   const [foiCurtido, setFoiCurtido] = useState(false);
   const [totalCurtidas, setTotalCurtidas] = useState(post.curtidas || 0);
   const [modalAberto, setModalAberto] = useState(false);
-  const [destinatarioId, setDestinatarioId] = useState("");
-  const [mensagem, setMensagem] = useState("");
-  const [seguindo, setSeguindo] = useState([]);
-  const [curtindo, setCurtindo] = useState(false);
-  const [toast, setToast] = useState(null);
-  
-  const opcoesRef = useRef(null);
+const [destinatarioId, setDestinatarioId] = useState("");
+const [mensagem, setMensagem] = useState("");
+const [seguindo, setSeguindo] = useState([]);
+const [curtindo, setCurtindo] = useState(false);
+  const denunciarPost = async (descricao) => {
+    try {
+      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/denuncias/adicionar_denuncia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postid: post.id,
+          usuarioid: usuario.id,
+          descricao: descricao
+        })
+      });
+      alert('Denúncia enviada com sucesso!');
+      setMostrarMenu(false);
+      setMostrarTiposDenuncia(false);
+    } catch (err) {
+      console.error('Erro ao denunciar:', err);
+      alert('Erro ao enviar denúncia.');
+    }
+  };
+useEffect(() => {
+  const buscarUsuariosSeguindo = async () => {
+    try {
+      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`);
+      const data = await res.json();
 
-  // Verifica se o usuário já curtiu o post
+      if (data.sucesso && Array.isArray(data.seguindo)) {
+        const usuariosDetalhados = await Promise.all(
+          data.seguindo.map(async ({ usuario2 }) => {
+            const resUser = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuario2}`);
+            const userData = await resUser.json();
+            return {
+              id: usuario2,
+              nome: userData.nome,
+              imagem: userData.imagem
+            };
+          })
+        );
+
+        setSeguindo(usuariosDetalhados);
+      }
+    } catch (err) {
+      console.error('Erro ao buscar detalhes dos usuários seguindo:', err);
+    }
+  };
+
+  if (modalAberto) {
+    buscarUsuariosSeguindo();
+  }
+}, [modalAberto, usuario.id]);
+
   useEffect(() => {
     async function checkCurtida() {
-      try {
-        const res = await fetch(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`
-        );
-        const data = await res.json();
-        setFoiCurtido(data.curtiu);
-      } catch (error) {
-        console.error('Erro ao verificar curtida:', error);
-      }
+      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`);
+      const data = await res.json();
+      setFoiCurtido(data.curtiu);
     }
-    
-    if (usuario?.id) {
-      checkCurtida();
-    }
+    checkCurtida();
   }, [post.id, usuario.id]);
+  if (!usuario?.id) {
+  alert("Usuário não autenticado.");
+  return;
+}
 
-  // Busca usuários que o usuário atual segue (para compartilhamento)
+
+const [toast, setToast] = useState(null);
+function Toast({ mensagem, tipo = 'sucesso', onClose }) {
   useEffect(() => {
-    const buscarUsuariosSeguindo = async () => {
-      try {
-        const res = await fetch(
-          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`
-        );
-        const data = await res.json();
+    const timer = setTimeout(onClose, 3000); // desaparece após 3s
+    return () => clearTimeout(timer);
+  }, [onClose]);
 
-        if (data.sucesso && Array.isArray(data.seguindo)) {
-          const usuariosDetalhados = await Promise.all(
-            data.seguindo.map(async ({ usuario2 }) => {
-              const resUser = await fetch(
-                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuario2}`
-              );
-              const userData = await resUser.json();
-              return {
-                id: usuario2,
-                nome: userData.nome,
-                imagem: userData.imagem
-              };
-            })
-          );
-          setSeguindo(usuariosDetalhados);
-        }
-      } catch (err) {
-        console.error('Erro ao buscar usuários seguindo:', err);
-      }
-    };
+  return (
+    <div className={`toast ${tipo}`} onClick={onClose}>
+      {mensagem}
+    </div>
+  );
+}
 
-    if (modalAberto && usuario?.id) {
-      buscarUsuariosSeguindo();
-    }
-  }, [modalAberto, usuario.id]);
 
-  // Fecha menus quando clica fora
+const enviarMensagem = async () => {
+  const corpo = {
+  idRemetente: usuario.id,
+  idDestinatario: destinatarioId,
+  conteudo: mensagem,
+  postCompartilhadoId: post.id
+};
+
+
+  try {
+    const response = await fetch("https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/enviar-com-post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(corpo)
+    });
+
+    const data = await response.json();
+    if (data.sucesso) {
+  setToast({ mensagem: "Enviada com sucesso!", tipo: "sucesso" });
+  setModalAberto(false);
+  setMensagem("");
+  setDestinatarioId("");
+} else {
+  setToast({ mensagem: "Erro: " + data.mensagem, tipo: "erro" });
+}
+
+  } catch (erro) {
+  setToast({ mensagem: "Erro ao enviar: " + erro.message, tipo: "erro" });
+
+  }
+};
+
+async function handleCurtir() {
+  if (curtindo) return;
+  setCurtindo(true);
+
+  setFoiCurtido(prev => !prev);
+  setTotalCurtidas(prev => (foiCurtido ? prev - 1 : prev + 1));
+
+  const resultado = await curtirPost(post.id);
+
+  if (!resultado?.sucesso) {
+    setFoiCurtido(prev => !prev);
+    setTotalCurtidas(prev => (foiCurtido ? prev + 1 : prev - 1));
+  }
+
+  setCurtindo(false);
+}
+
+
+
+
   useEffect(() => {
     const handleClickFora = (e) => {
       if (opcoesRef.current && !opcoesRef.current.contains(e.target)) {
@@ -92,112 +157,13 @@ function FeedItem({
     return () => document.removeEventListener('mousedown', handleClickFora);
   }, []);
 
-  // Função para denunciar post
-  const denunciarPost = async (descricao) => {
-    try {
-      await fetch(
-        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/denuncias/adicionar_denuncia', 
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            postid: post.id,
-            usuarioid: usuario.id,
-            descricao: descricao
-          })
-        }
-      );
-      alert('Denúncia enviada com sucesso!');
-      setMostrarMenu(false);
-      setMostrarTiposDenuncia(false);
-    } catch (err) {
-      console.error('Erro ao denunciar:', err);
-      alert('Erro ao enviar denúncia.');
-    }
-  };
-
-  // Função para curtir/descurtir
-  const handleCurtir = async () => {
-    if (curtindo || !usuario?.id) return;
-    setCurtindo(true);
-
-    // Otimista UI update
-    setFoiCurtido(prev => !prev);
-    setTotalCurtidas(prev => (foiCurtido ? prev - 1 : prev + 1));
-
-    try {
-      const resultado = await onCurtirPost(post.id);
-      
-      if (!resultado?.sucesso) {
-        // Reverte se falhar
-        setFoiCurtido(prev => !prev);
-        setTotalCurtidas(prev => (foiCurtido ? prev + 1 : prev - 1));
-      }
-    } finally {
-      setCurtindo(false);
-    }
-  };
-
-  // Função para enviar mensagem
-  const enviarMensagem = async () => {
-    if (!destinatarioId || !mensagem.trim()) return;
-
-    const corpo = {
-      idRemetente: usuario.id,
-      idDestinatario: destinatarioId,
-      conteudo: mensagem,
-      postCompartilhadoId: post.id
-    };
-
-    try {
-      const response = await fetch(
-        "https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/enviar-com-post", 
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(corpo)
-        }
-      );
-
-      const data = await response.json();
-      if (data.sucesso) {
-        setToast({ mensagem: "Enviada com sucesso!", tipo: "sucesso" });
-        setModalAberto(false);
-        setMensagem("");
-        setDestinatarioId("");
-      } else {
-        setToast({ mensagem: "Erro: " + data.mensagem, tipo: "erro" });
-      }
-    } catch (erro) {
-      setToast({ mensagem: "Erro ao enviar: " + erro.message, tipo: "erro" });
-    }
-  };
-
-  // Componente Toast
-  function Toast({ mensagem, tipo = 'sucesso', onClose }) {
-    useEffect(() => {
-      const timer = setTimeout(onClose, 3000);
-      return () => clearTimeout(timer);
-    }, [onClose]);
-
-    return (
-      <div className={`toast ${tipo}`} onClick={onClose}>
-        {mensagem}
-      </div>
-    );
-  }
-
-  if (!usuario?.id) {
-    return null;
-  }
-
+  
   return (
     <li style={{ marginBottom: '20px' }}>
-      {/* Cabeçalho do post */}
       <div className="autor-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img
-            src={post.autorImagem || 'https://via.placeholder.com/40'}
+            src={post.autorImagem || 'https://sigeventos.unifesspa.edu.br/sigeventos/verArquivo?idArquivo=899786&key=7b31619566f4f78b8a447ec38d196e12'}
             alt={`Foto de ${post.autorNome}`}
             onClick={() => irParaPerfil(post.autorId)}
             style={{ width: 40, height: 40, borderRadius: '50%', marginRight: 10, cursor: 'pointer' }}
@@ -207,16 +173,19 @@ function FeedItem({
           </span>
         </div>
 
-        {/* Toast de mensagem */}
-        {toast && (
-          <Toast
-            mensagem={toast.mensagem}
-            tipo={toast.tipo}
-            onClose={() => setToast(null)}
-          />
-        )}
 
-        {/* Menu de opções */}
+        {/* menssagem de alerta  */}
+
+        {toast && (
+  <Toast
+    mensagem={toast.mensagem}
+    tipo={toast.tipo}
+    onClose={() => setToast(null)}
+  />
+)}
+
+
+        {/* Botão e menu de opções */}
         <div style={{ position: 'relative' }} ref={opcoesRef}>
           <MoreVertical
             size={20}
@@ -269,8 +238,12 @@ function FeedItem({
         </div>
       </div>
 
-      {/* Conteúdo do post */}
-      <article data-postid={post.id} style={{ marginBottom: '20px' }} className="post-item">
+      <article
+        data-postid={post.id}
+        style={{ marginBottom: '20px' }}
+        className="post-item"
+      >
+        {/* Conteúdo do post */}
         {post.imagem && (
           <img src={post.imagem} alt="Imagem" className="imagem-post-feed" />
         )}
@@ -284,102 +257,110 @@ function FeedItem({
           </div>
         )}
 
-        {/* Ações do post */}
+        {/* Botões curtir/comentar */}
         <div className="botoes-post">
           <button className="botao-acao" onClick={handleCurtir}>
-            <Heart
-              size={20}
-              color={foiCurtido ? 'red' : 'black'}
-              fill={foiCurtido ? 'red' : 'none'}
-            />
-            {usuario?.id === post.autorId && (
-              <span> ({totalCurtidas})</span>
-            )}
-          </button>
+           <Heart
+           size={20}
+           color={foiCurtido ? 'red' : 'black'}
+           fill={foiCurtido ? 'red' : 'none'}
+          />
+           {usuario?.id === post.autorId && (
+          <span> ({totalCurtidas})</span>
+          )}
+         </button>
 
-          <button className="botao-acao" onClick={() => onAbrirComentarios(post)}>
+
+
+          <button className="botao-acao" onClick={() => abrirComentarios(post)}>
             <MessageCircle size={20} /> ({post.comentarios})
           </button>
 
           <button onClick={() => setModalAberto(true)} className="botao-enviar-dm">
-            <Share2 size={20} />
+             <Share2 size={20} />
           </button>
+
         </div>
 
-        {/* Modal de compartilhamento */}
-        {modalAberto && (
-          <div className="modal-overlay-story" onClick={() => setModalAberto(false)}>
-            <div className="modal-content-story" onClick={(e) => e.stopPropagation()}>
-              <h3>Compartilhar</h3>
+        {/* EXIBE USUARIOS PARA O COMPARTILHAMENTO DO CODIGO  */}
 
-              <ul className="lista-usuarios-horizontal">
-                {seguindo.map((usuario) => (
-                  <li
-                    key={usuario.id}
-                    onClick={() => setDestinatarioId(usuario.id)}
-                    style={{
-                      backgroundColor: destinatarioId === usuario.id ? '#ddd' : undefined,
-                    }}
-                  >
-                    <img src={usuario.imagem} alt="avatar" />
-                    <span style={{ fontSize: 12 }}>{usuario.nome}</span>
-                  </li>
-                ))}
-              </ul>
 
-              {destinatarioId && (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 10,
-                  marginBottom: 10,
-                  backgroundColor: '#f0f0f0',
-                  padding: '8px 12px',
-                  borderRadius: '8px'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <img
-                      src={seguindo.find(u => u.id === destinatarioId)?.imagem}
-                      alt="Selecionado"
-                      style={{ width: 40, height: 40, borderRadius: '50%' }}
-                    />
-                    <strong>{seguindo.find(u => u.id === destinatarioId)?.nome}</strong>
-                  </div>
-                  <button
-                    onClick={() => setDestinatarioId("")}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      fontSize: 18,
-                      cursor: 'pointer',
-                      color: '#888',
-                      fontWeight: 'bold'
-                    }}
-                    title="Cancelar destinatário"
-                  >
-                    ✖
-                  </button>
-                </div>
-              )}
+{modalAberto && (
+  <div className="modal-overlay-story" onClick={() => setModalAberto(false)}>
+    <div className="modal-content-story" onClick={(e) => e.stopPropagation()}>
+      <h3>Compartilhar</h3>
 
-              {destinatarioId && (
-                <>
-                  <textarea
-                    className="textarea-mensagem"
-                    placeholder="Escreva uma mensagem..."
-                    value={mensagem}
-                    onChange={(e) => setMensagem(e.target.value)}
-                    style={{ width: '100%', marginBottom: 10 }}
-                  />
-                  <button className="botao-enviar-dm-story" onClick={enviarMensagem}>Enviar</button>
-                </>
-              )}
-            </div>
+      {/* LISTA DE USUÁRIOS HORIZONTAL */}
+      <ul className="lista-usuarios-horizontal">
+        {seguindo.map((usuario) => (
+          <li
+            key={usuario.id}
+            onClick={() => setDestinatarioId(usuario.id)}
+            style={{
+              backgroundColor: destinatarioId === usuario.id ? '#ddd' : undefined,
+            }}
+          >
+            <img src={usuario.imagem} alt="avatar" />
+            <span style={{ fontSize: 12 }}>{usuario.nome}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* DESTINATÁRIO ESCOLHIDO */}
+      {destinatarioId && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+          marginBottom: 10,
+          backgroundColor: '#f0f0f0',
+          padding: '8px 12px',
+          borderRadius: '8px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img
+              src={seguindo.find(u => u.id === destinatarioId)?.imagem}
+              alt="Selecionado"
+              style={{ width: 40, height: 40, borderRadius: '50%' }}
+            />
+            <strong>{seguindo.find(u => u.id === destinatarioId)?.nome}</strong>
           </div>
-        )}
+          <button
+            onClick={() => setDestinatarioId("")}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontSize: 18,
+              cursor: 'pointer',
+              color: '#888',
+              fontWeight: 'bold'
+            }}
+            title="Cancelar destinatário"
+          >
+            ✖
+          </button>
+        </div>
+      )}
 
-        {/* Rodapé do post */}
+      {/* CAMPO DE MENSAGEM E BOTÃO ENVIAR */}
+      {destinatarioId && (
+        <>
+          <textarea
+            className="textarea-mensagem"
+            placeholder="Escreva uma mensagem..."
+            value={mensagem}
+            onChange={(e) => setMensagem(e.target.value)}
+            style={{ width: '100%', marginBottom: 10 }}
+          />
+          <button className="botao-enviar-dm-story" onClick={enviarMensagem}>Enviar</button>
+        </>
+      )}
+    </div>
+  </div>
+)}
+
+        {/* Texto do post */}
         <div className="post-description">
           <p>
             {post.conteudo} {post.tags?.map((tag) => `#${tag.trim()}`).join(' ')}
@@ -390,6 +371,9 @@ function FeedItem({
         <hr />
       </article>
     </li>
+
+
+
   );
 }
 
