@@ -242,18 +242,7 @@ const handleCriarStory = async () => {
               {/* Etapa 1: Upload */}
               {etapa === 1 && (
   <>
-    {/* Botão Criar Story antes da área de upload */}
-    <button
-      type="button"
-      className="btn-criar-story"
-      onClick={() => {
-        setmodalAberto(false);
-        setCriarStoryModal(true);
-      }}
-      style={{ marginBottom: '15px' }} // espaço entre o botão e a área upload
-    >
-      Criar Story
-    </button>
+    
 
     {!imagemArquivo && !videoArquivo && (
       <label
@@ -375,12 +364,7 @@ const handleCriarStory = async () => {
                     <button className='button-confirme' type="submit" disabled={enviando}>
                       {enviando ? 'Postando...' : 'Publicar'}
                     </button>
-                    <button
-  onClick={handleCriarStory}
-  className="botao-confirmar"
->
-  Publicar como Story
-</button>
+                  
 
                     <button
                     className='button-cancel'

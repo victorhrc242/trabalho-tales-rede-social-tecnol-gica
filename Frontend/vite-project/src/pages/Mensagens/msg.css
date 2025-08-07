@@ -44,7 +44,7 @@
 
 .sidebar-header {
   padding: 20px;
-  background-color: #00376f;
+  background-color: #1f2021;
   color: white;
   text-align: center;
 }
@@ -133,7 +133,7 @@
 }
 
 .chat-item-notificacao {
-  background-color: #0a66c2;
+  background-color: #1f2021;
   color: white;
   font-size: 12px;
   padding: 2px 8px;
@@ -152,7 +152,7 @@
 .chat-header {
   display: flex;
   align-items: center;
-  background-color: #00376f;
+  background-color: #1f2021;
   color: #fff9f9;
   padding: 9px;
   font-size: 1.2em;
@@ -239,7 +239,7 @@ textarea {
     min-height: 0px; 
 }
 .botao-enviar {
-  background-color: #0a66c2;
+  background-color: #1f2021;
   border: none;
   color: white;
   border-radius: 50%;
@@ -366,12 +366,12 @@ textarea {
 
 /* Botão "Sim" azul */
 .btn-sim {
-  background-color: #2196f3;
+  background-color: #1f2021;
   color: white;
 }
 
 .btn-sim:hover {
-  background-color: #1976d2;
+  background-color: #1f2021;
 }
 
 /* Botão "Não" vermelho */
@@ -508,7 +508,7 @@ textarea {
     align-items: center;
     padding: 15px;
     font-size: 1em;
-    background-color: #00376f;
+    background-color: #1f2021;
     color: #fff9f9;
     position: relative;
   }
@@ -552,7 +552,7 @@ textarea {
   }
 
   .btn-voltar-home:focus {
-    outline: 2px solid #00376f;
+    outline: 2px solid #1f2021;
   }
 
   /* Garantir que o texto "Mensagens" não quebre linha */

@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, MessageCircle, MoreVertical,Share2 } from 'lucide-react';
 import VideoPlayer from './VideoPlayer';
+import CompartilharPost from './CompartilharPost';
+
 import './modal.css';
 function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, abrirComentarios, irParaPerfil }) {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -92,39 +94,6 @@ function Toast({ mensagem, tipo = 'sucesso', onClose }) {
 }
 
 
-const enviarMensagem = async () => {
-  const corpo = {
-  idRemetente: usuario.id,
-  idDestinatario: destinatarioId,
-  conteudo: mensagem,
-  postCompartilhadoId: post.id
-};
-
-
-  try {
-    const response = await fetch("https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/enviar-com-post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(corpo)
-    });
-
-    const data = await response.json();
-    if (data.sucesso) {
-  setToast({ mensagem: "Enviada com sucesso!", tipo: "sucesso" });
-  setModalAberto(false);
-  setMensagem("");
-  setDestinatarioId("");
-} else {
-  setToast({ mensagem: "Erro: " + data.mensagem, tipo: "erro" });
-}
-
-  } catch (erro) {
-  setToast({ mensagem: "Erro ao enviar: " + erro.message, tipo: "erro" });
-
-  }
-};
 
 async function handleCurtir() {
   if (curtindo) return;
@@ -157,6 +126,9 @@ async function handleCurtir() {
     return () => document.removeEventListener('mousedown', handleClickFora);
   }, []);
 
+
+  const [mostrarCompartilhar, setMostrarCompartilhar] = useState(false);
+
   
   return (
     <li style={{ marginBottom: '20px' }}>
@@ -174,15 +146,7 @@ async function handleCurtir() {
         </div>
 
 
-        {/* menssagem de alerta  */}
-
-        {toast && (
-  <Toast
-    mensagem={toast.mensagem}
-    tipo={toast.tipo}
-    onClose={() => setToast(null)}
-  />
-)}
+      
 
 
         {/* Botão e menu de opções */}
@@ -276,97 +240,23 @@ async function handleCurtir() {
             <MessageCircle size={20} /> ({post.comentarios})
           </button>
 
-          <button onClick={() => setModalAberto(true)} className="botao-enviar-dm">
-             <Share2 size={20} />
-          </button>
+         <button onClick={() => setMostrarCompartilhar(true)} className="botao-enviar-dm">
+  <Share2 size={20} />
+</button>
+
 
         </div>
 
-        {/* EXIBE USUARIOS PARA O COMPARTILHAMENTO DO CODIGO  */}
-
-
-{modalAberto && (
-  <div className="modal-overlay-story" onClick={() => setModalAberto(false)}>
-    <div className="modal-content-story" onClick={(e) => e.stopPropagation()}>
-      <h3>Compartilhar</h3>
-
-      {/* LISTA DE USUÁRIOS HORIZONTAL */}
-      <ul className="lista-usuarios-horizontal">
-        {seguindo.map((usuario) => (
-          <li
-            key={usuario.id}
-            onClick={() => setDestinatarioId(usuario.id)}
-            style={{
-              backgroundColor: destinatarioId === usuario.id ? '#ddd' : undefined,
-            }}
-          >
-            <img src={usuario.imagem} alt="avatar" />
-            <span style={{ fontSize: 12 }}>{usuario.nome}</span>
-          </li>
-        ))}
-      </ul>
-
-      {/* DESTINATÁRIO ESCOLHIDO */}
-      {destinatarioId && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 10,
-          marginBottom: 10,
-          backgroundColor: '#f0f0f0',
-          padding: '8px 12px',
-          borderRadius: '8px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img
-              src={seguindo.find(u => u.id === destinatarioId)?.imagem}
-              alt="Selecionado"
-              style={{ width: 40, height: 40, borderRadius: '50%' }}
-            />
-            <strong>{seguindo.find(u => u.id === destinatarioId)?.nome}</strong>
-          </div>
-          <button
-            onClick={() => setDestinatarioId("")}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              fontSize: 18,
-              cursor: 'pointer',
-              color: '#888',
-              fontWeight: 'bold'
-            }}
-            title="Cancelar destinatário"
-          >
-            ✖
-          </button>
-        </div>
-      )}
-
-      {/* CAMPO DE MENSAGEM E BOTÃO ENVIAR */}
-      {destinatarioId && (
-        <>
-          <textarea
-            className="textarea-mensagem"
-            placeholder="Escreva uma mensagem..."
-            value={mensagem}
-            onChange={(e) => setMensagem(e.target.value)}
-            style={{ width: '100%', marginBottom: 10 }}
-          />
-          <button className="botao-enviar-dm-story" onClick={enviarMensagem}>Enviar</button>
-        </>
-      )}
-    </div>
-  </div>
+        {mostrarCompartilhar && (
+  <CompartilharPost
+    post={post}
+    usuario={usuario}
+    onClose={() => setMostrarCompartilhar(false)}
+  />
 )}
 
-        {/* Texto do post */}
-        <div className="post-description">
-          <p>
-            {post.conteudo} {post.tags?.map((tag) => `#${tag.trim()}`).join(' ')}
-          </p>
-          <p>{new Date(post.dataPostagem).toLocaleString()}</p>
-        </div>
+
+     
 
         <hr />
       </article>

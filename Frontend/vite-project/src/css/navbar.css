@@ -122,7 +122,7 @@
   margin-top: 8px;
   width: 100%;
   padding: 8px;
-  background-color: #0095f6;
+  background-color: #1f2021;
   border: none;
   color: white;
   font-weight: bold;
@@ -215,13 +215,7 @@
   cursor: pointer;
 }
 
-.button-confirme:hover{
-  background-color: #0f8200;
-}
 
-.button-cancel:hover{
-  background-color: #cf1a1a;
-}
 
 /* Wrapper principal */
 .navbar-container {
@@ -345,7 +339,7 @@
   position: absolute;
   top: -6px;
   right: -10px;
-  background-color:  #0095f6;
+  background-color:  #4264fb;
   color: white;
   font-size: 10px;
   padding: 2px 6px;

@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Heart, MessageCircle,Share2 } from 'lucide-react';
 import './kurz_css.css';
 import Comentario from '../../Components/Comentario';
+import CompartilharPost from '../../Components/Home/CompartilharPost';
+
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -83,7 +85,7 @@ function VideoPlayer({ videoUrl, isActive }) {
         className="video-responsive"
         onClick={handleVideoClick}
         style={{
-          width: '110%',
+          width: '100%',
           height: 'auto',
           maxHeight: '650px',
           aspectRatio: '9 / 16',
@@ -470,56 +472,11 @@ useEffect(() => {
     }
   };
 
-
-  // COMPARTILHAR VIDEO 
-
-  const compartilharVideo = async (video) => {
-  const nomeUsuario = prompt('Digite o nome de usuário para compartilhar este vídeo:');
-
-  if (!nomeUsuario) return;
-
-  try {
-    // Buscar usuário destino pelo nome
-    const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/buscar-por-nome/${nomeUsuario}`);
-    const usuarios = await res.json();
-
-    if (!Array.isArray(usuarios) || usuarios.length === 0) {
-      alert('Usuário não encontrado.');
-      return;
-    }
-
-    const destinatario = usuarios[0];
-
-    // Enviar a mensagem com o vídeo compartilhado
-    const enviar = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Mensagens/enviar-com-post', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        accept: '*/*',
-      },
-      body: JSON.stringify({
-        idRemetente: usuario.id,
-        idDestinatario: destinatario.id,
-        conteudo: `Veja este vídeo!`, // ou deixe string vazia
-        postCompartilhadoId: video.id,
-      }),
-    });
-
-    if (enviar.ok) {
-      alert('Vídeo compartilhado com sucesso!');
-    } else {
-      alert('Erro ao compartilhar. Tente novamente.');
-    }
-  } catch (error) {
-    console.error('Erro ao compartilhar vídeo:', error);
-    alert('Erro ao compartilhar vídeo.');
-  }
-};
-
- 
+  const [mostrarCompartilhar, setMostrarCompartilhar] = useState(false);
+const [postParaCompartilhar, setPostParaCompartilhar] = useState(null);
 
   if (!videos.length && !carregando)
-    return <div className="kurz-loading">Nenhum vídeo disponível.</div>;
+  return <div className="kurz-loading">Nenhum vídeo disponível.</div>;
 
   return (
     <>
@@ -556,16 +513,31 @@ useEffect(() => {
                 <MessageCircle size={28} color="white" />
                 <span>{comentariosCount[video.id] || 0}</span>
               </button>
-             <button
-  onClick={() => compartilharVideo(video)}
-  aria-label="Compartilhar"
+           <button
+  onClick={() => {
+    setPostParaCompartilhar(video);  // Define o post atual para compartilhar
+    setMostrarCompartilhar(true);    // Abre o modal
+  }}
+  className="botao-enviar-dm"
 >
-  <Share2 size={28} color="white" />
+  <Share2 size={20} />
 </button>
- 
+
             </div>
           </div>
         ))}
+
+       {mostrarCompartilhar && postParaCompartilhar && (
+  <CompartilharPost
+    post={postParaCompartilhar}
+    usuario={usuario}
+    onClose={() => {
+      setMostrarCompartilhar(false);
+      setPostParaCompartilhar(null);
+    }}
+  />
+)}
+
         {carregando && (
           <div style={{ textAlign: 'center', padding: 10, color: '#fff' }}>
             Carregando mais vídeos...
