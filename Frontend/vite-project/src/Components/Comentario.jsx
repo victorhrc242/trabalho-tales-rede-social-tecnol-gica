@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
-import { Heart, Share2 } from 'lucide-react';
+import { Heart, Share2, Send } from 'lucide-react';
 import '../css/comentario.css';
+import CompartilharPost from '../Components/Home/CompartilharPost';
+
 
 function Comentario({ post, usuario, fechar }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -309,6 +311,8 @@ function Comentario({ post, usuario, fechar }) {
 
   if (!post) return null;
 
+  const [mostrarCompartilhar, setMostrarCompartilhar] = useState(false);
+
   return (
     <div
       className={`comentarios-modal ${isMobile ? 'mobile' : ''}`}
@@ -364,7 +368,7 @@ function Comentario({ post, usuario, fechar }) {
             </div>
           ))}
         </div>
-<div className="post-acoes">
+         <div className="post-acoes">
           <button onClick={curtirPost} title="Curtir">
             <Heart
               size={20}
@@ -375,20 +379,31 @@ function Comentario({ post, usuario, fechar }) {
             <span>{curtidasCount}</span>
           </button>
 
-          <button onClick={compartilharPost} title="Compartilhar">
-            <Share2 size={20} stroke="black" strokeWidth={2} />
-          </button>
+          <button onClick={() => setMostrarCompartilhar(true)} title="Compartilhar">
+          <Share2 size={20} stroke="black" strokeWidth={2} />
+         </button>
+
         </div>
-        <div className="comentarios-form">
-          <input
-            type="text"
-            placeholder="Adicione um comentário..."
-            value={comentarioTexto}
-            onChange={(e) => setComentarioTexto(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && comentar()}
-          />
-          <button onClick={comentar}>Enviar</button>
-        </div>
+{mostrarCompartilhar && post && usuario && (
+  <CompartilharPost
+    post={post}
+    usuario={usuario}
+    onClose={() => setMostrarCompartilhar(false)}
+  />
+)}
+
+       <div className="comentarios-form">
+  <input
+    type="text"
+    placeholder="Adicione um comentário..."
+    value={comentarioTexto}
+    onChange={(e) => setComentarioTexto(e.target.value)}
+    onKeyDown={(e) => e.key === 'Enter' && comentar()}
+  />
+  <button onClick={comentar}>
+    <Send size={18} />
+  </button>
+</div>
       </div>
     </div>
   );

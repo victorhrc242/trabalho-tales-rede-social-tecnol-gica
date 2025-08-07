@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import CriarStoryModal from '../Components/Home/CriarStoryModal';
+import CriarStoryModal from './Home/CriarStoryModal';
 import '../css/Criar.css';
-
 
 // Conecção com Banco
 const supabase = createClient(
@@ -142,7 +141,6 @@ function Criar({ usuarioLogado, onClose }) {
     }
   };
 
-
   // sugestões de tags
   const buscarTags = async (texto) => {
   const ultimaPalavra = texto.split(',').pop().trim();
@@ -231,9 +229,6 @@ const handleCriarStory = async () => {
 
   return (
     <>
-    {criarStoryModal && (
-  <CriarStoryModal fecharModal={() => setCriarStoryModal(false)} />
-)}
       {/* Modal principal */}
       {modalAberto && (
         <div className="modal-overlay" onClick={onClose}>
@@ -247,20 +242,7 @@ const handleCriarStory = async () => {
               {/* Etapa 1: Upload */}
               {etapa === 1 && (
   <>
-    {/* Botão Criar Story antes da área de upload */}
-    <button
-  type="button"
-  className="btn-criar-story"
-  onClick={() => {
-    setModalAberto(false); // Fecha o modal atual
-    setTimeout(() => {
-      setCriarStoryModal(true); // Abre o CriarStoryModal
-    }, 200); // Delay curto para garantir desmontagem
-  }}
-  style={{ marginBottom: '15px' }}
->
-  Criar Story
-</button>
+    
 
     {!imagemArquivo && !videoArquivo && (
       <label
@@ -382,12 +364,7 @@ const handleCriarStory = async () => {
                     <button className='button-confirme' type="submit" disabled={enviando}>
                       {enviando ? 'Postando...' : 'Publicar'}
                     </button>
-                    <button
-  onClick={handleCriarStory}
-  className="botao-confirmar"
->
-  Publicar como Story
-</button>
+                  
 
                     <button
                     className='button-cancel'
@@ -406,8 +383,6 @@ const handleCriarStory = async () => {
           </div>
         </div>
       )}
-
-      
 
       {/* Mini Modal flutuante */}
       {mostrarMiniModal && (
