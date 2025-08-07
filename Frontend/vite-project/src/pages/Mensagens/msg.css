@@ -639,12 +639,12 @@ textarea {
   }
  
 }
-
 .ig-preview {
   background-color: #1e1e1e;
   border-radius: 12px;
   overflow: hidden;
   max-width: 300px;
+  width: 100%;
   font-family: sans-serif;
   color: #fff;
   margin-top: 8px;
@@ -681,31 +681,35 @@ textarea {
   width: 100%;
   height: auto;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
+  max-height: 400px;
 }
 
 /* Vídeo */
 .ig-video-wrapper {
   position: relative;
   width: 100%;
-  height: auto;
+  max-height: 400px;
+  overflow: hidden;
   background-color: #000;
 }
 
 .ig-preview-video {
   width: 100%;
   height: auto;
-  object-fit: cover;
   display: block;
+  object-fit: contain;
 }
 
 .ig-play-icon {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2rem;
-  color: rgba(255, 255, 255, 0.9);
+  top: 8px;
+  right: 8px;
+  font-size: 20px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 4px;
   pointer-events: none;
 }
 
@@ -715,3 +719,32 @@ textarea {
   color: #ccc;
 }
 
+/* Responsivo para mobile */
+@media (max-width: 600px) {
+  .ig-preview {
+    max-width: 95%;
+    margin: 8px auto;
+  }
+
+  .ig-preview-img,
+  .ig-preview-video {
+    max-height: 250px;
+  }
+
+  .ig-username {
+    font-size: 0.75rem;
+  }
+
+  .ig-caption {
+    font-size: 0.7rem;
+  }
+
+  .ig-avatar {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ig-play-icon {
+    font-size: 16px;
+  }
+}
