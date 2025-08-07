@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import CriarStoryModal from './Home/CriarStoryModal';
+import CriarStoryModal from '../Components/Home/CriarStoryModal';
 import '../css/Criar.css';
+
 
 // Conecção com Banco
 const supabase = createClient(
@@ -141,6 +142,7 @@ function Criar({ usuarioLogado, onClose }) {
     }
   };
 
+
   // sugestões de tags
   const buscarTags = async (texto) => {
   const ultimaPalavra = texto.split(',').pop().trim();
@@ -229,6 +231,9 @@ const handleCriarStory = async () => {
 
   return (
     <>
+    {criarStoryModal && (
+  <CriarStoryModal fecharModal={() => setCriarStoryModal(false)} />
+)}
       {/* Modal principal */}
       {modalAberto && (
         <div className="modal-overlay" onClick={onClose}>
@@ -244,16 +249,18 @@ const handleCriarStory = async () => {
   <>
     {/* Botão Criar Story antes da área de upload */}
     <button
-      type="button"
-      className="btn-criar-story"
-      onClick={() => {
-        setmodalAberto(false);
-        setCriarStoryModal(true);
-      }}
-      style={{ marginBottom: '15px' }} // espaço entre o botão e a área upload
-    >
-      Criar Story
-    </button>
+  type="button"
+  className="btn-criar-story"
+  onClick={() => {
+    setModalAberto(false); // Fecha o modal atual
+    setTimeout(() => {
+      setCriarStoryModal(true); // Abre o CriarStoryModal
+    }, 200); // Delay curto para garantir desmontagem
+  }}
+  style={{ marginBottom: '15px' }}
+>
+  Criar Story
+</button>
 
     {!imagemArquivo && !videoArquivo && (
       <label
@@ -399,6 +406,8 @@ const handleCriarStory = async () => {
           </div>
         </div>
       )}
+
+      
 
       {/* Mini Modal flutuante */}
       {mostrarMiniModal && (
