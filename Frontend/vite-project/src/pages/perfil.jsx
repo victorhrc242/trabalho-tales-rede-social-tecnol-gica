@@ -48,13 +48,28 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const [imagem, setImagem] = useState('');
   const inputRef = useRef();
   const [mostrarTrocarConta, setMostrarTrocarConta] = useState(false);
+  const [perfilPublico, setPerfilPublico] = useState(true);
+  const [autorizadoVisualizar, setAutorizadoVisualizar] = useState(true);
 
 
   // Verifica se o perfil visualizado é o próprio usuário logado
   const isPerfilProprio = usuarioLogadoId && userId && usuarioLogadoId.toString() === userId.toString();
 
   const seguirUsuario = async () => {
-    try {
+  try {
+    // Verifica se o perfil é privado
+    if (!usuario.publico) {
+      // Se for privado, envia solicitação de amizade
+      await axios.post(
+        "https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar",
+        {
+          usuario1: usuarioLogadoId,
+          usuario2: userId,
+        }
+      );
+      alert('Solicitação de amizade enviada! Aguarde aprovação.');
+    } else {
+      // Se for público, segue diretamente
       await axios.post(
         "https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente",
         {
@@ -63,11 +78,13 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
         }
       );
       setEstaSeguindo(true);
-    } catch (err) {
-      console.error('Erro ao seguir usuário:', err);
-      alert('Erro ao seguir usuário. Tente novamente.');
+      alert('Agora você está seguindo este usuário!');
     }
-  };
+  } catch (err) {
+    console.error('Erro ao seguir/solicitar amizade:', err);
+    alert('Erro ao processar sua solicitação. Tente novamente.');
+  }
+};
 
   const deseguirUsuario = async () => {
   try {
@@ -176,25 +193,66 @@ useEffect(() => {
   }
 
   // 2. Depois: Busca dados atualizados em segundo plano
-  const carregarDados = async () => {
-    try {
-      const { data: userData } = await axios.get(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
-      );
+const carregarDados = async () => {
+  try {
+    // 1. Buscar dados do usuário (inclui se é público)
+    const { data: userData } = await axios.get(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${userId}`
+    );
+
+    // Salva os dados básicos do usuário
+    setUsuario(userData);
+    setNome(userData.nome || '');
+    setBiografia(userData.biografia || '');
+    setImagem(userData.imagem || '');
+
+    const seguidoresRes = await axios.get(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`
+    );
+    const seguindoRes = await axios.get(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`
+    );
+
+    const infoSeguidores = {
+      seguidores: seguidoresRes.data?.seguidores?.length || 0,
+      seguindo: seguindoRes.data?.seguindo?.length || 0,
+    };
+    setSeguidoresInfo(infoSeguidores);
+
+    let podeVisualizarPosts = false;
+
+    // Perfil próprio => pode visualizar tudo
+    if (usuarioLogadoId === userId) {
+      podeVisualizarPosts = true;
+    }
+    // Conta pública => pode visualizar tudo
+    else if (userData.publico) {
+      podeVisualizarPosts = true;
+    }
+    // Conta privada => precisa verificar se está seguindo
+    else {
+      try {
+        const { data } = await axios.get(
+          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue`,
+          {
+            params: {
+              usuario1: usuarioLogadoId,
+              usuario2: userId,
+            },
+          }
+        );
+
+        setEstaSeguindo(data.estaSeguindo);
+        podeVisualizarPosts = data.estaSeguindo;
+      } catch (err) {
+        console.error('Erro ao verificar se está seguindo perfil privado:', err);
+      }
+    }
+
+    if (podeVisualizarPosts) {
       const { data: postsData } = await axios.get(
         `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/posts/usuario/${userId}`
       );
-      const seguidoresRes = await axios.get(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`
-      );
-      const seguindoRes = await axios.get(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`
-      );
-
-      const infoSeguidores = {
-        seguidores: seguidoresRes.data?.seguidores?.length || 0,
-        seguindo: seguindoRes.data?.seguindo?.length || 0,
-      };
 
       const novosDados = {
         usuario: userData,
@@ -202,56 +260,27 @@ useEffect(() => {
         seguidoresInfo: infoSeguidores,
       };
 
-      // Compara com o cache
       const cacheAntigo = perfilCache ? JSON.parse(perfilCache).data : null;
       const dadosAlteraram = JSON.stringify(novosDados) !== JSON.stringify(cacheAntigo);
 
       if (dadosAlteraram) {
-        setUsuario(userData);
-        setNome(userData.nome || '');
-        setBiografia(userData.biografia || '');
-        setImagem(userData.imagem || '');
         setPosts(postsData);
-        setSeguidoresInfo(infoSeguidores);
-
         localStorage.setItem(cacheKey, JSON.stringify({
           data: novosDados,
           timestamp: agora,
         }));
       }
-
-      // Verifica se está seguindo
-      if (userId && usuarioLogadoId && userId !== usuarioLogadoId) {
-        try {
-          const { data } = await axios.get(
-            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/segue?usuario1=${usuarioLogadoId}&usuario2=${userId}`
-          );
-
-          setEstaSeguindo(data.estaSeguindo);
-
-          if (!data.estaSeguindo) {
-            await axios.post(
-              'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitar-e-aceitar-automaticamente',
-              {
-                usuario1: usuarioLogadoId,
-                usuario2: userId,
-              }
-            );
-            setEstaSeguindo(true);
-            console.log('Usuário começou a seguir automaticamente.');
-          }
-        } catch (err) {
-          console.error('Erro ao verificar ou seguir o usuário automaticamente:', err);
-        }
-      }
-
-    } catch (err) {
-      console.error('Erro ao buscar dados atualizados do perfil:', err);
-    } finally {
-      setLoading(false);
+    } else {
+      // Conta privada e usuário não está seguindo
+      setPosts([]); // Não mostrar nenhum post
     }
-  };
 
+  } catch (err) {
+    console.error('Erro ao buscar dados atualizados do perfil:', err);
+  } finally {
+    setLoading(false);
+  }
+};
   carregarDados();
 }, [userId, navigate, usuarioLogadoId]);
 
@@ -470,6 +499,7 @@ const cancelarLogout = () => {
   </div>
 
   <div className="perfil-info">
+    
     {!isEditing && (
       <div className="infor-pessoais">
         <p><strong><button className="botao-link" onClick={() => {
@@ -555,25 +585,28 @@ const cancelarLogout = () => {
 )}
   </>
         ) : (
-          <div className="botoes-perfil">
-            {estaSeguindo ? (
-              <button
-                onMouseEnter={() => setHoveringSeguindo(true)}
-                onMouseLeave={() => setHoveringSeguindo(false)}
-                onClick={() => {
-                if (hoveringSeguindo) deseguirUsuario();
-              }}
-              >
-                {hoveringSeguindo ? 'Deixar de seguir' : 'Seguindo'}
-              </button>
-            ) : (
-              <button onClick={seguirUsuario}>Seguir</button>
-            )}
-            <Link to="/mensagen">
-              <button>Enviar Mensagem</button>
-            </Link>
-          </div>
-        )}
+     
+  <div className="botoes-perfil">
+    {estaSeguindo ? (
+      <button
+        onMouseEnter={() => setHoveringSeguindo(true)}
+        onMouseLeave={() => setHoveringSeguindo(false)}
+        onClick={() => {
+          if (hoveringSeguindo) deseguirUsuario();
+        }}
+      >
+        {hoveringSeguindo ? 'Deixar de seguir' : 'Seguindo'}
+      </button>
+    ) : (
+      <button onClick={seguirUsuario}>
+        {usuario.publico ? 'Seguir' : 'Enviar solicitação'}
+      </button>
+    )}
+    <Link to="/mensagen">
+      <button>Enviar Mensagem</button>
+    </Link>
+  </div>
+)}
       </div>
     </div>
 
@@ -649,57 +682,59 @@ const cancelarLogout = () => {
 
 
 {/* post perfil*/}
-      <div className="explore-grid">
-        {posts.map((post) => (
-          <div
-            key={post.id}
-            className="grid-item"
-            onClick={() => abrirModalPost(post)}
-            style={{ cursor: 'pointer' }}
-          >
-            {post.imagem && (
-              <img
-                src={post.imagem}
-                alt="Imagem do post"
-                style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
-              />
+<div className="explore-grid">
+  {(isPerfilProprio || usuario.publico || estaSeguindo) && posts.length > 0 ? (
+    posts.map((post) => (
+      <div
+        key={post.id}
+        className="grid-item"
+        onClick={() => abrirModalPost(post)}
+        style={{ cursor: 'pointer' }}
+      >
+        {post.imagem && (
+          <img
+            src={post.imagem}
+            alt="Imagem do post"
+            style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+          />
+        )}
 
-            )}
-
-            {post.video && (
-           <div style={{ position: 'relative' }}>
-    <video
-      muted
-      preload="metadata"
-      playsInline
-      style={{
-        width: '100%',
-        borderRadius: '8px',
-        objectFit: 'cover',
-        pointerEvents: 'none'
-      }}
-    >
-      <source src={post.video + '#t=0.1'} type="video/mp4" />
-      Seu navegador não suporta o elemento de vídeo.
-    </video>
-    <FaPlay
-      style={{
-        position: 'absolute',
-        top: '8px',
-        left: '8px',
-        color: 'white',
-        background: 'rgba(0, 0, 0, 0.6)',
-        borderRadius: '50%',
-        padding: '4px',
-        fontSize: '14px'
-      }}
-    />
-  </div>
-)}
-          </div>  
-        ))}
+        {post.video && (
+          <div style={{ position: 'relative' }}>
+            <video
+              muted
+              preload="metadata"
+              playsInline
+              style={{
+                width: '100%',
+                borderRadius: '8px',
+                objectFit: 'cover',
+                pointerEvents: 'none',
+              }}
+            >
+              <source src={post.video + '#t=0.1'} type="video/mp4" />
+              Seu navegador não suporta o elemento de vídeo.
+            </video>
+            <FaPlay
+              style={{
+                position: 'absolute',
+                top: '8px',
+                left: '8px',
+                color: 'white',
+                background: 'rgba(0, 0, 0, 0.6)',
+                borderRadius: '50%',
+                padding: '4px',
+                fontSize: '14px',
+              }}
+            />
+          </div>
+        )}
       </div>
-
+    ))
+  ) : (
+    <p>Este perfil é privado. Siga para ver os posts.</p>
+  )}
+</div>
     {modalPost && (
       <div className="modal-overlay" onClick={fecharModalPost}>
         <div className="modal-post-container" onClick={e => e.stopPropagation()}>
@@ -785,63 +820,67 @@ const cancelarLogout = () => {
         </button>
       </div>
 
-      <div className="modal-seguir-conteudo">
-        {abaSeguidoresAtiva === 'seguidores' ? (
-          Array.isArray(listaSeguidores) && listaSeguidores.length > 0 ? (
-            listaSeguidores.map((user, i) => (
-              <div key={i} className="usuario-item">
-                <Link
-                  className="botao-link"
-                  to={`/perfil/${user.id}`}
-                  onClick={fecharModalSeguidores}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    textDecoration: 'none',
-                    color: 'inherit',
-                  }}
-                >
-                  <img
-                    src={user.imagem || '/img/placeholder.png'}
-                    alt={`Foto de ${user.nome_usuario}`}
-                    className="foto-perfil-seguidores"
-                  />
-                  <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
-                </Link>
-              </div>
-            ))
-          ) : (
-            <p>Nenhum seguidor encontrado.</p>
-          )
-        ) : Array.isArray(listaSeguindo) && listaSeguindo.length > 0 ? (
-          listaSeguindo.map((user, i) => (
-            <div key={i} className="usuario-item">
-              <Link
-                className="botao-link"
-                to={`/perfil/${user.id}`}
-                onClick={fecharModalSeguidores}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                }}
-              >
-                <img
-                  src={user.imagem || '/img/placeholder.png'}
-                  alt={`Foto de ${user.nome_usuario}`}
-                  className="foto-perfil-seguidores"
-                />
-                <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
-              </Link>
-            </div>
-          ))
-        ) : (
-          <p>Você não está seguindo ninguém.</p>
-        )}
-      </div>
+{(isPerfilProprio || usuario.publico || estaSeguindo) ? (
+  <div className="modal-seguir-conteudo">
+    {abaSeguidoresAtiva === 'seguidores' ? (
+      Array.isArray(listaSeguidores) && listaSeguidores.length > 0 ? (
+        listaSeguidores.map((user, i) => (
+          <div key={i} className="usuario-item">
+            <Link
+              className="botao-link"
+              to={`/perfil/${user.id}`}
+              onClick={fecharModalSeguidores}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                textDecoration: 'none',
+                color: 'inherit',
+              }}
+            >
+              <img
+                src={user.imagem || '/img/placeholder.png'}
+                alt={`Foto de ${user.nome_usuario}`}
+                className="foto-perfil-seguidores"
+              />
+              <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+            </Link>
+          </div>
+        ))
+      ) : (
+        <p>Nenhum seguidor encontrado.</p>
+      )
+    ) : Array.isArray(listaSeguindo) && listaSeguindo.length > 0 ? (
+      listaSeguindo.map((user, i) => (
+        <div key={i} className="usuario-item">
+          <Link
+            className="botao-link"
+            to={`/perfil/${user.id}`}
+            onClick={fecharModalSeguidores}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
+          >
+            <img
+              src={user.imagem || '/img/placeholder.png'}
+              alt={`Foto de ${user.nome_usuario}`}
+              className="foto-perfil-seguidores"
+            />
+            <span className="nome-usuario-seguidores">{user.nome_usuario}</span>
+          </Link>
+        </div>
+      ))
+    ) : (
+      <p>Você não está seguindo ninguém.</p>
+    )}
+  </div>
+) : (
+  <p>Você precisa seguir esse usuário para ver seus seguidores e quem ele segue.</p>
+)}
     </div>
   </div>
 )}
