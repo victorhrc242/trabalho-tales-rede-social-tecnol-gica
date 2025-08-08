@@ -559,12 +559,13 @@ async function curtirPost(postId) {
           </ul>
         )}
         </div>
+        {/* Solicitações */}
         <Solicitacoes
-  usuarioId={usuario.id}
-  solicitacoes={solicitacoes}
-  setSolicitacoes={setSolicitacoes}
-  irParaPerfil={irParaPerfil}
-/>
+        usuarioId={usuario.id}
+        solicitacoes={solicitacoes}
+        setSolicitacoes={setSolicitacoes}
+        irParaPerfil={irParaPerfil}
+      />
 
           {/* Notificações */}
         <div className="notificacoes-box">
