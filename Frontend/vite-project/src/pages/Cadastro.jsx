@@ -164,7 +164,7 @@ const handleProximaEtapa = async (e) => {
   setEnviandoCodigo(true);
   try {
     const response = await fetch(
-      'http://localhost:5124/api/auth/Enviar-codigo',
+      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -201,7 +201,7 @@ const handleVerificarCodigo = async (e) => {
   setEnviandoCodigo(true);
   try {
     const response = await fetch(
-      'http://localhost:5124/api/auth/Verificar-codigo',
+      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Verificar-codigo',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -253,7 +253,7 @@ const handleCadastro = async (e) => {
     };
 
     const response = await fetch(
-      'http://localhost:5124/api/auth/register',
+      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/register',
       {
         method: 'POST',
         headers: {
