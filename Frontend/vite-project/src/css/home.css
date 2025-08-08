@@ -215,7 +215,7 @@ li {
   border: 1px solid #ddd;
   border-radius: 12px;
   padding: 16px;
-  height: 650px;
+  height: 700px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 20px;
@@ -493,17 +493,33 @@ li {
   list-style: none;
   padding: 0;
   margin: 0;
+  max-height: 110px; /* altura máxima para a lista */
+  overflow-y: auto;  /* adiciona scrollbar vertical quando necessário */
+  border-radius: 8px;      /* arredonda as bordas */
+  background-color: #fff;  /* para ficar melhor visualmente */
+}
+
+/* Estilização do scroll para navegadores Webkit (Chrome, Safari, Edge) */
+.lista-solicitacoes::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-solicitacoes::-webkit-scrollbar-thumb {
+  background-color: rgba(67, 99, 185, 0.5);
+  border-radius: 3px;
 }
 
 .solicitacao-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;               /* diminuiu um pouco o espaço entre elementos */
   background: #fff;
-  padding: 10px;
+  padding: 6px 8px;        /* menos padding para ficar mais compacto */
   border-radius: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin-bottom: 8px;      /* margem um pouco menor */
+  box-shadow: 0 1px 2px  rgba(0, 0, 0, 0.233); /* sombra mais leve */
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .botoes-solicitacao {
