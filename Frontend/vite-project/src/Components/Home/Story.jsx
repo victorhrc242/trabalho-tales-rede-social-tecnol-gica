@@ -21,7 +21,7 @@ function Story() {
   const [usuarios, setUsuarios] = useState({});             // Mapa de informações dos usuários
   const [usuarioLogado, setUsuarioLogado] = useState(null); // Info do usuário logado
   const [carregando, setCarregando] = useState(true);       // Flag de carregamento
-
+const gruposOrdenados = [...stories].reverse(); // Inverte a ordem dos grupos
   // Estados do modal de visualização
   const [modalAberto, setModalAberto] = useState(false);
   const [storyAtual, setStoryAtual] = useState(null);
@@ -182,21 +182,20 @@ const carregarStories = async () => {
 
       {/* Modal de visualização */}
       {modalAberto && storyAtual && (
-        <StoryModal
-  grupo={storyAtual}
-  indiceStory={indiceStory}
-  setIndiceStory={setIndiceStory}
-  fechar={fecharModal}
-  usuarios={usuarios}
-  usuarioLogadoId={usuarioLogadoId}
-  grupos={stories} // novo
-  irParaProximoGrupo={(proximoGrupo) => {
-    setStoryAtual(proximoGrupo);
-    setIndiceStory(0);
-  }} // novo
-/>
-
-      )}
+  <StoryModal
+    grupo={storyAtual}
+    indiceStory={indiceStory}
+    setIndiceStory={setIndiceStory}
+    fechar={fecharModal}
+    usuarios={usuarios}
+    usuarioLogadoId={usuarioLogadoId}
+    grupos={gruposOrdenados} // Passa os grupos invertidos
+    irParaProximoGrupo={(proximoGrupo) => {
+      setStoryAtual(proximoGrupo);
+      setIndiceStory(0);
+    }}
+  />
+)}
 
       {/* Modal de criação de novo story */}
       {abrirCriar && usuarioLogadoId && (

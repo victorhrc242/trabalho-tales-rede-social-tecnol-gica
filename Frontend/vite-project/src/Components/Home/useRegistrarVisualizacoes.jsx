@@ -11,7 +11,7 @@ function useRegistrarVisualizacoes(posts, usuario) {
         console.log(`Usuário: ${usuario.id}`);
     try {
       await fetch(
-  `https://localhost:7051/api/Feed/post/${postId}/visualizacao?usuarioId=${usuario.id}&tempoEmSegundos=2`,
+  `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/post/${postId}/visualizacao?usuarioId=${usuario.id}&tempoEmSegundos=2`,
   {
     method: 'POST',
     credentials: 'include'  // 👈 ESSENCIAL com AllowCredentials

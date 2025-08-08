@@ -108,13 +108,6 @@ function Criar({ usuarioLogado, onClose }) {
         video: videoUrlSupabase,
         tags: tags.split(',').map(tag => tag.trim()),
       };
-
-      const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/criar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(novoPost),
-      });
-
       if (response.ok) {
         setEtapa(1);
         setImagemArquivo(null);
@@ -199,7 +192,7 @@ const handleCriarStory = async () => {
       tipo,
     };
 
-    const response = await fetch('https://localhost:7051/api/Stories/criar', {
+    const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/criar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(storyPayload),

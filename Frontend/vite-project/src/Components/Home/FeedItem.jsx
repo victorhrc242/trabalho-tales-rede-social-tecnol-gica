@@ -11,7 +11,7 @@ function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, a
 const [curtindo, setCurtindo] = useState(false);
   const denunciarPost = async (descricao) => {
     try {
-      await fetch('https://localhost:7051/api/denuncias/adicionar_denuncia', {
+      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/denuncias/adicionar_denuncia', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -31,7 +31,7 @@ const [curtindo, setCurtindo] = useState(false);
 
   useEffect(() => {
     async function checkCurtida() {
-      const res = await fetch(`https://localhost:7051/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`);
+      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`);
       const data = await res.json();
       setFoiCurtido(data.curtiu);
     }

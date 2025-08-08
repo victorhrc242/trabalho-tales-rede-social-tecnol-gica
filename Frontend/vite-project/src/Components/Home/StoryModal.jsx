@@ -81,15 +81,12 @@ function StoryModal({
     setIndiceStory(indiceStory - 1);
   } else {
     // Estamos no primeiro story do grupo atual
-    const indiceAtualDoGrupo = grupos.findIndex((g) => g.usuarioId === grupo.usuarioId);
-    const grupoAnterior = grupos[indiceAtualDoGrupo - 1];
-
-    if (grupoAnterior) {
-      irParaProximoGrupo(grupoAnterior);
-      setIndiceStory(grupoAnterior.stories.length - 1); // último story do grupo anterior
-    } else {
-      // Não tem grupo anterior, talvez fechar ou não fazer nada
-      // fechar(); // opcional
+    const indiceAtualDoGrupo = grupos.findIndex(g => g.usuarioId === grupo.usuarioId);
+    const proximoGrupo = grupos[indiceAtualDoGrupo + 1]; // Agora +1 vai para o mais recente
+    
+    if (proximoGrupo) {
+      irParaProximoGrupo(proximoGrupo);
+      setIndiceStory(proximoGrupo.stories.length - 1);
     }
   }
 };
