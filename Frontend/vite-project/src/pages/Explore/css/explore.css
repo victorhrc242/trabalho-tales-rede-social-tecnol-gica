@@ -168,3 +168,30 @@ body, html {
     display: block; /* ou inline-block */
   }
 }
+
+
+
+
+
+
+
+.modal-overlay-explorar {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content-explorar {
+  background: white;          /* fundo branco */
+  border-radius: 8px;         /* bordas arredondadas */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* sombra suave */
+  max-height: 90vh;
+  overflow-y: auto;
+  max-width: 500px;           /* para não ficar muito largo */
+  width: 90%;                /* responsivo em telas menores */
+}

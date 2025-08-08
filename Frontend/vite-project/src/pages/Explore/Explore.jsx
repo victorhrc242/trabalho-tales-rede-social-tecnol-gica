@@ -256,20 +256,40 @@ function Explore({ usuarioLogado }) {
         ))}
       </div>
 
-      {postSelecionado && (
-        isMobileState ? (
-          <VisualizacaoExploreSelecionado
-            post={postSelecionado}
-            comentarios={comentarios}
-            comentarioTexto={comentarioTexto}
-            setComentarioTexto={setComentarioTexto}
-            comentar={comentar}
-            fechar={() => setPostSelecionado(null)}
-          />
-        ) : (
-          <Comentario post={postSelecionado} usuario={usuarioLogado} fechar={() => setPostSelecionado(null)} />
-        )
-      )}
+  {postSelecionado && (
+  isMobileState ? (
+    <div
+      className="modal-overlay-explorar"
+      onClick={() => setPostSelecionado(null)}
+    >
+      <div
+        className="modal-content-explorar"
+        onClick={e => e.stopPropagation()}
+      >
+        <VisualizacaoExploreSelecionado
+          post={postSelecionado}
+          comentarios={comentarios}
+          comentarioTexto={comentarioTexto}
+          setComentarioTexto={setComentarioTexto}
+          comentar={comentar}
+          fechar={() => setPostSelecionado(null)}
+          foiCurtido={false}
+          totalCurtidas={postSelecionado.totalCurtidas || 0}
+          handleCurtir={() => {}}
+        />
+      </div>
+    </div>
+  ) : (
+    <Comentario
+      post={postSelecionado}
+      usuario={usuarioLogado}
+      fechar={() => setPostSelecionado(null)}
+    />
+  )
+)}
+
+
+
     </div>
   );
 }
