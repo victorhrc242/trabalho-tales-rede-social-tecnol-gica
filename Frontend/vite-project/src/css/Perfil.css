@@ -765,6 +765,14 @@ body {
   }
 }
 
+@media (max-width: 768px) {
+.perfil-parag1{
+  white-space: nowrap; /* impede quebra de linha dentro do parágrafo */
+  margin: 0;            /* remove margem padrão */
+  display: block; 
+  }
+}
+
 .modal-editar-mobile {
   position: fixed;
   top: 0;
