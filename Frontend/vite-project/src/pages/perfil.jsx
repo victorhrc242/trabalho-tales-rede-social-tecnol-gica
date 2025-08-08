@@ -7,7 +7,6 @@ import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se ne
 import { FaCog, FaPlay  } from 'react-icons/fa';
 import TrocarConta from '../Components/configuraçãoes/TrocarConta.jsx';
 import StoryModal from '../Components/Home/StoryModal.jsx';
-import CriarStoryModal from '../Components/Home/CriarStoryModal.jsx';
 //https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
 const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
@@ -33,7 +32,6 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const [mostrarConfirmarLogout, setMostrarConfirmarLogout] = useState(false);
   const [modalOpcoes, setModalOpcoes] = useState(false);
   const [modalPost, setModalPost] = useState(null);
-  const [criarStoryModal, setCriarStoryModal] = useState(false);
   const [verStoryModal, setVerStoryModal] = useState(false);
   const [comentarios, setComentarios] = useState([]);
   const [novoComentario, setNovoComentario] = useState('');
@@ -272,6 +270,21 @@ useEffect(() => {
   carregarDados();
 }, [userId, navigate, usuarioLogadoId]);
 
+if (verStoryModal && usuario?.id) {
+      // Busca stories do usuário atual
+      fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Stories/usuario-listar-stories-de-todo-mundo/${usuarioLogadoId}/visualizar/${usuarioLogadoId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // Estrutura no formato que o StoryModal espera
+          setGrupoUnico({
+            usuarioId: usuario.id,
+            stories: data, // a API deve retornar array de stories
+          });
+        })
+        .catch((err) => console.error("Erro ao buscar stories:", err));
+    }
+   [verStoryModal, usuario];
+
 
   const uploadImagem = async (file) => {
   const fileName = `${Date.now()}_${file.name}`;
@@ -419,29 +432,23 @@ const cancelarLogout = () => {
 )}
   <div className="foto-perfil-bloco">
     <div
-  className="foto-perfil-bloco"
-  onClick={() => {
-    if (usuarioLogado) {
-      setCriarStoryModal(true);
-    } else {
-      setVerStoryModal(true);;
-    }
-  }}
-  style={{ cursor: 'pointer' }}
->
-  <div className="foto-perfil">
-    <img
-      src={usuario.imagem || 'https://via.placeholder.com/150'}
-      alt={`Foto de perfil de ${usuario.nome_usuario}`}
-      style={{
-        width: '100%',
-        height: '100%',
-        borderRadius: '50%',
-        objectFit: 'cover'
-      }}
-    />
-  </div>
-</div>
+        className="foto-perfil-bloco"
+        onClick={() => setVerStoryModal(true)}
+        style={{ cursor: "pointer" }}
+      >
+        <div className="foto-perfil">
+          <img
+            src={usuario.imagem || "https://via.placeholder.com/150"}
+            alt={`Foto de perfil de ${usuario.nome_usuario}`}
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+      </div>
     {/* VERSÃO MOBILE */}
     <div className="nome-e-editar nome-e-editar-mobile">
       <h1 className="nome-mobile">{usuario.nome_usuario}</h1>
@@ -497,13 +504,19 @@ const cancelarLogout = () => {
       )}
 
   </div>
-  {criarStoryModal && (
-  <CriarStoryModal onClose={() => setCriarStoryModal(false)} />
-)}
 
-{verStoryModal && (
-  <StoryModal usuario={usuarioLogadoId} onClose={() => setVerStoryModal(false)} />
-)}
+{verStoryModal && grupoUnico && (
+        <StoryModal
+          grupo={grupoUnico}
+          indiceStory={0}
+          setIndiceStory={() => {}}
+          fechar={() => setVerStoryModal(false)}
+          usuarios={{ [usuario.id]: usuario }}
+          usuarioLogadoId={usuarioLogado?.id}
+          grupos={[grupoUnico]} // só este grupo
+          irParaProximoGrupo={() => {}} // sem mudança de grupo
+        />
+      )}
 
   <div className="perfil-info">
     {!isEditing && (
@@ -592,7 +605,8 @@ const cancelarLogout = () => {
   </>
         ) : (
   <div className="botoes-perfil">
-    {estaSeguindo ? (
+  {estaSeguindo ? (
+    <>
       <button
         onMouseEnter={() => setHoveringSeguindo(true)}
         onMouseLeave={() => setHoveringSeguindo(false)}
@@ -602,15 +616,17 @@ const cancelarLogout = () => {
       >
         {hoveringSeguindo ? 'Deixar de seguir' : 'Seguindo'}
       </button>
-    ) : (
-      <button onClick={seguirUsuario}>
-        {usuario.publico ? 'Seguir' : 'Enviar solicitação'}
-      </button>
-    )}
-    <Link to="/mensagen">
-      <button>Enviar Mensagem</button>
-    </Link>
-  </div>
+
+      <Link to="/mensagen">
+        <button>Enviar Mensagem</button>
+      </Link>
+    </>
+  ) : (
+    <button onClick={seguirUsuario}>
+      {usuario.publico ? 'Seguir' : 'Enviar solicitação'}
+    </button>
+  )}
+</div>
 )}
       </div>
     </div>
@@ -688,7 +704,7 @@ const cancelarLogout = () => {
 
 {/* post perfil*/}
 <div className="explore-grid">
-  {(isPerfilProprio || usuario.publico || estaSeguindo) && posts.length > 0 ? (
+  {(isPerfilProprio || usuario.publico || estaSeguindo) && posts.length > -1 ? (
     posts.map((post) => (
       <div
         key={post.id}
@@ -738,7 +754,7 @@ const cancelarLogout = () => {
 
     ))
   ) : (
-    <p>Este perfil é privado. Siga para ver os posts.</p>
+    <div><p className='perfil-parag1'>Este perfil é privado. Siga para ver os posts.</p></div>
   )}
 </div>
     {modalPost && (
