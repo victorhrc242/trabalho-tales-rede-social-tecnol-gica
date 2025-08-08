@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Solicitacoes from '../../Components/Home/Solicitacoes.jsx';  // ajuste o caminho conforme seu projeto
 import "../Notificacao/notificacao.css";
-import {FaBell } from 'react-icons/fa';
+import { FaBell } from 'react-icons/fa';
 
 function Notificacoes() {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ function Notificacoes() {
   const [usuario, setUsuario] = useState({ nome: '', id: '' });
   const [notificacoes, setNotificacoes] = useState([]);
   const [carregando, setCarregando] = useState(false);
+  const [solicitacoes, setSolicitacoes] = useState([]);
   const cacheRemetentes = useRef({});
 
   useEffect(() => {
@@ -97,9 +99,22 @@ function Notificacoes() {
     }
   };
 
+  // Função para navegar até o perfil do usuário
+  const irParaPerfil = (idUsuario) => {
+    navigate(`/perfil/${idUsuario}`);
+  };
+
   return (
     <div className="notificacoes-container">
-      <h2> <FaBell /> Notificações</h2>
+      <h2><FaBell /> Notificações</h2>
+
+      {/* Renderizando o componente de solicitações */}
+      <Solicitacoes
+        usuarioId={usuario.id}
+        solicitacoes={solicitacoes}
+        setSolicitacoes={setSolicitacoes}
+        irParaPerfil={irParaPerfil}
+      />
 
       {carregando && <p>Carregando notificações...</p>}
       {!carregando && notificacoes.length === 0 && <p>Não há notificações</p>}

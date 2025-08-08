@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Comentario from '../../Components/Comentario.jsx';
+import VisualizacaoExploreSelecionado from '../../Components/visualizacaoexploreselecionado.jsx'; // componente mobile
 import '../Explore/css/explore.css';
 import { FaVideo } from 'react-icons/fa';
 
@@ -17,18 +18,39 @@ function Explore({ usuarioLogado }) {
   const [seguindoUsuario, setSeguindoUsuario] = useState({});
   const [buscandoUsuarios, setBuscandoUsuarios] = useState(false);
   const [erroBuscaUsuarios, setErroBuscaUsuarios] = useState(null);
+  
+  // Novos estados para o modal/visualização do post selecionado
   const [postSelecionado, setPostSelecionado] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [comentarioTexto, setComentarioTexto] = useState('');
+  const [carregandoComentarios, setCarregandoComentarios] = useState(false);
+
+  const isMobile = window.innerWidth < 768;
 
   const irParaPerfil = (nome) => navigate(`/perfil/${nome}`);
 
+  useEffect(() => {
+    const handleResize = () => {
+      // Atualiza o isMobile dinamicamente
+      // Como isMobile é constante aqui, vamos mudar para estado
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Corrigindo isMobile para estado
+  const [isMobileState, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Função para buscar dados json da API
   const fetchJson = async (url) => {
     const res = await fetch(url);
-    if (!res.ok) throw new Error('Erro');
+    if (!res.ok) throw new Error('Erro ao carregar dados');
     return res.json();
   };
 
+  // Busca dados do autor pelo id
   const fetchAutorData = async (id) => {
     try {
       const data = await fetchJson(`${API}/auth/usuario/${id}`);
@@ -38,18 +60,21 @@ function Explore({ usuarioLogado }) {
     }
   };
 
+  // Enriquecer posts com dados do autor
   const enrichWithAutor = async (items) => {
-    return Promise.all(items.map(async (item) => {
-      const autor = await fetchAutorData(item.autorId);
-      return { ...item, autorNome: autor.nome, autorImagem: autor.imagem };
-    }));
+    return Promise.all(
+      items.map(async (item) => {
+        const autor = await fetchAutorData(item.autorId);
+        return { ...item, autorNome: autor.nome, autorImagem: autor.imagem };
+      })
+    );
   };
 
+  // Buscar posts
   const fetchPosts = async () => {
     try {
       const data = await fetchJson(`${API}/Feed/feed`);
       const enriched = await enrichWithAutor(data);
-      // Marcar aleatoriamente até 3 posts como destaque
       const indicesAleatorios = enriched
         .map((_, i) => i)
         .sort(() => 0.5 - Math.random())
@@ -65,35 +90,27 @@ function Explore({ usuarioLogado }) {
     }
   };
 
-  const abrirComentarios = async (post) => {
-    setPostSelecionado(post);
+  // Buscar comentários do post
+  const fetchComentarios = async (postId) => {
+    setCarregandoComentarios(true);
     try {
-      const data = await fetchJson(`${API}/Comentario/comentarios/${post.id}`);
-      const enriched = await enrichWithAutor(data);
-      setComentarios(enriched);
+      const data = await fetchJson(`${API}/Comentarios/post/${postId}`);
+      setComentarios(data);
     } catch {
       setComentarios([]);
+    } finally {
+      setCarregandoComentarios(false);
     }
   };
 
-  const comentar = async () => {
-    if (!comentarioTexto.trim()) return;
-    try {
-      const res = await fetch(`${API}/Feed/comentarios/${postSelecionado.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conteudo: comentarioTexto }),
-      });
-
-      if (res.ok) {
-        const novo = await res.json();
-        const autor = await fetchAutorData(novo.autorId);
-        setComentarios(prev => [...prev, { ...novo, autorNome: autor.nome, autorImagem: autor.imagem }]);
-        setComentarioTexto('');
-      }
-    } catch {}
+  // Abrir modal / visualizar comentários
+  const abrirComentarios = (post) => {
+    setPostSelecionado(post);
+    fetchComentarios(post.id);
+    setComentarioTexto('');
   };
 
+  // Função para buscar usuários por nome na busca
   const buscarUsuarios = async (texto) => {
     if (!texto.trim()) {
       setResultadosUsuarios([]);
@@ -107,14 +124,18 @@ function Explore({ usuarioLogado }) {
       setResultadosUsuarios(data);
 
       const status = {};
-      await Promise.all(data.map(async (user) => {
-        try {
-          const followData = await fetchJson(`${API}/Amizades/segue?usuario1=${usuarioId}&usuario2=${user.id}`);
-          status[user.id] = followData.estaSeguindo;
-        } catch {
-          status[user.id] = false;
-        }
-      }));
+      await Promise.all(
+        data.map(async (user) => {
+          try {
+            const followData = await fetchJson(
+              `${API}/Amizades/segue?usuario1=${usuarioId}&usuario2=${user.id}`
+            );
+            status[user.id] = followData.estaSeguindo;
+          } catch {
+            status[user.id] = false;
+          }
+        })
+      );
 
       setSeguindoUsuario(status);
     } catch {
@@ -125,6 +146,7 @@ function Explore({ usuarioLogado }) {
     }
   };
 
+  // Função para seguir usuário
   const seguirUsuario = async (id) => {
     try {
       const res = await fetch(`${API}/Amizades/solicitar-e-aceitar-automaticamente`, {
@@ -132,10 +154,34 @@ function Explore({ usuarioLogado }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario1: usuarioId, usuario2: id }),
       });
-      if (res.ok) setSeguindoUsuario(prev => ({ ...prev, [id]: true }));
+      if (res.ok) setSeguindoUsuario((prev) => ({ ...prev, [id]: true }));
     } catch {}
   };
 
+  // Envio do comentário
+  const comentar = async () => {
+    if (!comentarioTexto.trim()) return;
+
+    try {
+      const res = await fetch(`${API}/Comentarios`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postId: postSelecionado.id,
+          autorId: usuarioId,
+          conteudo: comentarioTexto.trim(),
+        }),
+      });
+      if (res.ok) {
+        fetchComentarios(postSelecionado.id);
+        setComentarioTexto('');
+      }
+    } catch {
+      // Pode tratar erro aqui
+    }
+  };
+
+  // Debounce para buscar usuários ao digitar na barra
   useEffect(() => {
     const delay = setTimeout(() => buscarUsuarios(buscaTexto), 400);
     return () => clearTimeout(delay);
@@ -145,6 +191,7 @@ function Explore({ usuarioLogado }) {
     fetchPosts();
   }, []);
 
+  // Handlers para vídeo autoplay on hover
   const handleVideoMouseEnter = (id) => videoRefs.current[id]?.play().catch(() => {});
   const handleVideoMouseLeave = (id) => videoRefs.current[id]?.pause();
 
@@ -155,16 +202,16 @@ function Explore({ usuarioLogado }) {
         type="text"
         placeholder="Buscar usuários pelo nome..."
         value={buscaTexto}
-        onChange={e => setBuscaTexto(e.target.value)}
+        onChange={(e) => setBuscaTexto(e.target.value)}
       />
 
       {erroBuscaUsuarios && <p className="erro">{erroBuscaUsuarios}</p>}
 
       {resultadosUsuarios.length > 0 && (
         <ul className="usuarios-resultado">
-          {resultadosUsuarios.map(user => (
+          {resultadosUsuarios.map((user) => (
             <li key={user.id}>
-              <div onClick={() => irParaPerfil(user.nome_usuario)}>
+              <div onClick={() => irParaPerfil(user.nome_usuario)} style={{ cursor: 'pointer' }}>
                 <img src={user.imagem || 'https://via.placeholder.com/40'} alt={user.nome_usuario} />
                 <span>{user.nome_usuario}</span>
               </div>
@@ -181,7 +228,7 @@ function Explore({ usuarioLogado }) {
       {erro && <p className="erro">{erro}</p>}
 
       <div className="explore-grid">
-        {posts.map(post => (
+        {posts.map((post) => (
           <div
             key={post.id}
             className={`grid-item ${post.video ? 'video' : ''} ${post.destaque ? 'destaque' : ''}`}
@@ -194,11 +241,13 @@ function Explore({ usuarioLogado }) {
                   muted
                   loop
                   playsInline
-                  ref={node => (videoRefs.current[post.id] = node)}
+                  ref={(node) => (videoRefs.current[post.id] = node)}
                   onMouseEnter={() => handleVideoMouseEnter(post.id)}
                   onMouseLeave={() => handleVideoMouseLeave(post.id)}
                 />
-                <span className="video-icon"><FaVideo /></span>
+                <span className="video-icon">
+                  <FaVideo />
+                </span>
               </div>
             ) : (
               <img src={post.imagem} alt={`Post de ${post.autorNome}`} className="post-img" />
@@ -208,18 +257,18 @@ function Explore({ usuarioLogado }) {
       </div>
 
       {postSelecionado && (
-        <Comentario
-          post={postSelecionado}
-          comentarios={comentarios}
-          comentarioTexto={comentarioTexto}
-          setComentarioTexto={setComentarioTexto}
-          comentar={comentar}
-          fechar={() => {
-            setPostSelecionado(null);
-            setComentarios([]);
-            setComentarioTexto('');
-          }}
-        />
+        isMobileState ? (
+          <VisualizacaoExploreSelecionado
+            post={postSelecionado}
+            comentarios={comentarios}
+            comentarioTexto={comentarioTexto}
+            setComentarioTexto={setComentarioTexto}
+            comentar={comentar}
+            fechar={() => setPostSelecionado(null)}
+          />
+        ) : (
+          <Comentario post={postSelecionado} usuario={usuarioLogado} fechar={() => setPostSelecionado(null)} />
+        )
       )}
     </div>
   );

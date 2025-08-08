@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
-
 import FeedItem from '../Components/Home/FeedItem';
 import Comentario from '../Components/Comentario';
 import Notificacoes from './Notificacao/Notificacoes ';
@@ -10,7 +9,7 @@ import '../css/home.css';
 import useRegistrarVisualizacoes from '../Components/Home/useRegistrarVisualizacoes';
 import Story from '../Components/Home/Story.jsx';
 import { FaSearch, FaBell } from 'react-icons/fa';
-
+import Solicitacoes from '../Components/Home/Solicitacoes.jsx';
 function Home() {
   const navigate = useNavigate();
 
@@ -34,13 +33,11 @@ function Home() {
   const [termoBusca, setTermoBusca] = useState('');
   // Paginação e controle fim do feed
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const [fimDoFeed, setFimDoFeed] = useState(false);
-  //Solicitações
-  const [solicitacoes, setSolicitacoes] = useState([]);
-
-
+  const [fimDoFeed, setFimDoFeed] = useState(false);  
+  // Estado para controlar carregamento do feed
 const [loadingFeed, setLoadingFeed] = useState(true);
-
+  // Estado para erros de carregamento do feed
+const [solicitacoes, setSolicitacoes] = useState([]);
 
   // Registra referência do vídeo
   const registerVideoRef = useCallback((postId, node) => {
@@ -462,74 +459,7 @@ async function curtirPost(postId) {
     return () => clearInterval(intervalId);
   }, [posts]);
 
-  // solicitações  /trocar para componentes 
-  async function fetchSolicitacoes() {
-  try {
-    const response = await fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/solicitacoes-recebidas/${usuario.id}`
-    );
-    const data = await response.json();
 
-    if (Array.isArray(data)) {
-      const solicitacoesComRemetente = await Promise.all(
-        data.map(async s => {
-          try {
-            const resp = await fetch(
-              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${s.usuario1}`
-            );
-            const remetente = await resp.json();
-
-            return {
-              id: s.id,
-              usuarioId: s.usuario1,
-              nome: remetente.nome || remetente.nome_usuario,
-              nome_usuario: remetente.nome_usuario,
-              imagem: remetente.imagem || 'https://via.placeholder.com/40',
-            };
-          } catch {
-            return {
-              id: s.id,
-              usuarioId: s.usuario1,
-              nome: 'Desconhecido',
-              imagem: 'https://via.placeholder.com/40',
-            };
-          }
-        })
-      );
-
-      setSolicitacoes(solicitacoesComRemetente);
-    }
-  } catch (err) {
-    console.error('Erro ao buscar solicitações:', err);
-  }
-}
-async function aceitarSolicitacao(idSolicitacao) {
-  try {
-    const res = await fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/aceitar/${idSolicitacao}`,
-      { method: 'POST' }
-    );
-    if (res.ok) {
-      setSolicitacoes(prev => prev.filter(s => s.id !== idSolicitacao));
-    }
-  } catch (err) {
-    console.error('Erro ao aceitar solicitação:', err);
-  }
-}
-
-async function recusarSolicitacao(idSolicitacao) {
-  try {
-    const res = await fetch(
-      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/recusar/${idSolicitacao}`,
-      { method: 'DELETE' }
-    );
-    if (res.ok) {
-      setSolicitacoes(prev => prev.filter(s => s.id !== idSolicitacao));
-    }
-  } catch (err) {
-    console.error('Erro ao recusar solicitação:', err);
-  }
-}
 
   return (
     <div className="pagina-container">
@@ -629,39 +559,12 @@ async function recusarSolicitacao(idSolicitacao) {
           </ul>
         )}
         </div>
-
-        {/* Solicitaçoes */}
-       <div className="solicitacao-box">
-  <h4>Solicitações</h4>
-  <ul className="lista-solicitacoes">
-    {solicitacoes.length === 0 ? (
-      <li>Não há solicitações</li>
-    ) : (
-      solicitacoes.map(s => (
-        <li key={s.id} className="solicitacao-item">
-          <img
-            src={s.imagem}
-            alt="avatar"
-            className="avatar-busca"
-            onClick={() => irParaPerfil(s.usuarioId)}
-          />
-          <div className="info-notificacao">
-            <p>
-              <strong onClick={() => irParaPerfil(s.usuarioId)} style={{ cursor: 'pointer' }}>
-                {s.nome_usuario || s.nome}
-              </strong>{' '}
-              quer te seguir.
-            </p>
-            <div className="botoes-solicitacao">
-              <button onClick={() => aceitarSolicitacao(s.id)}>Aceitar</button>
-              <button onClick={() => recusarSolicitacao(s.id)}>Recusar</button>
-            </div>
-          </div>
-        </li>
-      ))
-    )}
-  </ul>
-</div>
+        <Solicitacoes
+  usuarioId={usuario.id}
+  solicitacoes={solicitacoes}
+  setSolicitacoes={setSolicitacoes}
+  irParaPerfil={irParaPerfil}
+/>
 
           {/* Notificações */}
         <div className="notificacoes-box">

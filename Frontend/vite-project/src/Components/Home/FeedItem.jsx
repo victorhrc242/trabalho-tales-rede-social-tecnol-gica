@@ -1,23 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, MessageCircle, MoreVertical,Share2 } from 'lucide-react';
+import { Heart, MessageCircle, MoreVertical } from 'lucide-react';
 import VideoPlayer from './VideoPlayer';
-import CompartilharPost from './CompartilharPost';
 
-import './modal.css';
 function FeedItem({ post, usuario, videoAtivoId, registerVideoRef, curtirPost, abrirComentarios, irParaPerfil }) {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [mostrarTiposDenuncia, setMostrarTiposDenuncia] = useState(false);
   const opcoesRef = useRef(null);
   const [foiCurtido, setFoiCurtido] = useState(false);
   const [totalCurtidas, setTotalCurtidas] = useState(post.curtidas || 0);
-  const [modalAberto, setModalAberto] = useState(false);
-const [destinatarioId, setDestinatarioId] = useState("");
-const [mensagem, setMensagem] = useState("");
-const [seguindo, setSeguindo] = useState([]);
 const [curtindo, setCurtindo] = useState(false);
   const denunciarPost = async (descricao) => {
     try {
-      await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/denuncias/adicionar_denuncia', {
+      await fetch('https://localhost:7051/api/denuncias/adicionar_denuncia', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -34,66 +28,15 @@ const [curtindo, setCurtindo] = useState(false);
       alert('Erro ao enviar denúncia.');
     }
   };
-useEffect(() => {
-  const buscarUsuariosSeguindo = async () => {
-    try {
-      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${usuario.id}`);
-      const data = await res.json();
-
-      if (data.sucesso && Array.isArray(data.seguindo)) {
-        const usuariosDetalhados = await Promise.all(
-          data.seguindo.map(async ({ usuario2 }) => {
-            const resUser = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuario2}`);
-            const userData = await resUser.json();
-            return {
-              id: usuario2,
-              nome: userData.nome,
-              imagem: userData.imagem
-            };
-          })
-        );
-
-        setSeguindo(usuariosDetalhados);
-      }
-    } catch (err) {
-      console.error('Erro ao buscar detalhes dos usuários seguindo:', err);
-    }
-  };
-
-  if (modalAberto) {
-    buscarUsuariosSeguindo();
-  }
-}, [modalAberto, usuario.id]);
 
   useEffect(() => {
     async function checkCurtida() {
-      const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`);
+      const res = await fetch(`https://localhost:7051/api/Curtida/usuario-curtiu?postId=${post.id}&usuarioId=${usuario.id}`);
       const data = await res.json();
       setFoiCurtido(data.curtiu);
     }
     checkCurtida();
   }, [post.id, usuario.id]);
-  if (!usuario?.id) {
-  alert("Usuário não autenticado.");
-  return;
-}
-
-
-const [toast, setToast] = useState(null);
-function Toast({ mensagem, tipo = 'sucesso', onClose }) {
-  useEffect(() => {
-    const timer = setTimeout(onClose, 3000); // desaparece após 3s
-    return () => clearTimeout(timer);
-  }, [onClose]);
-
-  return (
-    <div className={`toast ${tipo}`} onClick={onClose}>
-      {mensagem}
-    </div>
-  );
-}
-
-
 
 async function handleCurtir() {
   if (curtindo) return;
@@ -126,10 +69,6 @@ async function handleCurtir() {
     return () => document.removeEventListener('mousedown', handleClickFora);
   }, []);
 
-
-  const [mostrarCompartilhar, setMostrarCompartilhar] = useState(false);
-
-  
   return (
     <li style={{ marginBottom: '20px' }}>
       <div className="autor-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -144,10 +83,6 @@ async function handleCurtir() {
             {post.autorNome}
           </span>
         </div>
-
-
-      
-
 
         {/* Botão e menu de opções */}
         <div style={{ position: 'relative' }} ref={opcoesRef}>
@@ -223,47 +158,35 @@ async function handleCurtir() {
 
         {/* Botões curtir/comentar */}
         <div className="botoes-post">
-          <button className="botao-acao" onClick={handleCurtir}>
-           <Heart
-           size={20}
-           color={foiCurtido ? 'red' : 'black'}
-           fill={foiCurtido ? 'red' : 'none'}
-          />
-           {usuario?.id === post.autorId && (
-          <span> ({totalCurtidas})</span>
-          )}
-         </button>
+  <button className="botao-acao" onClick={handleCurtir}>
+  <Heart
+    size={20}
+    color={foiCurtido ? 'red' : 'black'}
+    fill={foiCurtido ? 'red' : 'none'}
+  />
+  {usuario?.id === post.autorId && (
+    <span> ({totalCurtidas})</span>
+  )}
+</button>
 
 
 
           <button className="botao-acao" onClick={() => abrirComentarios(post)}>
             <MessageCircle size={20} /> ({post.comentarios})
           </button>
-
-         <button onClick={() => setMostrarCompartilhar(true)} className="botao-enviar-dm">
-  <Share2 size={20} />
-</button>
-
-
         </div>
 
-        {mostrarCompartilhar && (
-  <CompartilharPost
-    post={post}
-    usuario={usuario}
-    onClose={() => setMostrarCompartilhar(false)}
-  />
-)}
-
-
-     
+        {/* Texto do post */}
+        <div className="post-description">
+          <p>
+            {post.conteudo} {post.tags?.map((tag) => `#${tag.trim()}`).join(' ')}
+          </p>
+          <p>{new Date(post.dataPostagem).toLocaleString()}</p>
+        </div>
 
         <hr />
       </article>
     </li>
-
-
-
   );
 }
 

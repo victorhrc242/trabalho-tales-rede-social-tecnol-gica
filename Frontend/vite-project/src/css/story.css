@@ -16,6 +16,7 @@
   overflow-x: auto;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  margin-top: 40px;
 }
 
 .story-container::-webkit-scrollbar {
