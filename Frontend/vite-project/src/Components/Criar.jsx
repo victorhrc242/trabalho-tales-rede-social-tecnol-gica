@@ -76,63 +76,71 @@ function Criar({ usuarioLogado, onClose }) {
   };
 
   // Manipulação do envio do post
-  const handleCriarPost = async (e) => {
-    e.preventDefault();
-    if (enviando) return;
+ const handleCriarPost = async (e) => {
+  e.preventDefault();
+  if (enviando) return;
 
-    if (!imagemArquivo && !videoArquivo) {
-      setErro('Adicione uma imagem ou vídeo para o post.');
-      return;
+  if (!imagemArquivo && !videoArquivo) {
+    setErro('Adicione uma imagem ou vídeo para o post.');
+    return;
+  }
+
+  setEnviando(true);
+  setMostrarMiniModal(true);
+  setModalAberto(false);
+
+  try {
+    let imagemUrl = '';
+    let videoUrlSupabase = '';
+
+    if (imagemArquivo) {
+      imagemUrl = await uploadImagem(imagemArquivo);
     }
 
-    setEnviando(true);
-    setMostrarMiniModal(true);
-    setModalAberto(false); // Fecha apenas o modal principal visualmente
+    if (videoArquivo) {
+      videoUrlSupabase = await uploadVideo(videoArquivo);
+    }
 
-    try {
-      let imagemUrl = '';
-      let videoUrlSupabase = '';
+    const novoPost = {
+      autorId: usuarioLogado.id,
+      conteudo,
+      imagem: imagemUrl,
+      video: videoUrlSupabase,
+      tags: tags.split(',').map(tag => tag.trim()),
+    };
 
-      if (imagemArquivo) {
-        imagemUrl = await uploadImagem(imagemArquivo);
-      }
+    // **Aqui você precisa enviar o novoPost para sua API:**
+    const response = await fetch('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Feed/criar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(novoPost),
+    });
 
-      if (videoArquivo) {
-        videoUrlSupabase = await uploadVideo(videoArquivo);
-      }
+    if (response.ok) {
+      setEtapa(1);
+      setImagemArquivo(null);
+      setVideoArquivo(null);
+      setImagem('');
+      setVideoUrl('');
+      setConteudo('');
+      setTags('');
+      setErro('');
 
-      const novoPost = {
-        autorId: usuarioLogado.id,
-        conteudo,
-        imagem: imagemUrl,
-        video: videoUrlSupabase,
-        tags: tags.split(',').map(tag => tag.trim()),
-      };
-      if (response.ok) {
-        setEtapa(1);
-        setImagemArquivo(null);
-        setVideoArquivo(null);
-        setImagem('');
-        setVideoUrl('');
-        setConteudo('');
-        setTags('');
-        setErro('');
-
-        // Oculta o mini modal após 4 segundos
-        setTimeout(() => setMostrarMiniModal(false), 4000);
-      } else {
-        const erroResp = await response.json();
-        setErro(erroResp.erro || 'Erro ao criar o post');
-        setMostrarMiniModal(false);
-      }
-    } catch (err) {
-      console.error('Erro ao criar post:', err);
-      setErro('Erro ao enviar imagem ou vídeo.');
+      setTimeout(() => setMostrarMiniModal(false), 4000);
+    } else {
+      const erroResp = await response.json();
+      setErro(erroResp.erro || 'Erro ao criar o post');
       setMostrarMiniModal(false);
-    } finally {
-      setEnviando(false);
     }
-  };
+  } catch (err) {
+    console.error('Erro ao criar post:', err);
+    setErro('Erro ao enviar imagem ou vídeo.');
+    setMostrarMiniModal(false);
+  } finally {
+    setEnviando(false);
+  }
+};
+
 
   // sugestões de tags
   const buscarTags = async (texto) => {

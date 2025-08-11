@@ -82,6 +82,12 @@ const [showTermos, setShowTermos] = useState(false);
 const [showPrivacidade, setShowPrivacidade] = useState(false);
 const [showCookies, setShowCookies] = useState(false);
 
+
+// Estados de loading para cada etapa
+const [loadingProximaEtapa, setLoadingProximaEtapa] = useState(false);
+const [loadingVerificarCodigo, setLoadingVerificarCodigo] = useState(false);
+const [loadingCadastro, setLoadingCadastro] = useState(false);
+
   // Escuta resize para atualizar isResponsive
   useEffect(() => {
     const handleResize = () => {
@@ -139,6 +145,7 @@ const handleProximaEtapa = async (e) => {
   setErro('');
   setToastErro({ mensagem: '', campo: null });
   setMensagem('');
+  setLoadingProximaEtapa(true);
 
   if (!validarSenhaSegura(senha)) {
     setToastErro({
@@ -146,6 +153,7 @@ const handleProximaEtapa = async (e) => {
         'A senha deve ter pelo menos 6 caracteres, uma letra maiúscula, um número e um caractere especial.',
       campo: senhaRef,
     });
+    setLoadingProximaEtapa(false);
     return;
   }
 
@@ -154,21 +162,22 @@ const handleProximaEtapa = async (e) => {
       mensagem: 'As senhas não coincidem.',
       campo: repetirSenhaRef,
     });
+    setLoadingProximaEtapa(false);
     return;
   }
 
   if (!email) {
     setMensagem('Informe seu e-mail para receber o código de cadastro.');
+    setLoadingProximaEtapa(false);
     return;
   }
-  setEnviandoCodigo(true);
+
   try {
     const response = await fetch(
       'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Use propriedades com maiúscula inicial, conforme o DTO backend:
         body: JSON.stringify({ Email: email, Tipo: 'cadastro' }),
       }
     );
@@ -182,9 +191,10 @@ const handleProximaEtapa = async (e) => {
   } catch (error) {
     setMensagem('Erro ao conectar com o servidor.');
   } finally {
-    setEnviandoCodigo(false);
+    setLoadingProximaEtapa(false);
   }
 };
+
 
 // Etapa 2: Verificar código enviado por e-mail e avançar para etapa 3
 // Verificar código - etapa 2
@@ -192,20 +202,20 @@ const handleVerificarCodigo = async (e) => {
   e.preventDefault();
   setErro('');
   setMensagem('');
+  setLoadingVerificarCodigo(true);
 
   if (!codigoVerificacao || codigoVerificacao.trim().length === 0) {
     setMensagem('Informe o código de verificação.');
+    setLoadingVerificarCodigo(false);
     return;
   }
 
-  setEnviandoCodigo(true);
   try {
     const response = await fetch(
       'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Verificar-codigo',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Também aqui: campos com maiúscula inicial
         body: JSON.stringify({
           Email: email,
           Codigo: codigoVerificacao,
@@ -224,15 +234,17 @@ const handleVerificarCodigo = async (e) => {
   } catch (error) {
     setMensagem('Erro ao conectar com o servidor.');
   } finally {
-    setEnviandoCodigo(false);
+    setLoadingVerificarCodigo(false);
   }
 };
+
 
 // Cadastro final
 const handleCadastro = async (e) => {
   e.preventDefault();
   setErro('');
   setToastErro({ mensagem: '', campo: null });
+  setLoadingCadastro(true);
 
   try {
     let fotoPerfilURL = '';
@@ -249,16 +261,14 @@ const handleCadastro = async (e) => {
       FotoPerfil: fotoPerfilURL,
       biografia,
       dataaniversario: dataAniversario,
-      CodigoVerificacao: codigoVerificacao, // segurança extra
+      CodigoVerificacao: codigoVerificacao,
     };
 
     const response = await fetch(
       'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/register',
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novoUsuario),
       }
     );
@@ -270,6 +280,7 @@ const handleCadastro = async (e) => {
     if (!response.ok) {
       const msg = isJson ? data.message : data;
       setErro(msg || 'Erro ao cadastrar');
+      setLoadingCadastro(false);
       return;
     }
 
@@ -278,10 +289,11 @@ const handleCadastro = async (e) => {
       setShowModalSucesso(false);
       navigate('/');
     }, 3000);
-
   } catch (error) {
     console.error('Erro ao cadastrar:', error);
     setErro('Erro ao conectar com o servidor');
+  } finally {
+    setLoadingCadastro(false);
   }
 };
 
@@ -393,9 +405,10 @@ function getToastPosition(ref) {
               />
             </div>
 
-            <button type="submit" className="next-button">
-              Proximo
-            </button>
+            <button type="submit" className="next-button" disabled={loadingProximaEtapa}>
+  {loadingProximaEtapa ? "Enviando..." : "Próximo"}
+</button>
+
 
             <div className="divider-with-text">
               <span className="line"></span>
@@ -416,9 +429,10 @@ function getToastPosition(ref) {
               />
             </div>
 
-            <button type="submit" className="next-button">
-              Verificar código
-            </button>
+            <button type="submit" className="next-button" disabled={loadingVerificarCodigo}>
+  {loadingVerificarCodigo ? "Verificando..." : "Verificar código"}
+</button>
+
           </>
         ) : (
           <>
@@ -502,9 +516,10 @@ function getToastPosition(ref) {
             <PoliticaDePrivacidade isOpen={showPrivacidade} onClose={() => setShowPrivacidade(false)} />
             <PoliticaDeCookies isOpen={showCookies} onClose={() => setShowCookies(false)} />
 
-            <button type="submit" className="signup-button">
-              Cadastrar
-            </button>
+            <button type="submit" className="signup-button" disabled={loadingCadastro}>
+  {loadingCadastro ? "Cadastrando..." : "Cadastrar"}
+</button>
+
           </>
         )}
 

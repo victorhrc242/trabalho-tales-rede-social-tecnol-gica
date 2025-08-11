@@ -186,7 +186,7 @@ useEffect(() => {
 
     // Salva os dados básicos do usuário
     setUsuario(userData);
-    setNome(userData.nome || '');
+    setNome(userData.nome_usuario || '');
     setBiografia(userData.biografia || '');
     setImagem(userData.imagem || '');
 
@@ -301,39 +301,50 @@ if (verStoryModal && usuario?.id) {
   return urlPublica;
 };
 
-  const editarPerfil = async () => {
-    try {
-      const payload = {};
+const editarPerfil = async () => {
+  try {
+    const payload = {};
 
-      if (nome !== usuario.nome) payload.nome = nome;
-if (biografia !== usuario.biografia) payload.biografia = biografia;
-if (imagemArquivo) {
-  const novaUrlImagem = await uploadImagem(imagemArquivo);
-  payload.imagem = novaUrlImagem;
-  setImagem(novaUrlImagem);
-} else if (imagem !== usuario.imagem) {
-  payload.imagem = imagem;
-}
-
-      if (Object.keys(payload).length === 0) {
-        alert('Não há dados para atualizar.');
-        return;
-      }
-
-      const response = await axios.put(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/editarusuarios/${userId}`,
-        payload
-      );
-
-      setUsuario(response.data[0] || response.data);
-      setIsEditing(false);
-      setShowEditarModalMobile(false);
-    } catch (err) {
-      console.error('Erro ao editar perfil:', err);
-      alert('Erro ao editar perfil. Verifique os dados e tente novamente.');  
+    // Ajuste os nomes dos campos para corresponder ao esperado pelo backend
+    if (nome !== usuario.nome_usuario) payload.Nome = nome;
+    if (biografia !== usuario.biografia) payload.Biografia = biografia;
+    
+    if (imagemArquivo) {
+      const novaUrlImagem = await uploadImagem(imagemArquivo);
+      payload.Imagem = novaUrlImagem;
+      setImagem(novaUrlImagem);
+    } else if (imagem !== usuario.imagem) {
+      payload.Imagem = imagem;
     }
-  };
 
+    if (Object.keys(payload).length === 0) {
+      alert('Não há dados para atualizar.');
+      return;
+    }
+
+    const response = await axios.put(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/editarusuarios/${userId}`,
+      payload
+    );
+
+    // Tratamento da resposta considerando que o backend pode retornar um array ou objeto direto
+    const updatedUser = Array.isArray(response.data) ? response.data[0] : response.data;
+
+    // Atualize o estado do usuário mantendo os dados existentes e sobrescrevendo apenas os atualizados
+    setUsuario(prev => ({
+      ...prev,
+      nome_usuario: updatedUser.Nome_usuario || prev.nome_usuario,
+      biografia: updatedUser.Biografia || prev.biografia,
+      imagem: updatedUser.Imagem || updatedUser.FotoPerfil || prev.imagem
+    }));
+
+    setIsEditing(false);
+    setShowEditarModalMobile(false);
+  } catch (err) {
+    console.error('Erro ao editar perfil:', err);
+    alert('Erro ao editar perfil. Verifique os dados e tente novamente.');  
+  }
+};
   const fetchComentarios = async (postId) => {
     try {
       const response = await axios.get(
@@ -571,14 +582,6 @@ const cancelarLogout = () => {
               />
             </label>
           </div>
-          <div className="botao-wrapper">
-            <button
-              className="editar-botoes"
-              onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
-            >
-              Alterar foto de perfil
-            </button>
-          </div>
         </div>
 
         <label>Nome</label>
@@ -669,12 +672,6 @@ const cancelarLogout = () => {
           }}
         />
       </label>
-      <button
-        className="btn-alterar-foto"
-        onClick={() => document.querySelector('.editar-foto-label input').click()}
-      >
-        Alterar foto de perfil
-      </button>
     </div>
 
     <div className="editar-campos">
