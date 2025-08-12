@@ -45,7 +45,7 @@ function NavbarTop({ usuarioLogado }) {
     <div className="navbar-top">
       <div className="logo">
         <Link to="/home">
-          <img src="../public/logoParadise.jpg" alt="Logo" className="imagem-logo-top" />
+          <img src="https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/LogoParadise.jpg" alt="Logo" className="imagem-logo-top" />
         </Link>
       </div>
 

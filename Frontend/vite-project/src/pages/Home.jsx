@@ -158,58 +158,61 @@ async function fetchFeed(pagina = 1) {
   }, [carregandoMais, fimDoFeed]);
 
   // Busca notificações
-    async function fetchNotificacoes() {
-    try {
-      const response = await fetch(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
-      );
-      const data = await response.json();
+async function fetchNotificacoes() {
+  try {
+    const response = await fetch(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Notificacoes/${usuario.id}`
+    );
+    const data = await response.json();
 
-      if (data.notificacoes) {
+    if (data.notificacoes) {
       const notificacoesComRemetente = await Promise.all(
-    data.notificacoes.map(async n => {
-      const remetenteId = n.usuarioRemetenteId;
-      if (remetenteId) {
-        try {
-          const resp = await fetch(
-            `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${remetenteId}`
-          );
-          const remetenteData = await resp.json();
-          const remetente = {
-            id: remetenteData.id || remetenteData.usuario_id || remetenteData.userId,
-            nome: remetenteData.nome || remetenteData.nome_usuario,
-            nome_usuario: remetenteData.nome_usuario,
-            imagem: remetenteData.imagem || null
-          };
+        data.notificacoes.map(async n => {
+          const remetenteId = n.usuarioRemetenteId;
+          if (remetenteId) {
+            try {
+              const resp = await fetch(
+                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${remetenteId}`
+              );
+              const remetenteData = await resp.json();
+              const remetente = {
+                id: remetenteData.id || remetenteData.usuario_id || remetenteData.userId,
+                nome: remetenteData.nome || remetenteData.nome_usuario,
+                nome_usuario: remetenteData.nome_usuario,
+                imagem: remetenteData.imagem || null
+              };
 
-          const nomeRemetente = remetente.nome || 'Desconhecido';
-          const imagemRemetente =
-            remetente.imagem ||
-            'https://ui-avatars.com/api/?name=Desconhecido';
+              const nomeRemetente = remetente.nome || 'Desconhecido';
+              const imagemRemetente =
+                remetente.imagem ||
+                'https://ui-avatars.com/api/?name=Desconhecido';
 
-          return {
-            ...n,
-            remetente,
-            nomeRemetente,
-            imagemRemetente,
-          };
+              return {
+                ...n,
+                remetente,
+                nomeRemetente,
+                imagemRemetente,
+              };
 
-        } catch {
+            } catch {
+              return { ...n };
+            }
+          }
           return { ...n };
-        }
-      }
-      return { ...n };
-    })
-  );
-  setNotificacoes(notificacoesComRemetente);
+        })
+      );
 
-      }
-      
-    } catch (err) {
-      console.error('Erro ao buscar notificações:', err);
+      // 🔹 Filtra para não incluir interações do próprio usuário logado
+      const notificacoesFiltradas = notificacoesComRemetente.filter(
+        n => n.usuarioRemetenteId !== usuario.id
+      );
+
+      setNotificacoes(notificacoesFiltradas);
     }
-    
+  } catch (err) {
+    console.error('Erro ao buscar notificações:', err);
   }
+}
   //Fim notificações
 
   // Salva primeiros 5 posts no localStorage como cache
@@ -359,30 +362,6 @@ async function curtirPost(postId) {
   function irParaPerfil(id) {
     navigate(`/perfil/${id}`, { state: { userId: id } });
   }
-
-  // Conexão SignalR para feed de posts
-  useEffect(() => {
-    const connection = new HubConnectionBuilder()
-      .withUrl(
-        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/feedHub',
-        { transport: HttpTransportType.LongPolling }
-      )
-      .withAutomaticReconnect()
-      .build();
-
-    connection
-      .start()
-      .then(() => {
-        connection.on('NovoPost', novoPost => {
-          setPosts(prev => [novoPost, ...prev]);
-          setCarregandoMais(false);
-        });
-      })
-      .catch(err => console.error('Erro ao conectar feedHub:', err));
-
-    return () => connection.stop();
-  }, []);
-
   // Conexão SignalR para curtidas
   useEffect(() => {
     const curtidaConnection = new HubConnectionBuilder()
@@ -547,12 +526,6 @@ async function curtirPost(postId) {
                   >
                     {usuarioPesquisado.nome_usuario || usuarioPesquisado.nome}
                   </span>
-                  <button
-                    onClick={() => seguirUsuarioRapido(usuarioPesquisado.id)}
-                    disabled={usuarioPesquisado.jaSegue}
-                  >
-                    {usuarioPesquisado.jaSegue ? 'Seguindo' : 'Seguir'}
-                  </button>
                 </div>
               </li>
             ))}

@@ -3,6 +3,18 @@
   animation-play-state: paused !important;
 }
 
+/* Borda cinza na imagem da bolota quando já viu */
+.story-item.story-visto .story-imagem {
+  border: 3px solid rgb(172, 172, 172);
+  border-radius: 50%;
+  opacity: 0.7;
+  transition: border-color 0.3s ease;
+}
+
+/* Se quiser, pode mudar o cursor também */
+.story-item.story-visto {
+  cursor: default;
+}
 
 /* --------------------------- story --------------------------- */
 .story-wrapper {
@@ -45,7 +57,6 @@
   text-align: center;
 }
 
-
 .story-item.nao-visto {
   border-color: #007bff;
 }
@@ -53,7 +64,6 @@
 .story-item.visto {
   border-color: #ccc;
 }
-
 
 .story-imagem {
   width: 100%;
@@ -70,12 +80,14 @@
   font-size: 16px;
   color: #666;
 }
+
 .story-bolota-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
+
 .story-nome {
   margin-top: 4px;
   font-size: 10px;
@@ -104,20 +116,22 @@
   overflow: hidden;
 }
 
-/* Conteúdo do modal */
-.modal-content {
+/* Conteúdo do modal - flex vertical com espaço para input */
+.modal-contents {
   background-color: rgba(0, 0, 0, 0.8);
   position: relative;
-  width: 420px;   /* largura fixa */
+  width: 400px;   /* largura fixa */
   height: 640px;  /* altura fixa */
-  padding: 0;
+  padding: 15px 15px 60px 15px; /* espaço extra abaixo para o input */
   margin: 0;
   border-radius: 15px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   transition: background-color 0.5s ease;
+  box-sizing: border-box;
 }
 
 /* Zonas invisíveis para clique nas laterais */
@@ -136,22 +150,24 @@
   right: 0;
 }
 
-/* Imagem/vídeo do story */
+/* Imagem/vídeo do story - ocupa todo o espaço possível, menos o do input */
 .modal-story {
   max-width: 100%;
-  max-height: 100%;
+  max-height: calc(100% - 60px); /* Reservando 60px para a área do input */
   border-radius: 15px;
   object-fit: contain;
   user-select: none;
   pointer-events: none;
   background: transparent;
   display: block;
+  margin: 0 auto;
+  margin-top: 95px;
 }
 
-/* Tamanho fixo para imagem/vídeo */
+/* Tamanho fixo para imagem/vídeo - classe fixa */
 .modal-story.fixo {
   max-width: 100%;
-  max-height: 100%;
+  max-height: calc(100% - 60px);
   width: auto;
   height: auto;
   border-radius: 12px;
@@ -165,7 +181,7 @@
 /* Estilo para vídeo também */
 .modal-story.fixo.video {
   max-width: 360px;
-  max-height: 640px;
+  max-height: calc(640px - 60px);
   width: 100%;
   height: auto;
   object-fit: contain;
@@ -184,6 +200,7 @@
   .modal-content {
     width: 100vw;
     height: 100vh;
+    padding: 15px 15px 80px 15px; /* mais espaço para input no mobile */
   }
 }
 
@@ -321,41 +338,46 @@
 /* Container para a interação (textarea ) */
 .story-interacao {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex; /* Adicionei o display flex para o alinhamento */
-  align-items: center; /* Alinha os itens verticalmente no centro */
-  padding: 8px 12px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  bottom: 15px; /* um pouco afastado da borda */
+  left: 15px;
+  right: 15px;
+  height: 45px; /* altura fixa para garantir espaço */
+  display: flex; /* para centralizar verticalmente o textarea */
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  padding: 0 15px;
   z-index: 50;
 }
 
-/* Estilização datextarea */
+/* Estilização do textarea */
 .input-resposta-story {
-  width: 96%;
+  width: 100%;
   border: none;
   border-radius: 18px;
-  padding: 3px 10px; /* Reduzindo o padding para deixá-la mais fina */
-  height: 36px; /* Adicionando uma altura fixa para um controle mais preciso */
+  padding: 3px 10px;
+  height: 30px;
   font-size: 14px;
   background-color: rgba(255, 255, 255, 0.623);
   color: #333;
   outline: none;
   resize: none;
-  max-height: 80px; /* Mantendo a altura máxima, caso seja necessário, mas a altura fixa já a define */
 }
 
+/* Responsividade do input */
 @media (max-width: 600px) {
   .story-interacao {
-    padding: 8px 16px;
+    bottom: 20px;
+    left: 10px;
+    right: 10px;
+    height: 50px;
   }
   .input-resposta-story {
     font-size: 16px;
-    padding: 5px ;
+    padding: 5px;
+    height: 36px;
   }
 }
-
 
 /* ------------------------------------------------Criar novo story------------------------------------------ */
 .create-story-overlay {
@@ -515,6 +537,5 @@
 .create-story-status-message.postando {
   background-color: #4caf50; /* verde */
 }
-   
-/* -------------------------------------testes----------------------------------------- */
 
+/* -------------------------------------testes----------------------------------------- */

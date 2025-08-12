@@ -34,6 +34,35 @@ const [mensagemExcluir, setMensagemExcluir] = useState('');
         });
     }
   }, [abaAtiva, usuarioId]);
+useEffect(() => {
+  if (abaAtiva === 'privacidade') {
+    const usuarioStorage = localStorage.getItem('usuario');
+    if (usuarioStorage) {
+      setUsuario(JSON.parse(usuarioStorage));
+    }
+  }
+}, [abaAtiva]);
+useEffect(() => {
+  if ((abaAtiva === 'notificacoes' || abaAtiva === 'privacidade') && usuarioId) {
+    fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${usuarioId}`, {
+      headers: {
+        accept: '*/*',
+      },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Erro ao buscar usuário');
+        return res.json();
+      })
+      .then(data => {
+        setUsuario(data);
+        localStorage.setItem('usuario', JSON.stringify(data)); // mantém localStorage atualizado
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+}, [abaAtiva, usuarioId]);
+
 
   return (
     <div className="config-container">
@@ -103,52 +132,51 @@ const [mensagemExcluir, setMensagemExcluir] = useState('');
           )}
 
 {abaAtiva === 'privacidade' && (
-  <div>
-    <h3>Configurações de Privacidade</h3>
-    {usuario ? (
-      <div>
-<p className='text-priv'>Conta privada <label className="switch">
-       <input
-  type="checkbox"
-  checked={!usuario.publica} // Agora: marcada = privada
-  onChange={async () => {
-    try {
-      const response = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/alterar-status/${usuario.id}`, {
-        method: 'PUT',
-        headers: {
-          accept: '*/*',
-        },
-      });
+        <div>
+          <h3>Configurações de Privacidade</h3>
+          {usuario ? (
+            <div>
+              <p className="text-priv">
+                Conta privada{' '}
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    checked={!usuario.publica}
+                    onChange={async () => {
+                      try {
+                        const response = await fetch(
+                          `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/alterar-status/${usuario.id}`,
+                          { method: 'PUT', headers: { accept: '*/*' } }
+                        );
+                        if (!response.ok) throw new Error('Erro ao alterar status da conta');
+                        const data = await response.json();
+                        const usuarioAtualizado = { ...usuario, publica: data.usuario.publica };
+                        setUsuario(usuarioAtualizado);
+                        localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado));
+                      } catch (error) {
+                        console.error(error);
+                        alert('Erro ao atualizar status de privacidade.');
+                      }
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </p>
+            </div>
+          ) : (
+            <p>Carregando dados do usuário...</p>
+          )}
 
-      if (!response.ok) throw new Error('Erro ao alterar status da conta');
+          <p className="descricao-privacidade">
+            Quando sua conta está <strong>privada</strong>, apenas pessoas que você aprovar poderão ver suas publicações,
+            comentários e perfil completo. Se estiver <strong>pública</strong>, qualquer pessoa poderá visualizar seu conteúdo,
+            mesmo sem seguir você.
+          </p>
+        </div>
+      )}
+    
 
-      const data = await response.json();
-      setUsuario((prev) => ({
-        ...prev,
-        publica: data.usuario.publica,
-      }));
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao atualizar status de privacidade.');
-    }
-  }}
-/>
-          <span className="slider round"></span>
-        </label>
-        </p>
-      </div>
-    ) : (
-      <p>Carregando dados do usuário...</p>
-      
-    )}
-   <p className="descricao-privacidade">
-  Quando sua conta está <strong>privada</strong>, apenas pessoas que você aprovar poderão ver suas publicações, comentários e perfil completo. 
-  Se estiver <strong>pública</strong>, qualquer pessoa poderá visualizar seu conteúdo, mesmo sem seguir você.
-</p>
 
-  </div>
-  
-)}
 
          {abaAtiva === 'seguranca' && (
   <div>

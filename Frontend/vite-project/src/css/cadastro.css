@@ -390,7 +390,7 @@
 }
 
 /* Modal Overlay (fundo escuro) */
-.modal-overlays {
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -404,7 +404,7 @@
 }
 
 /* Conteúdo do modal */
-.modal-contents {
+.modal-content {
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
@@ -415,7 +415,7 @@
 }
 
 /* Botão de fechar modal */
-.modal-contents button {
+.modal-content button {
   margin-top: 20px;
   padding: 10px 20px;
   background-color: #6182dd; /* azul escuro */
@@ -427,7 +427,7 @@
   margin-right: auto;
 }
 
-.modal-contents button:hover {
+.modal-content button:hover {
   background-color: #7f9af1; /* azul mais escuro no hover */
 }
 
