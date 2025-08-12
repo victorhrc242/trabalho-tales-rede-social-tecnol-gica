@@ -44,52 +44,65 @@ function Comentario({ post, usuario, fechar }) {
   useEffect(() => {
     if (!post?.id) return;
 
-    async function carregarComentarios() {
-      try {
-        console.log('Carregando comentários para postId:', post.id);
+async function carregarComentarios() {
+  try {
+    console.log('Carregando comentários para postId:', post.id);
 
-        const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
-        const data = await res.json();
+    const res = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${post.id}`);
+    if (!res.ok) throw new Error('Erro ao buscar comentários');
+    
+    const data = await res.json();
+    console.log('Resposta API comentários:', data);
 
-        console.log('Resposta API comentários:', data);
-
-        const comentariosRaw = Array.isArray(data.comentarios) ? data.comentarios : (Array.isArray(data) ? data : []);
-
-        const comentariosComAutores = await Promise.all(
-          comentariosRaw.map(async (comentario) => {
-            if (!comentario.autorId) {
-              return {
-                ...comentario,
-                autorNome: 'Usuário',
-                autorImagem: 'https://via.placeholder.com/40',
-              };
-            }
-            try {
-              const r = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
-              if (!r.ok) throw new Error('Erro ao buscar autor');
-              const u = await r.json();
-              return {
-                ...comentario,
-                autorNome: u.nome || 'Usuário',
-                autorImagem: u.imagem || 'https://via.placeholder.com/40',
-              };
-            } catch (error) {
-              console.warn('Erro ao buscar dados do autor do comentário:', error);
-              return {
-                ...comentario,
-                autorNome: 'Usuário',
-                autorImagem: 'https://via.placeholder.com/40',
-              };
-            }
-          })
-        );
-
-        setComentarios(comentariosComAutores);
-
-      } catch (err) {
-        console.error('Erro ao carregar comentários:', err);
-      }
+    // Verifica se a resposta tem uma propriedade 'comentarios' ou é o array diretamente
+    const comentariosRaw = data.comentarios || data;
+    
+    if (!Array.isArray(comentariosRaw)) {
+      throw new Error('Formato de comentários inválido');
     }
+
+    const comentariosComAutores = await Promise.all(
+      comentariosRaw.map(async (comentario) => {
+        // Se já tiver os dados do autor, usa eles
+        if (comentario.autorNome && comentario.autorImagem) {
+          return comentario;
+        }
+        
+        // Caso contrário, busca os dados do autor
+        if (!comentario.autorId) {
+          return {
+            ...comentario,
+            autorNome: 'Usuário',
+            autorImagem: 'https://via.placeholder.com/40',
+          };
+        }
+        
+        try {
+          const r = await fetch(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autorId}`);
+          if (!r.ok) throw new Error('Erro ao buscar autor');
+          const u = await r.json();
+          return {
+            ...comentario,
+            autorNome: u.nome_usuario || u.nome_usuario || 'Usuário',
+            autorImagem: u.imagem || 'https://via.placeholder.com/40',
+          };
+        } catch (error) {
+          console.warn('Erro ao buscar dados do autor do comentário:', error);
+          return {
+            ...comentario,
+            autorNome: 'Usuário',
+            autorImagem: 'https://via.placeholder.com/40',
+          };
+        }
+      })
+    );
+
+    setComentarios(comentariosComAutores);
+  } catch (err) {
+    console.error('Erro ao carregar comentários:', err);
+    setComentarios([]);
+  }
+}
 
     carregarComentarios();
   }, [post, usuario]);
@@ -163,7 +176,7 @@ function Comentario({ post, usuario, fechar }) {
       console.error('Erro ao enviar comentário:', e);
     }
   };
-
+console.log(usuario)
   const curtirPost = async () => {
     const novoEstadoCurtido = !curtido;
     const novaContagem = curtidasCount + (novoEstadoCurtido ? 1 : -1);

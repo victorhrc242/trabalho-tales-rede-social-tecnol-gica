@@ -180,7 +180,7 @@ function Navbar({ usuarioLogado, deslogar }) {
         {/* Logo com link para Home */}
         <div className="logo-navbar">
           <Link to="/home">
-            <img src="../LogoParadise.jpg" alt="Logo" className="imagem-logo" />
+            <img src="https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/LogoParadise.jpg" alt="Logo" className="imagem-logo" />
           </Link>
         </div>
 

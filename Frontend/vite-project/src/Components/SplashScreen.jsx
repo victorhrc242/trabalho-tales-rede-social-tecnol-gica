@@ -15,7 +15,7 @@ export default function SplashScreen() {
       padding: 20,
     }}>
       <img 
-        src="/public/LogoParadise.svg" 
+        src="https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/LogoParadise.svg" 
         alt="Logo Paradise" 
         style={{ 
           width: 100, 

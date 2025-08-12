@@ -175,7 +175,7 @@ function StoryModal({
 
       <div className="modal-overlay" onClick={proximo}>
         <div
-          className="modal-content"
+          className="modal-contents"
           onClick={(e) => e.stopPropagation()}
           style={{ backgroundColor: bgColor, transition: "background-color 0.5s" }}
         >
@@ -231,7 +231,7 @@ function StoryModal({
           )}
 
           {/* Interação do usuário */}
-          <div className="story-interacao">
+          {/* <div className="story-interacao">
             <textarea
               className="input-resposta-story"
               placeholder="Enviar uma mensagem..."
@@ -246,7 +246,7 @@ function StoryModal({
                 }
               }}
             />
-          </div>
+          </div> */}
 
           {/* Navegação por clique lateral */}
           <div className="nav-zona esquerda" onClick={anterior} />

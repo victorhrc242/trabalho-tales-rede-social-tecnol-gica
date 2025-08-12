@@ -24,7 +24,7 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
 
   // ID do perfil que está sendo visualizado (vem da URL ou do estado da rota)
   const userId = location.state?.userId || idDaUrl;
-
+const [postParaComentar, setPostParaComentar] = useState(null);
   const [usuario, setUsuario] = useState(null);
   const [posts, setPosts] = useState([]);
   const [seguidoresInfo, setSeguidoresInfo] = useState({ seguidores: 0, seguindo: 0 });
@@ -33,8 +33,6 @@ const Perfil = ({ usuarioLogado, deslogar }) => {
   const [modalOpcoes, setModalOpcoes] = useState(false);
   const [modalPost, setModalPost] = useState(null);
   const [verStoryModal, setVerStoryModal] = useState(false);
-  const [comentarios, setComentarios] = useState([]);
-  const [novoComentario, setNovoComentario] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [mostrarModalSeguidores, setMostrarModalSeguidores] = useState(false);
   const [abaSeguidoresAtiva, setAbaSeguidoresAtiva] = useState('seguidores');
@@ -186,7 +184,7 @@ useEffect(() => {
 
     // Salva os dados básicos do usuário
     setUsuario(userData);
-    setNome(userData.nome || '');
+    setNome(userData.nome_usuario || '');
     setBiografia(userData.biografia || '');
     setImagem(userData.imagem || '');
 
@@ -301,106 +299,50 @@ if (verStoryModal && usuario?.id) {
   return urlPublica;
 };
 
-  const editarPerfil = async () => {
-    try {
-      const payload = {};
+const editarPerfil = async () => {
+  try {
+    const payload = {};
 
-      if (nome !== usuario.nome) payload.nome = nome;
-if (biografia !== usuario.biografia) payload.biografia = biografia;
-if (imagemArquivo) {
-  const novaUrlImagem = await uploadImagem(imagemArquivo);
-  payload.imagem = novaUrlImagem;
-  setImagem(novaUrlImagem);
-} else if (imagem !== usuario.imagem) {
-  payload.imagem = imagem;
-}
-
-      if (Object.keys(payload).length === 0) {
-        alert('Não há dados para atualizar.');
-        return;
-      }
-
-      const response = await axios.put(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/editarusuarios/${userId}`,
-        payload
-      );
-
-      setUsuario(response.data[0] || response.data);
-      setIsEditing(false);
-      setShowEditarModalMobile(false);
-    } catch (err) {
-      console.error('Erro ao editar perfil:', err);
-      alert('Erro ao editar perfil. Verifique os dados e tente novamente.');  
+    // Ajuste os nomes dos campos para corresponder ao esperado pelo backend
+    if (nome !== usuario.nome_usuario) payload.Nome = nome;
+    if (biografia !== usuario.biografia) payload.Biografia = biografia;
+    
+    if (imagemArquivo) {
+      const novaUrlImagem = await uploadImagem(imagemArquivo);
+      payload.Imagem = novaUrlImagem;
+      setImagem(novaUrlImagem);
+    } else if (imagem !== usuario.imagem) {
+      payload.Imagem = imagem;
     }
-  };
 
-  const fetchComentarios = async (postId) => {
-    try {
-      const response = await axios.get(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${postId}?comAutor=true`
-      );
-
-      const comentariosArray = response.data?.comentarios || [];
-
-      const comentariosComNomeAtualizado = await Promise.all(
-        comentariosArray.map(async (comentario) => {
-          if (!comentario.autor?.id) return comentario;
-          try {
-            const userResp = await axios.get(
-              `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${comentario.autor.id}`
-            );
-            return {
-              ...comentario,
-              autor: {
-                ...comentario.autor,
-                nome: userResp.data.nome_usuario || comentario.autor.nome,
-              },
-            };
-          } catch {
-            return comentario;
-          }
-        })
-      );
-
-      setComentarios(comentariosComNomeAtualizado);
-    } catch (err) {
-      console.error('Erro ao buscar comentários:', err);
+    if (Object.keys(payload).length === 0) {
+      alert('Não há dados para atualizar.');
+      return;
     }
-  };
 
-  const abrirModalPost = async (post) => {
-    setModalPost(post);
-    setComentarios([]);
-    await fetchComentarios(post.id);
-  };
+    const response = await axios.put(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/editarusuarios/${userId}`,
+      payload
+    );
 
-  const fecharModalPost = () => {
-    setModalPost(null);
-    setComentarios([]);
-  };
+    // Tratamento da resposta considerando que o backend pode retornar um array ou objeto direto
+    const updatedUser = Array.isArray(response.data) ? response.data[0] : response.data;
 
-  const enviarComentario = async () => {
-    if (!novoComentario.trim()) return;
+    // Atualize o estado do usuário mantendo os dados existentes e sobrescrevendo apenas os atualizados
+    setUsuario(prev => ({
+      ...prev,
+      nome_usuario: updatedUser.Nome_usuario || prev.nome_usuario,
+      biografia: updatedUser.Biografia || prev.biografia,
+      imagem: updatedUser.Imagem || updatedUser.FotoPerfil || prev.imagem
+    }));
 
-    const payload = {
-      postId: modalPost.id,
-      autorId: usuarioLogadoId,
-      conteudo: novoComentario,
-    };
-
-    try {
-      await axios.post(
-        'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/',
-        payload
-      );
-      setNovoComentario('');
-      inputRef.current?.focus();
-      await fetchComentarios(modalPost.id);
-    } catch (err) {
-      console.error('Erro ao enviar comentário:', err);
-    }
-  };
-
+    setIsEditing(false);
+    setShowEditarModalMobile(false);
+  } catch (err) {
+    console.error('Erro ao editar perfil:', err);
+    alert('Erro ao editar perfil. Verifique os dados e tente novamente.');  
+  }
+};
 const confirmarLogout = () => {
   deslogar();       // <- chama a função passada via props, que deve limpar o estado global
   navigate('/');    // <- redireciona para a página de login (ou onde a rota "/" leve)
@@ -408,18 +350,47 @@ const confirmarLogout = () => {
 const cancelarLogout = () => {
   setMostrarConfirmarLogout(false); // apenas fecha o modal
 };
+const deseguirUsuario = async () => {
+  try {
+    await axios.delete(
+      `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/deseguir`,
+      {
+        params: {
+          usuario1: usuarioLogadoId,
+          usuario2: userId,
+        },
+      }
+    );
+    
+    setEstaSeguindo(false);
+    alert('Você deixou de seguir este usuário.');
+    
+    // Atualiza a contagem de seguidores
+    const [seguidoresRes, seguindoRes] = await Promise.all([
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguidores/${userId}`),
+      axios.get(`https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Amizades/seguindo/${userId}`)
+    ]);
 
-  const excluirComentario = async (comentarioId) => {
-    try {
-      await axios.delete(
-        `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/Comentario/comentarios/${comentarioId}`
-      );
-      await fetchComentarios(modalPost.id);
-    } catch (err) {
-      console.error('Erro ao excluir comentário:', err);
+    setSeguidoresInfo({
+      seguidores: seguidoresRes.data?.seguidores?.length || 0,
+      seguindo: seguindoRes.data?.seguindo?.length || 0,
+    });
+
+    // Se o modal de seguidores estiver aberto, atualiza a lista
+    if (mostrarModalSeguidores) {
+      carregarSeguidoresESeguindo();
     }
-  };
 
+  } catch (err) {
+    console.error('Erro ao deixar de seguir:', err);
+    if (err.response?.status === 404) {
+      alert('Você já não seguia este usuário.');
+      setEstaSeguindo(false); // Força a atualização do estado
+    } else {
+      alert('Erro ao deixar de seguir. Tente novamente.');
+    }
+  }
+};
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!usuario) return <div className="erro">Usuário não encontrado.</div>;
  return (
@@ -571,14 +542,6 @@ const cancelarLogout = () => {
               />
             </label>
           </div>
-          <div className="botao-wrapper">
-            <button
-              className="editar-botoes"
-              onClick={() => document.querySelector('.modal-editar-desktop .editar-foto-label input').click()}
-            >
-              Alterar foto de perfil
-            </button>
-          </div>
         </div>
 
         <label>Nome</label>
@@ -669,12 +632,6 @@ const cancelarLogout = () => {
           }}
         />
       </label>
-      <button
-        className="btn-alterar-foto"
-        onClick={() => document.querySelector('.editar-foto-label input').click()}
-      >
-        Alterar foto de perfil
-      </button>
     </div>
 
     <div className="editar-campos">
@@ -709,7 +666,14 @@ const cancelarLogout = () => {
       <div
         key={post.id}
         className="grid-item"
-        onClick={() => abrirModalPost(post)}
+        onClick={() => setPostParaComentar({
+          ...post,
+          autorId: usuario.id,
+          autorNome: usuario.nome_usuario,
+          autorImagem: usuario.imagem,
+          conteudo: post.conteudo || '',
+          tags: post.tags || []
+        })}
         style={{ cursor: 'pointer' }}
       >
         {post.imagem && (
@@ -751,61 +715,22 @@ const cancelarLogout = () => {
           </div>
         )}
       </div>
-
     ))
   ) : (
     <div><p className='perfil-parag1'>Este perfil é privado. Siga para ver os posts.</p></div>
   )}
 </div>
-    {modalPost && (
-      <div className="modal-overlay" onClick={fecharModalPost}>
-        <div className="modal-post-container" onClick={e => e.stopPropagation()}>
-          <div className="modal-post-imagem-container">
-    {modalPost.imagem && (
-    <img src={modalPost.imagem} alt="Imagem do post" />
-  )}
 
-  {modalPost.video && (
-    <video
-      controls
-      style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
-    >
-      <source src={modalPost.video} type="video/mp4" />
-      Seu navegador não suporta o elemento de vídeo.
-    </video>
-  )}
-          </div>
-          <div className="modal-post-conteudo">
-            <div className="modal-post-header">
-              <h3>{usuario.nome_usuario}</h3>
-              <button className="fechar-btn" onClick={fecharModalPost}>×</button>
-            </div>
-
-            <div className="modal-post-comentarios">
-              {comentarios.length === 0 && <p>Sem comentários ainda.</p>}
-              {Array.isArray(comentarios) && comentarios.map((c, idx) => (
-                <div key={idx} className="comentario-item">
-                  <strong>{c.autor?.nome_usuario || 'Anônimo'}</strong>: {c.conteudo}
-                </div>
-              ))}
-            </div>
-
-            <div className="modal-comentar-box">
-              <input
-                ref={inputRef}
-                type="text"
-                value={novoComentario}
-                onChange={e => setNovoComentario(e.target.value)}
-                placeholder="Adicione um comentário..."
-                onKeyDown={e => e.key === 'Enter' && enviarComentario()}
-              />
-              <button onClick={enviarComentario}>Enviar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-
+{postParaComentar && (
+  <Comentario 
+    post={postParaComentar}
+    usuario={{
+      ...(usuarioLogado || usuarioArmazenado),
+      id: usuarioLogadoId
+    }}
+    fechar={() => setPostParaComentar(null)}
+  />
+)}
 {mostrarConfirmarLogout && (
   <div className="modal-logout-overlay" onClick={cancelarLogout}>
     <div className="modal-logout-content" onClick={(e) => e.stopPropagation()}>

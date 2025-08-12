@@ -200,35 +200,33 @@ useEffect(() => {
 
     // Recebe nova mensagem
    connection.on('NovaMensagem', (novaMensagem) => {
-    const remetente = novaMensagem.id_remetente;
-    const destinatario = novaMensagem.id_destinatario;
+  const remetente = novaMensagem.id_remetente;
+  const destinatario = novaMensagem.id_destinatario;
 
-    if (
-      usuarioSelecionado &&
-      (remetente === usuarioSelecionado.id || destinatario === usuarioSelecionado.id)
-    ) {
-      setHistoricoMensagens((prev) => [...prev, novaMensagem]);
-
-      // Se a mensagem for recebida (não enviada pelo usuário logado), marca como lida
-      if (remetente !== usuarioLogadoId) {
-        marcarMensagemComoLida(novaMensagem.id);  // <-- Chamada para marcar como lida
-
-        setNaoLidas((prev) => {
-          const copy = { ...prev };
-          copy[remetente] = 0;
-          return copy;
-        });
-      }
-    } else {
-      if (remetente !== usuarioLogadoId) {
-        setNaoLidas((prev) => {
-          const count = prev[remetente] || 0;
-          return { ...prev, [remetente]: count + 1 };
-        });
-      }
+  // Se a mensagem é para o chat aberto
+  if (usuarioSelecionado && (remetente === usuarioSelecionado.id || destinatario === usuarioSelecionado.id)) {
+    setHistoricoMensagens(prev => [...prev, novaMensagem]);
+    
+    // Se for mensagem recebida, marca como lida
+    if (remetente !== usuarioLogadoId) {
+      marcarMensagemComoLida(novaMensagem.id);
+      setNaoLidas(prev => ({ ...prev, [remetente]: 0 }));
     }
-  });
-
+  } 
+  // Se for mensagem recebida em outro chat
+  else if (remetente !== usuarioLogadoId) {
+    setNaoLidas(prev => ({
+      ...prev,
+      [remetente]: (prev[remetente] || 0) + 1
+    }));
+  }
+});
+connection.on('MensagensLidas', ({ usuarioId }) => {
+  setNaoLidas(prev => ({
+    ...prev,
+    [usuarioId]: 0
+  }));
+});
     // Remove mensagem apagada
     connection.on('MensagemApagada', (mensagemId) => {
       setHistoricoMensagens((prev) => prev.filter((msg) => msg.id !== mensagemId));
@@ -312,14 +310,27 @@ useEffect(() => {
   };
 
   // Quando clico em um usuário da lista para iniciar o chat
-  const iniciarChat = (usuario) => {
-    setUsuarioSelecionado(usuario);
-    setNaoLidas((prev) => {
-      const copy = { ...prev };
-      copy[usuario.id] = 0;
-      return copy;
-    });
-  };
+  const iniciarChat = async (usuario) => {
+  setUsuarioSelecionado(usuario);
+  
+  // Se houver mensagens não lidas, marca como lidas
+  if (naoLidas[usuario.id] > 0) {
+    try {
+      await axios.post(`${API_URL}/api/Mensagens/marcar-lidas`, {
+        remetenteId: usuario.id,
+        destinatarioId: usuarioLogadoId
+      });
+      
+      // Atualiza o estado local
+      setNaoLidas(prev => ({
+        ...prev,
+        [usuario.id]: 0
+      }));
+    } catch (err) {
+      console.error('Erro ao marcar mensagens como lidas:', err);
+    }
+  }
+};
 
   // Voltar para home
   const voltarParaHome = () => {
@@ -437,7 +448,20 @@ const marcarMensagemComoLida = async (mensagemId) => {
     console.error('Erro ao marcar mensagem como lida:', err);
   }
 };
-
+useEffect(() => {
+  const fetchNaoLidas = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/Mensagens/nao-lidas/${usuarioLogadoId}`);
+      setNaoLidas(res.data.naoLidas || {});
+    } catch (err) {
+      console.error('Erro ao buscar mensagens não lidas:', err);
+    }
+  };
+  
+  if (usuarioLogadoId) {
+    fetchNaoLidas();
+  }
+}, [usuarioLogadoId]);
 
   return (
     <div className="app-container">
@@ -483,38 +507,35 @@ const marcarMensagemComoLida = async (mensagemId) => {
         </div>
 
         {/* Lista de usuários com quem é possível iniciar conversas */}
-        <div className="chat-list">
-          {seguindoFiltrado.length === 0 ? (
-            <p className="texto-sem-seguidores">Nenhum usuário encontrado.</p>
-          ) : (
-            seguindoFiltrado.map((item) => (
-              <div
-                key={item.idAmizade}
-                className="chat-item"
-                onClick={() => iniciarChat(item.usuario)}
-              >
-                {/* Foto de perfil do usuário */}
-                <img
-                  src={
-                    item.usuario.imagem ||
-                    item.usuario.FotoPerfil ||
-                    'https://via.placeholder.com/40'
-                  }
-                  alt={item.usuario.nome_usuario}
-                />
-                <div className="chat-item-info">
-                  <div className="chat-item-header">
-                    <span className="chat-item-nome">{item.usuario.nome_usuario}</span>
-                    {/* Notificação de mensagens não lidas */}
-                    {naoLidas[item.usuario.id] > 0 && (
-                      <span className="chat-item-notificacao">{naoLidas[item.usuario.id]}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
+       <div className="chat-list">
+  {seguindoFiltrado.length === 0 ? (
+    <p className="texto-sem-seguidores">Nenhum usuário encontrado.</p>
+  ) : (
+    seguindoFiltrado.map((item) => (
+      <div
+        key={item.idAmizade}
+        className="chat-item"
+        onClick={() => iniciarChat(item.usuario)}
+      >
+        <img
+          src={item.usuario.imagem || item.usuario.FotoPerfil || 'https://via.placeholder.com/40'}
+          alt={item.usuario.nome_usuario}
+        />
+        <div className="chat-item-info">
+          <div className="chat-item-header">
+            <span className="chat-item-nome">{item.usuario.nome_usuario}</span>
+            {naoLidas[item.usuario.id] > 0 && (
+              <span className="bolota-azul">
+                {naoLidas[item.usuario.id]}
+              </span>
+            )}
+          </div>
         </div>
+      </div>
+    ))
+  )}
+</div>
+
       </div>
 
       {/* Área principal do chat (exibida quando um usuário é selecionado) */}

@@ -4,8 +4,8 @@ const PoliticaDeCookies = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content" role="dialog" aria-modal="true">
+    <div className="modal-overlays">
+      <div className="modal-contents" role="dialog" aria-modal="true">
         <h2>Política de Cookies</h2>
 
         <p>

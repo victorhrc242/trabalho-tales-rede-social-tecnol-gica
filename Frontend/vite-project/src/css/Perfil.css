@@ -511,9 +511,10 @@ body {
 
 .editar-foto-container-desktop {
   display: flex;
-  align-items: center;
   gap: 20px;
   margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .foto-wrapper {

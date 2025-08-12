@@ -4,87 +4,173 @@ import '../configuraçãoes/trocarConta.css';
 
 function TrocarConta({ fechar }) {
   const [usuariosSalvos, setUsuariosSalvos] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [trocandoConta, setTrocandoConta] = useState(false);
 
   useEffect(() => {
-    // Recupera contas recentes salvas no localStorage
-    const salvos = JSON.parse(localStorage.getItem('usuariosRecentes')) || [];
-    setUsuariosSalvos(salvos);
+    const buscarUsuarios = async () => {
+      try {
+        const salvos = JSON.parse(localStorage.getItem('usuariosRecentes')) || [];
+        setCarregando(true);
+        
+        const usuariosAtualizados = await Promise.all(
+          salvos.map(async (user) => {
+            if (!user?.id) return null;
+            
+            try {
+              const res = await fetch(
+                `https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/usuario/${user.id}`,
+                {
+                  headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                  }
+                }
+              );
+              
+              if (!res.ok) {
+                console.warn(`Usuário ${user.id} não encontrado, usando dados locais`);
+                return user;
+              }
+              
+              const dadosAtualizados = await res.json();
+              return {
+                ...user,
+                ...dadosAtualizados
+              };
+              
+            } catch (err) {
+              console.warn(`Erro ao buscar usuário ${user.id}:`, err);
+              return user;
+            }
+          })
+        );
+        
+        const usuariosValidos = usuariosAtualizados.filter(u => u != null);
+        localStorage.setItem('usuariosRecentes', JSON.stringify(usuariosValidos));
+        setUsuariosSalvos(usuariosValidos);
+        
+      } catch (err) {
+        console.error('Erro geral ao buscar contas:', err);
+        const salvos = JSON.parse(localStorage.getItem('usuariosRecentes')) || [];
+        setUsuariosSalvos(salvos);
+      } finally {
+        setCarregando(false);
+      }
+    };
 
-    // Bloqueia o scroll do body quando o modal está aberto
+    buscarUsuarios();
+
     document.body.style.overflow = 'hidden';
-
     return () => {
-      // Restaura o scroll quando o modal for fechado
       document.body.style.overflow = 'auto';
     };
   }, []);
 
-  // Define a conta selecionada como ativa
-  const selecionarUsuario = (usuario) => {
-    localStorage.setItem('usuario', JSON.stringify(usuario));
-    window.location.reload(); // Recarrega a página com o novo usuário
+  const selecionarUsuario = async (usuario) => {
+    setTrocandoConta(true);
+    try {
+      // Limpa dados temporários da sessão
+      sessionStorage.clear();
+      
+      // Atualiza o usuário no localStorage
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+      
+      // Pequeno delay para feedback visual
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Redireciona para a home
+      window.location.href = '/home';
+    } catch (error) {
+      console.error('Erro ao trocar de conta:', error);
+    } finally {
+      setTrocandoConta(false);
+    }
   };
 
-  // Redireciona para a página de login
   const irLogin = () => {
-     window.location.href = '/?adicionarConta=true'; // Redireciona com parâmetro
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('usuario');
-    // window.location.href = '/';
+    window.location.href = '/?adicionarConta=true';
   };
 
-  // Remove todas as contas e retorna ao login
   const removerTudo = () => {
     localStorage.removeItem('usuariosRecentes');
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');
+    sessionStorage.clear();
     window.location.href = '/';
   };
 
-  // Fecha o modal chamando a função passada por props
   const fecharModal = () => {
-    if (fechar && typeof fechar === 'function') {
-      fechar(); // ✅ Fecha corretamente o modal como componente
-    }
+    if (typeof fechar === 'function') fechar();
   };
 
   return (
-    // Fundo escurecido com blur (não fecha mais ao clicar fora)
     <div className="modal-overlay-trocar">
-      {/* Container principal do modal que impede propagação de clique */}
       <div className="modal-trocar-container" onClick={(e) => e.stopPropagation()}>
         <h2 className="titulo-trocar">Trocar de Conta</h2>
 
-        {/* Lista de usuários ou mensagem de vazio */}
-        {usuariosSalvos.length === 0 ? (
+        {carregando ? (
+          <div className="carregando-contas">
+            <div className="spinner"></div>
+            <p>Carregando contas...</p>
+          </div>
+        ) : usuariosSalvos.length === 0 ? (
           <p className="mensagem-vazia">Nenhuma conta salva neste dispositivo.</p>
         ) : (
           <ul className="lista-usuarios">
             {usuariosSalvos.map((user, i) => (
-              <li key={i} className="item-usuario" onClick={() => selecionarUsuario(user)}>
+              <li 
+                key={i} 
+                className="item-usuario" 
+                onClick={() => !trocandoConta && selecionarUsuario(user)}
+              >
                 <img
-                  src={user.imagem || 'https://via.placeholder.com/100x100.png?text=Foto'}
-                  alt={user.nome_usuario}
+                  src={user.imagem || '/imagens/avatar-padrao.png'}
+                  alt={user.nome_usuario || user.nome}
                   className="avatar-usuario"
+                  onError={(e) => {
+                    e.target.src = '/imagens/avatar-padrao.png';
+                  }}
                 />
                 <span className="nome-usuario">{user.nome_usuario || user.nome}</span>
+                {trocandoConta && user.id === usuariosSalvos[i]?.id && (
+                  <div className="loading-troca"></div>
+                )}
               </li>
             ))}
           </ul>
         )}
 
-        {/* Botões de ação */}
         <div className="acoes-conta">
-          <button className="botao-conta adicionar-conta" onClick={irLogin}>
+          <button 
+            className="botao-conta adicionar-conta" 
+            onClick={irLogin}
+            disabled={trocandoConta}
+          >
             Adicionar nova conta
           </button>
-          <button className="botao-conta sair-contas" onClick={removerTudo}>
+          <button 
+            className="botao-conta sair-contas" 
+            onClick={removerTudo}
+            disabled={trocandoConta}
+          >
             Sair de todas as contas
           </button>
         </div>
 
-        {/* Botão "X" para fechar o modal */}
-        <button className="fechar-modal" onClick={fecharModal}>×</button>
+        <button 
+          className="fechar-modal" 
+          onClick={fecharModal}
+          disabled={trocandoConta}
+        >
+          ×
+        </button>
+
+        {trocandoConta && (
+          <div className="overlay-carregando">
+            <div className="spinner-grande"></div>
+          </div>
+        )}
       </div>
     </div>
   );
