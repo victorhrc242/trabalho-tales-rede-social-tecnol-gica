@@ -51,8 +51,18 @@ export default function RecuperarSenha() {
   // Envia o código para o email
   const enviarCodigo = async () => {
     setCarregando(true);
+    // Validação de email
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setMensagem('Por favor, insira um e-mail válido.');
+      setCarregando(false);
+      return;
+    }
+    
     try {
-      await axios.post('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo', { email });
+      await axios.post('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo', {
+        email,
+        tipo: 'recuperacao'  // Corrigido para "recuperacao"
+      });
       setTempoRestante(300);
       setMensagem('');
       setEtapa(2);
@@ -99,7 +109,8 @@ export default function RecuperarSenha() {
       await axios.put('https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Recuperar-senha', {
         email,
         novaSenha,
-        codigoRecuperacao: codigo
+        codigoRecuperacao: codigo,
+        tipo: 'recuperacao'  // Corrigido para "recuperacao"
       });
       setMensagem('');
       setMensagemSucesso('Senha alterada com sucesso!');
@@ -115,22 +126,6 @@ export default function RecuperarSenha() {
   const handleReenviarCodigo = () => {
     enviarCodigo();
     setMensagem('');
-  };
-
-  // Funções para lidar com o submit dos formulários
-  const handleSubmitEmail = (e) => {
-    e.preventDefault();
-    enviarCodigo();
-  };
-
-  const handleSubmitCodigo = (e) => {
-    e.preventDefault();
-    validarCodigo();
-  };
-
-  const handleSubmitSenha = (e) => {
-    e.preventDefault();
-    redefinirSenha();
   };
 
   return (
@@ -151,7 +146,7 @@ export default function RecuperarSenha() {
 
         {/* Etapa 1: Inserir email */}
         {etapa === 1 && (
-          <form onSubmit={handleSubmitEmail}>
+          <form onSubmit={(e) => { e.preventDefault(); enviarCodigo(); }}>
             <div className="rec-senha-input-wrapper">
               <input
                 type="email"
@@ -170,7 +165,7 @@ export default function RecuperarSenha() {
 
         {/* Etapa 2: Inserir código */}
         {etapa === 2 && (
-          <form onSubmit={handleSubmitCodigo}>
+          <form onSubmit={(e) => { e.preventDefault(); validarCodigo(); }}>
             <input
               type="text"
               placeholder="Digite o código recebido"
@@ -195,7 +190,7 @@ export default function RecuperarSenha() {
 
         {/* Etapa 3: Nova senha */}
         {etapa === 3 && (
-          <form onSubmit={handleSubmitSenha}>
+          <form onSubmit={(e) => { e.preventDefault(); redefinirSenha(); }}>
             <div className="rec-senha-input-wrapper">
               <input
                 type={mostrarNovaSenha ? 'text' : 'password'}
@@ -221,22 +216,13 @@ export default function RecuperarSenha() {
                 ? <FaEyeSlash className="rec-senha-input-icon" onClick={() => setMostrarConfirmarSenha(false)} />
                 : <FaEye className="rec-senha-input-icon" onClick={() => setMostrarConfirmarSenha(true)} />}
             </div>
-
             <button type="submit" disabled={carregando}>
-              {carregando ? "Atualizando..." : "Atualizar Senha"}
+              {carregando ? "Alterando..." : "Alterar Senha"}
             </button>
           </form>
         )}
 
-        {/* Separador "ou" e links */}
-        <div className="rec-senha-ou-separador">
-          <div className="rec-senha-linha-esq"></div>
-          <div className="rec-senha-ou">ou</div>
-          <div className="rec-senha-linha-dir"></div>
-        </div>
-
-        <p><Link to="/">Voltar para o login</Link></p>
-        <p>Não tem uma conta? <Link to="/cadastro">Cadastrar</Link></p>
+        <Link to="/" className="voltar-link">Voltar para a página de login</Link>
       </div>
     </div>
   );
