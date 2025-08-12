@@ -117,9 +117,24 @@ export default function RecuperarSenha() {
     setMensagem('');
   };
 
+  // Funções para lidar com o submit dos formulários
+  const handleSubmitEmail = (e) => {
+    e.preventDefault();
+    enviarCodigo();
+  };
+
+  const handleSubmitCodigo = (e) => {
+    e.preventDefault();
+    validarCodigo();
+  };
+
+  const handleSubmitSenha = (e) => {
+    e.preventDefault();
+    redefinirSenha();
+  };
+
   return (
     <div className="rec-senha-container">
-
       <div className="rec-senha-box">
         {/* Mensagem de sucesso flutuante */}
         {mensagemSucesso && <div className="rec-senha-sucesso">{mensagemSucesso}</div>}
@@ -136,7 +151,7 @@ export default function RecuperarSenha() {
 
         {/* Etapa 1: Inserir email */}
         {etapa === 1 && (
-          <form onSubmit={(e) => { e.preventDefault(); enviarCodigo(); }}>
+          <form onSubmit={handleSubmitEmail}>
             <div className="rec-senha-input-wrapper">
               <input
                 type="email"
@@ -155,7 +170,7 @@ export default function RecuperarSenha() {
 
         {/* Etapa 2: Inserir código */}
         {etapa === 2 && (
-          <form onSubmit={(e) => { e.preventDefault(); validarCodigo(); }}>
+          <form onSubmit={handleSubmitCodigo}>
             <input
               type="text"
               placeholder="Digite o código recebido"
@@ -180,7 +195,7 @@ export default function RecuperarSenha() {
 
         {/* Etapa 3: Nova senha */}
         {etapa === 3 && (
-          <form onSubmit={(e) => { e.preventDefault(); redefinirSenha(); }}>
+          <form onSubmit={handleSubmitSenha}>
             <div className="rec-senha-input-wrapper">
               <input
                 type={mostrarNovaSenha ? 'text' : 'password'}
