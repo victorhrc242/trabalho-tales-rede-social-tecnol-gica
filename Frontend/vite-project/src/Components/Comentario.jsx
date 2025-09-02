@@ -355,7 +355,7 @@ console.log(usuario)
             <Send size={18} />
           </button>
         </div>
-      </div>
+      </div> 
     </div>
   );
 }
