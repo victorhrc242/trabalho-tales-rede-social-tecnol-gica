@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Heart, MessageCircle,Share2 } from 'lucide-react';
 import './kurz_css.css';
-import Comentario from '../../Components/Comentario';
-import CompartilharPost from '../../Components/Home/CompartilharPost';
+import Comentario from '../../Components/Comentario/Comentario';
+import CompartilharPost from '../Home/CompartilharPost';
 
 
 class ErrorBoundary extends React.Component {

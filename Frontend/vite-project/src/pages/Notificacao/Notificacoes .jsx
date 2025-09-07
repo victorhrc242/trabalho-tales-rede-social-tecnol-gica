@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Solicitacoes from '../../Components/Home/Solicitacoes.jsx';
+import Solicitacoes from '../Home/Solicitacoes.jsx';
 import "../Notificacao/notificacao.css"; 
 import { FaBell } from 'react-icons/fa'; 
 

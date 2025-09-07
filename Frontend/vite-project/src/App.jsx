@@ -1,21 +1,21 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
-import Login from "./pages/Login";
-import Cadastro from './pages/Cadastro';
-import RecuperarSenha from './pages/RecuperarSenha';
-import Home from './pages/Home';
-import Perfil from './pages/perfil';
-import Navbar from './Components/Navbar';
-import NavbarTop from './Components/NavbarTop';
-import Criar from './Components/Criar';
-import Msg from './pages/Mensagens/mensagen';
+import Login from "./pages/Login/Login.jsx"
+import Cadastro from './pages/Cadastro/Cadastro.jsx';
+import RecuperarSenha from './pages/RecuperarSenha/RecuperarSenha.jsx';
+import Home from './pages/Home/Home.jsx';
+import Perfil from './pages/perfil/perfil.jsx';
+import Navbar from './Components/Navbar/Navbar.jsx';
+import NavbarTop from './Components/Navbar/NavbarTop.jsx';
+import Criar from './Components/Criar/Criar.jsx';
+import Msg from './pages/Mensagens/mensagen.jsx';
 import Explore from './pages/Explore/Explore';
 import Notificacoes from './pages/Notificacao/Notificacoes ';
 import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
 import Kurz from './pages/kurz/Kurz';
 import DenunciasAdmin from './adm/DenunciasAdmin';
 import TrocarConta from './Components/configuraçãoes/TrocarConta';
-import SplashScreen from './Components/SplashScreen';
+import SplashScreen from './Components/temas/SplashScreen.jsx';
 function AppWrapper() {
   const location = useLocation();
   // Estado que controla se está carregando a tela splash

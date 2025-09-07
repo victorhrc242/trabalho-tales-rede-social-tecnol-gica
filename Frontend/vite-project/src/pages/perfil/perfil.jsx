@@ -1,17 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import '../css/Perfil.css';
+import '../../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { createClient } from '@supabase/supabase-js';
-import Comentario from '../Components/Comentario.jsx'; // ajuste o caminho se necessário
+import Comentario from '../../Components/comentario/Comentario.jsx'; // ajuste o caminho se necessário
 import { FaCog, FaPlay  } from 'react-icons/fa';
-import TrocarConta from '../Components/configuraçãoes/TrocarConta.jsx';
-import StoryModal from '../Components/Home/StoryModal.jsx';
-//https://trabalho-tales-rede-social-tecnol-gica.onrender.com/swagger/index.html
-const supabaseUrl = 'https://vffnyarjcfuagqsgovkd.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg';
+import TrocarConta from '../../Components/configuraçãoes/TrocarConta.jsx';
+import StoryModal from '../../pages/Home/StoryModal.jsx';
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Perfil = ({ usuarioLogado, deslogar }) => {
   const location = useLocation();
@@ -50,11 +45,10 @@ const [postParaComentar, setPostParaComentar] = useState(null);
   const [mostrarTrocarConta, setMostrarTrocarConta] = useState(false);
   const [perfilPublico, setPerfilPublico] = useState(true);
   const [autorizadoVisualizar, setAutorizadoVisualizar] = useState(true);
-
-
   // Verifica se o perfil visualizado é o próprio usuário logado
   const isPerfilProprio = usuarioLogadoId && userId && usuarioLogadoId.toString() === userId.toString();
-
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/upload`;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
   const seguirUsuario = async () => {
     try {
     // Verifica se o perfil é privado
@@ -285,19 +279,23 @@ if (verStoryModal && usuario?.id) {
 
 
   const uploadImagem = async (file) => {
-  const fileName = `${Date.now()}_${file.name}`;
-  const { data, error } = await supabase.storage
-    .from('imagens-usuarios')
-    .upload(`perfil/${fileName}`, file);
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
 
-  if (error) {
-    console.error('Erro ao fazer upload:', error);
-    throw error;
+  const response = await fetch(CLOUDINARY_URL, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao enviar imagem para Cloudinary");
   }
 
-  const urlPublica = `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/${fileName}`;
-  return urlPublica;
+  const data = await response.json();
+  return data.secure_url; // URL pública da imagem
 };
+
 
 const editarPerfil = async () => {
   try {

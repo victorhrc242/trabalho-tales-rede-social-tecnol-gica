@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Comentario from '../../Components/Comentario.jsx';
-import VisualizacaoExploreSelecionado from '../../Components/visualizacaoexploreselecionado.jsx';
+import Comentario from '../../Components/comentario/Comentario.jsx';
+import VisualizacaoExploreSelecionado from '../../Components/visualização/visualizacaoexploreselecionado.jsx';
 import '../Explore/css/explore.css';
 import { FaVideo } from 'react-icons/fa';
 

@@ -4,7 +4,7 @@ import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
 import { FaPaperPlane, FaSearch, FaArrowLeft, FaUser, FaPaintBrush, FaBellSlash, FaTrash, FaVideo } from 'react-icons/fa';
 
-import Comentario from '../../Components/Comentario';
+import Comentario from '../../components/Comentario/comentario';
 
 
 
@@ -41,7 +41,7 @@ const [apagandoTudo, setApagandoTudo] = useState(false);
 
 
   // URL da API
-  const API_URL = 'https://trabalho-tales-rede-social-tecnol-gica.onrender.com';
+  const API_URL = 'https://localhost:7051';
 
   //  usada para rolar a visualização para a última mensagem
   const fimDasMensagensRef = useRef(null);

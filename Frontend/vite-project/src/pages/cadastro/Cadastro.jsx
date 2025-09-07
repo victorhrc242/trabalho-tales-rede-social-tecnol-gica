@@ -1,18 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { createClient } from '@supabase/supabase-js';
-import '../css/cadastro.css';
+import '../../css/cadastro.css';
 // importaçao dos icons
 import { FaUser, FaEnvelope, FaUserCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
-import TermosDeUso from '../Components/TermosDeUso';
-import PoliticaDePrivacidade from '../Components/PoliticaDePrivacidade';
-import PoliticaDeCookies from '../Components/PoliticaDeCookies';
+import TermosDeUso from '../../Components/politicaetermos/TermosDeUso';
+import PoliticaDePrivacidade from '../../Components/politicaetermos/PoliticaDePrivacidade';
+import PoliticaDeCookies from '../../Components/politicaetermos/PoliticaDeCookies';
 
-// Supabase config
-const supabase = createClient(
-  'https://vffnyarjcfuagqsgovkd.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZm55YXJqY2Z1YWdxc2dvdmtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzUyNjE0NywiZXhwIjoyMDU5MTAyMTQ3fQ.CvLdiGKqykKGTsPzdw7PyiB6POS-bEJTuo6sPE4fUKg'
-);
 
 const Cadastro = () => {
   const [etapa, setEtapa] = useState(1);
@@ -90,14 +84,12 @@ const [loadingCadastro, setLoadingCadastro] = useState(false);
 
   // Escuta resize para atualizar isResponsive
   useEffect(() => {
-    const handleResize = () => {
-      setIsResponsive(window.innerWidth <= 600);
-    };
+    const handleResize = () => setIsResponsive(window.innerWidth <= 600);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Carrega imagem padrão na etapa 2
+ // Carrega imagem padrão na etapa 2
   useEffect(() => {
     if (etapa === 2 && !fotoPerfilArquivo) {
       const carregarImagemPadrao = async () => {
@@ -116,21 +108,29 @@ const [loadingCadastro, setLoadingCadastro] = useState(false);
     }
   }, [etapa, fotoPerfilArquivo]);
 
-  // Função para upload da imagem no Supabase
-  const uploadImagem = async (file) => {
-    const fileName = `${Date.now()}_${file.name}`;
-    const { data, error } = await supabase.storage
-      .from('imagens-usuarios')
-      .upload(`perfil/${fileName}`, file);
+// Configuração Cloudinary
+  const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/upload`;
+  const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-    if (error) {
-      console.error('Erro ao fazer upload:', error);
-      throw error;
+  // Função para upload da imagem no Cloudinary
+  const uploadImagem = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const response = await fetch(CLOUDINARY_URL, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao enviar imagem para Cloudinary");
     }
 
-    const urlPublica = `https://vffnyarjcfuagqsgovkd.supabase.co/storage/v1/object/public/imagens-usuarios/perfil/${fileName}`;
-    return urlPublica;
+    const data = await response.json();
+    return data.secure_url; // URL pública da imagem
   };
+
 
   // Validação de senha forte
   const validarSenhaSegura = (senha) => {

@@ -2,14 +2,14 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
-import FeedItem from '../Components/Home/FeedItem';
-import Comentario from '../Components/Comentario';
-import Notificacoes from './Notificacao/Notificacoes ';
-import '../css/home.css';
-import useRegistrarVisualizacoes from '../Components/Home/useRegistrarVisualizacoes';
-import Story from '../Components/Home/Story.jsx';
+import FeedItem from '../Home/FeedItem.jsx';
+import Comentario from '../../Components/comentario/Comentario.jsx';
+import Notificacoes from '../Notificacao/Notificacoes .jsx';
+import '../../css/home.css';
+import useRegistrarVisualizacoes from '../Home/useRegistrarVisualizacoes.jsx';
+import Story from '../Home/Story.jsx';
 import { FaSearch, FaBell } from 'react-icons/fa';
-import Solicitacoes from '../Components/Home/Solicitacoes.jsx';
+import Solicitacoes from '../Home/Solicitacoes.jsx';
 function Home() {
   const navigate = useNavigate();
 

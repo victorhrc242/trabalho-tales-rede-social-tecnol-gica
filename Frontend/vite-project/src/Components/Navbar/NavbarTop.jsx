@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   FaSearch, FaHeart, FaPaperPlane
 } from 'react-icons/fa';
-import '../css/NavbarTop.css';
+import '../../css/NavbarTop.css'; // Importando o CSS para estilização
 
 function NavbarTop({ usuarioLogado }) {
   const location = useLocation();

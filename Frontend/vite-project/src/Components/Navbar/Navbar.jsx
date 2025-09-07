@@ -11,10 +11,10 @@ import {
 import axios from 'axios';
 
 // Modais importados
-import CriarPostModal from '../Components/Criar.jsx';
-import TrocarConta from './configuraçãoes/TrocarConta.jsx'; 
+import CriarPostModal from '../criar/Criar.jsx';
+import TrocarConta from '../configuraçãoes/TrocarConta.jsx'; 
 
-import '../css/navbar.css';
+import '../../css/navbar.css';
 
 // Biblioteca para conexão em tempo real (SignalR)
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
