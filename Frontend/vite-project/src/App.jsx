@@ -1,16 +1,16 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
-import Login from "./pages/Login/Login.jsx"
+import Login from "./pages/login/Login.jsx"
 import Cadastro from './pages/cadastro/Cadastro.jsx';
 import RecuperarSenha from './pages/recuperarSenha/RecuperarSenha.jsx';
-import Home from './pages/Home/Home.jsx';
+import Home from './pages/home/Home.jsx';
 import Perfil from './pages/perfil/perfil.jsx';
 import Navbar from './Components/Navbar/Navbar.jsx';
 import NavbarTop from './Components/Navbar/NavbarTop.jsx';
 import Criar from './Components/criar/Criar.jsx';
-import Msg from './pages/Mensagens/mensagen.jsx';
+import Msg from './pages/mensagens/mensagen.jsx';
 import Explore from './pages/Explore/Explore';
-import Notificacoes from './pages/Notificacao/Notificacoes ';
+import Notificacoes from './pages/notificacao/Notificacoes .jsx';
 import Configuracoes from './Components/configuraçãoes/Configuraçãoes';
 import Kurz from './pages/kurz/Kurz';
 import DenunciasAdmin from './adm/DenunciasAdmin';
