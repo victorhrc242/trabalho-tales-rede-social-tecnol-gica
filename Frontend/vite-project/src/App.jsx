@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import Login from "./pages/Login/Login.jsx"
 import Cadastro from './pages/cadastro/Cadastro.jsx';
-import RecuperarSenha from './pages/RecuperarSenha/RecuperarSenha.jsx';
+import RecuperarSenha from './pages/recuperarSenha/RecuperarSenha.jsx';
 import Home from './pages/Home/Home.jsx';
 import Perfil from './pages/perfil/perfil.jsx';
 import Navbar from './Components/Navbar/Navbar.jsx';
