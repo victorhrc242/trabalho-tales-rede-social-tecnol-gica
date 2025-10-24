@@ -75,15 +75,24 @@ li {
 }
 
 /* Video player específico */
-.imagem-post-feed {
+.imagem-post-feed,
+.post-item video {
   width: 100%;
   max-width: 100%;
-  height: 600px;
-  object-fit: cover;
+  max-height: 600px;      /* altura máxima, sem passar disso */
+  height: auto;           /* ajusta automaticamente */
+  object-fit: contain;    /* mostra a imagem/vídeo inteiro sem cortar */
   border-radius: 12px;
   display: block;
   margin: 0 auto;
+  background-color: #030303; /* borda preta para vídeos/fotos menores que o espaço */
 }
+img, video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* corta as bordas e preenche */
+}
+
 
 /* Autor */
 .autor-container {

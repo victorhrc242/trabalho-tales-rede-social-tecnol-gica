@@ -171,72 +171,72 @@ const handleProximaEtapa = async (e) => {
     setLoadingProximaEtapa(false);
     return;
   }
-
-  try {
-    const response = await fetch(
-      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Email: email, Tipo: 'cadastro' }),
-      }
-    );
-    if (response.ok) {
-      setMensagem('Código enviado para seu e-mail.');
-      setEtapa(2);
-    } else {
-      const data = await response.json();
-      setMensagem(data?.message || 'Erro ao enviar código.');
-    }
-  } catch (error) {
-    setMensagem('Erro ao conectar com o servidor.');
-  } finally {
-    setLoadingProximaEtapa(false);
-  }
+setEtapa(3);
+  // try {
+  //   const response = await fetch(
+  //     'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Enviar-codigo',
+  //     {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ Email: email, Tipo: 'cadastro' }),
+  //     }
+  //   );
+  //   if (response.ok) {
+  //     setMensagem('Código enviado para seu e-mail.');
+  //     setEtapa(2);
+  //   } else {
+  //     const data = await response.json();
+  //     setMensagem(data?.message || 'Erro ao enviar código.');
+  //   }
+  // } catch (error) {
+  //   setMensagem('Erro ao conectar com o servidor.');
+  // } finally {
+  //   setLoadingProximaEtapa(false);
+  // }
 };
 
 
 // Etapa 2: Verificar código enviado por e-mail e avançar para etapa 3
 // Verificar código - etapa 2
-const handleVerificarCodigo = async (e) => {
-  e.preventDefault();
-  setErro('');
-  setMensagem('');
-  setLoadingVerificarCodigo(true);
+// const handleVerificarCodigo = async (e) => {
+//   e.preventDefault();
+//   setErro('');
+//   setMensagem('');
+//   setLoadingVerificarCodigo(true);
 
-  if (!codigoVerificacao || codigoVerificacao.trim().length === 0) {
-    setMensagem('Informe o código de verificação.');
-    setLoadingVerificarCodigo(false);
-    return;
-  }
+//   if (!codigoVerificacao || codigoVerificacao.trim().length === 0) {
+//     setMensagem('Informe o código de verificação.');
+//     setLoadingVerificarCodigo(false);
+//     return;
+//   }
 
-  try {
-    const response = await fetch(
-      'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Verificar-codigo',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          Email: email,
-          Codigo: codigoVerificacao,
-          Tipo: 'cadastro',
-        }),
-      }
-    );
+//   try {
+//     const response = await fetch(
+//       'https://trabalho-tales-rede-social-tecnol-gica.onrender.com/api/auth/Verificar-codigo',
+//       {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({
+//           Email: email,
+//           Codigo: codigoVerificacao,
+//           Tipo: 'cadastro',
+//         }),
+//       }
+//     );
 
-    if (response.ok) {
-      setMensagem('Código verificado com sucesso.');
-      setEtapa(3);
-    } else {
-      const data = await response.json();
-      setMensagem(data?.message || 'Código inválido.');
-    }
-  } catch (error) {
-    setMensagem('Erro ao conectar com o servidor.');
-  } finally {
-    setLoadingVerificarCodigo(false);
-  }
-};
+//     if (response.ok) {
+//       setMensagem('Código verificado com sucesso.');
+//       setEtapa(3);
+//     } else {
+//       const data = await response.json();
+//       setMensagem(data?.message || 'Código inválido.');
+//     }
+//   } catch (error) {
+//     setMensagem('Erro ao conectar com o servidor.');
+//   } finally {
+//     setLoadingVerificarCodigo(false);
+//   }
+// };
 
 
 // Cadastro final
