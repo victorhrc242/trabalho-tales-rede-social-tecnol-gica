@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../configuraçãoes/configuraçãoes.css';
+import '../configuracaoes/configuracaoes.css';
 
 const Configuracoes = ({ usuarioLogado }) => {
   const [abaAtiva, setAbaAtiva] = useState('notificacoes');

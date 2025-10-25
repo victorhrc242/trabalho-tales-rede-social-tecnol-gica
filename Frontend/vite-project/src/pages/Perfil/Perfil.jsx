@@ -4,7 +4,7 @@ import '../../css/Perfil.css';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Comentario from '../../Components/comentario/Comentario.jsx'; // ajuste o caminho se necessário
 import { FaCog, FaPlay  } from 'react-icons/fa';
-import TrocarConta from '../../Components/configuraçãoes/TrocarConta.jsx';
+import TrocarConta from '../../Components/configuracaoes/TrocarConta.jsx';
 import StoryModal from '../Home/StoryModal.jsx';
 
 

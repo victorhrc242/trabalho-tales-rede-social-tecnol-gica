@@ -12,7 +12,7 @@ import axios from 'axios';
 
 // Modais importados
 import CriarPostModal from '../Criar/Criar.jsx';
-import TrocarConta from '../configuraçãoes/TrocarConta.jsx'; 
+import TrocarConta from '../configuracaoes/TrocarConta.jsx'; 
 
 import '../../css/navbar.css';
 

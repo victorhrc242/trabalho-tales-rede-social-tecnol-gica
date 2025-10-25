@@ -1,6 +1,6 @@
 // Modais/TrocarConta.jsx
 import React, { useEffect, useState } from 'react';
-import '../configuraçãoes/trocarConta.css';
+import '../configuracaoes/trocarConta.css';
 
 function TrocarConta({ fechar }) {
   const [usuariosSalvos, setUsuariosSalvos] = useState([]);

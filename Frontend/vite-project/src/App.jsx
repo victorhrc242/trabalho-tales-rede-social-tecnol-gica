@@ -16,7 +16,7 @@ import DenunciasAdmin from "./adm/DenunciasAdmin.jsx";
 import Navbar from "./Components/Navbar/Navbar.jsx";
 import NavbarTop from "./Components/Navbar/NavbarTop.jsx";
 import Criar from "./Components/Criar/Criar.jsx";
-import Configuracaoes from "./Components/Configuracaoes/Configuracaoes.jsx";
+import Configuracaoe from "./Components/Configuracaoes/Configuracaoes.jsx";
 import TrocarConta from "./Components/Configuracaoes/TrocarConta.jsx";
 import SplashScreen from "./Components/Temas/SplashScreen.jsx";
 
@@ -108,7 +108,7 @@ function AppWrapper() {
   <Route path="/mensagen" element={<Mensagens />} />
   <Route path="/explore" element={<Explore />} />
   <Route path="/notificacoes" element={<Notificacao />} />
-  <Route path="/configuracoes" element={<Configuracaoes />} />
+  <Route path="/configuracoes" element={<Configuracaoe />} />
   <Route path="/kurz" element={<Kurz />} /> 
   <Route path="/trocarConta" element={<TrocarConta />} /> 
   <Route path="/adm-painel-de-denuncias2025/2026" element={<DenunciasAdmin/>}/>
