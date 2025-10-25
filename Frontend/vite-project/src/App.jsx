@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 // Páginas
 import Login from "./pages/Login/Login.jsx";
 import Cadastro from "./pages/Cadastro/Cadastro.jsx";
-import Recuperarsenha from "./pages/Recuperarsenha/RecuperarSenha.jsx";
+import Recuperarsenha from "./pages/RecuperarSenha/RecuperarSenha.jsx";
 import Home from "./pages/Home/Home.jsx";
 import Perfil from "./pages/Perfil/Perfil.jsx";
 import Mensagens from "./pages/Mensagens/Mensagen.jsx";
