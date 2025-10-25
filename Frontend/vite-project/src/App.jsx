@@ -18,7 +18,7 @@ import NavbarTop from "./Components/Navbar/NavbarTop.jsx";
 import Criar from "./Components/Criar/Criar.jsx";
 import Configuracaoes from "./Components/Configuracaoes/Configuracaoes.jsx";
 import TrocarConta from "./Components/Configuracaoes/TrocarConta.jsx";
-import SplashScreen from "./Components/temas/SplashScreen.jsx";
+import SplashScreen from "./Components/Temas/SplashScreen.jsx";
 
 function AppWrapper() {
   const location = useLocation();
