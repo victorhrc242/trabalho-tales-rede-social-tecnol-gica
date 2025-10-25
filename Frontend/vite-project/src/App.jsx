@@ -1,20 +1,22 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
+// Páginas
 import Login from "./pages/Login/Login.jsx";
 import Cadastro from "./pages/Cadastro/Cadastro.jsx";
-import RecuperarSenha from "./pages/Recuperarsenha/RecuperarSenha.jsx";
+import RecuperarSenha from "./pages/RecuperarSenha/RecuperarSenha.jsx";
 import Home from "./pages/Home/Home.jsx";
-import Perfil from "./pages/Perfil/Perfil.jsx";
+import Perfil from "./pages/Perfil/perfil.jsx";
+import Msg from "./pages/Mensagens/mensagen.jsx";
+import Explore from "./pages/Explore/Explore.jsx";
+import Notificacoes from "./pages/Notificacao/Notificacoes.jsx";
+import Kurz from "./pages/Kurz/Kurz.jsx";
+import DenunciasAdmin from "./adm/DenunciasAdmin.jsx";
+// Components
 import Navbar from "./Components/Navbar/Navbar.jsx";
 import NavbarTop from "./Components/Navbar/NavbarTop.jsx";
 import Criar from "./Components/Criar/Criar.jsx";
-import Msg from "./pages/Mensagens/Mensagen.jsx";
-import Explore from "./pages/Explore/Explore.jsx";
-import Notificacoes from "./pages/Notificacao/Notificacoes.jsx";
-import Configuracoes from "./Components/configuraçãoes/Configuraçãoes.jsx";
-import Kurz from "./pages/Kurz/Kurz.jsx";
-import DenunciasAdmin from "./adm/DenunciasAdmin.jsx";
-import TrocarConta from "./Components/configuraçãoes/TrocarConta.jsx";
+import Configuracoes from "./Components/Configuracoes/Configuracoes.jsx";
+import TrocarConta from "./Components/Configuracoes/TrocarConta.jsx";
 import SplashScreen from "./Components/Temas/SplashScreen.jsx";
 function AppWrapper() {
   const location = useLocation();
