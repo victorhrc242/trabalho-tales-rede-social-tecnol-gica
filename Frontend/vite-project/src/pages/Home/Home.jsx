@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import FeedItem from './FeedItem.jsx';
-import Comentario from '../../Components/comentario/Comentario.jsx';
+import Comentario from '../../Components/Comentario/Comentario.jsx';
 import Notificacoes from '../Notificacao/Notificacoes.jsx';
 import '../../css/home.css';
 import useRegistrarVisualizacoes from './useRegistrarVisualizacoes.jsx';

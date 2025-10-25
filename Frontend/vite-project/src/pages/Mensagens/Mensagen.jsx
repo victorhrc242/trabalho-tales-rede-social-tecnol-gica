@@ -4,7 +4,7 @@ import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import './msg.css';
 import { FaPaperPlane, FaSearch, FaArrowLeft, FaUser, FaPaintBrush, FaBellSlash, FaTrash, FaVideo } from 'react-icons/fa';
 
-import Comentario from '../../components/Comentario/comentario';
+import Comentario from '../../Components/Comentario/Comentario';
 
 
 
