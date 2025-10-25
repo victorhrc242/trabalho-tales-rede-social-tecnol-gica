@@ -16,8 +16,8 @@ import DenunciasAdmin from "./adm/DenunciasAdmin.jsx";
 import Navbar from "./Components/Navbar/Navbar.jsx";
 import NavbarTop from "./Components/Navbar/NavbarTop.jsx";
 import Criar from "./Components/Criar/Criar.jsx";
-import Configuracaoes from "./Components/configuraçãoes/Configuraçãoes.jsx";
-import TrocarConta from "./Components/configuraçãoes/TrocarConta.jsx";
+import Configuracaoes from "./Components/Configuracaoes/Configuracaoes.jsx";
+import TrocarConta from "./Components/Configuracaoes/TrocarConta.jsx";
 import SplashScreen from "./Components/temas/SplashScreen.jsx";
 
 function AppWrapper() {

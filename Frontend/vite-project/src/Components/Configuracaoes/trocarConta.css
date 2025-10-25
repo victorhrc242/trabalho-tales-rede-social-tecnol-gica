@@ -1,0 +1,224 @@
+/* configuraçãoes/trocarConta.css */
+
+/* Fundo do modal (overlay) com blur leve e fundo parcialmente transparente */
+.modal-overlay-trocar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.438); 
+  backdrop-filter: blur(1px); /* Desfoque leve do fundo */
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  z-index: 1000; /* fica na frente de outros elementos */
+}
+
+/* Container principal do modal */
+.modal-trocar-container {
+  background-color: #fff; 
+  padding: 40px; 
+  border-radius: 16px; 
+  width: 100%;
+  max-width: 500px; 
+  position: relative; 
+}
+
+/* Título do modal */
+.titulo-trocar {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Lista de contas salvas */
+.lista-usuarios {
+  list-style: none; 
+  padding: 0;
+  margin: 0 0 30px 0;
+}
+
+/* Cada item da lista de usuário */
+.item-usuario {
+  display: flex;
+  align-items: center;
+  gap: 16px; 
+  padding: 10px;
+  border-radius: 8px; 
+  transition: background-color 0.2s; /* transição suave ao passar mouse */
+  cursor: pointer; 
+}
+
+.item-usuario:hover {
+  background-color: #f5f5f5; /* cor de fundo ao passar o mouse */
+}
+
+/* Foto do usuário (avatar) */
+.avatar-usuario {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; 
+  object-fit: cover; /* a imagem preenche o container sem distorcer */
+  border: 1px solid #ccc; /* borda fina cinza */
+}
+
+/* Nome do usuário */
+.nome-usuario {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Mensagem exibida quando não há contas salvas */
+.mensagem-vazia {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+}
+
+/* Container dos botões "Adicionar nova conta" e "Sair de todas as contas" */
+.acoes-conta {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap; /* permite quebrar linha se necessário */
+}
+
+/* Estilo base para botões */
+.botao-conta {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer; 
+  transition: background-color 0.3s;
+}
+
+/* Botão de adicionar conta */
+.adicionar-conta {
+  background-color: #4363b9; 
+  color: white;
+}
+
+.adicionar-conta:hover {
+  background-color: #1d42a0; 
+}
+
+/* Botão de sair de todas as contas */
+.sair-contas {
+  background-color: #ccc; 
+  color: #333;
+}
+
+.sair-contas:hover {
+  background-color: #a1a1a1; 
+}
+
+/* Botão de fechar modal ("X") */
+.fechar-modal {
+  position: absolute; 
+  top: 10px;
+  right: 15px;
+  font-size: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Responsivo: modal no mobile sobe da parte de baixo */
+@media (max-width: 768px) {
+  
+  /* Ajusta alinhamento do overlay para o modal aparecer na parte inferior */
+  .modal-overlay-trocar {
+    align-items: flex-end;
+  }
+
+  /* Ajusta container para ocupar toda largura na parte inferior */
+  .modal-trocar-container {
+    width: 100%;
+    max-width: none;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 24px 20px;
+    animation: slideUp 0.3s ease-out;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+    height: auto;
+  }
+
+  .titulo-trocar {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: #262626;
+  }
+
+  .fechar-modal {
+    top: 12px;
+    right: 16px;
+    font-size: 24px;
+    color: #666;
+  }
+
+  .item-usuario {
+    padding: 12px 10px;
+    border-radius: 12px;
+  }
+
+  .avatar-usuario {
+    width: 42px;
+    height: 42px;
+  }
+
+  .nome-usuario {
+    font-size: 16px;
+    color: #262626;
+  }
+
+  .acoes-conta {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .botao-conta {
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+
+  .adicionar-conta {
+    background-color: #0095f6;
+    color: white;
+  }
+
+  .adicionar-conta:hover {
+    background-color: #0074cc;
+  }
+
+  .sair-contas {
+    background-color: #efefef;
+    color: #262626;
+  }
+
+  .sair-contas:hover {
+    background-color: #ddd;
+  }
+
+  /* Animação para o modal subir da parte de baixo */
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
