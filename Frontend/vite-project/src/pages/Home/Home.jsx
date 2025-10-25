@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import FeedItem from './FeedItem.jsx';
 import Comentario from '../../Components/comentario/Comentario.jsx';
-import Notificacoes from '../notificacao/Notificacoes .jsx';
+import Notificacoes from '../Notificacao/Notificacoes .jsx';
 import '../../css/home.css';
 import useRegistrarVisualizacoes from './useRegistrarVisualizacoes.jsx';
 import Story from './Story.jsx';

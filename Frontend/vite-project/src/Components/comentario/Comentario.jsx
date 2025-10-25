@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr';
 import { Heart, Share2, Send } from 'lucide-react';
 import '../../css/comentario.css';
-import CompartilharPost from '../../pages/home/CompartilharPost.jsx';
+import CompartilharPost from '../../pages/Home/CompartilharPost.jsx';
 
 function Comentario({ post, usuario, fechar }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);

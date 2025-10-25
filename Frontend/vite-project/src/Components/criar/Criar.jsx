@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CriarStoryModal from '../../pages/home/CriarStoryModal';
+import CriarStoryModal from '../../pages/Home/CriarStoryModal';
 import '../../css/Criar.css'; // Importando o CSS para estilização
 
 function Criar({ usuarioLogado, onClose }) {
