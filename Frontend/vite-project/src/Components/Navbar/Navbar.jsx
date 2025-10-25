@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 
 // Modais importados
-import CriarPostModal from '../criar/Criar.jsx';
+import CriarPostModal from '../Criar/Criar.jsx';
 import TrocarConta from '../configuraçãoes/TrocarConta.jsx'; 
 
 import '../../css/navbar.css';
